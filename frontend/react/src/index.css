@@ -1,0 +1,140 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: white;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
+}
+
+p {
+	margin: 0;
+}
+
+a {
+	text-decoration:none;
+	color: orange;
+}
+
+a:hover {
+	color: white;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+	/* display: block; */
+
+}
+
+button {
+	border: 2px solid orange;
+	border-radius: 10px;
+	background: none;
+	color: orange;
+}
+
+button:hover {
+	/* border: 2px solid orange; */
+	/* border-radius: 10px; */
+	/* color: rgba(0,0,0,0.0); */
+	/* -webkit-text-fill-color: transparent;
+	-webkit-background-clip: text; */
+	background: orange;
+	color: rgba(125, 0, 125, 1);
+}
+
+.Page {
+	/* height: 100%; */
+}
+
+.Menu {
+	height: 70px;
+	padding: 20px;
+	padding-right: 10px;
+}
+
+.FriendsNav, .MatchNav , .Menu {
+	background-color:rgba(125, 0, 125, 0.2);
+	border-radius: 20px;
+}
+
+.FriendsNav, .MatchNav {
+	height: 75vh;
+	padding: 10px;
+}
+
+.miniAvatar {
+	max-width: 50px;
+	max-height: 50px;
+	display: block;
+	left: -20px;
+	border-radius: 10px;
+	border: 2px solid orange;
+}
+
+.modifAvatar {
+	max-width: 100px;
+	max-height: 100px;
+	/* display: block; */
+	border-radius: 20px;
+	border: 2px solid orange;
+}
+
+.miniAvatar:hover, .modifAvatar:hover {
+	border: 2px solid white;
+}
+
+
+
+	/* background-image: linear-gradient(purple 10%, transparent); */
+
+/* .Menu {
+	width: 100%;
+	height: 46px;
+	background-color: white;
+	padding: 10px;
+}
+
+.homeButtonDiv {
+	display: inline;
+	float: left;
+	position: relative;
+}
+
+.titleDiv {
+	display: inline;
+	float: none;
+	position: relative;
+}
+
+.profilMenu {
+	display: inline;
+	float: right;
+	position: relative;
+}
+
+.loginMenu {
+	display: inline;
+	float: left;
+	position: absolute;
+	margin-right: 60px;
+}
+
+.avatarMenu {
+	display: inline;
+	float: left;
+	position: absolute;
+	margin-right: 60px;
+} */
+/* .homeButtonDiv {
+	display: inline;
+	float: left;
+} */

@@ -1,0 +1,51 @@
+user:
+  -Creation user
+  -stockage user
+  -fonction verification unique nickname  (front)
+  -upload avatar ou avatar par default    (front)
+
+amis :
+  -ajout (front)
+  -suppression (front)
+  -bloquer (front)
+  -status (online, offline, in game, search game, etc...) (front)
+  -access user's profile
+  -invitations to play (front)
+
+channels:
+  -Sockets
+  -creation channels (public, private, protected)
+  -gestion mdp (hashage & comparaison + char min)
+  -front
+  -add user (whitelist) (front)
+  -kick user            (front)
+  -ban user (blacklist) (front)
+  -invitations to play  (front)
+  -administrator
+  -change name
+  -change mdp
+  -direct messages
+  -access user's profile  (front)
+
+Back:
+  -protection injections SQL
+
+Stats:
+  -access user's profile  (front)
+  -stockage tableau des scores
+  -front
+
+Pong
+  -Sockets
+  -Bot
+  -invitations to play  (front)
+  -spectateur           (front)
+  -vitesse              (front)
+  -access user's profile (front)
+  -couleurs
+  -matchingSystem
+  -search match         (front)
+  -create match         (front)
+
+API 42
+double authentification (API google)

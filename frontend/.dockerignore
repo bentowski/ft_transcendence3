@@ -1,0 +1,4 @@
+Dockerfile
+.dockerignore
+./react/node_modules/
+npm-debug.log

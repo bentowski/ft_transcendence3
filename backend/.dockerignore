@@ -1,0 +1,4 @@
+Dockerfile
+.dockerignore
+${PWD}/nest/node_modules/
+npm-debug.log

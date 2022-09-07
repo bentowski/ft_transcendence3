@@ -1,0 +1,16 @@
+#joueur1{
+  background-color: black;
+}
+
+#joueur2{
+  background-color: black;
+}
+
+#globale{
+  background-color: black;
+}
+
+.canva{
+  display: flex;
+  justify-content: center;
+}
