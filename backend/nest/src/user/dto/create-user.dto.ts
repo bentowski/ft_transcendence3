@@ -14,4 +14,6 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     public password: string;
+
+    public isOnline: boolean;
 }

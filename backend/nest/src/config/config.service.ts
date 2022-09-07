@@ -37,7 +37,8 @@ export class ConfigService {
             username: this.getValue('POSTGRES_USER'),
             password: this.getValue('POSTGRES_PASSWORD'),
             database: this.getValue('POSTGRES_DB'),
-            entities: ['**/*.entity{.ts,.js}'],
+            //entities: ['**/*.entity{.ts,.js}'],
+            autoLoadEntities: true,
             synchronize: true,
         }
     }

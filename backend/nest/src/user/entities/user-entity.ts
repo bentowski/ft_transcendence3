@@ -26,5 +26,10 @@ export class User {
         default: '',
     })
     password: string;
+
+    @Column({
+        default: false,
+    })
+    isOnline: boolean;
 }
 export default User;

@@ -16,9 +16,9 @@ COPY --chown=node:node ./nest/package*.json ./
 
 RUN npm ci
 
-RUN npm i @nestjs/config @nestjs/platform-express @nestjs/typeorm typeorm pg class-validator dotenv @nestjs/websockets @nestjs/platform-socket.io && npm add -D @types/socket.io
-
 COPY --chown=node:node ./nest ./
+
+USER node
 
 # End of development instructions.
 
