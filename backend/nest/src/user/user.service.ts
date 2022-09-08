@@ -26,9 +26,9 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    // findOne(username: string): Promise<User> {
-    //     return this.userRepository.findOneBy({ username });
-    // }
+    findOne(username: string): Promise<User> {
+        return this.userRepository.findOneBy({ username });
+    }
 
     async remove(id: string): Promise<void> {
         await this.userRepository.delete(id);
