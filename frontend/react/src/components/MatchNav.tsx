@@ -50,33 +50,24 @@ class OpenGames extends Component<{allGames : any}, {}> {
 
 class MatchNav extends Component {
 		state = {
+			nbGame: 1,
 			allGames: []
 		}
 
-	test = () => {
-		let xhr:any;
-		let MatchNav_SearchBar = (document.querySelector("#MatchNav input") as HTMLInputElement).value;
-		let url = "http://localhost:3000/search-bar/parties/" + MatchNav_SearchBar;
-		xhr = new XMLHttpRequest();
-    	xhr.open("GET", url);
-		xhr.responseType = 'json';
-    	xhr.send();
-    	xhr.onload = () => {
-			this.setState({allGames: xhr.response});
-		}
-		//<RequestUrl inputSelector={"#MatchNav input"} routeForRequest={"search-bar/parties/"}/>
+	callBackFunction = (childData:any, newInput: string) => {
+		this.setState({allGames: childData, lastInput: newInput})
 	}
 
 	render() {
 		return (
 			<div className="MatchNav" id="MatchNav">
 				<div className="Wait m-2 p-2">
-					<p>x games are waitting</p>
+					<p>{this.state.allGames.length} games are waitting</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
-					<button onClick={this.test} >Random matching</button>
+					<button>Random matching</button>
 					<div className="m-2 p-2">
-						<SearchBar/>
+						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"search-bar/parties/"} parentCallBack={this.callBackFunction}/>
 					</div>
 				</div>
 				<div className="List">
