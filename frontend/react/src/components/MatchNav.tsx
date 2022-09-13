@@ -54,8 +54,8 @@ class MatchNav extends Component {
 			allGames: []
 		}
 
-	callBackFunction = (childData:any, newInput: string) => {
-		this.setState({allGames: childData, lastInput: newInput})
+	callBackFunction = (childData:any) => {
+		this.setState({allGames: childData})
 	}
 
 	render() {
