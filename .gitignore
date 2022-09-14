@@ -4,6 +4,8 @@
 frontend/react/node_modules
 backend/nest/node_modules
 backend/dist
+backend/nest/dist
+frontend/react/dist
 data
 examples
 frontend/volume
