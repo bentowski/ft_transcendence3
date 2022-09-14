@@ -15,7 +15,7 @@ class Tchat extends Component {
           <button>Create Channel</button>
           <div className="channelsList">
             <p>Channel List (x)</p>
-            {/* <SearchBar /> */}
+            <SearchBar />
             <Channels />
           </div> {/*fin channelsList*/}
         </div> {/*fin channels*/}
