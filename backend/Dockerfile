@@ -12,7 +12,6 @@ FROM node:alpine As development
 WORKDIR /home/node/app
 
 COPY --chown=node:node ./nest/package*.json ./
-#COPY --chown=node:node ./.env ./
 
 RUN npm ci
 
