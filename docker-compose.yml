@@ -7,9 +7,8 @@ services:
   build:
    context: ./frontend/
    dockerfile: Dockerfile
-  working_dir: /var/www
   volumes:
-   - site_volume:/var/www
+   - site_volume:/home/node/www
   ports:
    - "8080:8080"
   networks:
@@ -25,7 +24,7 @@ services:
    target: development
    dockerfile: Dockerfile
   volumes:
-   - api_volume:/usr/src/app
+   - api_volume:/home/node/app
   ports:
    - "3000:3000"
   # Run a command against the development stage of the image

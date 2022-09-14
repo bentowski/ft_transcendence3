@@ -1,18 +1,14 @@
 FROM node:alpine
 
-#RUN	 adduser test
-
-WORKDIR /var/www
+WORKDIR /home/node/www/
 
 COPY ./react/package*.json ./
 
-RUN npm ci
-
-RUN npm install react@latest react-dom@latest
+RUN npm ci && npm install react@latest react-dom@latest
 
 COPY ./react ./
 
-#USER test
+USER node
 
 EXPOSE	8080
 
