@@ -3,6 +3,7 @@
 # dependencies
 frontend/react/node_modules
 backend/nest/node_modules
+backend/dist
 data
 examples
 frontend/volume
