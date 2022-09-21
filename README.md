@@ -28,10 +28,7 @@ Examples :
 `git checkout <new_branch>`
 
 ### Set la branche sur le repo distant
-`git push --set-upstream origin <new_branch>`
-
-### Push notre travail
-`git push -u origin <branch_name>`
+`git push --set-upstream origin <new_branch>` ou `git push -u origin <new_branch>`
 
 ### Une fois qu'on veut fusionner notre branche avec le main
 - Aller sur Github.com, dans le projet, se rendre sur sa branche
