@@ -11,12 +11,12 @@ Differents ways to make modifications:
 - Write a task into project.
 
 Accroding on a way of naming branches :
-- #<number>#-<functionnality>
-- examples :
-- #1#-Front-NavBar : Issue number 1 about the NavBar
-- #5#-Front-NavBar : 5th modification about NavBar
-- #1#-Docker-Compose : 1st modification on Docker-Compose
-- #7#-Back-User : Ticket number 7 on the User Module
+`#<number>#-<functionnality>`
+Examples :
+- `#1#-Front-NavBar` : Issue number 1 about the NavBar
+- `#5#-Front-NavBar` : 5th modification about NavBar
+- `#1#-Docker-Compose` : 1st modification on Docker-Compose
+- `#7#-Back-User` : Ticket number 7 on the User Module
 - Warning: Each number should track the number of the modification we are taking on the project
 
 ## Commands
