@@ -23,6 +23,8 @@ Examples :
 
 ## Commands
 
+Before working! Don't forget to pull the `main` branch, and not the `dev` branch that is not necessarly working.
+
 ### Creating a new branch
 `git branch <new_branch>`
 
