@@ -22,7 +22,7 @@ Examples :
 
 Before working! Don't forget to pull the `main` branch, and not the `dev` branch that is not necessarly working.
 
-# Start with the `main` branch
+### Start with the `main` branch
 `git checkout main`
 `git fetch origin`
 `git reset --hard origin/main`
