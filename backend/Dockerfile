@@ -17,7 +17,7 @@ RUN npm install
 
 COPY --chown=node:node ./nest ./
 
-USER node
+#USER node
 
 # End of development instructions.
 

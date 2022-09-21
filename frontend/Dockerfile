@@ -8,6 +8,6 @@ RUN npm install && npm install react@latest react-dom@latest
 
 COPY --chown=node:node ./react ./
 
-USER node
+#USER node
 
 CMD ["npm", "start"]

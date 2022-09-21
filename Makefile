@@ -20,17 +20,17 @@ down:
 clear_volume: down
 	docker volume rm $(TEST)
 
-	clear: clear_volume
-		docker system prune -af
-		sudo rm -rf ./frontend/volume/node_modules
-		sudo rm -rf ./backend/volume/node_modules
-		sudo rm -rf ./backend/volume/dist
-		sudo cp -rf ./frontend/volume/* ./frontend/react/
-		sudo cp -rf ./backend/volume/* ./backend/nest/
-		sudo chmod 775 ./backend/
-		sudo chmod 775 ./frontend/
-		sudo rm -rf ./frontend/volume
-		sudo rm -rf ./backend/volume
-		sudo rm -rf ./data
+clear: clear_volume
+	docker system prune -af
+	sudo rm -rf ./frontend/volume/node_modules
+	sudo rm -rf ./backend/volume/node_modules
+	sudo rm -rf ./backend/volume/dist
+	sudo cp -rf ./frontend/volume/* ./frontend/react/
+	sudo cp -rf ./backend/volume/* ./backend/nest/
+	sudo chmod 775 ./backend/
+	sudo chmod 775 ./frontend/
+	sudo rm -rf ./frontend/volume
+	sudo rm -rf ./backend/volume
+	sudo rm -rf ./data
 
 re: clear all
