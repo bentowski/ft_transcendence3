@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import User from './User'
+import User from '../User/User'
 
 class FriendsNav extends Component {
   state = {
