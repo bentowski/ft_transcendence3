@@ -71,15 +71,15 @@ Les branches fonctionnelles :
 Differentes manières de faire des modifications:
 - Créer directement une requête pull.
 - Écrire une issue dans l'interface de github.
-- Écrire une tache dans le projet de github (Le projet doit commencer par le numéro #<numéro>#).
+- Écrire une tache dans le projet de github (Le projet doit commencer par le numéro #<numéro>).
 
 Accordons-nous sur une manière de nommer les branches de modification :
-`#<numero>#-<fonctionnalité>`
+`#<numero>-<fonctionnalité>`
 Exemples :
-- `#1#-NavBar` : L'issue numero un de NavBar.
-- `#5#-NavBar` : 5e modification de NavBar.
-- `#1#-Docker-Compose` : 1ère modification de Docker-Compose.
-- `#7#-UserProfile` : Ticket numero 7 de la fonctionnalité profil utilisateur.
+- `#1-NavBar` : L'issue numero un de NavBar.
+- `#5-NavBar` : 5e modification de NavBar.
+- `#1-Docker-Compose` : 1ère modification de Docker-Compose.
+- `#7-UserProfile` : Ticket numero 7 de la fonctionnalité profil utilisateur.
 - Attention: Chacque numéro doit se suivre et doit représenter le numéro de modification, issue, projet et request comprises.
 
 ## Commandes
