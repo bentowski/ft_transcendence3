@@ -1,11 +1,34 @@
-mise en place de l'environnement docker en cours
+### README
 
-Un dossier front a ete fait et initialiser avec react, pour pouvoir y travailler
+La branche main va contenir la version actuelle et mise a jour du projet.
+Chaque modification fera l'objet d'un ticket sur la page "Project" dans le repo.
 
-Procedure pour installer nodejs et lancer react sont dans le fichier "commands"
+# Créer une nouvelle branche
+`git branch <new_branch>`
 
-Pour le back, creer un dossier back et initialiser un projet nest
+# Set la branche sur le repo distant
+`git push --set-upstream origin <new_branch>`
 
-Je continue les tests sur docker
+# Push notre travail
+`git push -u origin <branch_name>`
 
-Penser a faire une nouvelle branche avant de taffer ;)
+# Une fois qu'on veut fusionner notre branche avec le main
+> Aller sur Github.com, dans le projet, se rendre sur sa branche
+> Cliquer sur Contribute, Open Pull Request
+> A droite, choisir le reviewer
+> Remplir le formulaire, puis Create Pull Request
+(Reviewer: commit, merge, puis delete branch depuis l'interface)
+
+## Usefull memo
+
+# Supprimer la branche du repo distant
+`git push origin --delete <branch_name>`
+
+# Supprimer une branche en local
+`git branch -D <branch_name>`
+
+# Lister les branches en local
+`git branch`
+
+# Lister les branches sur le depot distant
+`git branch -a`
