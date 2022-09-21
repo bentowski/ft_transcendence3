@@ -1,15 +1,13 @@
 FROM node:alpine
 
-WORKDIR /home/node/www/
+WORKDIR /home/node/www
 
-COPY ./react/package*.json ./
+COPY --chown=node:node ./react/package*.json ./
 
-RUN npm ci && npm install react@latest react-dom@latest
+RUN npm install && npm install react@latest react-dom@latest
 
-COPY ./react ./
+COPY --chown=node:node ./react ./
 
 USER node
-
-EXPOSE	8080
 
 CMD ["npm", "start"]
