@@ -3,6 +3,20 @@
 La branche main va contenir la version actuelle et mise a jour du projet.
 Chaque modification fera l'objet d'un ticket sur la page "Project" dans le repo.
 
+Differents ways to make modifications:
+- Create directly a pull request.
+- Write an issue if you can't handle this problem.
+- Write a task into project.
+
+Accroding on a way of naming branches :
+#<number>#-<functionnality>
+examples :
+#1#-Front-NavBar : Issue number 1 about the NavBar
+#5#-Front-NavBar : 5th modification about NavBar
+#1#-Docker-Compose : 1st modification on Docker-Compose
+#7#-Back-User : Ticket number 7 on the User Module
+/ ! \ Each number should track the number of the modification we are taking on the project
+
 # Créer une nouvelle branche
 `git branch <new_branch>`
 
@@ -20,6 +34,7 @@ Chaque modification fera l'objet d'un ticket sur la page "Project" dans le repo.
 > Cliquer sur Contribute, Open Pull Request
 > A droite, choisir le reviewer
 > Remplir le formulaire, puis Create Pull Request
+(Si pas de conflits, faire merge pull request)
 (Reviewer: commit, merge, puis delete branch depuis l'interface)
 
 ## Usefull memo
