@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Menu from '../components/Menu'
-import MatchNav from '../components/Party/MatchNav'
+import MatchNav from '../components/MatchNav/MatchNav'
 import FriendsNav from '../components/Friends/FriendsNav'
 // import Tchat from './Tchat'
 import Profil from '../components/User/Profil'

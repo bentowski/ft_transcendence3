@@ -1,6 +1,6 @@
 //import React from 'react';
 import {Component} from 'react';
-import SearchBar from '../Friends/SearchBar'
+import SearchBar from './SearchBar'
 
 
 class OpenGames extends Component<{allGames : any}, {}> {

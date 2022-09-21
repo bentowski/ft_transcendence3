@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles/App.css';
-import Game from './components/Game/Game'
+import Game from './components/Party/Game'
 import Page from './pages/Page'
 
 class App extends React.Component {
