@@ -1,4 +1,5 @@
 Dockerfile
 .dockerignore
 ${PWD}/nest/node_modules/
-npm-debug.log
+${PWD}/nest/dist
+${PWD}/nest/npm-debug.log

@@ -1,30 +1,32 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'user' })
-export class User {
+@Entity('user')
+export class UserEntity {
     @PrimaryGeneratedColumn({
         type: 'bigint',
-        name: 'user_id',
+        name: 'uuid',
     })
-    public id: number;
+    public id: bigint;
 
     @Column({
+        unique: true,
+        type: 'varchar',
         nullable: false,
-        default: '',
     })
     public username: string;
 
     @Column({
-        name: 'email_address',
+        name: 'email',
+        type: 'varchar',
         nullable: false,
-        default: '',
     })
     public email: string;
 
     @Column({
+        name: 'password',
+        type: 'varchar',
         nullable: false,
-        default: '',
     })
     password: string;
 }
-export default User;
+export default UserEntity;

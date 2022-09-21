@@ -1,5 +1,7 @@
-import { Controller, Get, Param, HostParam } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { PartiesService } from './parties.service';
+import { CreatePartiesDto } from './dto/create-parties.dto';
+
 
 @Controller('search-bar/parties')
 export class PartiesController {
@@ -12,6 +14,11 @@ export class PartiesController {
 
     @Get()
     findAllParties() {
-        return (this.partiesService.findAllParties());
+        return (this.partiesService.findParties());
+    }
+
+	@Post('create')
+    createParties(@Body() createPartiesDto: CreatePartiesDto) {
+        return this.partiesService.createPartiesEntity(createPartiesDto);
     }
 }
