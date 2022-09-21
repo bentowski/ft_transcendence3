@@ -43,7 +43,7 @@ Before working! Don't forget to pull the `main` branch, and not the `dev` branch
 - Go on Github.com, into the project, choose our current branch.
 - Click on `Contribute`, then `Open Pull Request`.
 - To the right, choosing the reviewer.
-- Fill the form, then `Create Pull Request`.
+- CHOOSE BRANCH `dev`. Fill the form, then `Create Pull Request`.
 - (If no conflicts, click `Merge Pull Request`)
 - (Reviewer: `commit`, `merge`, then `delete branch` from github's interface)
 
