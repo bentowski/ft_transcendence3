@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 // import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
-@Entity()
+@Entity('chat')
 export class Chat {
  @PrimaryGeneratedColumn('uuid')
  id: number;
@@ -15,3 +15,4 @@ export class Chat {
  // @CreateDateColumn()
  // createdAt: Date;
 }
+export default Chat;
