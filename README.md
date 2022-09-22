@@ -65,6 +65,8 @@ Before working! Don't forget to pull the `main` branch, and not the `dev` branch
 ### List all the branches of the distant repo
 `git branch -a`
 
+------------
+
 # Pour un bon usage de git - Français
 
 ## Instructions
