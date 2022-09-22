@@ -1,7 +1,7 @@
 import { Component } from 'react';
 // import io from "socket.io-client"
 import socketio from "socket.io-client";
-import User from './User'
+import User from '../Friends/User'
 // import SearchBar from './SearchBar'
 import Channels from './Channels'
 // import Messages from './Messages'

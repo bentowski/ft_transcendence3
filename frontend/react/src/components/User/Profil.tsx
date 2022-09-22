@@ -46,10 +46,10 @@ class Profil extends Component {
 			<div className="Profil">
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
-						<a href="#">
-							<img className="modifAvatar mb-2"  src="./ivloisy.jpg" />
+						<a href="src/components/Profil#">
+							<img className="modifAvatar mb-2"  src="/pictures/ivloisy.jpg" />
 						</a>
-						<a className="modifName" href="#">
+						<a className="modifName" href="src/components/Profil#">
 							<h3>login</h3>
 						</a>
 					</div> {/* fin ProfilInfPer */}
