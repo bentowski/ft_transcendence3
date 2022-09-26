@@ -6,13 +6,12 @@ import SearchBar from './SearchBar'
 class OpenGames extends Component<{allGames : any}, {}> {
 	renderGames(login: string, key: number) {
 		return (
-			<div key={key} className="gamesDiv row">
-				<div className="col-4"></div>
-				<div className="col-2">
+			<div key={key} className="gamesDiv row justify-content-start">
+				<div className="col-4">
 					<button>Join</button>
 				</div>
-				<div className="col-3">
-					<p>game {login}</p>
+				<div className="col w-100">
+					<p className="text-start">game {login}</p>
 				</div>
 			</div>
 		)
@@ -34,12 +33,17 @@ class OpenGames extends Component<{allGames : any}, {}> {
 
 class MatchNav extends Component {
 		state = {
-			nbGame: 1,
 			allGames: []
 		}
 
 	callBackFunction = (childData:any) => {
 		this.setState({allGames: childData})
+	}
+
+	test() {
+		return (
+			alert("Hello! I am an alert box!")
+		)
 	}
 
 	render() {
@@ -49,7 +53,7 @@ class MatchNav extends Component {
 					<p>{this.state.allGames.length} games are waitting</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
-					<button>Random matching</button>
+					<button onClick={this.test}>Random matching</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction}/>
 					</div>

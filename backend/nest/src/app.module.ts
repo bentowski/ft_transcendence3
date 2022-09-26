@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { configService } from './config/config.service';
 import { ChatModule } from "./chat/chat.module";
+import { PartiesModule } from './parties/parties.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ChatModule } from "./chat/chat.module";
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
     UserModule,
     ChatModule,
+    PartiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
