@@ -3,7 +3,6 @@ import PartiesEntity from './entities/parties-entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePartiesDto } from "./dto/create-parties.dto";
-import { toPartiesDto } from '../shared/mapper';
 
 @Injectable()
 export class PartiesService {
@@ -12,29 +11,6 @@ export class PartiesService {
         @InjectRepository(PartiesEntity)
         private readonly partiesRepository: Repository<PartiesEntity>,
     ) {}
-
-    parties: any[] = [
-        {
-            login: "AAA",
-			id: 1
-        },
-        {
-            login: "AAA BBB",
-			id: 2
-        },
-        {
-            login: "BBB CCC",
-			id: 3
-        },
-        {
-            login: "CCC DDD",
-			id: 4
-        },
-        {
-            login: "AAA BBB CCC DDD",
-			id: 5
-        }
-    ];
 
     async findAllAvailableParties(login: string) {
         //return 'Hello World';

@@ -50,7 +50,7 @@ class MatchNav extends Component {
 		return (
 			<div className="MatchNav" id="MatchNav">
 				<div className="Wait m-2 p-2">
-					<p>{this.state.allGames.length} games are waitting</p>
+					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
 					<button onClick={this.test}>Random matching</button>
