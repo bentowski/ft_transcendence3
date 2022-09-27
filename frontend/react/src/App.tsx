@@ -1,7 +1,8 @@
 import React from 'react';
 import './styles/App.css';
-import Game from './components/Party/Game'
+import Game from './pages/Game'
 import Page from './pages/Page'
+// import Login from './pages/Login'
 
 class App extends React.Component {
   state = {

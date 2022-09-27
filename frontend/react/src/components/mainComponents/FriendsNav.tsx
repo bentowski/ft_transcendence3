@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import User from './User'
+import UserCards from '../utils/UserCards'
 
 class FriendsNav extends Component {
   state = {
@@ -16,7 +16,7 @@ class FriendsNav extends Component {
 				<div className="addFriends my-3">
 					<input className="col-8" type="text" placeholder="login"></input>
 					<button className="col-2 mx-2">ADD</button>
-          <User value={6} avatar={true}/>
+          <UserCards value={6} avatar={true}/>
 				</div>
       </div>
     ); // fin de return
