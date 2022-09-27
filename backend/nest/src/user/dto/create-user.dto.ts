@@ -7,17 +7,17 @@ this will call the post request
 
 export class CreateUserDto {
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ description: 'takes username'})
+    // @IsString()
+    // @IsNotEmpty()
+    // @ApiProperty({ description: 'takes username'})
     public username: string;
 
-    @IsEmail()
-    @IsNotEmpty()
+    // @IsEmail()
+    // @IsNotEmpty()
     public email: string;
-
-    @IsString()
-    @IsNotEmpty()
+    //
+    // @IsString()
+    // @IsNotEmpty()
     public password: string;
 
 }
