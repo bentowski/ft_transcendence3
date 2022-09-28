@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-class User extends Component<{value:number, avatar:boolean}, {ary:any}> {
+class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 	test()
 	{
 		async function test2()
@@ -18,7 +18,7 @@ class User extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		test2();
 	}
 
-	renderUser(login: number) {
+	renderUserCards(login: number) {
 		let print: string = "user" + login;
 		if (this.props.avatar)
 		{
@@ -57,7 +57,7 @@ class User extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		let x = 0; //variable a changer selon le back
 		const items:any = []
 		while(x < this.props.value) {
-			items.push(this.renderUser(x + 1))
+			items.push(this.renderUserCards(x + 1))
 			x++;
 		}
 		return (
@@ -68,4 +68,4 @@ class User extends Component<{value:number, avatar:boolean}, {ary:any}> {
 	}
 }
 
-export default User;
+export default UserCards;
