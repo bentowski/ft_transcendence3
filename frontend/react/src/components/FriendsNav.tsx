@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import UserCards from '../utils/UserCards'
+import UserCards from './utils/UserCards'
 
 class FriendsNav extends Component {
   state = {

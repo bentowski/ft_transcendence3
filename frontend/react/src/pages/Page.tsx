@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Menu from '../components/mainComponents/Menu'
-import MatchNav from '../components/mainComponents/MatchNav'
-import FriendsNav from '../components/mainComponents/FriendsNav'
+import Menu from '../components/Menu'
+import MatchNav from '../components/MatchNav'
+import FriendsNav from '../components/FriendsNav'
 // import Tchat from './Tchat'
-import Profil from '../components/mainComponents/Profil'
+import Profil from '../components/Profil'
 // import Footer from './Footer'
 
 class Page extends React.Component {
