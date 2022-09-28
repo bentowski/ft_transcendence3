@@ -48,7 +48,7 @@ class SearchBar extends Component<{inputSelector : string, routeForRequest : str
 	}
 
 	render() {
-		if (this.state.onload == 0)
+		if (this.state.onload === 0)
 			this.onloadFct();
 		return (
 			<div className="SearchBar my-2">

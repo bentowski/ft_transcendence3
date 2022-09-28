@@ -3,7 +3,7 @@ import { PartiesService } from './parties.service';
 import { CreatePartiesDto } from './dto/create-parties.dto';
 
 
-@Controller('search-bar/parties')
+@Controller('parties')
 export class PartiesController {
     constructor(private readonly partiesService: PartiesService ) {}
 
@@ -13,7 +13,7 @@ export class PartiesController {
     }
 
     @Get()
-    findAllParties() {
+    getParties() {
         return (this.partiesService.findParties());
     }
 
