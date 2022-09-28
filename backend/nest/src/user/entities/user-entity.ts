@@ -6,7 +6,7 @@ export class UserEntity {
         type: 'bigint',
         name: 'uuid',
     })
-    public id: bigint;
+    public id: string;
 
     @Column({
         unique: true,

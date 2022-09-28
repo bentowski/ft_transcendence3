@@ -1,14 +1,15 @@
 import { Component } from 'react';
 
 class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
-	test()
+	test = () =>
 	{
-		async function test2()
+		const url = "http://localhost:3000/user/" + this.props.value;
+		async function test2(url: any)
 		{
 			const settings = {
 				method: 'GET',
 			}
-			const response: any = await fetch('http://localhost:3000/user', settings)
+			const response: any = await fetch(url, settings)
 			if (response.ok)
 			{
 				console.log("test");
@@ -16,7 +17,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 			}
 			return response;
 		}
-		test2();
+		test2(url);
 	}
 
 	renderUserCards(login: number) {

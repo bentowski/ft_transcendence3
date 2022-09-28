@@ -9,9 +9,14 @@ export class UserController {
     @Get()
     getUsers() { return this.userService.findAll(); }
 
+    // @Get(':id')
+    // findOne(@Param('id') username: string) {
+    //     return this.userService.findOne(username);
+    // }
+
     @Get(':id')
-    findOne(@Param('id') username: string) {
-        return this.userService.findOne(username);
+    findOnebyID(@Param('id') id: string) {
+        return this.userService.findOnebyID(id);
     }
 
     @Post('create')
