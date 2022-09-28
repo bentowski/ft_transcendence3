@@ -8,9 +8,10 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 			const settings = {
 				method: 'GET',
 			}
-			const response: any = await fetch('http://localhost:3000/first-route', settings)
+			const response: any = await fetch('http://localhost:3000/user', settings)
 			if (response.ok)
 			{
+				console.log("test");
 				console.log(await response.json());
 			}
 			return response;
@@ -22,6 +23,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		let print: string = "user" + login;
 		if (this.props.avatar)
 		{
+			// console.log("test");
 			return (
 				<div key={login} className="friendsDiv row my-2">
 					<div className="col-3">
@@ -41,7 +43,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		return (
 			<div key={login} className="friendsDiv row my-2">
 				<div className="col-3">
-					<button>Chat</button>
+					<button onClick={this.test}>Chat</button>
 					<button>Play</button>
 				</div>
 				<div className="col-3">
