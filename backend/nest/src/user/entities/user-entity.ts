@@ -18,14 +18,14 @@ export class UserEntity {
     @Column({
         name: 'email',
         type: 'varchar',
-        nullable: false,
+        // nullable: false,
     })
     public email: string;
 
     @Column({
         name: 'password',
         type: 'varchar',
-        nullable: false,
+        // nullable: false,
     })
     password: string;
 }

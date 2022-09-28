@@ -7,16 +7,20 @@ Working branches :
 - The branch `dev` is merged with the differents features branches linked to it but is not stable.
 - The branches with features are explained below.
 
-Before creating a new branch, open an issue in the backlog project team, write a task into "A faire". The project name must start with # then a number (which would correspond to the branch number) and then have a short description. You can write details, assign yourself or somebody else (or let it blank for somebody's assigning theyselves on the taks). Choose a priority and don't forget to actualize it's column.
+Before creating a new branch, open an issue in the backlog project team, write a task into "A faire". Click on the three little dots beside `Draft` and choose the project. Then have a short description. You can write details, assign yourself or somebody else (or let it blank for somebody's assigning theyselves on the taks). Choose a priority and don't forget to actualize it's column.
 
 Accroding on a way of naming modifications branches :
-`#ticket_number-feature_title`
+`#ticket_number-code-feature_title`
+- ticket_number: the number of the issue on github.
+- code: the first letter of your first name, with F for Front, B for Back, O for Other
+- feature_title: short description for the feature
+
 Examples :
-- `#1-NavBar-Adding-Title` : Ticket number 1 about the NavBar.
-- `#5-NavBar-Edit-Design` : Ticket number 5 about NavBar.
-- `#2-Docker-Compose-Structure` : Ticket number 2 on Docker-Compose.
-- `#7-User-Profile-Routes` : Ticket number 7 on the User Profile routes.
-- Warning: Numbers can be anything, exepted one which is already existing. Branch numbers should be linked to ticket numbers.
+- `#1-AF-NavBar-Adding-Title` : Ticket number 1 about the NavBar, edit by Antoine on the Frontend.
+- `#5-LF-NavBar-Edit-Design` : Ticket number 5 about NavBar, edit by Lucas on the Frontend.
+- `#2-IO-Docker-Compose-Structure` : Ticket number 2 on Docker-Compose, edit by Ivan.
+- `#7-BFB-User-Profile-Routes` : Ticket number 7 on the User Profile routes, edit by Ben on the Frontend and Backend.
+- Warning: The number should correspond to your issue's number on github.
 
 ## Commands
 
@@ -61,6 +65,8 @@ Before working! Don't forget to pull the `main` branch, and not the `dev` branch
 ### List all the branches of the distant repo
 `git branch -a`
 
+------------
+
 # Pour un bon usage de git - Français
 
 ## Instructions
@@ -70,16 +76,20 @@ Les branches fonctionnelles :
 - La branche `dev` reçoit les modifications récentes des branches features liées mais ne fonctionne pas forcement.
 - Les branches qui apportent des modifications sont expliquées ci-dessous.
 
-Avant de créer une nouvelle branche, ouvrir une issue dans le panneau projet équipe, écrire une tâche dans "A faire". Le nom du projet doit commencer avec un # puis un numéro (qui va correspondre au numéro de la branche), puis avoir une courte description. Vous pouvez écrire des details, assigner vous meme ou quelqu'un d'autre (ou laissez vide si vous voulez que quelqu'un s'approprie la tâche). Choisir une priorité, et n'oubliez pas d'actualiser sa colonne!
+Avant de créer une nouvelle branche, ouvrir une issue dans le panneau projet équipe, écrire une tâche dans "A faire". Cliquer du les trois petits points à coté de `Drafts` et choisir le projet. Puis écrire une courte description. Vous pouvez écrire des details, assigner vous meme ou quelqu'un d'autre (ou laissez vide si vous voulez que quelqu'un s'approprie la tâche). Choisir une priorité, et n'oubliez pas d'actualiser sa colonne!
 
 Accordons-nous sur une manière de nommer les branches de modification :
-`#numero_ticket-titre_fonctionnalité`
+`#numero_ticket-code-titre_fonctionnalité`
+- numero_ticket: le numero de l'issue sur le github.
+- code: la premiere lettre de votre prenom, avec F pour Front, B pour Back, O pour Other.
+- titre_fonctionnalité: courte description de la modification.
+
 Exemples :
-- `#1-NavBar-Adding-Title` : Ticket numéro 1 sur la barre de navigation.
-- `#5-NavBar-Edit-Design` : Ticket numéro 5 sur la barre de navigation.
-- `#2-Docker-Compose-Structure` : Ticket numéro 2 sur Docker Compose.
-- `#7-User-Profile-Routes` : Ticket numero 7 sur les routes des profils utilisateur.
-- Attention: Les numéros peuvent être n'importe lesquels, excepté un qui est déjà existant dans un autre ticket. Les numéros des branches doivent être liés aux numéros des tickets.
+- `#1-AF-NavBar-Adding-Title` : Ticket numéro 1 sur la barre de navigation, pris en charge par Antoine sur le Front.
+- `#5-LF-NavBar-Edit-Design` : Ticket numéro 5 sur la barre de navigation, pris en charge par Lucas sur le Front.
+- `#2-IO-Docker-Compose-Structure` : Ticket numéro 2 sur Docker Compose, pris en charge par Ivan.
+- `#7-BFB-User-Profile-Routes` : Ticket numero 7 sur les routes des profils utilisateur, pris en charge par Ben sur le Front et le Back.
+- Attention: Le numéro sur votre branche doit correspondre au numéro de votre ticket.
 
 ## Commandes
 
