@@ -159,12 +159,12 @@ class Tchat extends Component<{}, {message: number}> {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-            <p> Channel's members (x) </p>
-            <UserCards value={2} avatar={false}/>
+            <p> Channnnnel's members (x) </p>
         </div>
       </div>
     ); // fin de return
   } // fin de render
+  // <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;

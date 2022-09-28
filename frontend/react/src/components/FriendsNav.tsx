@@ -8,6 +8,7 @@ class FriendsNav extends Component {
   // <User />
 
   render() {
+    console.log("ffriends");
     return (
       <div className="FriendsNav">
 		  	<div className="numberFriendsOnline">
@@ -16,7 +17,7 @@ class FriendsNav extends Component {
 				<div className="addFriends my-3">
 					<input className="col-8" type="text" placeholder="login"></input>
 					<button className="col-2 mx-2">ADD</button>
-          <UserCards value={6} avatar={true}/>
+          <UserCards value={1} avatar={true}/>
 				</div>
       </div>
     ); // fin de return
