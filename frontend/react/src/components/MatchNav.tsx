@@ -1,4 +1,5 @@
 //import React from 'react';
+import { AnyARecord } from 'dns';
 import {Component} from 'react';
 import SearchBar from './utils/SearchBar'
 
@@ -40,10 +41,17 @@ class MatchNav extends Component {
 		this.setState({allGames: childData})
 	}
 
-	test() {
-		return (
-			alert("Hello! I am an alert box!")
-		)
+	randomMatchmaking = () => {
+		let xhr:any;
+		let url = "http://localhost:3000/parties";
+		xhr = new XMLHttpRequest();
+    	xhr.open("GET", url);
+		xhr.responseType = 'json';
+    	xhr.send();
+    	xhr.onload = () => {
+			let randomUser:any = xhr.response[(Math.floor(Math.random() * (this.state.allGames.length * 10))) % this.state.allGames.length];
+			alert("Random game with : " + randomUser.login);
+		}
 	}
 
 	render() {
@@ -53,7 +61,7 @@ class MatchNav extends Component {
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
-					<button onClick={this.test}>Random matching</button>
+					<button onClick={this.randomMatchmaking}>Random matching</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction}/>
 					</div>
