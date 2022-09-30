@@ -1,6 +1,7 @@
 //import React from 'react';
+import { wait } from '@testing-library/user-event/dist/utils';
 import { AnyARecord } from 'dns';
-import {Component} from 'react';
+import {Component, useReducer} from 'react';
 import SearchBar from './utils/SearchBar'
 
 
@@ -35,30 +36,44 @@ class OpenGames extends Component<{allGames : any}, {}> {
 class MatchNav extends Component {
 		state = {
 			allGames: [],
-			reload: "",
+			pendingRequest: [],
 		}
 
 	callBackFunction = (childData:any) => {
 		this.setState({allGames: childData})
 	}
 
+	async reqUrl(request:string, url:string) {
+		return await fetch(url, {
+			method: request,
+		}).then(response => response.json())
+	}
+
 	randomMatchmaking = () => {
-		let xhr:any;
-		let url = "http://localhost:3000/parties";
-		xhr = new XMLHttpRequest();
-    	xhr.open("GET", url);
-		xhr.responseType = 'json';
-    	xhr.send();
-    	xhr.onload = () => {
-			let randomUser:any = xhr.response[(Math.floor(Math.random() * (this.state.allGames.length * 10))) % this.state.allGames.length];
+		let url:string = "http://localhost:3000/parties";
+		this.reqUrl("GET", url)
+		.then((json) => {
+			if (json.length === 0) {
+				alert("No game found");
+				return ;
+			}
+			let randomUser:any = json[(Math.floor(Math.random() * json.length))];
+			let games:any[] = this.state.allGames;
+			let i = 0;
+			for(; i < games.length; i++) {
+				if (games[i].id === randomUser.id) { 
+					games.splice(i, 1);
+					break ;
+				}
+			}
 			alert("Random game with : " + randomUser.login);
-			let delUser:any = new XMLHttpRequest();
-			delUser.open("DELETE", url + "/" + randomUser.id);
-			console.log("tentative de delete : " + url + "/" + randomUser.id);
-			delUser.onload = function () {}
-			delUser.send();
-			// this.setState({reload: randomUser.id});
-		}
+			this.setState({allGames: games});
+			fetch(url + '/' + randomUser.id, { method: 'DELETE' });
+			//! insert connection to partie : log user vs randomUser.login
+		 })
+		.catch((error) => {
+			console.log("Random matchmaking error : " + error);
+		});
 	}
 
 	render() {
