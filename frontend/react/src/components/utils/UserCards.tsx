@@ -5,13 +5,6 @@ class UserCards extends Component<{value:number, avatar:boolean}, {}> {
 		onload: 0
 	}
 
-	// test = () =>
-	// {
-
-	// 	test2(url);
-	// 	return ("test");
-	// }
-
 
 		renderUserCards(id: number) {
 			async function test(url: any)
@@ -23,21 +16,16 @@ class UserCards extends Component<{value:number, avatar:boolean}, {}> {
 				const response: any = await fetch(url, settings)
 				if (response.ok)
 				{
-					// console.log("test");
-					// console.log(await response.json());
-					return (await response.json());
+					return (await response.value);
 				}
 				return;
 			}
 			const url = "http://localhost:3000/user/" + id;
-			console.log(url);
 			let wtf: Promise<any> = test(url);
-			// wtf = test(url);
-			let login: string = JSON.stringify(wtf);
-			console.log(login);
+			console.log(wtf);
+			let login: string = "la";
 			if (this.props.avatar)
 			{
-				// console.log("test");
 				return (
 					<div key={id} className="friendsDiv row my-2">
 						<div className="col-3">
@@ -68,6 +56,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {}> {
 					</div>
 				</div>
 			)
+			// console.log(login);
 		}
 
 	onloadFct = () => {
