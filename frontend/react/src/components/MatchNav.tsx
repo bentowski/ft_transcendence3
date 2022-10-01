@@ -1,5 +1,7 @@
 //import React from 'react';
-import {Component} from 'react';
+import { wait } from '@testing-library/user-event/dist/utils';
+import { AnyARecord } from 'dns';
+import {Component, useReducer} from 'react';
 import SearchBar from './utils/SearchBar'
 
 
@@ -33,17 +35,45 @@ class OpenGames extends Component<{allGames : any}, {}> {
 
 class MatchNav extends Component {
 		state = {
-			allGames: []
+			allGames: [],
+			pendingRequest: [],
 		}
 
 	callBackFunction = (childData:any) => {
 		this.setState({allGames: childData})
 	}
 
-	test() {
-		return (
-			alert("Hello! I am an alert box!")
-		)
+	async reqUrl(request:string, url:string) {
+		return await fetch(url, {
+			method: request,
+		}).then(response => response.json())
+	}
+
+	randomMatchmaking = () => {
+		let url:string = "http://localhost:3000/parties";
+		this.reqUrl("GET", url)
+		.then((json) => {
+			if (json.length === 0) {
+				alert("No game found");
+				return ;
+			}
+			let randomUser:any = json[(Math.floor(Math.random() * json.length))];
+			let games:any[] = this.state.allGames;
+			let i = 0;
+			for(; i < games.length; i++) {
+				if (games[i].id === randomUser.id) { 
+					games.splice(i, 1);
+					break ;
+				}
+			}
+			alert("Random game with : " + randomUser.login);
+			this.setState({allGames: games});
+			fetch(url + '/' + randomUser.id, { method: 'DELETE' });
+			//! insert connection to partie : log user vs randomUser.login
+		 })
+		.catch((error) => {
+			console.log("Random matchmaking error : " + error);
+		});
 	}
 
 	render() {
@@ -53,7 +83,7 @@ class MatchNav extends Component {
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
-					<button onClick={this.test}>Random matching</button>
+					<button onClick={this.randomMatchmaking}>Random matching</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction}/>
 					</div>

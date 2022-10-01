@@ -33,8 +33,8 @@ export class PartiesService {
         return this.partiesRepository.save(createPartiesDto);
     }
 
-	async remove(id: string): Promise<void> {
-        await this.partiesRepository.delete(id);
+	remove(id: string) {
+        this.partiesRepository.delete(id);
     }
 
 }

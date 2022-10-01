@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Delete, Post, Body } from '@nestjs/common';
 import { PartiesService } from './parties.service';
 import { CreatePartiesDto } from './dto/create-parties.dto';
 
@@ -20,5 +20,10 @@ export class PartiesController {
 	@Post('create')
     createParties(@Body() createPartiesDto: CreatePartiesDto) {
         return this.partiesService.createPartiesEntity(createPartiesDto);
+    }
+
+	@Delete(':id')
+    remove(@Param('id') username: string) {
+        return this.partiesService.remove(username);
     }
 }
