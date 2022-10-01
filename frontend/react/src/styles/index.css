@@ -7,6 +7,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: white;
+	background-color: #3b3c3a;
 }
 
 code {
@@ -19,7 +20,7 @@ p {
 }
 
 a {
-	text-decoration:none;
+	text-decoration: none;
 	color: orange;
 }
 
@@ -61,12 +62,15 @@ button:hover {
 	padding-right: 10px;
 }
 
-.FriendsNav, .MatchNav , .Menu {
-	background-color:rgba(125, 0, 125, 0.2);
+.FriendsNav,
+.MatchNav,
+.Menu {
+	background-color: rgba(125, 0, 125, 0.2);
 	border-radius: 20px;
 }
 
-.FriendsNav, .MatchNav {
+.FriendsNav,
+.MatchNav {
 	height: 75vh;
 	padding: 10px;
 }
@@ -88,13 +92,14 @@ button:hover {
 	border: 2px solid orange;
 }
 
-.miniAvatar:hover, .modifAvatar:hover {
+.miniAvatar:hover,
+.modifAvatar:hover {
 	border: 2px solid white;
 }
 
 
 
-	/* background-image: linear-gradient(purple 10%, transparent); */
+/* background-image: linear-gradient(purple 10%, transparent); */
 
 /* .Menu {
 	width: 100%;

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Outlet } from "react-router-dom";
 import Menu from '../components/Menu'
 import MatchNav from '../components/MatchNav'
 import FriendsNav from '../components/FriendsNav'
 // import Tchat from './Tchat'
 import Profil from '../components/Profil'
+import Tchat from '../components/Tchat'
 // import Footer from './Footer'
 
 class Page extends React.Component {
@@ -12,28 +14,25 @@ class Page extends React.Component {
 	}
 
 	render() {
-	return (
-		<div className="Page p-4">
-			<Menu />
-			<div className="mt-4 row h-100">
-				<div  className="col-3">
-					<MatchNav />
+		return (
+			<div className="Page p-4">
+				<Menu />
+				<div className="mt-4 row h-100">
+					<div className="col-3">
+						<MatchNav />
+					</div>
+					<div className="col-6">
+						<Outlet />
+					</div>
+					<div className="col-3">
+						<FriendsNav />
+					</div>
 				</div>
-				<div  className="col-6">
-					{/*
-						<Printer />
-						*/}
-			<Profil />
-				</div>
-				<div  className="col-3">
-					<FriendsNav />
-				</div>
-			</div>
-			{/*
+				{/*
 				<Footer />
 			*/}
-		</div>
-	); // fin de return
+			</div>
+		); // fin de return
 	} // fin de render
 } // fin de App
 
