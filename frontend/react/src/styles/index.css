@@ -71,8 +71,8 @@ button:hover {
 
 .FriendsNav,
 .MatchNav {
-	height: 75vh;
-	padding: 10px;
+	/* height: 75vh;
+	padding: 10px; */
 }
 
 .miniAvatar {

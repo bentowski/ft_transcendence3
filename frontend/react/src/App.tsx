@@ -23,7 +23,9 @@ class App extends React.Component {
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/game' element={<Game />} />
-        <Route path='*' element={<Page />} />
+        <Route path='*' element={<Page />}>
+          <Route path='*' element={<Profil />} />
+        </Route>
       </Routes>
     ); // fin de return
   } // fin de render

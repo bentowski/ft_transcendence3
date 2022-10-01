@@ -11,9 +11,9 @@ class Menu extends Component {
 		return (
 			<div className="Menu d-flex justify-content-between align-items-center">
 				<div className="homeButtonDiv col-3 d-flex justify-content-start">
-					<a className="homeButton" href="#">
+					<Link to={"/"}>
 						<img src="/icons/home.svg" />
-					</a>
+					</Link>
 				</div> {/* homeButtonDiv */}
 				<div className="titleDiv">
 					<h1 className="m-0">PONG</h1>
