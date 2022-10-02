@@ -44,6 +44,12 @@ export class UserService {
         return toUserDto(user);
     }
 
+    async findOnebyID(id?: string): Promise<UserDto> {
+        const user = await this.userRepository.findOneBy({ id });
+        return toUserDto(user);
+    }
+
+
     async remove(id: string): Promise<void> {
         await this.userRepository.delete(id);
     }
