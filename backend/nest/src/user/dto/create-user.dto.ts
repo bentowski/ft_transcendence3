@@ -6,18 +6,14 @@ this will call the post request
  */
 
 export class CreateUserDto {
+  auth_id: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ description: 'takes username'})
-    public username: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'takes username' })
+  username: string;
 
-    @IsEmail()
-    @IsNotEmpty()
-    public email: string;
-    
-    @IsString()
-    @IsNotEmpty()
-    public password: string;
-
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }
