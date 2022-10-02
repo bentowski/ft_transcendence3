@@ -2,15 +2,15 @@ import { IsEmail, IsNotEmpty } from "class-validator";
 
 /* data sent when requesting user informations */
 
-export class UserDto {
+export class ChanDto {
 
     @IsNotEmpty()
     id: string;
 
     @IsNotEmpty()
-    username: string;
+    name: string;
 
     @IsNotEmpty()
     @IsEmail()
-    email: string;
+    topic: string;
 }

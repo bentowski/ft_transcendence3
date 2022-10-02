@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('user')
-export class UserEntity {
+@Entity('chan')
+export class ChanEntity {
     @PrimaryGeneratedColumn({
         type: 'bigint',
         name: 'uuid',
@@ -13,14 +13,14 @@ export class UserEntity {
         type: 'varchar',
         nullable: false,
     })
-    public username: string;
+    public name: string;
 
     @Column({
-        name: 'email',
+        name: 'topic',
         type: 'varchar',
         // nullable: false,
     })
-    public email: string;
+    public topic: string;
 
     @Column({
         name: 'password',
@@ -29,4 +29,4 @@ export class UserEntity {
     })
     password: string;
 }
-export default UserEntity;
+export default ChanEntity;
