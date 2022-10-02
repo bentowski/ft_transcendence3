@@ -23,10 +23,10 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		if (this.props.avatar)
 		{
 			return (
-				<div key={login} className="friendsDiv row my-2">
-					<div className="col-3">
-						<button onClick={this.test}>Tchat</button>
-						<button>Play</button>
+				<div key={login} className="friendsDiv row m-2 border-bottom">
+					<div className="col-3 h-100 overflow-hidden" id='buttons'>
+						<button className="w-100 h-50" onClick={this.test}>Tchat</button>
+						<button className="w-100 h-50">Play</button>
 					</div>
 					<div className="col-3">
 						<img src="online"/>
@@ -40,9 +40,10 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		}
 		return (
 			<div key={login} className="friendsDiv row my-2">
-				<div className="col-3">
-					<button>Chat</button>
-					<button>Play</button>
+				<div className="col-3" id='button'>
+					<p>coucou</p>
+					<button id='buttons'>Chat</button>
+					<button id='buttons'>Play</button>
 				</div>
 				<div className="col-3">
 					<img src="online"/>

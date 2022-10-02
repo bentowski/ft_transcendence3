@@ -9,15 +9,15 @@ class FriendsNav extends Component {
 
   render() {
     return (
-      <div className="FriendsNav">
-		  	<div className="numberFriendsOnline">
-					<p>x/total friends online</p>
-				</div>
-				<div className="addFriends my-3">
-					<input className="col-8" type="text" placeholder="login"></input>
-					<button className="col-2 mx-2">ADD</button>
-          <UserCards value={6} avatar={true}/>
-				</div>
+      <div className="FriendsNav h-100 p-1 text-center">
+        <div className="numberFriendsOnline m-2">
+          <p>x/total friends online</p>
+        </div>
+        <div className="addFriends m-2">
+          <input className="col-8" type="text" placeholder="login"></input>
+          <button className="col-4" id='button'>ADD</button>
+        </div>
+        <UserCards value={6} avatar={true} />
       </div>
     ); // fin de return
   } // fin de render

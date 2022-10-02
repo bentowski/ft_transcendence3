@@ -19,13 +19,13 @@ class Page extends React.Component {
 				<Menu />
 				{/* <div className="mt-4 row h-100"> */}
 				<div className="main row">
-					<div className="col-sm-12 order-sm-2 col-lg-3 order-lg-1">
+					<div className="mt-4 col-sm-12 order-2 col-lg-3 order-lg-1">
 						<MatchNav />
 					</div>
-					<div className="col-sm-12 order-sm-1 col-lg-6 order-lg-2">
+					<div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2">
 						<Outlet />
 					</div>
-					<div className="col-sm-12 col-lg-3 order-3">
+					<div className="mt-4 col-sm-12 col-lg-3 order-3">
 						<FriendsNav />
 					</div>
 				</div>
