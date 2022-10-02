@@ -12,36 +12,15 @@ export class PartiesService {
         private readonly partiesRepository: Repository<PartiesEntity>,
     ) {}
 
-    parties: any[] = [
-        {
-            login: "AAA",
-			id: 1
-        },
-        {
-            login: "AAA BBB",
-			id: 2
-        },
-        {
-            login: "BBB CCC",
-			id: 3
-        },
-        {
-            login: "CCC DDD",
-			id: 4
-        },
-        {
-            login: "AAA BBB CCC DDD",
-			id: 5
-        }
-    ];
-
-    findAllAvailableParties(name: string) {
+    async findAllAvailableParties(login: string) {
         //return 'Hello World';
-        return JSON.stringify(this.parties.filter(parties => parties.login.includes(name)));
+        // return JSON.stringify(this.parties.filter(parties => parties.login.includes(name)));
+        let parties = await this.partiesRepository.find();
+        return parties.filter(parties => parties.login.includes(login));
     }
-	findParties() {
-        return JSON.stringify(this.parties);
-        //return JSON.stringify(this.partiesRepository.find());
+	findParties(): Promise<PartiesEntity[]> {
+        //return JSON.stringify(this.parties);
+        return this.partiesRepository.find();
         //return this.parties.filter(parties => parties.login.includes(name));
     }
 
@@ -54,8 +33,8 @@ export class PartiesService {
         return this.partiesRepository.save(createPartiesDto);
     }
 
-	async remove(id: string): Promise<void> {
-        await this.partiesRepository.delete(id);
+	remove(id: string) {
+        this.partiesRepository.delete(id);
     }
 
 }

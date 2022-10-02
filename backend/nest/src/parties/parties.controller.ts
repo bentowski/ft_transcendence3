@@ -1,9 +1,9 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Delete, Post, Body } from '@nestjs/common';
 import { PartiesService } from './parties.service';
 import { CreatePartiesDto } from './dto/create-parties.dto';
 
 
-@Controller('search-bar/parties')
+@Controller('parties')
 export class PartiesController {
     constructor(private readonly partiesService: PartiesService ) {}
 
@@ -13,12 +13,17 @@ export class PartiesController {
     }
 
     @Get()
-    findAllParties() {
+    getParties() {
         return (this.partiesService.findParties());
     }
 
 	@Post('create')
     createParties(@Body() createPartiesDto: CreatePartiesDto) {
         return this.partiesService.createPartiesEntity(createPartiesDto);
+    }
+
+	@Delete(':id')
+    remove(@Param('id') username: string) {
+        return this.partiesService.remove(username);
     }
 }
