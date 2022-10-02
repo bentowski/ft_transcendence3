@@ -135,7 +135,13 @@ class Tchat extends Component<{}, {message: number}> {
   }
 
   render() {
-
+    let items:any = [];
+    let x = 1;
+    while(x < 4 ) {
+      console.log("appel : " + x)
+      items.push(<UserCards value={x} avatar={true}/>)
+      x++;
+    }
     return (
       <div className="tchat row">
         <div className="channels col-2">
@@ -159,12 +165,13 @@ class Tchat extends Component<{}, {message: number}> {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-            <p> Channel's members (x) </p>
-            <UserCards value={2} avatar={false}/>
+            <p> Channnnnel's members (x) </p>
+            {items}
         </div>
       </div>
     ); // fin de return
   } // fin de render
+  // <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;

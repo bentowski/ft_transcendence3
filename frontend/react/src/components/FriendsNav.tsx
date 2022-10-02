@@ -5,9 +5,15 @@ class FriendsNav extends Component {
   state = {
 
   }
-  // <User />
 
   render() {
+    let items:any = [];
+    let x = 1;
+    while(x < 4 ) {
+      console.log("appel : " + x)
+      items.push(<UserCards value={x} avatar={true}/>)
+      x++;
+    }
     return (
       <div className="FriendsNav">
 		  	<div className="numberFriendsOnline">
@@ -16,7 +22,9 @@ class FriendsNav extends Component {
 				<div className="addFriends my-3">
 					<input className="col-8" type="text" placeholder="login"></input>
 					<button className="col-2 mx-2">ADD</button>
-          <UserCards value={6} avatar={true}/>
+          <div>
+            {items}
+          </div>
 				</div>
       </div>
     ); // fin de return
