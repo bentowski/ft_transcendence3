@@ -15,13 +15,13 @@ class FriendsNav extends Component {
       x++;
     }
     return (
-      <div className="FriendsNav">
-		  	<div className="numberFriendsOnline">
+      <div className="FriendsNav h-100 p-1">
+		  	<div className="numberFriendsOnline m-2">
 					<p>x/total friends online</p>
 				</div>
-				<div className="addFriends my-3">
+				<div className="addFriends m-2 py-2">
 					<input className="col-8" type="text" placeholder="login"></input>
-					<button className="col-2 mx-2">ADD</button>
+					<button className="col-4" id='button'>ADD</button>
           <div>
             {items}
           </div>
