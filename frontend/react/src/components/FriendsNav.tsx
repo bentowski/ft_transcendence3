@@ -9,11 +9,11 @@ class FriendsNav extends Component {
 
   render() {
     return (
-      <div className="FriendsNav h-100 p-1 text-center">
+      <div className="FriendsNav h-100 p-1">
         <div className="numberFriendsOnline m-2">
           <p>x/total friends online</p>
         </div>
-        <div className="addFriends m-2">
+        <div className="addFriends m-2 py-2">
           <input className="col-8" type="text" placeholder="login"></input>
           <button className="col-4" id='button'>ADD</button>
         </div>

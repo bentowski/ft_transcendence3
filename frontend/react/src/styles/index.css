@@ -137,6 +137,10 @@ img {
 	height: 50px;
 }
 
+.FriendsNav,
+.UserCards {
+	padding: 1px 0;
+}
 
 
 /* background-image: linear-gradient(purple 10%, transparent); */

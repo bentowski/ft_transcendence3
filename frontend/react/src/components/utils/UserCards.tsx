@@ -23,17 +23,17 @@ class UserCards extends Component<{value:number, avatar:boolean}, {ary:any}> {
 		if (this.props.avatar)
 		{
 			return (
-				<div key={login} className="friendsDiv row m-2 border-bottom">
+				<div key={login} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center m-2">
 					<div className="col-3 h-100 overflow-hidden" id='buttons'>
 						<button className="w-100 h-50" onClick={this.test}>Tchat</button>
 						<button className="w-100 h-50">Play</button>
 					</div>
-					<div className="col-3">
+					<div className="">
 						<img src="online"/>
 					</div>
-					<div className="col-6 row">
-						<p className="col-6">{print}</p>
-						<img src="avatar" className="col-6"/>
+					<div className="d-flex flex-row align-items-center">
+						<p className="mx-2">{print}</p>
+						<img src="/pictures/ivloisy.jpg" className="miniAvatar h-100 w-100"/>
 					</div>
 				</div>
 			)
