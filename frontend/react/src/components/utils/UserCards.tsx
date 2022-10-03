@@ -6,6 +6,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 	 this.state = { login: "test", id: props.value };
 	}
 
+
 		renderUserCards = (id: number) => {
 
 				if (this.props.avatar)

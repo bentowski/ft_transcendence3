@@ -44,7 +44,7 @@ class Profil extends Component {
 	render() {
 		return (
 			<div className="Profil">
-				<div className="ProfilHeader text-center">
+				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
 						<a href="src/components/Profil#">
 							<img className="modifAvatar mb-2"  src="/pictures/ivloisy.jpg"  alt=""/>
@@ -53,7 +53,7 @@ class Profil extends Component {
 							<h3>login</h3>
 						</a>
 					</div> {/* fin ProfilInfPer */}
-					<div className=" mt-5 pt-4">
+					<div className=" mt-5 pt-5">
 						<History value={7} />
 					</div>
 				</div> {/* fin ProfilHeader*/}
