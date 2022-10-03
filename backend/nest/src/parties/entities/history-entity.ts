@@ -1,24 +1,39 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import UserEntity from '../../user/entities/user-entity';
 
+@Entity()
 export class HistoryEntity {
   @PrimaryGeneratedColumn()
   game_id: bigint;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   user_one: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   user_two: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   final_score: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   winner: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   looser: string;
 
   @Column()
   createdAt: Date;
+
+  @ManyToMany(() => UserEntity, (user) => user.parties)
+  users: UserEntity[];
 }

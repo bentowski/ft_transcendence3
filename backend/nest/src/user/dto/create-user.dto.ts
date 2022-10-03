@@ -6,6 +6,7 @@ this will call the post request
  */
 
 export class CreateUserDto {
+  @IsNotEmpty()
   auth_id: string;
 
   @IsString()

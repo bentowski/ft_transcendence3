@@ -4,13 +4,10 @@ import { HistoryEntity } from '../../parties/entities/history-entity';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn({
-    type: 'bigint',
-    name: 'uuid',
-  })
-  user_id: bigint;
+  @PrimaryGeneratedColumn()
+  user_id: string;
 
-  @Column()
+  @Column({ nullable: false })
   auth_id: string;
 
   @Column({
@@ -40,9 +37,6 @@ export class UserEntity {
   })
   avatar: string;
 
-  @Column({
-    default: [],
-  })
   @OneToMany(() => HistoryEntity, (parties) => parties.game_id)
   parties: HistoryEntity[];
 
@@ -71,27 +65,17 @@ export class UserEntity {
   })
   status: number;
 
-  @Column({
-    default: [],
-  })
   @OneToMany(() => UserEntity, (friends) => friends.user_id)
   friends: UserEntity[];
-
-  @Column({
-    default: [],
-  })
-  conversations: string[];
 
   @Column({
     default: '',
   })
   authStrategy: string;
 
-  @Column({})
+  @Column({
+    default: () => '((CURRENT_DATE))',
+  })
   createdAt: Date;
-
-  constructor(partial: UserEntity[]) {
-    Object.assign(this, partial);
-  }
 }
 export default UserEntity;
