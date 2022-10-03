@@ -7,10 +7,9 @@ class FriendsNav extends Component {
   }
 
   render() {
-    console.log("ffriends");
     let items:any = [];
     let x = 1;
-    while(x < 3 ) {
+    while(x < 4 ) {
       console.log("appel : " + x)
       items.push(<UserCards value={x} avatar={true}/>)
       x++;
