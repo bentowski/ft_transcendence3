@@ -52,7 +52,7 @@ class SearchBar extends Component<{inputSelector : string, routeForRequest : str
 			this.onloadFct();
 		return (
 			<div className="SearchBar my-2">
-				<p><input onChange={this.requestUrl} type= "text" placeholder="Search..." className="" required/></p>
+				<p><input onChange={this.requestUrl} type= "text" placeholder="Search..." className="w-100" required/></p>
 			</div>
 		); // fin de return
 	} // fin de render

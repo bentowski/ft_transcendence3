@@ -13,12 +13,6 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { auth_id, username, email } = createUserDto;
-    const userInDb = await this.userRepository.findOne({
-      where: { username },
-    });
-    if (userInDb) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
     const user: UserEntity = this.userRepository.create(createUserDto);
     try {
       await this.userRepository.save(user);
@@ -26,9 +20,9 @@ export class UserService {
       console.log(err);
       throw new HttpException('cant create user', HttpStatus.BAD_REQUEST);
     }
-    user.auth_id = createUserDto.auth_id;
-    user.username = createUserDto.username;
-    user.email = createUserDto.email;
+    user.auth_id = auth_id;
+    user.username = username;
+    user.email = email;
     user.createdAt = new Date();
     return user;
   }

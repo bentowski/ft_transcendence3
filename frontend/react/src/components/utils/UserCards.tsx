@@ -6,31 +6,32 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 	 this.state = { login: "test", id: props.value };
 	}
 
+
 		renderUserCards = (id: number) => {
 
 				if (this.props.avatar)
 				{
 					return (
-						<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center m-2">
-							<div className="col-3 h-100 overflow-hidden" id='buttons'>
-								<button className="w-100 h-50">Tchat</button>
-								<button className="w-100 h-50">Play</button>
+						<div key={id} className="friendsDiv row my-2">
+							<div className="col-3">
+								<button>Tchat</button>
+								<button>Play</button>
 							</div>
-							<div className="">
+							<div className="col-3">
 								<img src="online"/>
 							</div>
-							<div className="d-flex flex-row align-items-center">
-								<p className="mx-2">{this.state.login}</p>
-								<img src="avatar" className="miniAvatar h-100 w-100"/>
+							<div className="col-6 row">
+								<p className="col-6">{this.state.login}</p>
+								<img src="avatar" className="col-6"/>
 							</div>
 						</div>
 					)
 				}
 				return (
 					<div key={id} className="friendsDiv row my-2">
-						<div className="col-3" id='button'>
-							<button id='buttons'>Chat</button>
-							<button id='buttons'>Play</button>
+						<div className="col-3">
+							<button>Chat</button>
+							<button>Play</button>
 						</div>
 						<div className="col-3">
 							<img src="online"/>

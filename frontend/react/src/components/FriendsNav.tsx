@@ -7,21 +7,22 @@ class FriendsNav extends Component {
   }
 
   render() {
+    console.log("ffriends");
     let items:any = [];
     let x = 1;
-    while(x < 4 ) {
+    while(x < 3 ) {
       console.log("appel : " + x)
       items.push(<UserCards value={x} avatar={true}/>)
       x++;
     }
     return (
-      <div className="FriendsNav h-100 p-1">
-		  	<div className="numberFriendsOnline m-2">
+      <div className="FriendsNav">
+		  	<div className="numberFriendsOnline">
 					<p>x/total friends online</p>
 				</div>
-				<div className="addFriends m-2 py-2">
+				<div className="addFriends my-3">
 					<input className="col-8" type="text" placeholder="login"></input>
-					<button className="col-4" id='button'>ADD</button>
+					<button className="col-2 mx-2">ADD</button>
           <div>
             {items}
           </div>
