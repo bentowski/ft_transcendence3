@@ -42,14 +42,14 @@ img {
 
 }
 
-#button {
+.button {
 	border: 2px solid orange;
 	border-radius: 10px;
 	background: none;
 	color: orange;
 }
 
-#buttons {
+.buttons {
 	border: 2px solid orange;
 	border-radius: 10px;
 	background: none;
@@ -58,7 +58,7 @@ img {
 	padding-right: 0px;
 }
 
-#buttons button {
+.buttons button {
 	border: 0;
 	border-bottom: 2px solid orange;
 	/* border-radius: 10px; */
@@ -68,7 +68,7 @@ img {
 	/* width: 100vh; */
 }
 
-#button:hover {
+.button:hover {
 	/* border: 2px solid orange; */
 	/* border-radius: 10px; */
 	/* color: rgba(0,0,0,0.0); */
@@ -78,7 +78,7 @@ img {
 	color: rgba(125, 0, 125, 1);
 }
 
-#buttons button:hover {
+.buttons button:hover {
 	/* border: 2px solid orange; */
 	/* border-radius: 10px; */
 	/* color: rgba(0,0,0,0.0); */

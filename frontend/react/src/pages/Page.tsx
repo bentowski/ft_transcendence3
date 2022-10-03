@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Outlet } from "react-router-dom";
 import Menu from '../components/Menu'
 import MatchNav from '../components/MatchNav'
 import FriendsNav from '../components/FriendsNav'
-import Tchat from '../components/Tchat'
+// import Tchat from '../components/Tchat'
 // import Profil from '../components/Profil'
 // import Footer from './Footer'
 
-class Page extends React.Component {
+class Page extends Component {
 	state = {
 
 	}
@@ -16,7 +16,7 @@ class Page extends React.Component {
 		return (
 			<div className="Page p-4">
 				<Menu />
-				{/* <div className="mt-4 row h-100"> */}
+			{/* <div className="mt-4 row h-100"> */}
 				<div className="main row">
 					<div className="mt-4 col-sm-12 order-2 col-lg-3 order-lg-1">
 						<MatchNav />
@@ -27,20 +27,19 @@ class Page extends React.Component {
 					<div className="mt-4 col-sm-12 col-lg-3 order-3">
 						<FriendsNav />
 					</div>
+					{/*}
+			// 	</div>
+			// 	<div  className="col-6">
+			// 		{/*
+			// 			<Printer />
+			//
+			// 			<Tchat />
+			// 	</div>
+			// 	<div  className="col-3">
+			// 		<FriendsNav />
+			// 	</div>
+		*/}
 				</div>
-				<div  className="col-6">
-					{/*
-						<Printer />
-						*/}
-						<Tchat />
-				</div>
-				<div  className="col-3">
-					<FriendsNav />
-				</div>
-			</div>
-			{/*
-				<Footer />
-			*/}
 			</div>
 		); // fin de return
 	} // fin de render

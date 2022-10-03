@@ -12,7 +12,7 @@ class Menu extends Component {
 			<div className="Menu d-flex justify-content-between align-items-center">
 				<div className="homeButtonDiv col-3 d-flex justify-content-start">
 					<Link to={"/"}>
-						<img src="/icons/home.svg" />
+						<img src="/icons/home.svg" alt=""/>
 					</Link>
 				</div> {/* homeButtonDiv */}
 				<div className="titleDiv">
@@ -26,7 +26,7 @@ class Menu extends Component {
 					</div>
 					<div className="avatarMenu">
 						<Link to={"/profil"}>
-							<img className="miniAvatar" src="/pictures/ivloisy.jpg" />
+							<img className="miniAvatar" src="/pictures/ivloisy.jpg"  alt=""/>
 						</Link>
 					</div>
 

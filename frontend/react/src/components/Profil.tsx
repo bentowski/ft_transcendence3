@@ -17,7 +17,7 @@ class History extends Component<{value:number}, {}> {
 					<p>win/loose</p>
 				</div>
 				<p className="col-2">{login}</p>
-				<img src="avatar" className="col-1 rounded-circle"/>
+				<img src="avatar" className="col-1 rounded-circle" alt=""/>
 			</div>
 		)
 	}
@@ -47,7 +47,7 @@ class Profil extends Component {
 				<div className="ProfilHeader text-center">
 					<div className="ProfilInfoPers">
 						<a href="src/components/Profil#">
-							<img className="modifAvatar mb-2"  src="/pictures/ivloisy.jpg" />
+							<img className="modifAvatar mb-2"  src="/pictures/ivloisy.jpg"  alt=""/>
 						</a>
 						<a className="modifName" href="src/components/Profil#">
 							<h3>login</h3>
