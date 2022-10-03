@@ -3,9 +3,8 @@ import { Outlet } from "react-router-dom";
 import Menu from '../components/Menu'
 import MatchNav from '../components/MatchNav'
 import FriendsNav from '../components/FriendsNav'
-// import Tchat from './Tchat'
-import Profil from '../components/Profil'
 import Tchat from '../components/Tchat'
+// import Profil from '../components/Profil'
 // import Footer from './Footer'
 
 class Page extends React.Component {
@@ -29,7 +28,17 @@ class Page extends React.Component {
 						<FriendsNav />
 					</div>
 				</div>
-				{/*
+				<div  className="col-6">
+					{/*
+						<Printer />
+						*/}
+						<Tchat />
+				</div>
+				<div  className="col-3">
+					<FriendsNav />
+				</div>
+			</div>
+			{/*
 				<Footer />
 			*/}
 			</div>

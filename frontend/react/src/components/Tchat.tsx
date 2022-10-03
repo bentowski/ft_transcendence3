@@ -1,13 +1,8 @@
 import { Component } from 'react';
-// import io from "socket.io-client"
 import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
-// import SearchBar from './SearchBar'
-// import Channels from './Channels'
-// import Messages from './Messages'
 
 
-export const socket: any = socketio("http://localhost:3000");
 
 class Messages extends Component<{value : number}, {}> {
   renderMessage(origin: string, x: number) {
@@ -57,7 +52,7 @@ class Messages extends Component<{value : number}, {}> {
       </div>
     ); // fin de return
   } // fin de render
-} // fin de App
+} // fin de Message
 
 
 class Channels extends Component {
@@ -71,18 +66,10 @@ class Channels extends Component {
       </div>
     ); // fin de return
   } // fin de render
-} // fin de App
-
-// const socket: any = io("http://localhost:3000")
+} // fin de Channels
 
 
-
-
-
-// function test()
-// {
-//
-// }
+// export const socket: any = socketio("http://localhost:3000");
 
 
 class Tchat extends Component<{}, {message: number}> {
@@ -93,42 +80,42 @@ class Tchat extends Component<{}, {message: number}> {
       message: 0
     }
 
-    socket.on('message', ({ data }: any) => {
-      console.log("GOOD" + data);
-      console.log(socket.id);
-      if (this.state.message != 0)
-        this.handleNewMessage(data, this.state.message);
-    });
-  }
-
-  handleNewMessage = (message: any, x: number) => {
-    const messages = document.getElementById('messages') as HTMLElement;
-    messages.appendChild(this.buildNewMessage(message, x));
-  }
-
-  buildNewMessage = (message: any, x: number) => {
-      console.log(message);
-      const li = document.createElement("li");
-      li.appendChild(document.createTextNode(message));
-      li.setAttribute("id", "" + x);
-      console.log("child");
-      return li;
-    }
-
-  requestUrl = () => {
-		let xhr:any;
-		let url = "http://localhost:3000/user";
-		xhr = new XMLHttpRequest();
-    	xhr.open("GET", url);
-		xhr.responseType = 'json';
-    	xhr.send();
-    	xhr.onload = () => {
-		}
+  //   socket.on('message', ({ data }: any) => {
+  //     console.log("GOOD" + data);
+  //     console.log(socket.id);
+  //     if (this.state.message != 0)
+  //       this.handleNewMessage(data, this.state.message);
+  //   });
+  // }
+  //
+  // handleNewMessage = (message: any, x: number) => {
+  //   const messages = document.getElementById('messages') as HTMLElement;
+  //   messages.appendChild(this.buildNewMessage(message, x));
+  // }
+  //
+  // buildNewMessage = (message: any, x: number) => {
+  //     console.log(message);
+  //     const li = document.createElement("li");
+  //     li.appendChild(document.createTextNode(message));
+  //     li.setAttribute("id", "" + x);
+  //     console.log("child");
+  //     return li;
+  //   }
+  //
+  // requestUrl = () => {
+	// 	let xhr:any;
+	// 	let url = "http://localhost:3000/user";
+	// 	xhr = new XMLHttpRequest();
+  //   	xhr.open("GET", url);
+	// 	xhr.responseType = 'json';
+  //   	xhr.send();
+  //   	xhr.onload = () => {
+	// 	}
 	}
 
   handleSubmitNewMessage = () => {
-      const message = document.getElementById('message') as HTMLInputElement
-      console.log("submit " + message.value);
+      // const message = document.getElementById('message') as HTMLInputElement
+      console.log("submit " /*+ message.value*/);
       // async function test()
       // {
       //   const settings = {
@@ -141,14 +128,20 @@ class Tchat extends Component<{}, {message: number}> {
 
       // .then(function(response){
       // });
-      socket.emit('message', {data: message.value });
-      this.setState({message: this.state.message + 1})
-      message.value = "";
+      // socket.emit('message', {data: message.value });
+      // this.setState({message: this.state.message + 1})
+      // message.value = "";
 
   }
 
   render() {
-
+    let items:any = [];
+    let x = 1;
+    while(x < 4 ) {
+      console.log("appel : " + x)
+      items.push(<UserCards value={x} avatar={true}/>)
+      x++;
+    }
     return (
       <div className="tchat row">
         <div className="channels col-2">
@@ -172,12 +165,13 @@ class Tchat extends Component<{}, {message: number}> {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-            <p> Channel's members (x) </p>
-            <UserCards value={2} avatar={false}/>
+            <p> Channnnnel's members (x) </p>
+            {items}
         </div>
       </div>
     ); // fin de return
   } // fin de render
+  // <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;
