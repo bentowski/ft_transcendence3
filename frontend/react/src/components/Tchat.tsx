@@ -3,10 +3,10 @@ import { Component } from 'react';
 import UserCards from './utils/UserCards'
 
 
-
+// 
 // class Messages extends Component<{value : number}, {}> {
 //   renderMessage(origin: string, x: number) {
-//     if (origin === "own")
+//     if (origin == "own")
 //     {
 //       return (
 //         <div key={x} className="row">
@@ -31,8 +31,8 @@ import UserCards from './utils/UserCards'
 //       )
 //     }
 //   }
-
-
+//
+//
 //   render() {
 //     let x = 0;
 //     let origin = "";
@@ -135,7 +135,13 @@ class Tchat extends Component<{}, {message: number}> {
   }
 
   render() {
-
+    let items:any = [];
+    let x = 1;
+    while(x < 4 ) {
+      console.log("appel : " + x)
+      items.push(<UserCards value={x} avatar={true}/>)
+      x++;
+    }
     return (
       <div className="tchat row">
         <div className="channels col-2">
@@ -160,6 +166,7 @@ class Tchat extends Component<{}, {message: number}> {
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
             <p> Channnnnel's members (x) </p>
+            {items}
         </div>
       </div>
     ); // fin de return

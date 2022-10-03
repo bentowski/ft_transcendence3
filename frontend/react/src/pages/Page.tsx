@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom"
 import Menu from '../components/Menu'
 import MatchNav from '../components/MatchNav'
 import FriendsNav from '../components/FriendsNav'
