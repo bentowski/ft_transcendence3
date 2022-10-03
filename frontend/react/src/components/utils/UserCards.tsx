@@ -12,29 +12,29 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 				if (this.props.avatar)
 				{
 					return (
-						<div key={id} className="friendsDiv row my-2">
-							<div className="col-3">
-								<button>Tchat</button>
-								<button>Play</button>
+						<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center m-2">
+							<div className="col-3 h-100 overflow-hidden buttons">
+								<button className="w-100 h-50">Tchat</button>
+								<button className="w-100 h-50">Play</button>
 							</div>
-							<div className="col-3">
-								<img src="online"/>
+							<div className="">
+								<img src="online" alt=""/>
 							</div>
-							<div className="col-6 row">
-								<p className="col-6">{this.state.login}</p>
-								<img src="avatar" className="col-6"/>
+							<div className="d-flex flex-row align-items-center">
+								<p className="mx-2">{this.state.login}</p>
+								<img src="avatar" className="miniAvatar h-100 w-100" alt=""/>
 							</div>
 						</div>
 					)
 				}
 				return (
 					<div key={id} className="friendsDiv row my-2">
-						<div className="col-3">
-							<button>Chat</button>
-							<button>Play</button>
+						<div className="col-3 button">
+							<button className="buttons">Chat</button>
+							<button className="buttons">Play</button>
 						</div>
 						<div className="col-3">
-							<img src="online"/>
+							<img src="online" alt=""/>
 						</div>
 						<div className="col-6 row">
 							<p className="col-12">{this.state.login}</p>
