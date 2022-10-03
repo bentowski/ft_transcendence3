@@ -35,40 +35,60 @@ export class UserEntity {
   //@Exclude()
   //password: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   avatar: string;
 
-  @Column()
+  @Column({
+    default: [],
+  })
   @OneToMany(() => HistoryEntity, (parties) => parties.game_id)
   parties: HistoryEntity[];
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   game_won: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   game_lost: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   total_games: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   total_score: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   status: number;
 
-  @Column()
+  @Column({
+    default: [],
+  })
   @OneToMany(() => UserEntity, (friends) => friends.user_id)
   friends: UserEntity[];
 
-  @Column()
+  @Column({
+    default: [],
+  })
   conversations: string[];
 
-  @Column()
-  AuthStrategy: string;
+  @Column({
+    default: '',
+  })
+  authStrategy: string;
 
-  @Column()
-  CreatedAt: Date;
+  @Column({})
+  createdAt: Date;
 
   constructor(partial: UserEntity[]) {
     Object.assign(this, partial);

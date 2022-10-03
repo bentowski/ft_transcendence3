@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { UserDto } from './dto/user.dto';
-import { toUserDto } from '../shared/mapper';
 
 @Injectable()
 export class UserService {
@@ -14,24 +13,11 @@ export class UserService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
-    //const user: User = new User();
-    const { auth_id, username, email } = createUserDto;
-
-    //checks if the user exists in db
-    const userInDb = await this.userRepository.findOne({
-      where: { username },
-    });
-    if (userInDb) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
-
-    const user: UserEntity = await this.userRepository.create({
-      auth_id,
-      username,
-      email,
-    });
-    await this.userRepository.save(user);
-    return toUserDto(user);
+    const user = this.userRepository.create(createUserDto);
+    user.auth_id = createUserDto.auth_id;
+    user.username = createUserDto.username;
+    user.email = createUserDto.email;
+    return user;
   }
 
   findAll(): Promise<UserEntity[]> {
@@ -39,11 +25,16 @@ export class UserService {
   }
 
   async findOne(username?: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOneBy({ username });
-    return toUserDto(user);
+    const findUsername = await this.userRepository.findOneBy({ username });
+    return findUsername;
   }
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
+  }
+
+  async findOnebyID(user_id?: bigint): Promise<UserEntity> {
+    const findId = await this.userRepository.findOneBy({ user_id });
+    return findId;
   }
 }
