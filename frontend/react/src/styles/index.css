@@ -7,6 +7,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: white;
+  background-color: #3b3c3a;
 }
 
 code {
@@ -34,14 +35,43 @@ img {
 
 }
 
-button {
+.button {
 	border: 2px solid orange;
 	border-radius: 10px;
 	background: none;
 	color: orange;
 }
 
-button:hover {
+.buttons {
+	border: 2px solid orange;
+	border-radius: 10px;
+	background: none;
+	color: orange;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.buttons button {
+	border: 0;
+	border-bottom: 2px solid orange;
+	/* border-radius: 10px; */
+	background: none;
+	color: orange;
+	margin: 0;
+	/* width: 100vh; */
+}
+
+.button:hover {
+	/* border: 2px solid orange; */
+	/* border-radius: 10px; */
+	/* color: rgba(0,0,0,0.0); */
+	/* -webkit-text-fill-color: transparent;
+	-webkit-background-clip: text; */
+	background: orange;
+	color: rgba(125, 0, 125, 1);
+}
+
+.buttons button:hover {
 	/* border: 2px solid orange; */
 	/* border-radius: 10px; */
 	/* color: rgba(0,0,0,0.0); */
