@@ -14,15 +14,15 @@ export class ChanController {
     //     return this.chanService.findOne(username);
     // }
 
-    @Get(':id')
-    findOnebyID(@Param('id') id: string) {
-        return this.chanService.findOnebyID(id);
-    }
+    // @Get(':id')
+    // findOnebyID(@Param('id') id: string) {
+    //     return this.chanService.findOnebyID(id);
+    // }
 
-    @Post('create')
-    createChan(@Body() createUserDto: CreateChanDto) {
-        return this.chanService.createChan(createUserDto);
-    }
+    // @Post('create')
+    // createChan(@Body() createUserDto: CreateChanDto) {
+    //     return this.chanService.createChan(createUserDto);
+    // }
 
     @Delete()
     remove(@Param('id') username: string) {

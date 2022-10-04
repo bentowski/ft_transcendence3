@@ -1,53 +1,29 @@
 import React from 'react';
+import { Routes, Route } from "react-router-dom";
 import './styles/App.css';
 import Game from './pages/Game'
 import Page from './pages/Page'
-// import Login from './pages/Login'
+import Login from './pages/Login'
+import Profil from './components/Profil'
+import Tchat from './components/Tchat';
 
 class App extends React.Component {
   state = {
-    printing : "login",
+
   }
-
-  game = () => {
-    this.setState({printing : "game"})
-  };
-
-  clear = () => {
-  	this.setState({printing : ""})
-  }
-
-
 
   render() {
-    let printer = null
-	let printing = this.state.printing
-
-	switch (printing) {
-		// case "login":
-		// 	printer = (
-		// 		<Login />
-		// 	)
-		// break;
-
-		case "game":
-			printer = (
-				<Game />
-			)
-		break;
-
-		default:
-			printer = (
-        // <div className="App">
-				    <Page />
-        // </div>
-			)
-	}
 
     return (
-      <div className="App">
-	  	  {printer}
-      </div>
+      <Routes>
+        <Route path='/' element={<Page />}>
+          <Route path='/profil' element={<Profil />} />
+          <Route path='/tchat' element={<Tchat />} />
+          <Route path='/*' element={<Profil />} />
+        </Route>
+        <Route path='/login' element={<Login />} />
+        <Route path='/game' element={<Game />} />
+      </Routes>
     ); // fin de return
   } // fin de render
 } // fin de App

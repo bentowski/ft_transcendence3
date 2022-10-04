@@ -1,7 +1,5 @@
 //import React from 'react';
-import { wait } from '@testing-library/user-event/dist/utils';
-import { AnyARecord } from 'dns';
-import {Component, useReducer} from 'react';
+import {Component} from 'react';
 import SearchBar from './utils/SearchBar'
 
 
@@ -35,8 +33,7 @@ class OpenGames extends Component<{allGames : any}, {}> {
 
 class MatchNav extends Component {
 		state = {
-			allGames: [],
-			pendingRequest: [],
+			allGames: []
 		}
 
 	callBackFunction = (childData:any) => {
@@ -61,7 +58,7 @@ class MatchNav extends Component {
 			let games:any[] = this.state.allGames;
 			let i = 0;
 			for(; i < games.length; i++) {
-				if (games[i].id === randomUser.id) { 
+				if (games[i].id === randomUser.id) {
 					games.splice(i, 1);
 					break ;
 				}
