@@ -71,11 +71,13 @@ class MatchNav extends Component {
 		.catch((error) => {
 			console.log("Random matchmaking error : " + error);
 		});
+	}
+
 	test() {
 		return (
 			alert("Hello! I am an alert box!")
 		)
-	}
+}
 
 	render() {
 		return (
@@ -84,7 +86,7 @@ class MatchNav extends Component {
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
 				<div className="fastAccess">
-					<button onClick={this.test}>Random matching</button>
+					<button onClick={this.randomMatchmaking}>Random matching</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction}/>
 					</div>
