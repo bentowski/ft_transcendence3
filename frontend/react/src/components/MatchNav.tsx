@@ -73,12 +73,6 @@ class MatchNav extends Component {
 		});
 	}
 
-	test() {
-		return (
-			alert("Hello! I am an alert box!")
-		)
-}
-
 	render() {
 		return (
 			<div className="MatchNav" id="MatchNav">
