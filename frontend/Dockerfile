@@ -4,7 +4,7 @@ WORKDIR /home/node/www
 
 COPY --chown=node:node ./react/package*.json ./
 
-RUN npm install && npm install react@latest react-dom@latest
+RUN npm ci
 
 COPY --chown=node:node ./react ./
 

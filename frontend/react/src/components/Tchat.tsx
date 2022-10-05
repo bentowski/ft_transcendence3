@@ -71,6 +71,9 @@ class Channels extends Component {
 
 // export const socket: any = socketio("http://localhost:3000");
 
+// class Test{
+//
+// }
 
 class Tchat extends Component<{}, {message: number}> {
   constructor(props: any)
@@ -135,14 +138,17 @@ class Tchat extends Component<{}, {message: number}> {
   }
 
   createChan = async () => {
-    const obj = {
-      "name": "Paf",
-      "topic": "Pouf",
-      "password": "lala"
-    }
     const settings = {
       method:'POST',
-      body: JSON.stringify(obj)
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "name": "truc",
+        "topic": "nimp",
+        "password": "fuck"
+      })
     }
     const response = await fetch("http://localhost:3000/chan/create", settings);
     if (response.ok)
