@@ -2,7 +2,6 @@ import { Component } from 'react';
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 
-
 // 
 // class Messages extends Component<{value : number}, {}> {
 //   renderMessage(origin: string, x: number) {
@@ -71,6 +70,9 @@ class Channels extends Component {
 
 // export const socket: any = socketio("http://localhost:3000");
 
+// class Test{
+//
+// }
 
 class Tchat extends Component<{}, {message: number}> {
   constructor(props: any)
@@ -134,6 +136,26 @@ class Tchat extends Component<{}, {message: number}> {
 
   }
 
+  createChan = async () => {
+    const settings = {
+      method:'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "name": "truc",
+        "topic": "nimp",
+        "password": "fuck"
+      })
+    }
+    const response = await fetch("http://localhost:3000/chan/create", settings);
+    if (response.ok)
+    {
+      console.log("ok");
+    }
+  }
+
   render() {
     let items:any = [];
     let x = 1;
@@ -145,7 +167,7 @@ class Tchat extends Component<{}, {message: number}> {
     return (
       <div className="tchat row">
         <div className="channels col-2">
-          <button>Create Channel</button>
+          <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
             <p>Channel List (x)</p>
             {/* <SearchBar /> */}
