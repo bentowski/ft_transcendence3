@@ -38,8 +38,14 @@ class History extends Component<{value:number}, {}> {
 
 class Profil extends Component {
 	state = {
+		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+	};
 
-	}
+	componentDidMount = () => {
+		let newUser:any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		this.setState({avatar: newUser.user.avatar});
+	} 
 
 	render() {
 		return (
@@ -47,7 +53,7 @@ class Profil extends Component {
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
 						<a href="src/components/Profil#">
-							<img className="modifAvatar mb-2"  src="/pictures/ivloisy.jpg"  alt=""/>
+							<img className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
 						</a>
 						<a className="modifName" href="src/components/Profil#">
 							<h3>login</h3>
