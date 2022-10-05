@@ -20,7 +20,12 @@ export class UserController {
   getUsers() {
     return this.userService.findAll();
   }
-  
+
+  @Get('/name/:username')
+  findOnebyUsername(@Param('username') username: string) {
+    return this.userService.findOnebyUsername(username);
+  }
+
   @Get(':id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOnebyID(id);
