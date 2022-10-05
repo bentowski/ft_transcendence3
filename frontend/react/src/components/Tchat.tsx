@@ -2,11 +2,10 @@ import { Component } from 'react';
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 
-
-
+// 
 // class Messages extends Component<{value : number}, {}> {
 //   renderMessage(origin: string, x: number) {
-//     if (origin === "own")
+//     if (origin == "own")
 //     {
 //       return (
 //         <div key={x} className="row">
