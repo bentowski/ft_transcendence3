@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-//import {Exclude} from "class-transformer";
+import { Exclude } from 'class-transformer';
 
 @Entity('user')
 export class UserEntity {
@@ -24,13 +24,11 @@ export class UserEntity {
   })
   email: string;
 
-  //@Column({
-  //  name: 'password',
-  //  type: 'varchar',
-  //  nullable: false,
-  //})
-  //@Exclude()
-  //password: string;
+  @Column({
+    nullable: false,
+  })
+  @Exclude()
+  secret: string;
 
   @Column({
     default: '',
