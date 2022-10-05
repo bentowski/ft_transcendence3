@@ -3,10 +3,10 @@ import { Component } from 'react';
 import UserCards from './utils/UserCards'
 
 
-// 
+
 // class Messages extends Component<{value : number}, {}> {
 //   renderMessage(origin: string, x: number) {
-//     if (origin == "own")
+//     if (origin === "own")
 //     {
 //       return (
 //         <div key={x} className="row">
@@ -134,6 +134,23 @@ class Tchat extends Component<{}, {message: number}> {
 
   }
 
+  createChan = async () => {
+    const obj = {
+      "name": "Paf",
+      "topic": "Pouf",
+      "password": "lala"
+    }
+    const settings = {
+      method:'POST',
+      body: JSON.stringify(obj)
+    }
+    const response = await fetch("http://localhost:3000/chan/create", settings);
+    if (response.ok)
+    {
+      console.log("ok");
+    }
+  }
+
   render() {
     let items:any = [];
     let x = 1;
@@ -145,7 +162,7 @@ class Tchat extends Component<{}, {message: number}> {
     return (
       <div className="tchat row">
         <div className="channels col-2">
-          <button>Create Channel</button>
+          <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
             <p>Channel List (x)</p>
             {/* <SearchBar /> */}

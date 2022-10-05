@@ -55,15 +55,15 @@ export class ChanService {
         return this.chanRepository.find();
     }
 
-    // async findOne(name?: string): Promise<ChanDto> {
-    //     const chan = await this.chanRepository.findOneBy({ name });
-    //     return toChanDto(chan);
-    // }
-    //
-    async findOnebyID(id?: string): Promise<ChanEntity> {
-        const chan = await this.chanRepository.findOneBy({ id });
+    async findOne(name?: string): Promise<ChanDto> {
+        const chan = await this.chanRepository.findOneBy({ name });
         return chan;
     }
+
+    // async findOnebyID(id?: string): Promise<ChanEntity> {
+    //     const chan = await this.chanRepository.findOneBy({ id });
+    //     return chan;
+    // }
 
 
     async remove(id: string): Promise<void> {
