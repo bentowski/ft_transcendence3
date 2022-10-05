@@ -16,6 +16,13 @@ export class ChanEntity {
     public name: string;
 
     @Column({
+        name: 'admin',
+        type: 'varchar',
+        nullable: false,
+    })
+    public admin: Array<string>;
+
+    @Column({
         name: 'topic',
         type: 'varchar',
         // nullable: false,

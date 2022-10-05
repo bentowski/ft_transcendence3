@@ -16,8 +16,11 @@ export class CreateChanDto {
     @IsNotEmpty()
     public topic: string;
 
+    @IsNotEmpty()
+    public admin: Array<string>;
+
     @IsString()
     @IsNotEmpty()
-    public password: string;
+    password: string;
 
 }
