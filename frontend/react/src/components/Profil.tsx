@@ -39,11 +39,13 @@ class History extends Component<{ value: number }, {}> {
 	}
 }
 
-class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string}> {
+
+class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string, login: string}> {
 	state = {
 		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
     modalType: "",
-		modalTitle: ""
+		modalTitle: "",
+    login: ""
 	};
 
 	promptAvatar = () => {
@@ -57,6 +59,28 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 		modal.classList.remove('hidden');
 		this.setState({modalType: "Login", modalTitle: "Change user name"})
 	}
+
+	getUser = async (username: string) => {
+		let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
+		this.setState({ login: user.username })
+	}
+
+	// componentDidMount = () => {
+	// 		let url = document.URL
+	// 		let x = 0;
+	// 		while (url[x] != '#' && url[x])
+	// 		{
+	// 			x++;
+	// 		}
+	// 		x++;
+	// 		let tmp = ""
+	// 		while (url[x])
+	// 		{
+	// 			tmp += url[x++]
+	// 		}
+	// 		console.log(tmp)
+	// 		this.getUser(tmp);
+	// }
 
 	componentDidMount = () => {
 			let newUser:any = sessionStorage.getItem('data');
@@ -75,26 +99,30 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 				tmp += url[x++]
 			}
 			console.log(tmp)
+			this.getUser(tmp);
 	}
 
 
 
+
+
 	render() {
-		window.addEventListener('popstate', function (event){
-			let url = document.URL
-			let x = 0;
-			while (url[x] !== '#' && url[x])
-			{
+		window.addEventListener('popstate',  (event) => {
+				let url = document.URL
+				let x = 0;
+				while (url[x] != '#' && url[x])
+				{
+					x++;
+				}
 				x++;
-			}
-			x++;
-			let tmp = ""
-			while (url[x])
-			{
-				tmp += url[x++]
-			}
-			console.log(tmp)
-		})
+				let tmp = ""
+				while (url[x])
+				{
+					tmp += url[x++]
+				}
+				console.log(tmp)
+				this.getUser(tmp);
+			})
 		return (
 			<div className="Profil">
 				<div className="ProfilHeader">
@@ -104,7 +132,7 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
 						</button>
 						<button className="modifName">
-							<h3 onClick={this.promptLogin}>login</h3>
+							<h3 onClick={this.promptLogin}>{this.state.login}</h3>
 						</button>
 					</div> {/* fin ProfilInfPer */}
 					<div className=" mt-5 pt-5">
