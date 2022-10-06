@@ -2,6 +2,7 @@ import { Component } from 'react';
 import Modal from "./utils/Modal";
 // import Request from "./utils/Requests"
 
+
 class History extends Component<{ value: number }, {}> {
 	renderHistory(login: string, x: number) {
 		return (
@@ -63,18 +64,51 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 		this.setState({modalType: "Login", modalTitle: "Change user name"})
 	}
 
+	componentDidMount = () => {
+			let url = document.URL
+			let x = 0;
+			while (url[x] != '#' && url[x])
+			{
+				x++;
+			}
+			x++;
+			let tmp = ""
+			while (url[x])
+			{
+				tmp += url[x++]
+			}
+			console.log(tmp)
+	}
+
+
+
 	render() {
+		window.addEventListener('popstate', function (event){
+			let url = document.URL
+			let x = 0;
+			while (url[x] != '#' && url[x])
+			{
+				x++;
+			}
+			x++;
+			let tmp = ""
+			while (url[x])
+			{
+				tmp += url[x++]
+			}
+			console.log(tmp)
+		})
 		return (
 			<div className="Profil">
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
 						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
-            <a href="#changeAvatar">
+						<button>
 							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
-						</a>
-						<a className="modifName" href="#changeLogin">
+						</button>
+						<button className="modifName">
 							<h3 onClick={this.promptLogin}>login</h3>
-						</a>
+						</button>
 					</div> {/* fin ProfilInfPer */}
 					<div className=" mt-5 pt-5">
 						<History value={7} />

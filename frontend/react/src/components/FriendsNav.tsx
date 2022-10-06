@@ -21,10 +21,10 @@ class FriendsNav extends Component<{}, {friends: Array<any>}> {
     let onlines = 0;
     let x = 0;
     while(x < this.state.friends.length ) {
-      console.log("appel : " + x)
+      // console.log("appel : " + x)
       if (this.state.friends[x].online)
         onlines++;
-      friends.push(<UserCards value={this.state.friends[x].auth_id} avatar={true} online={this.state.friends[x].online}/>)
+      friends.push(<UserCards user={this.state.friends[x]} avatar={true}/>)
       x++;
     }
     return (

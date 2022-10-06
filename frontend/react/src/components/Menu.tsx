@@ -27,12 +27,12 @@ class Menu extends Component {
 				</div> {/* titleDiv */}
 				<div className="profilMenu d-flex justify-content-end align-items-center col-3">
 					<div className="loginMenu px-2">
-						<Link to={"/profil"}>
+						<Link to={"/profil/#user"}>
 							<p className="m-0">login (recup by session storage)</p>
 						</Link>
 					</div>
 					<div className="avatarMenu">
-						<Link to={"/profil"}>
+						<Link to={"/profil/#user"}>
 							<img className="miniAvatar" width="150" height="150" src={this.state.avatar}  alt=""/>
 						</Link>
 					</div>
