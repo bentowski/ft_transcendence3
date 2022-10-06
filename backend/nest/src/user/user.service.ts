@@ -58,6 +58,11 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
+  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
+    const findAuthId = await this.userRepository.findOneBy({ auth_id });
+    return findAuthId;
+  }
+
   async findOnebyID(user_id?: string): Promise<UserEntity> {
     const findId = await this.userRepository.findOneBy({ user_id });
     return findId;

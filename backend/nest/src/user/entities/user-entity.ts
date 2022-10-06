@@ -7,25 +7,22 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ nullable: false })
+  @Column({ default: '' })
   auth_id: string;
 
   @Column({
-    unique: true,
-    type: 'varchar',
+    //unique: true,
     nullable: false,
   })
   username: string;
 
   @Column({
-    name: 'email',
-    type: 'varchar',
-    // nullable: false,
+    default: '',
   })
   email: string;
 
   @Column({
-    nullable: false,
+    default: '',
   })
   @Exclude()
   secret: string;

@@ -1,6 +1,6 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
-import { IntraAuthGuard } from './guards';
+import { Controller, Get, Req, Res, Session, UseGuards } from '@nestjs/common';
+import { Response, Request } from 'express';
+import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -17,8 +17,16 @@ export class AuthController {
   }
 
   @Get('status')
-  status() {
-    return;
+  @UseGuards(AuthenticatedGuard)
+  status(@Req() req: Request) {
+    return req.user;
+  }
+
+  @Get('session')
+  async getAuthSession(@Session() session: Record<string, any>) {
+    console.log(session.id);
+    session.authenticated = true;
+    return session;
   }
 
   @Get('logout')
