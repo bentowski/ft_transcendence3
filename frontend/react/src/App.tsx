@@ -28,6 +28,7 @@ class App extends React.Component {
           <Route path='/profil' element={<Profil />} />
           <Route path='/tchat' element={<Tchat />} />
           <Route path='/*' element={<Profil />} />
+          <Route path='/' element={<Profil />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/game' element={<Game />} />

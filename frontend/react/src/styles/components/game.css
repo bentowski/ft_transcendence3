@@ -7,10 +7,24 @@
 }
 
 #globale{
-  background-color: black;
+  background-color: red;
 }
 
 .canva{
   display: flex;
   justify-content: center;
 }
+/* 
+@media screen and (max-width: 500px)
+{
+    .canva {
+      width: "";
+    }
+} */
+/* 
+@media screen and (max-height: 900px)
+{
+    .canva {
+      width: "90%";
+    }
+} */

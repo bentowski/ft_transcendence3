@@ -1,6 +1,8 @@
-import {Component} from 'react';
+import { Component } from 'react';
+import Modal from "./utils/Modal";
+import Request from "./utils/Requests"
 
-class History extends Component<{value:number}, {}> {
+class History extends Component<{ value: number }, {}> {
 	renderHistory(login: string, x: number) {
 		return (
 			<div key={x} className="friendsDiv row">
@@ -17,14 +19,14 @@ class History extends Component<{value:number}, {}> {
 					<p>win/loose</p>
 				</div>
 				<p className="col-2">{login}</p>
-				<img src="avatar" className="col-1 rounded-circle" alt=""/>
+				<img src="avatar" className="col-1 rounded-circle" alt="" />
 			</div>
 		)
 	}
 	render() {
 		let x = 0; //variable a changer selon le back
-		const items:any = []
-		while(x < this.props.value) {
+		const items: any = []
+		while (x < this.props.value) {
 			items.push(this.renderHistory("friends 1", x))
 			x++;
 		}
@@ -36,9 +38,11 @@ class History extends Component<{value:number}, {}> {
 	}
 }
 
-class Profil extends Component {
+class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
 	state = {
 		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+    modalType: "",
+		modalTitle: ""
 	};
 
 	componentDidMount = () => {
@@ -47,16 +51,29 @@ class Profil extends Component {
 		this.setState({avatar: newUser.user.avatar});
 	} 
 
+	promptAvatar = () => {
+		let modal = document.getElementById("Modal") as HTMLDivElement;
+		modal.classList.remove('hidden');
+		this.setState({modalType: "Avatar", modalTitle: "Change avatar"})
+	}
+
+	promptLogin = () => {
+		let modal = document.getElementById("Modal") as HTMLDivElement;
+		modal.classList.remove('hidden');
+		this.setState({modalType: "Login", modalTitle: "Change user name"})
+	}
+
 	render() {
 		return (
 			<div className="Profil">
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
-						<a href="src/components/Profil#">
-							<img className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
+						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
+            <a href="#changeAvatar">
+							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
 						</a>
-						<a className="modifName" href="src/components/Profil#">
-							<h3>login</h3>
+						<a className="modifName" href="#changeLogin">
+							<h3 onClick={this.promptLogin}>login</h3>
 						</a>
 					</div> {/* fin ProfilInfPer */}
 					<div className=" mt-5 pt-5">
