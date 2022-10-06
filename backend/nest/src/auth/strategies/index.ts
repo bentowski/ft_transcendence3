@@ -2,8 +2,6 @@ import { Strategy, Profile } from 'passport-42';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import UserEntity from '../../user/entities/user-entity';
-import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy, '42') {

@@ -11,12 +11,13 @@ export class UserEntity {
   auth_id: string;
 
   @Column({
-    //unique: true,
+    unique: true,
     nullable: false,
   })
   username: string;
 
   @Column({
+    unique: true,
     default: '',
   })
   email: string;

@@ -14,6 +14,7 @@ export class AuthController {
   @UseGuards(IntraAuthGuard)
   redirect(@Res() res: Response) {
     res.send(200);
+    //res.redirect('127.0.0.1:8080');
   }
 
   @Get('status')

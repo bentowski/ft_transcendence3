@@ -11,7 +11,6 @@ import { PartiesModule } from './parties/parties.module';
 import { ChanModule } from './chans/chan.module';
 import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-import { SessionEntity } from './auth/entities/session-entity';
 
 @Module({
   imports: [
@@ -24,7 +23,6 @@ import { SessionEntity } from './auth/entities/session-entity';
     PartiesModule,
     ChanModule,
     AuthModule,
-    SessionEntity,
     PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
