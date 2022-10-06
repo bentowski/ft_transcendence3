@@ -204,9 +204,8 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
     }
     return (
       <div className="tchat row">
-        <Modal title={this.state.modalTitle} calledBy={this.state.modalType}></Modal>
+        <Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
         <div className="channels col-2">
-          {/* <button onClick={this.promptNewChan}>Create Channel</button> */}
           <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
             <p>{this.state.chans.length} Channels</p>

@@ -1,6 +1,6 @@
 //import React from 'react';
 import { Component } from 'react';
-import Modal from "./utils/Modal";
+import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
 
@@ -76,7 +76,7 @@ class MatchNav extends Component {
 	}
 
 	prompt = () => {
-		let modal = document.getElementById("Modal") as HTMLDivElement;
+		let modal = document.getElementById("ModalMatch") as HTMLDivElement;
 		modal.classList.remove('hidden');
 		// this.setState({modalType: "Avatar", modalTitle: "Change avatar"})
 	}
@@ -87,7 +87,7 @@ class MatchNav extends Component {
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
-				<Modal title="Create new game" calledBy="newGame"></Modal>
+				<ModalMatch title="Create new game" calledBy="newGame" />
 				<div className="fastAccess">
 					<button onClick={this.randomMatchmaking}>Random matching</button>
 					<button onClick={this.prompt}>Create</button>

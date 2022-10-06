@@ -61,8 +61,7 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
 			<div className="Profil">
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
-						{/* <Modal title='Change avatar' calledBy="Avatar"></Modal> */}
-						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}></Modal>
+						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
 						<a href="#changeAvatar">
 							<img onClick={this.promptAvatar} className="modifAvatar mb-2" src="/pictures/ivloisy.jpg" alt="" />
 						</a>
