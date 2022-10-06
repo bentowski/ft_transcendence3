@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Modal from "./utils/Modal";
-import Request from "./utils/Requests"
+// import Request from "./utils/Requests"
 
 
 class History extends Component<{ value: number }, {}> {
@@ -39,10 +39,17 @@ class History extends Component<{ value: number }, {}> {
 	}
 }
 
-class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
+class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string}> {
 	state = {
-		modalType: "",
+		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+    modalType: "",
 		modalTitle: ""
+	};
+
+	componentDidMount = () => {
+		let newUser:any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		this.setState({avatar: newUser.user.avatar});
 	}
 
 	promptAvatar = () => {
@@ -97,7 +104,7 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
 					<div className="ProfilInfoPers">
 						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
 						<button>
-							<img onClick={this.promptAvatar} className="modifAvatar mb-2" src="/pictures/ivloisy.jpg" alt="" />
+							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
 						</button>
 						<button className="modifName">
 							<h3 onClick={this.promptLogin}>login</h3>
