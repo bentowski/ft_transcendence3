@@ -1,8 +1,10 @@
 import { Component } from 'react';
+import Modal from "./utils/Modal";
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
+import Request from "./utils/Requests"
 
-// 
+//
 // class Messages extends Component<{value : number}, {}> {
 //   renderMessage(origin: string, x: number) {
 //     if (origin == "own")
@@ -54,16 +56,31 @@ import UserCards from './utils/UserCards'
 // } // fin de Message
 
 
-class Channels extends Component {
-  state = {
+class Channels extends Component<{id: number}, {name: string}> {
+  constructor(props: any)
+  {
+    super(props)
+    this.state = { name: "" }
+  }
 
+  renderUserCards = (id: number) => {
+
+    }
+
+  componentDidMount: any = async () => {
+    let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + this.props.id)
+    this.setState({name: chan.name})
   }
 
   render() {
+    // let items: any = this.renderUserCards(this.state.id)
     return (
-      <div className="">
+      <div key={this.props.id} className="d-flex flex-row d-flex justify-content-between align-items-center m-2">
+        <div className="">
+          <a href="/tchat">{this.state.name}</a>
+        </div>
       </div>
-    ); // fin de return
+    ) // fin de return
   } // fin de render
 } // fin de Channels
 
@@ -74,12 +91,16 @@ class Channels extends Component {
 //
 // }
 
-class Tchat extends Component<{}, {message: number}> {
+class Tchat extends Component<{}, {message: number, chans: any, userChan: any, modalType: string, modalTitle: string}> {
   constructor(props: any)
   {
     super(props);
     this.state = {
-      message: 0
+      message: 0,
+      modalType: "",
+      modalTitle: "",
+      chans: [],
+      userChan: []
     }
 
   //   socket.on('message', ({ data }: any) => {
@@ -115,6 +136,13 @@ class Tchat extends Component<{}, {message: number}> {
 	// 	}
 	}
 
+
+  promptAddUser = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    this.setState({modalType: "addUser", modalTitle: "Add an user"})
+  }
+
   handleSubmitNewMessage = () => {
       // const message = document.getElementById('message') as HTMLInputElement
       console.log("submit " /*+ message.value*/);
@@ -137,47 +165,58 @@ class Tchat extends Component<{}, {message: number}> {
   }
 
   createChan = async () => {
-    const settings = {
-      method:'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "name": "truc",
-        "topic": "nimp",
-        "password": "fuck"
-      })
-    }
-    const response = await fetch("http://localhost:3000/chan/create", settings);
-    if (response.ok)
-    {
-      console.log("ok");
-    }
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    this.setState({modalType: "newChan", modalTitle: "Create a new channel"})
+    await Request(
+                        'POST',
+                        {
+                          Accept: 'application/json',
+                          'Content-Type': 'application/json'
+                        },
+                        {
+                          "name": "truc",
+                          "topic": "nimp",
+                          "admin": ["test"],
+                          "password": "fuck"
+                        },
+                        "http://localhost:3000/chan/create"
+                      )
   }
 
+  componentDidMount: any = async () => {
+    let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+			this.setState({chans: chans})
+	}
+
   render() {
-    let items:any = [];
-    let x = 1;
-    while(x < 4 ) {
-      console.log("appel : " + x)
-      items.push(<UserCards value={x} avatar={true}/>)
+    let users:any = [];
+    let x = 0;
+    while(x < this.state.userChan.length ) {
+      users.push(<UserCards user={this.state.userChan[x]} avatar={true}/>)
+      x++;
+    }
+    let chans:any = []
+    x = 0
+    while(x < this.state.chans.length) {
+      chans.push(<Channels id={this.state.chans[x].name} />)
       x++;
     }
     return (
       <div className="tchat row">
+        <Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
         <div className="channels col-2">
           <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
-            <p>Channel List (x)</p>
+            <p>{this.state.chans.length} Channels</p>
             {/* <SearchBar /> */}
-            <Channels />
+            {chans}
           </div> {/*fin channelsList*/}
         </div> {/*fin channels*/}
         <div className="tchatMain col-8">
           <div className="tchatMainTitle row">
             <h1 className="col-10">Channel Name</h1>
-            <button className="col-2">Add Peoples</button>
+            <button className="col-2" onClick={this.promptAddUser}>Add Peoples</button>
           </div>{/*fin tchatMainTitle*/}
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
@@ -187,8 +226,8 @@ class Tchat extends Component<{}, {message: number}> {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-            <p> Channnnnel's members (x) </p>
-            {items}
+            <p> Channnnnel's members ({this.state.userChan.length}) </p>
+            {users}
         </div>
       </div>
     ); // fin de return

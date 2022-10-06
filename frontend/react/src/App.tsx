@@ -13,13 +13,22 @@ class App extends React.Component {
   }
 
   render() {
-
+    const data = {
+      user: {
+        auth_id: 123,
+        user_id: 3,
+        avatar: "https://avatars.dicebear.com/api/personas/123.svg",
+        username: "toto"
+      }
+    }
+    sessionStorage.setItem("data", JSON.stringify(data));
     return (
       <Routes>
         <Route path='/' element={<Page />}>
           <Route path='/profil' element={<Profil />} />
           <Route path='/tchat' element={<Tchat />} />
           <Route path='/*' element={<Profil />} />
+          <Route path='/' element={<Profil />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/game' element={<Game />} />

@@ -12,12 +12,14 @@ import UserEntity from '../user/entities/user-entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, SessionEntity]), UserModule],
+
   controllers: [AuthController],
   providers: [
     {
       provide: 'AUTH_SERVICE',
       useClass: AuthService,
     },
+
     {
       provide: 'USER_SERVICE',
       useClass: UserService,
