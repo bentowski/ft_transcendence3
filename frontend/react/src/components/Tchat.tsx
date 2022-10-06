@@ -1,8 +1,10 @@
-import { Component } from 'react';
+import { Component, useContext, useEffect, useState } from 'react';
 import Modal from "./utils/Modal";
-// import socketio from "socket.io-client";
+import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
+
+import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
 
 //
 // class Messages extends Component<{value : number}, {}> {
@@ -85,11 +87,68 @@ class Channels extends Component<{id: number}, {name: string}> {
 } // fin de Channels
 
 
-// export const socket: any = socketio("http://localhost:3000");
+ //export const socket: any = socketio("http://localhost:3000");
 
 // class Test{
 //
 // }
+
+type MessagePayload = {
+  content: string;
+  msg: string;
+  sender_socket_id: string;
+};
+
+export const WebSocket = () => {
+  const [value, setValue] = useState('');
+  const [username, setUsername] = useState('');
+  const [messages, setMessage] = useState<MessagePayload[]>([]);
+  const socket = useContext(WebsocketContext);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Connected !');
+    });
+    socket.on('onMessage', (newMessage: MessagePayload) => {
+      console.log('onMessage event received!');
+      console.log(newMessage);
+      setMessage((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      console.log('Unregistering Events...');
+      socket.off('connect');
+      socket.off('onMessage');
+    }
+
+  }, []);
+
+  useEffect(() => {
+		setUsername(socket.id);
+  })
+
+  const onSubmit = () => {
+    socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id});
+    setValue('');
+  }
+
+  return (
+    <div className='messages'>
+      <input type="text" value={value} onChange={(e) => setValue(e.target.value)}/>
+      <button onClick={onSubmit}>Submit</button>
+      <div>
+        {messages.length === 0 ? <div>No messages here</div> :
+        <div>
+          {messages.map((msg) => 
+            msg.sender_socket_id === socket.id ?
+            <div><p className="text-end">mon message : {msg.content}</p></div>:
+            <div><p className="text-start">leur message : {msg.content}</p></div>
+          )}
+        </div>}
+      </div>
+    </div>
+  )
+}
 
 class Tchat extends Component<{}, {message: number, chans: any, userChan: any, modalType: string, modalTitle: string}> {
   constructor(props: any)
@@ -102,7 +161,6 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
       chans: [],
       userChan: []
     }
-
   //   socket.on('message', ({ data }: any) => {
   //     console.log("GOOD" + data);
   //     console.log(socket.id);
@@ -144,8 +202,8 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
   }
 
   handleSubmitNewMessage = () => {
-      // const message = document.getElementById('message') as HTMLInputElement
-      console.log("submit " /*+ message.value*/);
+      const message = document.getElementById('message') as HTMLInputElement
+      console.log("submit " + message.value);
       // async function test()
       // {
       //   const settings = {
@@ -158,9 +216,9 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
 
       // .then(function(response){
       // });
-      // socket.emit('message', {data: message.value });
-      // this.setState({message: this.state.message + 1})
-      // message.value = "";
+      socket.emit('newMessage', {data: message.value });
+      this.setState({message: this.state.message + 1})
+      message.value = "";
 
   }
 
@@ -203,6 +261,7 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
       x++;
     }
     return (
+      <div>
       <div className="tchat row">
         <Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
         <div className="channels col-2">
@@ -230,6 +289,11 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
             {users}
         </div>
       </div>
+      <div className="tchat2 row">
+        <WebsocketProvider value={socket}>
+          <WebSocket />
+        </WebsocketProvider>
+      </div></div>
     ); // fin de return
   } // fin de render
   // <UserCards value={2} avatar={false}/>
