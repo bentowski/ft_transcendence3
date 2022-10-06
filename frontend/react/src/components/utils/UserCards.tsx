@@ -1,15 +1,17 @@
 import { Component } from 'react';
 import Request from "./Requests"
+import '../../styles/components/UserCards.css'
 
-class UserCards extends Component<{value:number, avatar:boolean}, {login: string, id: number}> {
+class UserCards extends Component<{value:number, avatar:boolean, online:boolean}, {login: string, id: number, online: string}> {
 	constructor(props: any) {
 	 super(props);
-	 this.state = { login: "test", id: props.value };
+	 this.state = { login: "test", id: props.value, online: this.props.online ? "online" : "offline" };
 	}
 
 
 		renderUserCards = (id: number) => {
 
+				// let online = this.props.online ? "true" : "false"
 				if (this.props.avatar)
 				{
 					return (
@@ -19,7 +21,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 								<button className="w-100 h-50">Play</button>
 							</div>
 							<div className="">
-								<img src="online" alt=""/>
+								<input className={this.state.online} type="radio"></input>
 							</div>
 							<div className="d-flex flex-row align-items-center">
 								<p className="mx-2">{this.state.login}</p>
@@ -35,7 +37,7 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 							<button className="buttons">Play</button>
 						</div>
 						<div className="col-3">
-							<img src="online" alt=""/>
+							<input className={this.state.online} type="radio"></input>
 						</div>
 						<div className="col-6 row">
 							<p className="col-12">{this.state.login}</p>

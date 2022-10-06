@@ -1,0 +1,11 @@
+input[class="online"] {
+  appearance: none;
+  border: 6px solid green;
+  border-radius: 6px
+}
+
+input[class="offline"]{
+  appearance: none;
+  border: 6px solid grey;
+  border-radius: 6px
+}
