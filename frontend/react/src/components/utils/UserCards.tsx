@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Request from "./Requests"
 
 class UserCards extends Component<{value:number, avatar:boolean}, {login: string, id: number}> {
 	constructor(props: any) {
@@ -45,16 +46,8 @@ class UserCards extends Component<{value:number, avatar:boolean}, {login: string
 
 
 	componentDidMount: any = async () => {
-		const settings = {
-			method: 'GET',
-		}
-		const url: string = "http://localhost:3000/user/" + this.state.id;
-		const response: any = await fetch(url, settings)
-		if (response.ok)
-		{
-			let user: any = await response.json();
-			this.setState({login: user.username})
-		}
+		let user = await Request('GET', {}, {}, "http://localhost:3000/user/" + this.state.id)
+		this.setState({login: user.username})
 	}
 
 	render() {
