@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { Link } from "react-router-dom";
+import Request from "./utils/Requests"
 // import "./Menu.css"
 
 class Menu extends Component {
@@ -21,7 +22,7 @@ class Menu extends Component {
 				<div className="profilMenu d-flex justify-content-end align-items-center col-3">
 					<div className="loginMenu px-2">
 						<Link to={"/profil"}>
-							<p className="m-0">login</p>
+							<p className="m-0">login (recup by session storage)</p>
 						</Link>
 					</div>
 					<div className="avatarMenu">
@@ -29,7 +30,11 @@ class Menu extends Component {
 							<img className="miniAvatar" src="/pictures/ivloisy.jpg"  alt=""/>
 						</Link>
 					</div>
-
+					<div className="logoutMenu">
+						<Link to={"/login"}>
+							<p className="m-0">logout</p>
+						</Link>
+					</div>
 				</div> {/*profilMenu */}
 			</div> //Menu
 		); // fin de return

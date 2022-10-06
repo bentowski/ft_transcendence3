@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import Modal from "./utils/Modal";
+import Request from "./utils/Requests"
 
 class History extends Component<{ value: number }, {}> {
 	renderHistory(login: string, x: number) {
