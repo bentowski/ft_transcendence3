@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -30,6 +31,7 @@ export const storage = {
     }
   })
 }
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -53,6 +55,15 @@ export class UserController {
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
+  }
+
+  @Patch('settings/:id')
+  updateUser(
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    console.log(updateUserDto);
+    return this.userService.updateUser(userId, updateUserDto);
   }
 
   @Delete()
