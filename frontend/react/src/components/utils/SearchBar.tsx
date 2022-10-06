@@ -1,5 +1,5 @@
 import {Component} from 'react';
-import Request from "./Requests"
+// import Request from "./Requests"
 
 // class RequestUrl extends Component<{inputSelector : string, routeForRequest : string}, {}> {
 // 	render() {

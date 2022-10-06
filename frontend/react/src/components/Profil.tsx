@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Modal from "./utils/Modal";
-import Request from "./utils/Requests"
+// import Request from "./utils/Requests"
 
 
 class History extends Component<{ value: number }, {}> {
@@ -39,12 +39,14 @@ class History extends Component<{ value: number }, {}> {
 	}
 }
 
-class Profil extends Component< {}, {modalType: string, modalTitle: string, login: string}> {
+
+class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string, login: string}> {
 	state = {
-		modalType: "",
+		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+    modalType: "",
 		modalTitle: "",
-		login: ""
-	}
+    login: ""
+	};
 
 	promptAvatar = () => {
 		let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -81,9 +83,12 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string, logi
 	// }
 
 	componentDidMount = () => {
+			let newUser:any = sessionStorage.getItem('data');
+			newUser = JSON.parse(newUser);
+			this.setState({avatar: newUser.user.avatar});
 			let url = document.URL
 			let x = 0;
-			while (url[x] != '#' && url[x])
+			while (url[x] !== '#' && url[x])
 			{
 				x++;
 			}
@@ -124,7 +129,7 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string, logi
 					<div className="ProfilInfoPers">
 						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
 						<button>
-							<img onClick={this.promptAvatar} className="modifAvatar mb-2" src="/pictures/ivloisy.jpg" alt="" />
+							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
 						</button>
 						<button className="modifName">
 							<h3 onClick={this.promptLogin}>{this.state.login}</h3>
