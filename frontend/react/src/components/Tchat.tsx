@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Modal from "./utils/Modal";
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 
@@ -137,6 +138,8 @@ class Tchat extends Component<{}, {message: number}> {
   }
 
   createChan = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden')
     const settings = {
       method:'POST',
       headers: {
@@ -166,6 +169,7 @@ class Tchat extends Component<{}, {message: number}> {
     }
     return (
       <div className="tchat row">
+        <Modal title='Modal'></Modal>
         <div className="channels col-2">
           <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
