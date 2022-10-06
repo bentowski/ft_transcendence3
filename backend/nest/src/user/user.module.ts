@@ -9,6 +9,6 @@ import { HistoryEntity } from '../parties/entities/history-entity';
   imports: [TypeOrmModule.forFeature([UserEntity, HistoryEntity])],
   providers: [UserService],
   controllers: [UserController],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, UserService],
 })
 export class UserModule {}

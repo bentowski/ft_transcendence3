@@ -75,5 +75,9 @@ export class UserEntity {
     default: () => '((CURRENT_DATE))',
   })
   createdAt: Date;
+
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
 }
 export default UserEntity;
