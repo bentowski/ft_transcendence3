@@ -26,7 +26,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 					</div>
 					<div className="d-flex flex-row align-items-center">
 
-						<Link to={"/profil/" + this.state.login} className="mx-2">{this.state.login}</Link>
+						<a href={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</a>
 						<img src="avatar" className="miniAvatar h-100 w-100" alt="" />
 					</div>
 				</div>
