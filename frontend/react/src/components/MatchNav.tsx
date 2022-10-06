@@ -2,7 +2,7 @@
 import { Component } from 'react';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
-import Request from "./utils/Requests"
+// import Request from "./utils/Requests"
 
 
 class OpenGames extends Component<{ allGames: any }, {}> {

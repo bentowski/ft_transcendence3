@@ -1,6 +1,6 @@
-import { Component, useState, useEffect } from 'react';
+import { Component } from 'react';
 import { Link } from "react-router-dom";
-import Request from "./utils/Requests"
+// import Request from "./utils/Requests"
 // import "./Menu.css"
 
 class Menu extends Component {
@@ -12,7 +12,7 @@ class Menu extends Component {
 		let newUser:any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		this.setState({avatar: newUser.user.avatar});
-	} 
+	}
 
 	render() {
 		return (
