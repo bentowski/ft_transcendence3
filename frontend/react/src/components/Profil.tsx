@@ -2,6 +2,9 @@ import { Component } from 'react';
 import Modal from "./utils/Modal";
 import Request from "./utils/Requests"
 
+
+
+
 class History extends Component<{ value: number }, {}> {
 	renderHistory(login: string, x: number) {
 		return (
@@ -56,7 +59,27 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
 		this.setState({modalType: "Login", modalTitle: "Change user name"})
 	}
 
+	test(){
+		window.addEventListener('popstate', function (event){
+			console.log("AAAAAAAAAAAAA")
+			let url = document.URL
+			let x = 0;
+			while (url[x])
+			{
+				x++;
+			}
+			while (url[x - 1] != '/')
+			{
+				x--;
+			}
+			console.log(url[x])
+		})
+	}
+	
+
 	render() {
+		
+		this.test()
 		return (
 			<div className="Profil">
 				<div className="ProfilHeader">

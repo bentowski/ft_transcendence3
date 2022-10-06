@@ -193,7 +193,7 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
     let users:any = [];
     let x = 0;
     while(x < this.state.userChan.length ) {
-      users.push(<UserCards value={this.state.userChan[x].auth_id} avatar={true} online={this.state.userChan[x].online}/>)
+      users.push(<UserCards user={this.state.userChan[x]} avatar={true}/>)
       x++;
     }
     let chans:any = []
