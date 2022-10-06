@@ -30,7 +30,11 @@ class Menu extends Component {
 							<img className="miniAvatar" src="/pictures/ivloisy.jpg"  alt=""/>
 						</Link>
 					</div>
-
+					<div className="logoutMenu">
+						<Link to={"/login"}>
+							<p className="m-0">logout</p>
+						</Link>
+					</div>
 				</div> {/*profilMenu */}
 			</div> //Menu
 		); // fin de return
