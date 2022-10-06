@@ -1,12 +1,18 @@
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import Request from "./utils/Requests"
 // import "./Menu.css"
 
 class Menu extends Component {
 	state = {
+		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+	};
 
-	}
+	componentDidMount = () => {
+		let newUser:any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		this.setState({avatar: newUser.user.avatar});
+	} 
 
 	render() {
 		return (
@@ -27,7 +33,7 @@ class Menu extends Component {
 					</div>
 					<div className="avatarMenu">
 						<Link to={"/profil"}>
-							<img className="miniAvatar" src="/pictures/ivloisy.jpg"  alt=""/>
+							<img className="miniAvatar" width="150" height="150" src={this.state.avatar}  alt=""/>
 						</Link>
 					</div>
 					<div className="logoutMenu">

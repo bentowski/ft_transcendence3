@@ -22,15 +22,16 @@ export class UserService {
     const { auth_id, username, email } = createUserDto;
     const user: UserEntity = this.userRepository.create(createUserDto);
     try {
+      user.auth_id = auth_id;
+      user.username = username;
+      user.email = email;
+      user.avatar = "https://avatars.dicebear.com/api/personas/" + auth_id + ".svg";
+      user.createdAt = new Date();
       await this.userRepository.save(user);
     } catch (err) {
       console.log(err);
       throw new HttpException('cant create user', HttpStatus.BAD_REQUEST);
     }
-    user.auth_id = auth_id;
-    user.username = username;
-    user.email = email;
-    user.createdAt = new Date();
     return user;
   }
 
