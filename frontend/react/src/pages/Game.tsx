@@ -1,4 +1,4 @@
-import { Component, useState, useEffect } from 'react';
+import { Component } from 'react';
 import '../styles/components/game.css'
 
 // document.addEventListener('resize', () => {
@@ -27,12 +27,12 @@ class Game extends Component<{},{w:number, h: number}> {
   test = (() => {
     // let w;
     // let h;
-   
+
     // setTimeout(this.test(), 10)
     // setTimeout(this.test(), 10)
   })
       // const subscription = props.source.subscribe();
-      // return; 
+      // return;
       // => {
       //   // subscription.unsubscribe();
       // };

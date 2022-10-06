@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Modal from "./utils/Modal";
-import Request from "./utils/Requests"
+// import Request from "./utils/Requests"
 
 class History extends Component<{ value: number }, {}> {
 	renderHistory(login: string, x: number) {
@@ -38,7 +38,7 @@ class History extends Component<{ value: number }, {}> {
 	}
 }
 
-class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
+class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string}> {
 	state = {
 		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
     modalType: "",
@@ -49,7 +49,7 @@ class Profil extends Component< {}, {modalType: string, modalTitle: string}> {
 		let newUser:any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		this.setState({avatar: newUser.user.avatar});
-	} 
+	}
 
 	promptAvatar = () => {
 		let modal = document.getElementById("Modal") as HTMLDivElement;

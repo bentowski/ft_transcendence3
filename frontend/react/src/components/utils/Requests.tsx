@@ -1,6 +1,6 @@
 async function Request(type: string, headers: any, body: any, url: string)
 {
-  if (type == 'GET')
+  if (type === 'GET')
   {
     const settings = {
       method: type

@@ -168,7 +168,7 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any, m
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
     this.setState({modalType: "newChan", modalTitle: "Create a new channel"})
-    let chan = await Request(
+    await Request(
                         'POST',
                         {
                           Accept: 'application/json',
