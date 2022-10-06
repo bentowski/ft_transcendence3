@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Modal from "./utils/Modal";
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
@@ -90,12 +91,14 @@ class Channels extends Component<{id: number}, {name: string}> {
 //
 // }
 
-class Tchat extends Component<{}, {message: number, chans: any, userChan: any}> {
+class Tchat extends Component<{}, {message: number, chans: any, userChan: any, modalType: string, modalTitle: string}> {
   constructor(props: any)
   {
     super(props);
     this.state = {
       message: 0,
+      modalType: "",
+      modalTitle: "",
       chans: [],
       userChan: []
     }
@@ -133,6 +136,13 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any}> 
 	// 	}
 	}
 
+
+  promptAddUser = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    this.setState({modalType: "addUser", modalTitle: "Add an user"})
+  }
+
   handleSubmitNewMessage = () => {
       // const message = document.getElementById('message') as HTMLInputElement
       console.log("submit " /*+ message.value*/);
@@ -155,6 +165,9 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any}> 
   }
 
   createChan = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    this.setState({modalType: "newChan", modalTitle: "Create a new channel"})
     let chan = await Request(
                         'POST',
                         {
@@ -191,6 +204,7 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any}> 
     }
     return (
       <div className="tchat row">
+        <Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
         <div className="channels col-2">
           <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
@@ -202,7 +216,7 @@ class Tchat extends Component<{}, {message: number, chans: any, userChan: any}> 
         <div className="tchatMain col-8">
           <div className="tchatMainTitle row">
             <h1 className="col-10">Channel Name</h1>
-            <button className="col-2">Add Peoples</button>
+            <button className="col-2" onClick={this.promptAddUser}>Add Peoples</button>
           </div>{/*fin tchatMainTitle*/}
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
