@@ -15,14 +15,14 @@
   display: flex;
 }
 
-.Modalwin {
+.Modal > div {
   display: flex;
   flex-direction: column;
   width: auto;
   height: auto;
   /* border: 2px solid red; */
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.5);
   align-items: center;
   justify-content: center;
 }

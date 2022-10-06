@@ -75,12 +75,14 @@ class Channels extends Component {
 //
 // }
 
-class Tchat extends Component<{}, {message: number}> {
+class Tchat extends Component<{}, {message: number, modalType: string, modalTitle: string}> {
   constructor(props: any)
   {
     super(props);
     this.state = {
-      message: 0
+      message: 0,
+      modalType: "",
+      modalTitle: ""
     }
 
   //   socket.on('message', ({ data }: any) => {
@@ -116,6 +118,13 @@ class Tchat extends Component<{}, {message: number}> {
 	// 	}
 	}
 
+
+  promptAddUser = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    this.setState({modalType: "addUser", modalTitle: "Add an user"})
+  }
+
   handleSubmitNewMessage = () => {
       // const message = document.getElementById('message') as HTMLInputElement
       console.log("submit " /*+ message.value*/);
@@ -139,7 +148,8 @@ class Tchat extends Component<{}, {message: number}> {
 
   createChan = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.remove('hidden')
+    modal.classList.remove('hidden');
+    this.setState({modalType: "newChan", modalTitle: "Create a new channel"})
     const settings = {
       method:'POST',
       headers: {
@@ -169,8 +179,9 @@ class Tchat extends Component<{}, {message: number}> {
     }
     return (
       <div className="tchat row">
-        <Modal title='Modal'></Modal>
+        <Modal title={this.state.modalTitle} calledBy={this.state.modalType}></Modal>
         <div className="channels col-2">
+          {/* <button onClick={this.promptNewChan}>Create Channel</button> */}
           <button onClick={this.createChan}>Create Channel</button>
           <div className="channelsList">
             <p>Channel List (x)</p>
@@ -181,7 +192,7 @@ class Tchat extends Component<{}, {message: number}> {
         <div className="tchatMain col-8">
           <div className="tchatMainTitle row">
             <h1 className="col-10">Channel Name</h1>
-            <button className="col-2">Add Peoples</button>
+            <button className="col-2" onClick={this.promptAddUser}>Add Peoples</button>
           </div>{/*fin tchatMainTitle*/}
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
