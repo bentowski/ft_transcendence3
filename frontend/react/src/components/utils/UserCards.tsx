@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Request from "./Requests"
 import '../../styles/components/UserCards.css'
-import Login from '../../pages/Login';
+// import Login from '../../pages/Login';
 
 class UserCards extends Component<{ user: any, avatar: boolean }, { login: string, id: number, online: string }> {
 	constructor(props: any) {
@@ -25,7 +25,6 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 						<input className={this.state.online} type="radio"></input>
 					</div>
 					<div className="d-flex flex-row align-items-center">
-
 						<a href={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</a>
 						<img src="avatar" className="miniAvatar h-100 w-100" alt="" />
 					</div>

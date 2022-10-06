@@ -46,12 +46,6 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 		modalTitle: ""
 	};
 
-	componentDidMount = () => {
-		let newUser:any = sessionStorage.getItem('data');
-		newUser = JSON.parse(newUser);
-		this.setState({avatar: newUser.user.avatar});
-	}
-
 	promptAvatar = () => {
 		let modal = document.getElementById("Modal") as HTMLDivElement;
 		modal.classList.remove('hidden');
@@ -65,9 +59,12 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 	}
 
 	componentDidMount = () => {
+			let newUser:any = sessionStorage.getItem('data');
+			newUser = JSON.parse(newUser);
+			this.setState({avatar: newUser.user.avatar});
 			let url = document.URL
 			let x = 0;
-			while (url[x] != '#' && url[x])
+			while (url[x] !== '#' && url[x])
 			{
 				x++;
 			}
@@ -86,7 +83,7 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 		window.addEventListener('popstate', function (event){
 			let url = document.URL
 			let x = 0;
-			while (url[x] != '#' && url[x])
+			while (url[x] !== '#' && url[x])
 			{
 				x++;
 			}
