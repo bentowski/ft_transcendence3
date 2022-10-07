@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
+import { User42Dto } from './dto/user42.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -17,6 +18,23 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+
+  async validateUser42(user42: User42Dto): Promise<UserEntity> {
+    const { username } = user42;
+    const user = await this.findOnebyUsername(username);
+    if (user) {
+      user42.username = username;
+    }
+    const newUser: UserEntity = await this.createUser42(user42);
+    return newUser;
+  }
+
+  async createUser42(user42: User42Dto): Promise<UserEntity> {
+    const user: UserEntity = this.userRepository.create(user42);
+    user.friends = [];
+    user.username = user42.username;
+    return this.userRepository.save(user);
+  }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { auth_id, username, email } = createUserDto;
@@ -66,6 +84,11 @@ export class UserService {
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
+  }
+
+  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
+    const findAuthId = await this.userRepository.findOneBy({ auth_id });
+    return findAuthId;
   }
 
   async findOnebyID(user_id?: string): Promise<UserEntity> {
