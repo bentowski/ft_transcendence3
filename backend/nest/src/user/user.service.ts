@@ -24,9 +24,11 @@ export class UserService {
     const user = await this.findOnebyUsername(username);
     if (user) {
       user42.username = username;
+    } else {
+      const newUser: UserEntity = await this.createUser42(user42);
+      return newUser;
     }
-    const newUser: UserEntity = await this.createUser42(user42);
-    return newUser;
+    return user;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {

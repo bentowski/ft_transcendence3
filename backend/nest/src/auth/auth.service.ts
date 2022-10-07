@@ -12,9 +12,9 @@ export class AuthService {
     return this.userService.validateUser42(user42);
   }
 
-  createUser(user42: User42Dto): Promise<UserEntity> {
+  /*createUser(user42: User42Dto): Promise<UserEntity> {
     return this.userService.createUser42(user42);
-  }
+  }*/
 
   findUser(authId: string): Promise<UserEntity | undefined> {
     return this.userService.findOneByAuthId(authId);

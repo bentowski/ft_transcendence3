@@ -12,7 +12,6 @@ import UserEntity from '../user/entities/user-entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, SessionEntity]), UserModule],
-
   controllers: [AuthController],
   providers: [
     {

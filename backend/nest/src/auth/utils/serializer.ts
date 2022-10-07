@@ -10,7 +10,7 @@ export class SessionSerializer extends PassportSerializer {
   ) {
     super();
   }
-  
+
   serializeUser(user: any, done: (err: Error, user: UserEntity) => void) {
     done(null, user);
   }
