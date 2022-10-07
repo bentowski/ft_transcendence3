@@ -9,6 +9,7 @@ export class AuthService {
   constructor(@Inject('USER_SERVICE') private userService: UserService) {}
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
+    console.log('validate user auth service called');
     return this.userService.validateUser42(user42);
   }
 
@@ -17,6 +18,7 @@ export class AuthService {
   }*/
 
   findUser(authId: string): Promise<UserEntity | undefined> {
+    console.log('finduser auth service called');
     return this.userService.findOneByAuthId(authId);
   }
 }

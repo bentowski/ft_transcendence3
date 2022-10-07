@@ -9,6 +9,7 @@ export class IntraAuthGuard extends AuthGuard('42') {
     const request = context.switchToHttp().getRequest();
     //console.log(request);
     await super.logIn(request);
+    console.log('canActivate intraauth guard called ' + activate);
     return activate;
   }
 }
@@ -16,6 +17,7 @@ export class IntraAuthGuard extends AuthGuard('42') {
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<any> {
+    console.log('can activate authenticated guard called');
     const req = context.switchToHttp().getRequest();
     return req.isAuthenticated();
   }
