@@ -50,7 +50,7 @@ export class UserController {
 
   @Get(':id')
   findOnebyID(@Param('id') id: string) {
-    return this.userService.findOnebyID(id);
+    return this.userService.findOneByAuthId(id);
   }
 
   @Post('create')
@@ -60,14 +60,15 @@ export class UserController {
 
   @Patch('settings/:id')
   updateUser(
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    console.log(updateUserDto);
-    return this.userService.updateUser(userId, updateUserDto);
+      @Param('id') userId: string,
+      @Body() updateUserDto: UpdateUserDto,
+    )
+  {
+      // console.log(updateUserDto);
+      return this.userService.updateUser(userId, updateUserDto);
   }
 
-  @Delete()
+  @Delete(':id')
   remove(@Param('id') username: string) {
     return this.userService.remove(username);
   }
