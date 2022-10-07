@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Modal from "./utils/Modal";
-// import Request from "./utils/Requests"
+import Request from "./utils/Requests"
 
 
 class History extends Component<{ value: number }, {}> {
@@ -42,7 +42,7 @@ class History extends Component<{ value: number }, {}> {
 
 class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle: string, login: string}> {
 	state = {
-		avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+		avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
     modalType: "",
 		modalTitle: "",
     login: ""
@@ -62,6 +62,7 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 
 	getUser = async (username: string) => {
 		let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
+		console.log("ICI : " + user)
 		this.setState({ login: user.username })
 	}
 
@@ -123,17 +124,17 @@ class Profil extends Component< {}, {avatar: any, modalType: string, modalTitle:
 				console.log(tmp)
 				this.getUser(tmp);
 			})
+			// <button className="col-1">
+			// <button className="modifName col-2">
+			// </button>
+			// </button>
 		return (
 			<div className="Profil">
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
 						<Modal title={this.state.modalTitle} calledBy={this.state.modalType}/>
-						<button>
 							<img onClick={this.promptAvatar} className="modifAvatar mb-2"  src={this.state.avatar}  alt=""/>
-						</button>
-						<button className="modifName">
 							<h3 onClick={this.promptLogin}>{this.state.login}</h3>
-						</button>
 					</div> {/* fin ProfilInfPer */}
 					<div className=" mt-5 pt-5">
 						<History value={7} />

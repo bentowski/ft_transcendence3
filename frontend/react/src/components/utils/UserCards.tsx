@@ -51,13 +51,15 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 
 	componentDidMount: any = async () => {
 		let user = await Request('GET', {}, {}, "http://localhost:3000/user/" + this.state.id)
+		console.log(user)
 		this.setState({ login: user.username })
 	}
 
 	render() {
-		let items: any = this.renderUserCards(this.state.id)
+		console.log(this.state.id)
+		let items: any = this.renderUserCards(1)
 		return (
-			<div>
+			<div key={this.state.id * 5 / 3}>
 				{items}
 			</div>
 		);
