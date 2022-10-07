@@ -1,36 +1,32 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-//import {Exclude} from "class-transformer";
+import { Exclude } from 'class-transformer';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ nullable: false })
+  @Column({ default: '' })
   auth_id: string;
 
   @Column({
     unique: true,
-    type: 'varchar',
     nullable: false,
   })
   username: string;
 
   @Column({
-    name: 'email',
-    type: 'varchar',
-    // nullable: false,
+    unique: true,
+    default: '',
   })
   email: string;
 
-  //@Column({
-  //  name: 'password',
-  //  type: 'varchar',
-  //  nullable: false,
-  //})
-  //@Exclude()
-  //password: string;
+  @Column({
+    default: '',
+  })
+  @Exclude()
+  secret: string;
 
   @Column({
     default: '',
@@ -77,5 +73,9 @@ export class UserEntity {
     default: () => '((CURRENT_DATE))',
   })
   createdAt: Date;
+
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
 }
 export default UserEntity;

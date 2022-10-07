@@ -15,7 +15,7 @@ class App extends React.Component {
   render() {
     const data = {
       user: {
-        auth_id: 123,
+        auth_id: 56381,
         user_id: 3,
         avatar: "https://avatars.dicebear.com/api/personas/123.svg",
         username: "toto"

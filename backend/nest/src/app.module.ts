@@ -6,9 +6,11 @@ import { UserModule } from './user/user.module';
 //import { User } from './user/entities/user-entity';
 import { ConfigModule } from '@nestjs/config';
 import { configService } from './config/config.service';
-import { ChatModule } from "./chat/chat.module";
+import { ChatModule } from './chat/chat.module';
 import { PartiesModule } from './parties/parties.module';
-import { ChanModule } from "./chans/chan.module";
+import { ChanModule } from './chans/chan.module';
+import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { ChanModule } from "./chans/chan.module";
     UserModule,
     ChatModule,
     PartiesModule,
-    ChanModule
+    ChanModule,
+    AuthModule,
+    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
   providers: [AppService],

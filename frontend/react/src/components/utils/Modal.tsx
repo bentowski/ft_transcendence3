@@ -1,8 +1,8 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import "../../styles/utils/modal.css";
 import Request from "./Requests"
 
-class Modal extends Component<{ title: string, calledBy: string }, {}> {
+class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
   state = {
     user: {
@@ -16,6 +16,8 @@ class Modal extends Component<{ title: string, calledBy: string }, {}> {
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add('hidden')
+    const login = document.getElementById('changeLogin') as HTMLInputElement
+    login.value = ""
   }
 
   componentDidMount = () => {
@@ -70,6 +72,45 @@ class Modal extends Component<{ title: string, calledBy: string }, {}> {
     }
   }
 
+  sendRequest = async () => {
+    let newUser:any = sessionStorage.getItem('data');
+    newUser = JSON.parse(newUser);
+    const login = document.getElementById('changeLogin') as HTMLInputElement
+    let ret = await Request(
+                        'PATCH',
+                        {
+                          Accept: 'application/json',
+                          'Content-Type': 'application/json'
+                        },
+                        {
+                          "username": login.value,
+                          "avatar" : newUser.user.avatar
+                        },
+                        "http://localhost:3000/user/settings/" + newUser.user.auth_id
+                      )
+
+    if (!ret.ok)
+    {
+      window.location.href = "/#" + login.value
+      login.value = ""
+      this.hidden()
+    }
+    let loginError = document.getElementById("loginError") as HTMLDivElement;
+    loginError.classList.remove('hidden')
+    setTimeout(() => {
+      let loginError = document.getElementById("loginError") as HTMLDivElement;
+      loginError.classList.add('hidden')
+    }, 1700);
+
+  }
+
+  openWin = () => {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.click();
+  }
+
+
   printer = () => {
     switch (this.props.calledBy) {
       case "Avatar":
@@ -82,8 +123,8 @@ class Modal extends Component<{ title: string, calledBy: string }, {}> {
              <input type="text" placeholder='new user name'></input>
             </form>
             <footer>
-              <button className='mx-1' onClick={this.hidden}>Cancel</button>
               <button className='mx-1'>Change</button>
+              <button className='mx-1' onClick={this.hidden}>Cancel</button>
             </footer>
           </div>
         );
@@ -94,11 +135,12 @@ class Modal extends Component<{ title: string, calledBy: string }, {}> {
               <h2>{this.props.title}</h2>
             </header>
             <form className='mb-3'>
-              <input type="text" placeholder='new user name'></input>
+              <input type="text" placeholder='new user name' id="changeLogin"></input>
+              <p className="hidden" id="loginError">This login is not good</p>
             </form>
             <footer>
               <button className='mx-1' onClick={this.hidden}>Cancel</button>
-              <button className='mx-1'>Change</button>
+              <button className='mx-1' onClick={this.sendRequest}>Change</button>
             </footer>
           </div>
         );
