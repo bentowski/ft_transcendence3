@@ -12,6 +12,7 @@ import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+
 @Injectable()
 export class UserService {
   constructor(
@@ -66,13 +67,14 @@ export class UserService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    const user = await this.findOnebyID(userId);
+    const user = await this.findOneByAuthId(userId);
     console.log(user);
     const { username, avatar } = updateUserDto;
 
-    //const updatedUser = { username, avatar };
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
+
+    //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
 
     try {
       await this.userRepository.save(user);
