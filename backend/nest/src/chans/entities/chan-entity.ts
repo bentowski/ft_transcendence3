@@ -9,6 +9,13 @@ export class ChanEntity {
     public id: string;
 
     @Column({
+        name: 'type',
+        type: 'varchar',
+        //nullable: false,
+    })
+    type: string;
+
+    @Column({
         unique: true,
         type: 'varchar',
         nullable: false,
