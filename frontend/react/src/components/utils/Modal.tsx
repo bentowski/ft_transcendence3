@@ -1,11 +1,73 @@
 import { Component } from 'react';
 import "../../styles/utils/modal.css";
+import Request from "./Requests"
 
 class Modal extends Component<{ title: string, calledBy: string }, {}> {
+
+  state = {
+    user: {
+      auth_id: 0,
+      user_id: 0,
+      avatar: "",
+      username: "",
+    }
+  }
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add('hidden')
+  }
+
+  componentDidMount = () => {
+		let newUser:any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		this.setState({user: newUser.user});
+	}
+
+  createChan = async () => {
+    const name = (document.querySelector("#chanName") as HTMLInputElement);
+    const topic =(document.querySelector("#chanTopic") as HTMLInputElement);
+    const password = (document.querySelector("#chanPassword") as HTMLInputElement);
+    const radioPub = (document.querySelector("#public") as HTMLInputElement);
+    const radioPri = (document.querySelector("#private") as HTMLInputElement);
+    const radioPro = (document.querySelector("#protected") as HTMLInputElement);
+    let radioCheck = "";
+    let pswd = "";
+    if (radioPub.checked == true)
+      radioCheck = "public";
+    else if (radioPri.checked == true)
+      radioCheck = "private";
+    if (radioPro.checked == true)
+      radioCheck = "protected";
+    if (radioCheck != "" || !name.value || !topic.value) {
+      if (password.value)
+        pswd = password.value;
+      await Request(
+        'POST',
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        {
+          "name": name.value,
+          "type": radioCheck,
+          "topic": topic.value,
+          "admin": [this.state.user.username],
+          "password": pswd,
+        },
+        "http://localhost:3000/chan/create"
+      )
+      name.value = '';
+      topic.value = '';
+      password.value = '';
+      radioPub.checked = false;
+      radioPri.checked = false;
+      radioPro.checked = false;
+      this.hidden();
+    }
+    else {
+      alert("You have to fill each informations");
+    }
   }
 
   printer = () => {
@@ -51,14 +113,14 @@ class Modal extends Component<{ title: string, calledBy: string }, {}> {
                 <input type="radio" name="chanType" value="public" id="public" />Public<br />
                 <input type="radio" name="chanType" value="private" id="private" />Private<br />
                 <input type="radio" name="chanType" value="protected" id="protected" />Protected<br />
-                <input type="text" placeholder='name'></input><br />
-                <input type="text" placeholder='topic'></input><br />
-                <input type="text" placeholder='password'></input><br />
+                <input type="text" id="chanName" placeholder='name'></input><br />
+                <input type="text" id="chanTopic" placeholder='topic'></input><br />
+                <input type="text" id="chanPassword" placeholder='password'></input><br />
               </p>
             </form>
             <footer>
               <button className='mx-1' onClick={this.hidden}>Cancel</button>
-              <button className='mx-1'>Create</button>
+              <button className='mx-1'onClick={this.createChan}>Create</button>
             </footer>
           </div>
         );

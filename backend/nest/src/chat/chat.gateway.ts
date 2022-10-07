@@ -39,6 +39,8 @@ export class ChatGateway implements OnModuleInit
       msg: 'New Message',
       content: body.chat,
       sender_socket_id: body.sender_socket_id,
+      username: body.username,
+      avatar: body.avatar,
     })
   }
 //  constructor(private ChatService: ChatService) {}
