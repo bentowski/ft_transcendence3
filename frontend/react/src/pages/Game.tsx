@@ -2,26 +2,13 @@ import { Component } from 'react';
 // import Menu from '../components/Menu'
 import '../styles/components/game.css'
 
-// document.addEventListener('resize', () => {
 
-//   if (window.innerHeight > window.innerWidth) {
-//     // let h = h : window.innerWidth / 16 * 9
-//     Game.setState({ w: window.innerWidth, h : window.innerWidth / 16 * 9 })
-//     // this.state.w = window.innerWidth;
-//     // h = w / 16 * 9;
-//   }
-//   else {
-//     // h = window.innerHeight;
-//     // w = h / 9 * 16;
-//     Game.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
-//   }
-// })
 
 class Game extends Component<{},{w:number, h: number}> {
   constructor(props: any)
   {
     super(props)
-    this.state = { w: 0, h: 0}
+    this.state = { w: 1200, h: 800}
   }
 
 
@@ -34,8 +21,20 @@ class Game extends Component<{},{w:number, h: number}> {
 
 
   componentDidMount() {
-    this.setState({w: window.innerWidth})
-    this.setState({h: window.innerHeight})
+    if (window.innerHeight > window.innerWidth) {
+      // let h = h : window.innerWidth / 16 * 9
+      this.setState({ w: window.innerWidth, h : window.innerWidth / 16 * 9 })
+      // this.state.w = window.innerWidth;
+      // h = w / 16 * 9;
+    }
+    else {
+      // h = window.innerHeight;
+      // w = h / 9 * 16;
+      this.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
+    }
+
+    // this.setState({w: window.innerWidth})
+    // this.setState({h: window.innerHeight})
     //============== variables==============
     let middle: number = (1500 / 2) - 5
       , hMax: number = window.innerHeight
@@ -64,22 +63,22 @@ class Game extends Component<{},{w:number, h: number}> {
     const j2Ctx: any = joueur2.getContext('2d')
 
     //===============interaction=================
-    let test: any = prompt("combien de joueur ?", "1")
-    if (test)
-      player = (parseInt(test))
-    else
-      player = 1;
-    if (player === 1) {
-      speed2 = 40
-    }
-    if (player === 2) {
-      speed1 = 40
-      speed2 = 40
-    }
+    // let test: any = prompt("combien de joueur ?", "1")
+    // if (test)
+    //   player = (parseInt(test))
+    // else
+    //   player = 1;
+    // if (player === 1) {
+    //   speed2 = 40
+    // }
+    // if (player === 2) {
+    //   speed1 = 40
+    //   speed2 = 40
+    // }
 
     let infosClavier = (e: KeyboardEvent) => {
       let number = Number(e.keyCode);
-      console.log(number)
+      // console.log(number)
       if (player === 1) {
         switch (number) {
           case 38:
@@ -89,7 +88,7 @@ class Game extends Component<{},{w:number, h: number}> {
             j2Down()
             break;
           default:
-            console.log("error one player");
+            // console.log("error one player");
         }
       }
     }
@@ -221,7 +220,7 @@ class Game extends Component<{},{w:number, h: number}> {
         } else if (vitessex > 35) {
           gameOver()
         } else {
-          console.log("WIN !!!");
+          // console.log("WIN !!!");
         }
       }
 
@@ -258,17 +257,15 @@ class Game extends Component<{},{w:number, h: number}> {
   }
 
   render() {
-    console.log(this.state.h)
-    console.log(this.state.w)
-
+    window.onresize = () => {window.location.reload()}
     return (
       <div>
       {/*<Menu />*/}
         <h1>GAME</h1>
         <div className="canva">
-          <canvas ref="joueur1" id="joueur1" width="1200" height="630"></canvas>
-          <canvas ref="globale" id="globale" width="1200" height="630"></canvas>
-          <canvas ref="joueur2" id="joueur2" width="1200" height="630"></canvas>
+          <canvas ref="joueur1" id="joueur1" width="0" height="0"></canvas>
+          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
+          <canvas ref="joueur2" id="joueur2" width="0" height="0"></canvas>
         </div>
       </div>
     );

@@ -14,14 +14,14 @@
   display: flex;
   justify-content: center;
 }
-/* 
+/*
 @media screen and (max-width: 500px)
 {
     .canva {
       width: "";
     }
 } */
-/* 
+/*
 @media screen and (max-height: 900px)
 {
     .canva {
