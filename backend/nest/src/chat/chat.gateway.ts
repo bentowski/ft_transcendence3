@@ -1,3 +1,4 @@
+import { OnModuleInit } from '@nestjs/common';
 import {
  SubscribeMessage,
  WebSocketGateway,
@@ -5,24 +6,52 @@ import {
  WebSocketServer,
  OnGatewayConnection,
  OnGatewayDisconnect,
+ MessageBody,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { ChatService } from './chat.service';
+// import { ChatService } from './chat.service';
 import { Chat } from './entities/chat.entity';
 
 
-@WebSocketGateway({cors:" http://localhost:3000", credentials: true})
-export class ChatGateway
- implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:8080'],
+  },
+})
+export class ChatGateway implements OnModuleInit
+ //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
- constructor(private ChatService: ChatService) {}
 
- @WebSocketServer() server: Server;
+  @WebSocketServer()
+  server: Server
+
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log(socket.id);
+      console.log("Connected");
+    });
+  }
+
+  @SubscribeMessage('newMessage')
+  onNewMessage(@MessageBody() body: any) {
+    console.log(body);
+    this.server.emit('onMessage', {
+      msg: 'New Message',
+      content: body.chat,
+      sender_socket_id: body.sender_socket_id,
+      username: body.username,
+      avatar: body.avatar,
+    })
+  }
+//  constructor(private ChatService: ChatService) {}
+
+ /* @WebSocketServer() server: Server;
 
  @SubscribeMessage('sendMessage')
  async handleSendMessage(client: Socket, payload: Chat): Promise<void> {
-   await this.ChatService.createMessage(payload);
-   this.server.emit('recMessage', payload);
+  //  await this.ChatService.createMessage(payload);
+    console.log("msg : " + payload);
+    this.server.emit('recMessage', payload);
  }
 
  afterInit(server: Server) {
@@ -38,5 +67,5 @@ export class ChatGateway
  handleConnection(client: Socket, ...args: any[]) {
    console.log(`Connected ${client.id}`);
    //Do stuffs
- }
+ } */
 }
