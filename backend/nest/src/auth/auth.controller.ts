@@ -14,6 +14,7 @@ export class AuthController {
   @Get('redirect')
   @UseGuards(IntraAuthGuard)
   redirect(@Res() res: Response): any {
+    console.log('successful login thru 42 api');
     //res.send(200);
     //console.log(process.env.API_CALLBACK_URL);
     res.redirect('http://localhost:8080');

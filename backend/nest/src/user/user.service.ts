@@ -20,21 +20,22 @@ export class UserService {
   ) {}
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
-    const { username } = user42;
-    const user = await this.findOnebyUsername(username);
-    if (user) {
-      user42.username = username;
+    const { auth_id } = user42;
+    let user = await this.findOneByAuthId(auth_id);
+    if (!user) {
+      user = await this.createUser42(user42);
     } else {
-      const newUser: UserEntity = await this.createUser42(user42);
-      return newUser;
+      console.log('user already exists');
     }
     return user;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {
+    console.log('creating new user...');
+    console.log(user42);
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
-    user.username = user42.username;
+    //user.username = user42.username;
     return this.userRepository.save(user);
   }
 
@@ -45,7 +46,8 @@ export class UserService {
       user.auth_id = auth_id;
       user.username = username;
       user.email = email;
-      user.avatar = "https://avatars.dicebear.com/api/personas/" + auth_id + ".svg";
+      user.avatar =
+        'https://avatars.dicebear.com/api/personas/' + auth_id + '.svg';
       user.createdAt = new Date();
       await this.userRepository.save(user);
     } catch (err) {
@@ -88,7 +90,7 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
+  async findOneByAuthId(auth_id?: string): Promise<UserEntity> {
     const findAuthId = await this.userRepository.findOneBy({ auth_id });
     return findAuthId;
   }
