@@ -17,6 +17,7 @@ import { Chat } from './entities/chat.entity';
   cors: {
     origin: ['http://localhost:8080'],
   },
+  namespace: '/chat',
 })
 export class ChatGateway implements OnModuleInit
  //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -35,14 +36,28 @@ export class ChatGateway implements OnModuleInit
   @SubscribeMessage('newMessage')
   onNewMessage(@MessageBody() body: any) {
     console.log(body);
-    this.server.emit('onMessage', {
+    this.server.to(body.room).emit('onMessage', {
       msg: 'New Message',
       content: body.chat,
       sender_socket_id: body.sender_socket_id,
       username: body.username,
       avatar: body.avatar,
+	  room: body.room
     })
   }
+
+  @SubscribeMessage('joinRoom')
+  onJoinRoom(client: Socket, room: string) {
+	client.join(room);
+	client.emit('joinedRoom', room);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  onLeaveRoom(client: Socket, room: string) {
+	client.join(room);
+	client.emit('leftRoom', room);
+  }
+
 //  constructor(private ChatService: ChatService) {}
 
  /* @WebSocketServer() server: Server;

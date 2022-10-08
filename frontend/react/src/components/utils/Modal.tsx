@@ -35,13 +35,13 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
     const radioPro = (document.querySelector("#protected") as HTMLInputElement);
     let radioCheck = "";
     let pswd = "";
-    if (radioPub.checked == true)
+    if (radioPub.checked === true)
       radioCheck = "public";
-    else if (radioPri.checked == true)
+    else if (radioPri.checked === true)
       radioCheck = "private";
-    if (radioPro.checked == true)
+    else if (radioPro.checked === true)
       radioCheck = "protected";
-    if (radioCheck != "" || !name.value || !topic.value) {
+    if (radioCheck !== "" || !name.value || !topic.value) {
       if (password.value)
         pswd = password.value;
       await Request(

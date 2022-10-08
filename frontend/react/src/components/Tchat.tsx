@@ -7,6 +7,8 @@ import Request from "./utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
 import { wait } from '@testing-library/user-event/dist/utils';
 import { setTimeout } from 'timers';
+import { off } from 'process';
+import { channel } from 'diagnostics_channel';
 
 //
 // class Messages extends Component<{value : number}, {}> {
@@ -101,22 +103,29 @@ type MessagePayload = {
   username: string;
   avatar: string;
   sender_socket_id: string;
+  room: string;
 };
+
+type chanType = {
+	id: string;
+	type: string;
+	name: string;
+	admin: string[];
+	topic: string;
+	password: string;
+	messages: MessagePayload[];
+  };
 
 export const WebSocket = () => {
   const [value, setValue] = useState('');
-  const [chans, setChans] = useState<{
-    "id": 1,
-    "name": "truc",
-    "topic": "nimp",
-    "admin": ["test"],
-    "password": "fuck"
-  }[]>([]);
-  const [username, setUsername] = useState('');
-  const [avatar, setAvatar] = useState('');
+  const [chans, setChans] = useState<chanType[]>([]);
+  const [username, setUsername] = useState<string>('');
+  const [avatar, setAvatar] = useState<string>('');
   const [messages, setMessage] = useState<MessagePayload[]>([]);
   const [modalType, setModalType] = useState('');
   const [modalTitle, setModalTitle] = useState('');
+  const [room, setRoom] = useState('');
+  const [channelJoined, setChannelJoined] = useState<chanType[]>([]);
   
   const socket = useContext(WebsocketContext);
 
@@ -127,7 +136,11 @@ export const WebSocket = () => {
     socket.on('onMessage', (newMessage: MessagePayload) => {
       //console.log('onMessage event received!');
       //console.log(newMessage);
-      setMessage((prev) => [...prev, newMessage]);
+      //setMessage((prev) => [...prev, newMessage]);
+	  let channel = channelJoined.find((channel) => channel.id === room);
+	  if (channel !== undefined) {
+	  	channel.messages = [...(channel.messages), newMessage];
+	  }
     });
 
     return () => {
@@ -142,7 +155,7 @@ export const WebSocket = () => {
     let newUser:any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		setAvatar(newUser.user.avatar);
-    setUsername(newUser.user.username);
+    	setUsername(newUser.user.username);
 		//setUsername(socket.id);
   })
 
@@ -152,12 +165,47 @@ export const WebSocket = () => {
 		  	setChans(chans);
       }
       getChan();
-    })
+    }, [])
 
   const onSubmit = () => {
-    if (value != '' && value.replace(/\s/g, '') != '') // check if array is empty or contain only whitespace
-      socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar});
+    if (value !== '' && value.replace(/\s/g, '') !== '') // check if array is empty or contain only whitespace
+      socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar, "room": room});
     setValue('');
+  }
+
+  const joinRoom = (newRoom: chanType) => {
+
+	if (channelJoined.find((chan) => chan.id === newRoom.id) === undefined) {
+		// faut gerer le mdp si necessaire
+		if (window.confirm("You will join this channel: " + newRoom.name)) {
+			socket.emit('leaveRoom', room);
+			socket.emit('joinRoom', newRoom.id);
+			setRoom(newRoom.id);
+			//setChannelJoined([...channelJoined, newRoom]);
+			channelJoined.push(newRoom);
+			let channel = channelJoined.findIndex((c) => c.id === room);
+			// if (channel)
+			// 	console.log (channel.id);
+			// else
+			// 	console.log("undefined chan");
+			// channelJoined.map((c) => {
+			// 	console.log('channel id :' + c.id);
+			// });
+			//if (channel !== undefined)
+				setMessage(channelJoined[channel].messages);
+		}
+	}
+	else {
+		console.log('channel2 :' + room + ' ' + newRoom.id);
+		if (room != newRoom.id) {
+			socket.emit('leaveRoom', room);
+			socket.emit('joinRoom', newRoom.id);
+		}
+		//let channel = channelJoined.find((channel) => channel.id === room);
+		//if (channel !== undefined)
+		//	setMessage(channel.messages);
+		setRoom(newRoom.id);
+	}
   }
 
   const pressEnter = (e:any) => {
@@ -178,44 +226,17 @@ export const WebSocket = () => {
     modal.classList.remove('hidden');
     setModalTitle("Create a new channel");
     setModalType("newChan");
-    //this.setState({modalType: "newChan", modalTitle: "Create a new channel"})
-    /* await Request(
-                        'POST',
-                        {
-                          Accept: 'application/json',
-                          'Content-Type': 'application/json'
-                        },
-                        {
-                          "name": "truc",
-                          "topic": "nimp",
-                          "admin": ["test"],
-                          "password": "fuck"
-                        },
-                        "http://localhost:3000/chan/create"
-                      ) */
   }
 
-  // let users:any = [];
-  //   let x = 0;
-  //   while(x < this.state.userChan.length ) {
-  //     users.push(<UserCards user={this.state.userChan[x]} avatar={true}/>)
-  //     x++;
-  //   }
-    // let channel:any = [];
-    // let x:number = 0;
-    // channel.push(
-    // <ul className="list-group">
-    // chans.map() {
-    //   channel.push(
-    //     <div key={x} className="d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item">
-    //     <div className="">
-    //       <a href="#">{chans[x].name}</a>
-    //     </div>
-    //   </div>
-    //   )//<Channels id={chans[x].id} />)
-    //   x++;
-    // }
-    // </ul>);
+	const chanColor = (channel: any) => {
+		if (channel.id === room)
+			return ("bg-primary");
+		else if (channelJoined.find((chan) => chan === channel) !== undefined)
+			return ("bg-info");
+		else
+			return ("bg-secondary");
+	}
+
     return (
       <div>
       <div className="tchat row">
@@ -228,7 +249,7 @@ export const WebSocket = () => {
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
               {chans.map((chan) =>
-                <li key={chan.id} className="d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item">
+                <li key={chan.id} onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                   <div className="">
                     <a href="#">{chan.name}</a>
                   </div>
