@@ -28,7 +28,7 @@ export class PartiesController {
         return this.partiesService.remove(username);
     }
 
-    @Get('histories')
+    @Get('histories/all')
     getHistories() {
         return (this.partiesService.findHistories());
     }
