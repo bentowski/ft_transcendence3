@@ -32,7 +32,7 @@ export class UserService {
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {
     console.log('creating new user...');
-    console.log(user42);
+    //console.log(user42);
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
     //user.username = user42.username;

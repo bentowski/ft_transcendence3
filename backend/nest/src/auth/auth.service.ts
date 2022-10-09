@@ -6,7 +6,7 @@ import { User42Dto } from '../user/dto/user42.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject('USER_SERVICE') private userService: UserService) {}
+  constructor(private userService: UserService) {}
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
     console.log('validate user auth service called');

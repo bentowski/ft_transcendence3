@@ -30,9 +30,8 @@ import { DataSource } from 'typeorm';
   providers: [AppService],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
-
-  getDataSource() {
-    return this.dataSource;
-  }
+  //constructor(private dataSource: DataSource) {}
+  //getDataSource() {
+  //  return this.dataSource;
+  //}
 }

@@ -14,10 +14,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
       credentials: true,
-      origin: ['http://localhost:3000'],
-      methods: ['GET', 'POST'],
+      origin: true, //['http://localhost:3000'],
+      //methods: ['GET', 'POST'],
     },
   });
+
+  //app.use(cookieParser);
 
   const config = new DocumentBuilder()
     .setTitle("Bob l'ePONGe")
@@ -29,6 +31,8 @@ async function bootstrap() {
   //const document = SwaggerModule.createDocument(app, config);
   //SwaggerModule.setup('api', app, document);
 
+  /*
+    
   const sessionRepo = app
     .get(AppModule)
     .getDataSource()
@@ -52,7 +56,7 @@ async function bootstrap() {
       }).connect(sessionRepo),
     }),
   );
-  //app.use(cookieParser());
+
   //app.use(bodyParser.urlencoded({ extended: true }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -61,7 +65,12 @@ async function bootstrap() {
   //  req.send('Hello Welcome session');
   //});
 
+  */
+
+  //SWITCH THIS FOLLOWING METHOD ON BEFORE PRODUCTION
+
   //app.useGlobalPipes(new ValidationPipe());
+
   await app.listen(3000);
 }
 bootstrap();
