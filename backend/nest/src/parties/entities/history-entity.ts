@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import UserEntity from '../../user/entities/user-entity';
 
-@Entity()
+@Entity('histrories')
 export class HistoryEntity {
   @PrimaryGeneratedColumn()
   game_id: bigint;
@@ -17,9 +17,19 @@ export class HistoryEntity {
   user_two: string;
 
   @Column({
-    default: '',
+    default: 0,
   })
-  final_score: string;
+  score_one: number;
+
+  @Column({
+    default: 0,
+  })
+  score_two: number;
+
+  // @Column({
+  //   default: '',
+  // })
+  // final_score: string;
 
   @Column({
     default: '',
@@ -37,3 +47,5 @@ export class HistoryEntity {
   @ManyToMany(() => UserEntity, (user) => user.parties)
   users: UserEntity[];
 }
+
+export default HistoryEntity;
