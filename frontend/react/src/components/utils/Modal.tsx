@@ -15,9 +15,9 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.add('hidden')
-    const login = document.getElementById('changeLogin') as HTMLInputElement
-    login.value = ""
+    modal.classList.add('hidden');
+    const login = document.getElementById('changeLogin') as HTMLInputElement;
+    //login.value = "";
   }
 
   componentDidMount = () => {

@@ -113,6 +113,7 @@ type chanType = {
 	admin: string[];
 	topic: string;
 	password: string;
+	isActive: boolean;
 	messages: MessagePayload[];
   };
 
@@ -129,22 +130,31 @@ export const WebSocket = () => {
   
   const socket = useContext(WebsocketContext);
 
-  useEffect(() => {
+  useEffect( () => {
     socket.on('connect', () => {
-    //console.log('Connected !');
     });
     socket.on('onMessage', (newMessage: MessagePayload) => {
-      //console.log('onMessage event received!');
-      //console.log(newMessage);
-      //setMessage((prev) => [...prev, newMessage]);
-	  let channel = channelJoined.find((channel) => channel.id === room);
-	  if (channel !== undefined) {
-	  	channel.messages = [...(channel.messages), newMessage];
+	 //!!!!!!!!!!!!!!!
+	 let tmp:chanType[] = channelJoined;
+	 let index = tmp.findIndex((channel) => channel.id === newMessage.room);
+	  if (tmp[index] !== undefined) {
+		if (tmp[index].messages)
+			tmp[index].messages = [...tmp[index].messages, newMessage];
+		else
+			tmp[index].messages = [newMessage];
+		setChannelJoined(tmp);
 	  }
+	if (tmp[index].isActive) {
+		if (tmp[index].messages)
+	  		setMessage(tmp[index].messages)
+		else
+			setMessage([]);
+	}
     });
 
+	
+
     return () => {
-      //console.log('Unregistering Events...');
       socket.off('connect');
       socket.off('onMessage');
     }
@@ -156,7 +166,6 @@ export const WebSocket = () => {
 		newUser = JSON.parse(newUser);
 		setAvatar(newUser.user.avatar);
     	setUsername(newUser.user.username);
-		//setUsername(socket.id);
   })
 
     useEffect(() => {
@@ -168,42 +177,48 @@ export const WebSocket = () => {
     }, [])
 
   const onSubmit = () => {
-    if (value !== '' && value.replace(/\s/g, '') !== '') // check if array is empty or contain only whitespace
-      socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar, "room": room});
+    if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
+    	socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar, "room": room});
+	}
     setValue('');
   }
 
-  const joinRoom = (newRoom: chanType) => {
+  const unactiveRoom = () => {
+	let tmp:chanType[] = channelJoined;
+	tmp.map((chan) =>
+		chan.isActive = false
+	)
+	setChannelJoined(tmp);
+  }
+
+  const joinRoom = async (newRoom: chanType) => {
 
 	if (channelJoined.find((chan) => chan.id === newRoom.id) === undefined) {
-		// faut gerer le mdp si necessaire
+		//! faut gerer le mdp si necessaire
 		if (window.confirm("You will join this channel: " + newRoom.name)) {
-			socket.emit('leaveRoom', room);
 			socket.emit('joinRoom', newRoom.id);
 			setRoom(newRoom.id);
-			//setChannelJoined([...channelJoined, newRoom]);
-			channelJoined.push(newRoom);
-			let channel = channelJoined.findIndex((c) => c.id === room);
-			// if (channel)
-			// 	console.log (channel.id);
-			// else
-			// 	console.log("undefined chan");
-			// channelJoined.map((c) => {
-			// 	console.log('channel id :' + c.id);
-			// });
-			//if (channel !== undefined)
-				setMessage(channelJoined[channel].messages);
+			let tmp: chanType[] = channelJoined;
+			unactiveRoom();
+			newRoom.isActive = true;
+			tmp.push(newRoom)
+			setChannelJoined(tmp);
+			if (newRoom.messages)
+				setMessage(newRoom.messages)
+  			else
+				setMessage([]);
 		}
 	}
 	else {
-		console.log('channel2 :' + room + ' ' + newRoom.id);
+		unactiveRoom();
+		newRoom.isActive = true;
+		if (newRoom.messages)
+			setMessage(newRoom.messages)
+  		else
+			setMessage([]);
 		if (room != newRoom.id) {
-			socket.emit('leaveRoom', room);
 			socket.emit('joinRoom', newRoom.id);
 		}
-		//let channel = channelJoined.find((channel) => channel.id === room);
-		//if (channel !== undefined)
-		//	setMessage(channel.messages);
 		setRoom(newRoom.id);
 	}
   }
@@ -275,14 +290,14 @@ export const WebSocket = () => {
       <div>
         {messages.length === 0 ? <div>No messages here</div> :
         <div>
-          {messages.map((msg) => 
+          {messages.map((msg, index) => 
             msg.sender_socket_id === socket.id ?
-            <div className="outgoing_msg break-text">
+            <div key={index} className="outgoing_msg break-text">
             <div className="sent_msg">
               <p>{msg.content}</p>
             </div>
           </div>:
-            <div className="incoming_msg break-text">
+            <div key={index} className="incoming_msg break-text">
               <div className="incoming_msg_img align-bottom"> <img src={msg.avatar} alt="sunil" /> </div>
               <div className="received_msg">
                 <div className="received_withd_msg">
