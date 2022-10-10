@@ -31,21 +31,27 @@ export class HistoryEntity {
   // })
   // final_score: string;
 
-  @Column({
-    default: '',
-  })
-  winner: string;
+  // @Column({
+  //   default: '',
+  // })
+  // winner: string;
+
+  // @Column({
+  //   default: '',
+  // })
+  // looser: string;
 
   @Column({
-    default: '',
+    default: () => '((CURRENT_DATE))',
   })
-  looser: string;
-
-  @Column()
   createdAt: Date;
 
   @ManyToMany(() => UserEntity, (user) => user.parties)
   users: UserEntity[];
+
+  constructor(partial: Partial<HistoryEntity>) {
+    Object.assign(this, partial);
+  }
 }
 
 export default HistoryEntity;

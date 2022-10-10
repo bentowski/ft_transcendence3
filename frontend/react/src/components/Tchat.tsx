@@ -120,39 +120,39 @@ export const WebSocket = () => {
   
   const socket = useContext(WebsocketContext);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-    //console.log('Connected !');
-    });
-    socket.on('onMessage', (newMessage: MessagePayload) => {
-      //console.log('onMessage event received!');
-      //console.log(newMessage);
-      setMessage((prev) => [...prev, newMessage]);
-    });
+  // useEffect(() => {
+  //   socket.on('connect', () => {
+  //   //console.log('Connected !');
+  //   });
+  //   socket.on('onMessage', (newMessage: MessagePayload) => {
+  //     //console.log('onMessage event received!');
+  //     //console.log(newMessage);
+  //     setMessage((prev) => [...prev, newMessage]);
+  //   });
 
-    return () => {
-      //console.log('Unregistering Events...');
-      socket.off('connect');
-      socket.off('onMessage');
-    }
+  //   return () => {
+  //     //console.log('Unregistering Events...');
+  //     socket.off('connect');
+  //     socket.off('onMessage');
+  //   }
 
-  }, []);
+  // }, []);
 
-  useEffect(() => {
-    let newUser:any = sessionStorage.getItem('data');
-		newUser = JSON.parse(newUser);
-		setAvatar(newUser.user.avatar);
-    setUsername(newUser.user.username);
-		//setUsername(socket.id);
-  })
+  // useEffect(() => {
+  //   let newUser:any = sessionStorage.getItem('data');
+	// 	newUser = JSON.parse(newUser);
+	// 	setAvatar(newUser.user.avatar);
+  //   setUsername(newUser.user.username);
+	// 	//setUsername(socket.id);
+  // })
 
-    useEffect(() => {
-      const getChan = async () => {
-        let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-		  	setChans(chans);
-      }
-      getChan();
-    })
+  //   useEffect(() => {
+  //     const getChan = async () => {
+  //       let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+	// 	  	setChans(chans);
+  //     }
+  //     getChan();
+  //   })
 
   const onSubmit = () => {
     if (value != '' && value.replace(/\s/g, '') != '') // check if array is empty or contain only whitespace

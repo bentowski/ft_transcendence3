@@ -53,14 +53,14 @@ export class PartiesService {
         histories.user_two = user_two;
         histories.score_one = score_one;
         histories.score_two = score_two;
-        if (histories.score_one > histories.score_two) {
-            histories.winner = histories.user_one;
-            histories.looser = histories.user_two;
-        }
-        else if (histories.score_one < histories.score_two) {
-            histories.winner = histories.user_two;
-            histories.looser = histories.user_one;
-        }
+        // if (histories.score_one > histories.score_two) {
+        //     histories.winner = histories.user_one;
+        //     histories.looser = histories.user_two;
+        // }
+        // else if (histories.score_one < histories.score_two) {
+        //     histories.winner = histories.user_two;
+        //     histories.looser = histories.user_one;
+        // }
         histories.createdAt = new Date();
         await this.historyRepository.save(histories)
         return histories;
