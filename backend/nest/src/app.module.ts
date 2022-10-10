@@ -3,14 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-//import { User } from './user/entities/user-entity';
 import { ConfigModule } from '@nestjs/config';
 import { configService } from './config/config.service';
 import { ChatModule } from './chat/chat.module';
 import { PartiesModule } from './parties/parties.module';
 import { ChanModule } from './chans/chan.module';
 import { AuthModule } from './auth/auth.module';
-import { PassportModule } from '@nestjs/passport';
+import { UserAuthGuard } from './auth/guards/user-auth.guard';
+//import { PassportModule } from '@nestjs/passport';
+//import { JwtModule } from '@nestjs/jwt';
+//import { User } from './user/entities/user-entity';
+//import { JwtStrategy } from './auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -23,9 +26,8 @@ import { PassportModule } from '@nestjs/passport';
     PartiesModule,
     ChanModule,
     AuthModule,
-    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UserAuthGuard],
 })
 export class AppModule {}

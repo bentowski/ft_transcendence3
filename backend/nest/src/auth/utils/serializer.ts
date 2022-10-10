@@ -1,3 +1,4 @@
+/*
 import { PassportSerializer } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
 import UserEntity from '../../user/entities/user-entity';
@@ -23,3 +24,4 @@ export class SessionSerializer extends PassportSerializer {
     return userDb ? done(null, userDb) : done(null, null);
   }
 }
+*/

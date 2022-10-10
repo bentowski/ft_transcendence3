@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +10,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
 
 @Injectable()
 export class UserService {
@@ -39,12 +37,14 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { auth_id, username, email } = createUserDto;
-    const user: UserEntity = this.userRepository.create(createUserDto);
+    let user: UserEntity = undefined;
+    user = this.userRepository.create(createUserDto);
     try {
       user.auth_id = auth_id;
       user.username = username;
       user.email = email;
-      user.avatar = "https://avatars.dicebear.com/api/personas/" + auth_id + ".svg";
+      user.avatar =
+        'https://avatars.dicebear.com/api/personas/' + auth_id + '.svg';
       user.createdAt = new Date();
       await this.userRepository.save(user);
     } catch (err) {
@@ -59,7 +59,8 @@ export class UserService {
   }
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
-    const findUsername = await this.userRepository.findOneBy({ username });
+    let findUsername: UserEntity = undefined;
+    findUsername = await this.userRepository.findOneBy({ username });
     return findUsername;
   }
 
@@ -67,7 +68,8 @@ export class UserService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    const user = await this.findOneByAuthId(userId);
+    let user: UserEntity = undefined;
+    user = await this.findOneByAuthId(userId);
     console.log(user);
     const { username, avatar } = updateUserDto;
 
@@ -89,12 +91,14 @@ export class UserService {
   }
 
   async findOneByAuthId(auth_id: string): Promise<UserEntity> {
-    const findAuthId = await this.userRepository.findOneBy({ auth_id });
+    let findAuthId: UserEntity = undefined;
+    findAuthId = await this.userRepository.findOneBy({ auth_id });
     return findAuthId;
   }
 
   async findOnebyID(user_id?: string): Promise<UserEntity> {
-    const findId = await this.userRepository.findOneBy({ user_id });
+    let findId: UserEntity = undefined;
+    findId = await this.userRepository.findOneBy({ user_id });
     return findId;
   }
 }
