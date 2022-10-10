@@ -65,8 +65,8 @@ async function bootstrap() {
   //});
 
   */
-  app.use(passport.initialize());
-  app.use(passport.authenticate('42', { failureRedirect: '/auth/login' }));
+  //app.use(passport.initialize());
+  //app.use(passport.authenticate('42', { failureRedirect: '/auth/login' }));
   //app.use(passport.session());
 
   //SWITCH THIS FOLLOWING METHOD ON BEFORE PRODUCTION
