@@ -7,8 +7,6 @@ import { AuthService } from '../auth.service';
 export class IntraStrategy extends PassportStrategy(Strategy, '42') {
   constructor(private readonly authService: AuthService) {
     super({
-      //authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
-      //tokenURL: 'https://api.intra.42.fr/oauth/token',
       clientID: process.env.API_CLIENT_ID,
       clientSecret: process.env.API_CLIENT_SECRET,
       callbackURL: process.env.API_CALLBACK_URL,
@@ -19,6 +17,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, username } = profile;
     console.log('validate strategy called');
+    //console.log(profile);
     const user = {
       auth_id: id,
       username: username,

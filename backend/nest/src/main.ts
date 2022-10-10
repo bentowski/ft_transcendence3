@@ -6,7 +6,7 @@ import * as passport from 'passport';
 import { TypeormStore } from 'connect-typeorm';
 import { SessionEntity } from './auth/entities/session-entity';
 import { DataSource } from 'typeorm';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -19,7 +19,7 @@ async function bootstrap() {
     },
   });
 
-  //app.use(cookieParser);
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle("Bob l'ePONGe")
@@ -58,14 +58,16 @@ async function bootstrap() {
   );
 
   //app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(passport.initialize());
-  app.use(passport.session());
+
   //app.get('/profile', (req, res) => {
   //  req.session.isAuth = true;
   //  req.send('Hello Welcome session');
   //});
 
   */
+  app.use(passport.initialize());
+  app.use(passport.authenticate('42', { failureRedirect: '/auth/login' }));
+  //app.use(passport.session());
 
   //SWITCH THIS FOLLOWING METHOD ON BEFORE PRODUCTION
 
