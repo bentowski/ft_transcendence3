@@ -139,7 +139,7 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		let i = this.state.histories.length - 1;
 		while (i >= 0) {
 			if (this.state.histories[i].user_one == this.state.login || this.state.histories[i].user_two == this.state.login)
-				histories.push(<HistoryCards history={this.state.histories[i]} />)
+				histories.push(<HistoryCards history={this.state.histories[i]} profil={this.state.login} />)
 			i--;
 		}
 		return (

@@ -19,7 +19,7 @@ class History extends Component< {}, {histories: Array<any>} > {
     let histories: Array<any> = [];
     let x = this.state.histories.length - 1;
     while (x >= 0) {
-      histories.push(<HistoryCards history={this.state.histories[x]}/>)
+      histories.push(<HistoryCards history={this.state.histories[x]} profil={""}/>)
       x--;
     }
     return (
