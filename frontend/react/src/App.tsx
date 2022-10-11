@@ -1,17 +1,15 @@
-import React from 'react';
-import { Routes, Route } from "react-router-dom";
-import './styles/App.css';
-import Game from './pages/Game'
-import Page from './pages/Page'
-import Login from './pages/Login'
-import Profil from './components/Profil'
-import Tchat from './components/Tchat';
+import React, { useContext } from "react";
+import { Routes, Route, Router } from "react-router-dom";
+import "./styles/App.css";
+import Game from "./pages/Game";
+import Page from "./pages/Page";
+import Login from "./pages/Login";
+import Profil from "./components/Profil";
+import Tchat from "./components/Tchat";
 import History from './components/History';
 
 class App extends React.Component {
-  state = {
-
-  }
+  state = {};
 
   render() {
     const data = {
@@ -19,9 +17,9 @@ class App extends React.Component {
         auth_id: 56381,
         user_id: 3,
         avatar: "https://avatars.dicebear.com/api/personas/123.svg",
-        username: "toto"
-      }
-    }
+        username: "toto",
+      },
+    };
     sessionStorage.setItem("data", JSON.stringify(data));
     return (
       <Routes>
@@ -32,8 +30,8 @@ class App extends React.Component {
           <Route path='/*' element={<Profil />} />
           <Route path='/' element={<Profil />} />
         </Route>
-        <Route path='/login' element={<Login />} />
-        <Route path='/game' element={<Game />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/game" element={<Game />} />
       </Routes>
     ); // fin de return
   } // fin de render

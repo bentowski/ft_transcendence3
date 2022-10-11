@@ -8,24 +8,22 @@ import { SessionEntity } from './entities/session-entity';
 import { PassportModule } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import UserEntity from '../user/entities/user-entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, SessionEntity]), UserModule],
-
+  imports: [
+    //JwtModule.register({}),
+    TypeOrmModule.forFeature([UserEntity]),
+    UserModule,
+    PassportModule,
+  ],
   controllers: [AuthController],
   providers: [
-    {
-      provide: 'AUTH_SERVICE',
-      useClass: AuthService,
-    },
-
-    {
-      provide: 'USER_SERVICE',
-      useClass: UserService,
-    },
+    AuthService,
+    UserService,
     IntraStrategy,
-    SessionSerializer,
+    //SessionSerializer,
   ],
   //exports: [TypeORMSession],
 })
