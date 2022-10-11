@@ -1,6 +1,6 @@
 import { Component } from 'react';
 // import Menu from '../components/Menu'
-import '../styles/components/game.css'
+import '../styles/pages/game.css'
 
 // document.addEventListener('resize', () => {
 

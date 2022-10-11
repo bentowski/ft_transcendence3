@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "../../styles/utils/modal.css";
+import "../../styles/components/utils/modal.css";
 import Request from "./Requests"
 
 class Modal extends Component<{ title: string, calledBy: string}, {}> {
