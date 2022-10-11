@@ -20,12 +20,14 @@ export class UserService {
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
     const { username } = user42;
-    const user = await this.findOnebyUsername(username);
+    let user: UserEntity = undefined;
+    user = await this.findOnebyUsername(username);
     if (user) {
-      user42.username = username;
+      user.username = username;
+    } else {
+      user = await this.createUser42(user42);
     }
-    const newUser: UserEntity = await this.createUser42(user42);
-    return newUser;
+    return user;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {

@@ -16,7 +16,6 @@ import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     UserModule,
-    /* TypeOrmModule.forFeature([UserEntity, SessionEntity ]), */
     JwtModule.register({
       secret: process.env.SECRET_KEY,
       signOptions: {
@@ -28,6 +27,7 @@ import { PassportModule } from '@nestjs/passport';
       session: false,
       property: 'user',
     }),
+    /* TypeOrmModule.forFeature([UserEntity, SessionEntity ]), */
   ],
   controllers: [AuthController],
   providers: [

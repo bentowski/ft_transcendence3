@@ -27,10 +27,11 @@ export class AuthController {
     const status = 0;
     const payload: PayloadInterface = { auth_id, username, status };
     const access_token: string = await this.jwtService.sign(payload);
+    console.log('verify = ' + this.jwtService.verify(access_token));
     console.log(res.cookie);
     res.cookie('jwt', access_token, { httpOnly: true });
     res.redirect('http://localhost:8080');
-    return req.user;
+    //return req.user;
   }
 
   @Get('status')

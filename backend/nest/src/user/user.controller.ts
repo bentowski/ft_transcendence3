@@ -8,16 +8,19 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
 import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-//import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
+//import { fileURLToPath } from 'url';
 
 export const storage = {
   storage: diskStorage({
@@ -36,6 +39,7 @@ export const storage = {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
