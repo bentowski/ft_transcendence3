@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import "../../styles/utils/modal.css";
 import Request from "./Requests"
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000/chat');
 
 class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
@@ -12,6 +15,7 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
       username: "",
     }
   }
+
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -66,6 +70,7 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
       radioPri.checked = false;
       radioPro.checked = false;
       this.hidden();
+      socket.emit('chanCreated');
     }
     else {
       alert("You have to fill each informations");

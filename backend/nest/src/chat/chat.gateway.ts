@@ -2,16 +2,10 @@ import { OnModuleInit } from '@nestjs/common';
 import {
  SubscribeMessage,
  WebSocketGateway,
- OnGatewayInit,
  WebSocketServer,
- OnGatewayConnection,
- OnGatewayDisconnect,
  MessageBody,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-// import { ChatService } from './chat.service';
-import { Chat } from './entities/chat.entity';
-
 
 @WebSocketGateway({
   cors: {
@@ -58,29 +52,8 @@ export class ChatGateway implements OnModuleInit
 	client.emit('leftRoom', room);
   }
 
-//  constructor(private ChatService: ChatService) {}
-
- /* @WebSocketServer() server: Server;
-
- @SubscribeMessage('sendMessage')
- async handleSendMessage(client: Socket, payload: Chat): Promise<void> {
-  //  await this.ChatService.createMessage(payload);
-    console.log("msg : " + payload);
-    this.server.emit('recMessage', payload);
- }
-
- afterInit(server: Server) {
-   console.log(server);
-   //Do stuffs
- }
-
- handleDisconnect(client: Socket) {
-   console.log(`Disconnected: ${client.id}`);
-   //Do stuffs
- }
-
- handleConnection(client: Socket, ...args: any[]) {
-   console.log(`Connected ${client.id}`);
-   //Do stuffs
- } */
+  @SubscribeMessage('chanCreated')
+  onChanCreated() {
+	this.server.emit('newChan');
+  }
 }

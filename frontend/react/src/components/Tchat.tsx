@@ -152,11 +152,15 @@ export const WebSocket = () => {
 	}
     });
 
+      socket.on('newChan', () => {
+        getChan();
+      });
 	
 
     return () => {
       socket.off('connect');
       socket.off('onMessage');
+      socket.off('newChan');
     }
 
   }, []);
@@ -168,11 +172,12 @@ export const WebSocket = () => {
     	setUsername(newUser.user.username);
   })
 
+  const getChan = async () => {
+    let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+    setChans(chans);
+  }
+
     useEffect(() => {
-      const getChan = async () => {
-        let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-		  	setChans(chans);
-      }
       getChan();
     }, [])
 
