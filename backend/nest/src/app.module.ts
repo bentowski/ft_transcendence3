@@ -11,6 +11,7 @@ import { PartiesModule } from './parties/parties.module';
 import { ChanModule } from './chans/chan.module';
 import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -28,4 +29,9 @@ import { PassportModule } from '@nestjs/passport';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  //constructor(private dataSource: DataSource) {}
+  //getDataSource() {
+  //  return this.dataSource;
+  //}
+}

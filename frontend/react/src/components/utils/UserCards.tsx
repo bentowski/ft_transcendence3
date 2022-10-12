@@ -1,7 +1,7 @@
 import { Component } from 'react';
 // import { Link } from "react-router-dom";
 import Request from "./Requests"
-import '../../styles/components/UserCards.css'
+import '../../styles/components/utils/userCards.css'
 // import Login from '../../pages/Login';
 
 class UserCards extends Component<{ user: any, avatar: boolean }, { login: string, id: number, online: string }> {
