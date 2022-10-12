@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
-import "../../styles/components/utils/modal.css";
+import { Component } from 'react';
+import "../../styles/utils/modal.css";
 import Request from "./Requests"
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000/chat');
 
 class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
@@ -13,11 +16,12 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
     }
   }
 
+
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.add('hidden')
-    const login = document.getElementById('changeLogin') as HTMLInputElement
-    login.value = ""
+    modal.classList.add('hidden');
+    const login = document.getElementById('changeLogin') as HTMLInputElement;
+    //login.value = "";
   }
 
   componentDidMount = () => {
@@ -35,13 +39,13 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
     const radioPro = (document.querySelector("#protected") as HTMLInputElement);
     let radioCheck = "";
     let pswd = "";
-    if (radioPub.checked == true)
+    if (radioPub.checked === true)
       radioCheck = "public";
-    else if (radioPri.checked == true)
+    else if (radioPri.checked === true)
       radioCheck = "private";
-    if (radioPro.checked == true)
+    else if (radioPro.checked === true)
       radioCheck = "protected";
-    if (radioCheck != "" || !name.value || !topic.value) {
+    if (radioCheck !== "" || !name.value || !topic.value) {
       if (password.value)
         pswd = password.value;
       await Request(
@@ -66,6 +70,7 @@ class Modal extends Component<{ title: string, calledBy: string}, {}> {
       radioPri.checked = false;
       radioPro.checked = false;
       this.hidden();
+      socket.emit('chanCreated');
     }
     else {
       alert("You have to fill each informations");
