@@ -136,6 +136,8 @@ export const WebSocket = () => {
     socket.on('onMessage', (newMessage: MessagePayload) => {
 	 //!!!!!!!!!!!!!!!
 	 let tmp:chanType[] = channelJoined;
+   console.log("chan : " + JSON.stringify(channelJoined))
+   console.log("room of new msg : " + newMessage.room)
 	 let index = tmp.findIndex((channel) => channel.id === newMessage.room);
 	  if (tmp[index] !== undefined) {
 		if (tmp[index].messages)
@@ -173,8 +175,8 @@ export const WebSocket = () => {
   })
 
   const getChan = async () => {
-    let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-    setChans(chans);
+    let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+    setChans(channels);
   }
 
     useEffect(() => {
@@ -183,6 +185,7 @@ export const WebSocket = () => {
 
   const onSubmit = () => {
     if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
+      console.log("emit ! room : " + room);
     	socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar, "room": room});
 	}
     setValue('');
@@ -210,16 +213,20 @@ export const WebSocket = () => {
 			setChannelJoined(tmp);
 			if (newRoom.messages)
 				setMessage(newRoom.messages)
-  			else
+  		else
 				setMessage([]);
 		}
 	}
 	else {
 		unactiveRoom();
-		newRoom.isActive = true;
-		if (newRoom.messages)
-			setMessage(newRoom.messages)
-  		else
+    let tmp: chanType[] = channelJoined;
+    let index = tmp.findIndex((channel) => channel.id === newRoom.id);
+    if (tmp[index])
+      tmp[index].isActive = true;
+      setChannelJoined(tmp);
+		if (tmp[index].messages)
+			setMessage(tmp[index].messages)
+  	else
 			setMessage([]);
 		if (room != newRoom.id) {
 			socket.emit('joinRoom', newRoom.id);
@@ -251,7 +258,7 @@ export const WebSocket = () => {
 	const chanColor = (channel: any) => {
 		if (channel.id === room)
 			return ("bg-primary");
-		else if (channelJoined.find((chan) => chan === channel) !== undefined)
+		else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
 			return ("bg-info");
 		else
 			return ("bg-secondary");
