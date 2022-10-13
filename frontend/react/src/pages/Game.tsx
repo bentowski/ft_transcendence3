@@ -4,57 +4,157 @@ import '../styles/components/game.css'
 
 
 
-class Game extends Component<{},{w:number, h: number}> {
+class Game extends Component<
+                        {},
+                        { w:number,
+                          h: number,
+                          nbPlayer: number,
+                          playerHighStart: number,
+                          playerPos: number[],
+                          playerSpeed: number,
+                          sizeBall: number,
+                          ballPos: number[],
+                          vector: number[],
+                          middle: number,
+                          score1: number,
+                          score2: number,
+                          end: number
+                        }> {
   constructor(props: any)
   {
     super(props)
-    this.state = { w: 1200, h: 800}
+    this.state = {
+      w: 0,
+      h: 0,
+      nbPlayer: 0,
+      playerHighStart: 0,
+      playerPos: [0, 0],
+      playerSpeed: 0,
+      sizeBall: 0,
+      ballPos: [0, 0],
+      vector: [0, 0],
+      middle: 0,
+      score1: 0,
+      score2: 0,
+      end: 0
+    }
+  }
+
+
+//=================initialisation================
+  init = (ctx: any, j1Ctx: any, j2Ctx: any, globale: any, joueur1: any, joueur2: any) => {
+    //======ligne centrale=========
+    let h = 0;
+    let y = 0;
+    while (h < this.state.h) {
+      ctx.fillStyle = "white"
+      ctx.fillRect(this.state.middle, y, 10, 25)
+      y += 50
+      h += 50
+    }
+    //======joueurs========
+    while (this.state.playerPos[0] < this.state.playerHighStart) {
+      j1Ctx.fillStyle = "white"
+      j1Ctx.fillRect(2, this.state.playerPos[0], 10, 5)
+      j2Ctx.fillStyle = "white"
+      j2Ctx.fillRect(-2, this.state.playerPos[1], 10, 5)
+      this.state.playerPos[0] += 5
+      this.state.playerPos[1] += 5
+    }
+    //========balle========
+    ctx.fillStyle = "white"
+    ctx.arc(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, 0, 2 * Math.PI);
+    ctx.fill()
+    this.moveBall(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+  }
+
+//=============== Move Player ==================
+  movePlayer = (limit: number, jCtx: any, move: number, joueur: any) => {
+    if (this.state.playerPos[0] < limit) {
+      // if (first1) {
+        this.state.playerPos[0] += move
+      // }
+      this.state.playerPos[0] += this.state.playerSpeed
+      jCtx.clearRect(0, 0, joueur.width, joueur.height);
+      jCtx.fillStyle = "white"
+      jCtx.fillRect(2, this.state.playerPos[0], 10, 100)
+      // first1 = false
+    }
+  }
+
+  //=============== Move Ball===================
+
+
+    moveBall = (ctx: any, j1Ctx: any, j2Ctx: any, globale: any, joueur1: any, joueur2: any) => {
+      ctx.clearRect(0, 0, globale.width, globale.height)
+      let y = 0
+      let h = 0
+      while (h < this.state.h) {
+        ctx.fillStyle = "white"
+        ctx.fillRect(this.state.middle, y, 10, 25)
+        y += 50
+        h += 50
+      }
+      this.state.ballPos[0] += this.state.vector[0]
+      this.state.ballPos[1] += this.state.vector[1]
+      ctx.fillStyle = "white"
+      ctx.beginPath();
+      ctx.arc(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, 0, 2 * Math.PI);
+      ctx.fill()
+      ctx.closePath();
+      // =========== Bot ou joueur distant ==========
+      if (this.state.playerPos[0] + 51 < this.state.ballPos[1]) {
+        this.movePlayer(800, j1Ctx, 100, joueur1)
+      }
+      if (this.state.playerPos[0] + 49 > this.state.ballPos[1]) {
+        this.movePlayer(0, j1Ctx, -100, joueur1)
+      }
+      // ============== Fin Bot ===============
+      if (this.state.ballPos[1] + this.state.sizeBall <= globale.height) {
+        this.state.vector[1] = -this.state.vector[1]
+      }
+      if (this.state.ballPos[1] - this.state.sizeBall >= 0) {
+        this.state.vector[1] = -this.state.vector[1]
+      }
+      if (this.state.ballPos[0] + this.state.sizeBall >= globale.width && this.state.playerPos[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[1] + 100) {
+        this.state.vector[0] = -this.state.vector[0]
+      }
+      if (this.state.ballPos[0] <= 10 && this.state.playerPos[0] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[0] + 100) {
+        this.state.vector[0] = -this.state.vector[0]
+      }
+      if (this.state.ballPos[0] + this.state.sizeBall < 0) {
+          this.setState({end: 1})
+       }
+      if (this.state.ballPos[0] - this.state.sizeBall > globale.width) {
+        this.setState({end: 1})
+      }
+      if (this.state.end) {
+        window.requestAnimationFrame(() => {
+          this.moveBall(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+        })
+      } else if (this.state.vector[0] > 35) {
+        this.gameOver()
+      }
+    }
+
+
+  gameOver = () => {
+    alert("GAME OVER")
   }
 
 
 
-  //code js pour le jeu
 
-
-
-
-
-
+//============ Settings game ===============
   componentDidMount() {
     if (window.innerHeight > window.innerWidth) {
-      // let h = h : window.innerWidth / 16 * 9
       this.setState({ w: window.innerWidth, h : window.innerWidth / 16 * 9 })
-      // this.state.w = window.innerWidth;
-      // h = w / 16 * 9;
     }
     else {
-      // h = window.innerHeight;
-      // w = h / 9 * 16;
       this.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
     }
 
-    // this.setState({w: window.innerWidth})
-    // this.setState({h: window.innerHeight})
-    //============== variables==============
-    let middle: number = (1500 / 2) - 5
-      , hMax: number = window.innerHeight
-      , h: number = 0
-      , jHeight: number = 500
-      , yJ1: number = 400
-      , yJ2: number = 400
-      , first1: boolean = true
-      , first2: boolean = true
-      , xBalle: number = 300
-      , yBalle: number = 400
-      , sizeBalle: number = 10
-      , levelUp: number = 0.5
-      , vitessex: number = sizeBalle / 2
-      , vitessey: number = sizeBalle / 2
-      , game: boolean = true
-      , player: number
-      , speed1: number = 10
-      , speed2: number = 10
-      , y: number = -10
+  //============== variables ==============
     const globale = this.refs.globale as HTMLCanvasElement
     const ctx: any = globale.getContext('2d')
     const joueur1 = this.refs.joueur1 as HTMLCanvasElement
@@ -62,199 +162,26 @@ class Game extends Component<{},{w:number, h: number}> {
     const joueur2 = this.refs.joueur2 as HTMLCanvasElement
     const j2Ctx: any = joueur2.getContext('2d')
 
-    //===============interaction=================
-    // let test: any = prompt("combien de joueur ?", "1")
-    // if (test)
-    //   player = (parseInt(test))
-    // else
-    //   player = 1;
-    // if (player === 1) {
-    //   speed2 = 40
-    // }
-    // if (player === 2) {
-    //   speed1 = 40
-    //   speed2 = 40
-    // }
+  //===============interaction=================
 
     let infosClavier = (e: KeyboardEvent) => {
       let number = Number(e.keyCode);
-      // console.log(number)
-      if (player === 1) {
         switch (number) {
           case 38:
-            j2Up()
+            this.movePlayer(800, j2Ctx, 100, joueur2)
             break;
           case 40:
-            j2Down()
+            this.movePlayer(0, j2Ctx, -100, joueur2)
             break;
           default:
-            // console.log("error one player");
-        }
       }
     }
-
     document.addEventListener("keydown", infosClavier);
 
-
-
-    //===============joueur1===================
-    let j1Down = () => {
-      if (yJ1 < 800) {
-        if (first1) {
-          yJ1 -= 100
-        }
-        yJ1 += speed1
-        j1Ctx.clearRect(0, 0, joueur1.width, joueur1.height);
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 100)
-        first1 = false
-      }
-    }
-
-
-    let j1Up = () => {
-      if (yJ1 > 0) {
-        if (first1) {
-          yJ1 -= 100
-        }
-        yJ1 -= speed1
-        j1Ctx.clearRect(0, 0, joueur1.width, joueur1.height);
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 100)
-        first1 = false
-      }
-    }
-
-
-    //=================joueur2===================
-    let j2Down = () => {
-      if (yJ2 < 800) {
-        if (first2) {
-          yJ2 -= 100
-        }
-        yJ2 += speed2
-        j2Ctx.clearRect(0, 0, joueur2.width, joueur2.height);
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 100)
-        first2 = false
-      }
-    }
-
-    let j2Up = () => {
-      if (yJ2 > 0) {
-        if (first2) {
-          yJ2 -= 100
-        }
-        yJ2 -= speed2
-        j2Ctx.clearRect(0, 0, joueur2.width, joueur2.height);
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 100)
-        first2 = false
-      }
-    }
-
-    //===============ball===================
-
-
-      let moveBall = () => {
-        ctx.clearRect(0, 0, globale.width, globale.height)
-        y = 0
-        h = 0
-        while (h < hMax) {
-          ctx.fillStyle = "white"
-          ctx.fillRect(middle, y, 10, 25)
-          y += 50
-          h += 50
-        }
-        xBalle += vitessex
-        yBalle += vitessey
-        ctx.fillStyle = "white"
-        ctx.beginPath();
-        ctx.arc(xBalle, yBalle, sizeBalle, 0, 2 * Math.PI);
-        ctx.fill()
-        ctx.closePath();
-        if (player === 1) {
-          if (yJ1 + 51 < yBalle) {
-            j1Down()
-          }
-          if (yJ1 + 49 > yBalle) {
-            j1Up()
-          }
-        }
-        if (player === 0) {
-          if (yJ1 + 51 < yBalle) {
-            j1Down()
-          }
-          if (yJ1 + 49 > yBalle) {
-            j1Up()
-          }
-          if (yJ2 + 51 < yBalle) {
-            j2Down()
-          }
-          if (yJ2 + 49 > yBalle) {
-            j2Up()
-          }
-        }
-        if (yBalle + sizeBalle <= globale.height) {
-          vitessey = -vitessey
-
-        }
-        if (yBalle - sizeBalle >= 0) {
-          vitessey = -vitessey
-        }
-        if (xBalle + sizeBalle >= globale.width && yJ2 < yBalle + sizeBalle && yBalle - sizeBalle < yJ2 + 100) {
-          vitessex = -vitessex
-        }
-        if (xBalle <= 10 && yJ1 < yBalle + sizeBalle && yBalle - sizeBalle < yJ1 + 100) {
-          vitessex = -vitessex
-          vitessex += levelUp
-        }
-        if (xBalle + sizeBalle < 0) {
-          game = false
-        }
-        if (xBalle - sizeBalle > globale.width) {
-          game = false
-        }
-        if (game) {
-          window.requestAnimationFrame(moveBall)
-        } else if (vitessex > 35) {
-          gameOver()
-        } else {
-          // console.log("WIN !!!");
-        }
-      }
-
-    let gameOver = () => {
-      alert("GAME OVER")
-    }
-
-    //=================initialisation================
-    let init = () => {
-      //======ligne centrale=========
-      while (h < hMax) {
-        ctx.fillStyle = "white"
-        ctx.fillRect(middle, y, 10, 25)
-        y += 50
-        h += 50
-      }
-      //======joueurs========
-      while (yJ1 < jHeight) {
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 5)
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 5)
-        yJ1 += 5
-        yJ2 += 5
-      }
-      //========balle========
-      ctx.fillStyle = "white"
-      ctx.arc(xBalle, yBalle, sizeBalle, 0, 2 * Math.PI);
-      ctx.fill()
-      moveBall()
-    }
-
-    init()
+    this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
   }
+
+
 
   render() {
     window.onresize = () => {window.location.reload()}
@@ -262,10 +189,10 @@ class Game extends Component<{},{w:number, h: number}> {
       <div>
       {/*<Menu />*/}
         <h1>GAME</h1>
-        <div className="canva">
-          <canvas ref="joueur1" id="joueur1" width="0" height="0"></canvas>
+        <div className="canvas">
+          <canvas ref="joueur1" id="joueur1" width={this.state.w / 100} height={this.state.h}></canvas>
           <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
-          <canvas ref="joueur2" id="joueur2" width="0" height="0"></canvas>
+          <canvas ref="joueur2" id="joueur2" width={this.state.w / 100} height={this.state.h}></canvas>
         </div>
       </div>
     );
