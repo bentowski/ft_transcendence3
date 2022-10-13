@@ -7,6 +7,7 @@ import { HistoryEntity } from '../parties/entities/history-entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
+import { ProfileEntity } from './entities/profile-entity';
 //import { AuthModule } from '../auth/auth.module';
 //import { AuthService } from '../auth/auth.service';
 //import { JwtStrategy } from '../auth/strategies/jwt.strategy';
@@ -18,7 +19,7 @@ import { AuthService } from '../auth/auth.service';
   imports: [
     JwtModule,
     PassportModule,
-    TypeOrmModule.forFeature([UserEntity, HistoryEntity]),
+    TypeOrmModule.forFeature([UserEntity, HistoryEntity, ProfileEntity]),
   ],
   providers: [UserService, AuthService],
   controllers: [UserController],

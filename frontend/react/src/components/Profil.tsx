@@ -43,6 +43,7 @@ class Profil extends Component<
     modalType: "",
     modalTitle: "",
     login: "",
+    //undefined: true,
   };
 
   promptAvatar = () => {
@@ -57,16 +58,26 @@ class Profil extends Component<
     this.setState({ modalType: "Login", modalTitle: "Change user name" });
   };
 
+  /*
+  checkIfJSONisNotEmpty = (obj: any) => {
+    return Object.keys(obj).length > 0;
+  };
+  */
+
   getUser = async (username: string) => {
+    console.log("hellu");
     let user = await Request(
       "GET",
       {},
       {},
       "http://localhost:3000/user/name/" + username
     );
-    if (!user) return;
-    console.log("ICI : " + user);
-    this.setState({ login: user.username });
+    //console.log("prout = " + user);
+    if (user) {
+      console.log("get user ok ");
+      //this.setState({ undefined: false });
+      this.setState({ login: user.username });
+    }
   };
 
   // componentDidMount = () => {
@@ -88,6 +99,7 @@ class Profil extends Component<
 
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
+    console.log("new user = " + newUser);
     if (!newUser) return;
     newUser = JSON.parse(newUser);
     this.setState({ avatar: newUser.user.avatar });
@@ -101,8 +113,8 @@ class Profil extends Component<
     while (url[x]) {
       tmp += url[x++];
     }
-    console.log(tmp);
-    this.getUser(tmp);
+    console.log("tmp = " + tmp);
+    if (tmp !== "") this.getUser(tmp);
   };
 
   render() {
@@ -118,7 +130,7 @@ class Profil extends Component<
         tmp += url[x++];
       }
       console.log(tmp);
-      this.getUser(tmp);
+      if (tmp !== "") this.getUser(tmp);
     });
     // <button className="col-1">
     // <button className="modifName col-2">

@@ -1,0 +1,1 @@
+{"version":3,"file":"first-route.service.js","sourceRoot":"","sources":["first-route.service.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAA4C;AAGrC,IAAM,iBAAiB,GAAvB,MAAM,iBAAiB;IAC5B,QAAQ;QACN,IAAI,IAAI,GAAU;YAChB;gBACE,KAAK,EAAE,MAAM;gBACb,IAAI,EAAE,MAAM;aACb;SACF,CAAA;QACD,OAAO,IAAI,CAAC;IACd,CAAC;CACF,CAAA;AAVY,iBAAiB;IAD7B,IAAA,mBAAU,GAAE;GACA,iBAAiB,CAU7B;AAVY,8CAAiB"}

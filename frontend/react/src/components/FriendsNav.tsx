@@ -16,21 +16,27 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
   };
 
   render() {
+    if (!this.state.friends) return;
     let friends: Array<any> = [];
-    let onlines = 0;
-    let x = 0;
-    while (x < this.state.friends.length) {
-      if (this.state.friends[x].online) onlines++;
-      friends.push(
-        <UserCards key={x} user={this.state.friends[x]} avatar={true} />
-      );
-      x++;
+    let onlines;
+    if (this.state.friends.length > 0) {
+      onlines = 0;
+      let x = 0;
+      while (x < this.state.friends.length) {
+        if (this.state.friends[x].online) onlines++;
+        friends.push(
+          <UserCards key={x} user={this.state.friends[x]} avatar={true} />
+        );
+        x++;
+      }
     }
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
           <p>
-            {onlines}/{this.state.friends.length} friends online
+            {onlines}/
+            {this.state.friends.length > 0 ? this.state.friends.length : 0}{" "}
+            friends online
           </p>
         </div>
         <div className="addFriends my-3">
