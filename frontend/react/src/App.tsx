@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useContext } from "react";
+import { Routes, Route, Router } from "react-router-dom";
 import "./styles/App.css";
 import Game from "./pages/Game";
 import Page from "./pages/Page";

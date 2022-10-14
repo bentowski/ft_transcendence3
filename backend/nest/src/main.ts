@@ -1,23 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as session from 'express-session';
+import * as passport from 'passport';
+import { TypeormStore } from 'connect-typeorm';
+import { SessionEntity } from './auth/entities/session-entity';
+import { DataSource } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
-//import * as session from 'express-session';
-//import * as passport from 'passport';
-//import { TypeormStore } from 'connect-typeorm';
-//import { SessionEntity } from './auth/entities/session-entity';
-//import { DataSource } from 'typeorm';
+import bodyParser from 'body-parser';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    credentials: true,
-    origin: true, //['http://localhost:3000'],
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      credentials: true,
+      origin: true, //['http://localhost:3000'],
+      //methods: ['GET', 'POST'],
+    },
   });
 
   app.use(cookieParser());
-
-  //const sessionRepo = app.get(DataSource).getRepository(SessionEntity);
 
   const config = new DocumentBuilder()
     .setTitle("Bob l'ePONGe")

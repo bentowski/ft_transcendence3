@@ -1,6 +1,11 @@
-import React, { Component } from "react";
+import { Component } from 'react';
 import "../../styles/utils/modal.css";
-import Request from "./Requests";
+import Request from "./Requests"
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000/chat');
+
+class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
 class Modal extends Component<{ title: string; calledBy: string }, {}> {
   state = {
@@ -11,6 +16,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       username: "",
     },
   };
+
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -38,11 +44,15 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
     let radioCheck = "";
     let pswd = "";
-    if (radioPub.checked == true) radioCheck = "public";
-    else if (radioPri.checked == true) radioCheck = "private";
-    if (radioPro.checked == true) radioCheck = "protected";
-    if (radioCheck != "" || !name.value || !topic.value) {
-      if (password.value) pswd = password.value;
+    if (radioPub.checked === true)
+      radioCheck = "public";
+    else if (radioPri.checked === true)
+      radioCheck = "private";
+    else if (radioPro.checked === true)
+      radioCheck = "protected";
+    if (radioCheck !== "" || !name.value || !topic.value) {
+      if (password.value)
+        pswd = password.value;
       await Request(
         "POST",
         {
@@ -65,7 +75,9 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       radioPri.checked = false;
       radioPro.checked = false;
       this.hidden();
-    } else {
+      socket.emit('chanCreated');
+    }
+    else {
       alert("You have to fill each informations");
     }
   };

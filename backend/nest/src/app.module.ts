@@ -30,4 +30,9 @@ import { UserAuthGuard } from './auth/guards/user-auth.guard';
   controllers: [AppController],
   providers: [AppService, UserAuthGuard],
 })
-export class AppModule {}
+export class AppModule {
+  //constructor(private dataSource: DataSource) {}
+  //getDataSource() {
+  //  return this.dataSource;
+  //}
+}

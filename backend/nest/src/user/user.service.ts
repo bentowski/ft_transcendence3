@@ -50,7 +50,7 @@ export class UserService {
     console.log('creating new user42');
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
-    user.username = user42.username;
+    //user.username = user42.username;
     return this.userRepository.save(user);
   }
 

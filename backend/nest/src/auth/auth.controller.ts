@@ -40,6 +40,7 @@ export class AuthController {
     //return req.user;
   }
 
+  //@UseGuards(AuthenticatedGuard)
   @Get('status')
   //@UseGuards(AuthenticatedGuard)
   status(@Req() req: Request) {
@@ -50,12 +51,14 @@ export class AuthController {
   /*
   @Get('session')
   async getAuthSession(@Session() session: Record<string, any>) {
-    console.log(session.id);
-    session.authenticated = true;
-    return session;
+    console.log('get session user');
+    //console.log(session);
+    //session.authenticated = true;
+    //return session;
   }
   */
 
+  //@UseGuards(AuthenticatedGuard)
   @Get('logout')
   logout() {
     console.log('logout user');
