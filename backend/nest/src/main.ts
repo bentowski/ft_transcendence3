@@ -9,14 +9,11 @@ import * as cookieParser from 'cookie-parser';
 //import { DataSource } from 'typeorm';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    cors: {
-      credentials: true,
-      origin: true, //['http://localhost:3000'],
-      //methods: ['GET', 'POST'],
-    },
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    credentials: true,
+    origin: true, //['http://localhost:3000'],
   });
-  //app.enableCors();
 
   app.use(cookieParser());
 
@@ -62,6 +59,7 @@ async function bootstrap() {
  //  req.send('Hello Welcome session');
  //});
  */
+
   //app.use(passport.initialize());
   //app.use(passport.authenticate('42', { failureRedirect: '/auth/login' }));
   //app.use(passport.session());

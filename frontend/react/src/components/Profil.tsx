@@ -102,7 +102,7 @@ class Profil extends Component<
     console.log("new user = " + newUser);
     if (!newUser) return;
     newUser = JSON.parse(newUser);
-    this.setState({ avatar: newUser.user.avatar });
+    this.setState({ avatar: newUser.avatar });
     let url = document.URL;
     let x = 0;
     while (url[x] !== "#" && url[x]) {

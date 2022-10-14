@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 class Menu extends Component {
   state = {
+    username: "",
     avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
   };
 
@@ -13,11 +14,14 @@ class Menu extends Component {
     console.log("newUser = " + newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
-      this.setState({ avatar: newUser.user.avatar });
+      this.setState({ avatar: newUser.avatar });
+      this.setState({ username: newUser.username });
     }
   };
 
   render() {
+    const user = sessionStorage.getItem("username");
+    console.log(user);
     return (
       <div className="Menu d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">
@@ -33,7 +37,7 @@ class Menu extends Component {
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
           <div className="loginMenu px-2">
             <Link to={"/profil/#user"}>
-              <p className="m-0">login (recup by session storage)</p>
+              <p className="m-0">{this.state.username}</p>
             </Link>
           </div>
           <div className="avatarMenu">

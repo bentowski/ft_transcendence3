@@ -13,33 +13,18 @@ import jwt_decode from "jwt-decode";
 //import Cookies from "js-cookie";
 
 class App extends React.Component {
-  access_token = getCookies("jwt");
+  constructor(props: any) {
+    super(props);
+  }
   //check global state
   state = {
-    //username: Cookies.get("auth_id"),
+    isAuth: false,
+    currentUser: undefined,
   };
 
-  /*
-  getCookie = () => {
-    axios
-      .get("http://localhost:3000/auth/redirect", { withCredentials: true })
-      .then((res) => {
-        const token = res.data.token;
-        const user = jwt(token);
-        sessionStorage.setItem("token", token);
-      });
-  };
-  */
-
-  /*
-  getCurrentUser = () => {
-    //const [isAuth, setIsAuth] = React.useState(false);
-    let user = Request("GET", {}, {}, "http://localhost:3000/user/current");
-  };
-  */
-
-  componentDidMount = async () => {
-    const decoded = jwt_decode(this.access_token);
+  getCurrentUser() {
+    const access_token = getCookies("jwt");
+    const decoded = jwt_decode(access_token);
     const string = JSON.stringify(decoded);
     const user = JSON.parse(string);
     const data = {
@@ -49,9 +34,22 @@ class App extends React.Component {
       username: user.username,
     };
     sessionStorage.setItem("data", JSON.stringify(data));
+    return data;
+  }
+
+  componentDidMount = async () => {
+    const user = this.getCurrentUser();
+
+    if (user) {
+      this.setState({
+        currentUser: user,
+        isAuth: true,
+      });
+    }
   };
 
   render() {
+    const { currentUser, isAuth } = this.state;
     return (
       <div>
         <Routes>

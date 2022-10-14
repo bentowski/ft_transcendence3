@@ -120,6 +120,11 @@ export class UserService {
     return findAuthId;
   }
 
+  async getAvatar(auth_id: string) {
+    //const user: UserEntity = await this.userRepository.findOneBy({ auth_id });
+    return /*user.avatar */;
+  }
+
   async findOnebyID(user_id?: string): Promise<UserEntity> {
     let findId: UserEntity = undefined;
     findId = await this.userRepository.findOneBy({ user_id });

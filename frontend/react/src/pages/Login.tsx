@@ -1,12 +1,4 @@
-// import React from 'react';
-
-// const Auth = () => {
-//     return (
-//         <div>
-//
-//         </div>
-//     );
-// };
+import Request from "../components/utils/Requests";
 
 const Login = () => {
   return (
