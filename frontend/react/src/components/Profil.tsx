@@ -72,19 +72,23 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
   */
 
 	getUser = async (username: string) => {
-			let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
-			this.setState({ login: user.username })
+		let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
+		if (!user)
+			return ;
+		this.setState({ login: user.username })
 		}
 
 	getHistory = async () => {
 		let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
+		if (!histories)
+			return ;
 		this.setState({ histories: histories })
 	}
 
 	componentDidMount = () => {
 		let newUser: any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
-		this.setState({ avatar: newUser.user.avatar });
+		this.setState({ avatar: newUser.avatar });
 		let url = document.URL
 		let x = 0;
 		while (url[x] !== '#' && url[x]) {
@@ -96,7 +100,8 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 			tmp += url[x++]
 		}
 		console.log(tmp)
-		this.getUser(tmp);
+		if (tmp !== "")
+			this.getUser(tmp);
 		this.getHistory();
 	}
 

@@ -12,19 +12,26 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
 
   componentDidMount: any = async () => {
     let friends = await Request('GET', {}, {}, "http://localhost:3000/user/")
+    if (!friends)
+      return ;
     this.setState({ friends: friends })
   }
 
   render() {
     let friends: Array<any> = [];
-    let onlines = 0;
-    let x = 0;
-    while (x < this.state.friends.length) {
-      if (this.state.friends[x].online)
-        onlines++;
-      friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} />)
-      x++;
+    let onlines;
+    if (this.state.friends.length > 0)
+    {
+      onlines = 0;
+      let x = 0;
+      while (x < this.state.friends.length) {
+        if (this.state.friends[x].online)
+          onlines++;
+        friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} />)
+        x++;
+      }
     }
+
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
