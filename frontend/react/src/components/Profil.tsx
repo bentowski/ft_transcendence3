@@ -71,27 +71,15 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
   };
   */
 
+	getUser = async (username: string) => {
+			let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
+			this.setState({ login: user.username })
+		}
+
 	getHistory = async () => {
 		let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
 		this.setState({ histories: histories })
 	}
-
-	// componentDidMount = () => {
-	// 		let url = document.URL
-	// 		let x = 0;
-	// 		while (url[x] != '#' && url[x])
-	// 		{
-	// 			x++;
-	// 		}
-	// 		x++;
-	// 		let tmp = ""
-	// 		while (url[x])
-	// 		{
-	// 			tmp += url[x++]
-	// 		}
-	// 		console.log(tmp)
-	// 		this.getUser(tmp);
-	// }
 
 	componentDidMount = () => {
 		let newUser: any = sessionStorage.getItem('data');
@@ -112,32 +100,11 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		this.getHistory();
 	}
 
-  componentDidMount = () => {
-    let newUser: any = sessionStorage.getItem("data");
-    console.log("new user = " + newUser);
-    if (!newUser) return;
-    newUser = JSON.parse(newUser);
-    this.setState({ avatar: newUser.avatar });
-    let url = document.URL;
-    let x = 0;
-    while (url[x] !== "#" && url[x]) {
-      x++;
-    }
-    x++;
-    let tmp = "";
-    while (url[x]) {
-      tmp += url[x++];
-    }
-    console.log("tmp = " + tmp);
-    if (tmp !== "") this.getUser(tmp);
-  };
-
-
 	render() {
 		window.addEventListener('popstate', (event) => {
 			let url = document.URL
 			let x = 0;
-			while (url[x] != '#' && url[x]) {
+			while (url[x] !== '#' && url[x]) {
 				x++;
 			}
 			x++;
@@ -155,7 +122,7 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		let histories: Array<any> = [];
 		let i = this.state.histories.length - 1;
 		while (i >= 0) {
-			if (this.state.histories[i].user_one == this.state.login || this.state.histories[i].user_two == this.state.login)
+			if (this.state.histories[i].user_one === this.state.login || this.state.histories[i].user_two === this.state.login)
 				histories.push(<HistoryCards history={this.state.histories[i]} profil={this.state.login} />)
 			i--;
 		}

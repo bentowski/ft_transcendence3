@@ -9,7 +9,6 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  UseGuards,
   UsePipes,
   ValidationPipe,
   UseGuards,
@@ -42,8 +41,7 @@ export const storage = {
     },
   }),
 };
-import { UpdateUserDto } from './dto/update-user.dto';
-import { IntraAuthGuard } from '../auth/guards';
+import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 
 @Controller('user')
 export class UserController {

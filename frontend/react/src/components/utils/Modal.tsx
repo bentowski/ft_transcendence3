@@ -1,11 +1,9 @@
 import { Component } from 'react';
-import "../../styles/utils/modal.css";
+import "../../styles/components/utils/modal.css";
 import Request from "./Requests"
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3000/chat');
-
-class Modal extends Component<{ title: string, calledBy: string}, {}> {
 
 class Modal extends Component<{ title: string; calledBy: string }, {}> {
   state = {

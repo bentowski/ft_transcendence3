@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Routes, Route, Router } from "react-router-dom";
+import { Component } from "react";
+import { Routes, Route } from "react-router-dom";
 import "./styles/App.css";
 import Game from "./pages/Game";
 import Page from "./pages/Page";
@@ -12,15 +12,15 @@ import jwt_decode from "jwt-decode";
 //import axios from "axios";
 //import Cookies from "js-cookie";
 
-class App extends React.Component {
+class App extends Component {
   constructor(props: any) {
-    super(props);
-  }
+    super(props)
   //check global state
-  state = {
-    isAuth: false,
-    currentUser: undefined,
-  };
+    this.state = {
+      isAuth: false,
+      currentUser: undefined,
+    }
+  }
 
   getCurrentUser() {
     const access_token = getCookies("jwt");
@@ -49,7 +49,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { currentUser, isAuth } = this.state;
+    // const { currentUser, isAuth } = this.state;
     return (
       <div>
         <Routes>

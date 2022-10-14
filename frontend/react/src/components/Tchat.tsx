@@ -1,14 +1,14 @@
 import { Component, useContext, useEffect, useState } from 'react';
 import Modal from "./utils/Modal";
-import socketio from "socket.io-client";
+// import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
 
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
-import { wait } from '@testing-library/user-event/dist/utils';
-import { setTimeout } from 'timers';
-import { off } from 'process';
-import { channel } from 'diagnostics_channel';
+// import { wait } from '@testing-library/user-event/dist/utils';
+// import { setTimeout } from 'timers';
+// import { off } from 'process';
+// import { channel } from 'diagnostics_channel';
 
 //
 // class Messages extends Component<{value : number}, {}> {
@@ -69,9 +69,9 @@ class Channels extends Component<{id: number}, {name: string}> {
     this.state = { name: "" }
   }
 
-  renderUserCards = (id: number) => {
-
-    }
+  // renderUserCards = (id: number) => {
+  //
+  //   }
 
   componentDidMount: any = async () => {
     let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + this.props.id)
@@ -127,7 +127,7 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState('');
   const [room, setRoom] = useState('');
   const [channelJoined, setChannelJoined] = useState<chanType[]>([]);
-  
+
   const socket = useContext(WebsocketContext);
 
   useEffect( () => {
@@ -157,7 +157,7 @@ export const WebSocket = () => {
       socket.on('newChan', () => {
         getChan();
       });
-	
+
 
     return () => {
       socket.off('connect');
@@ -172,7 +172,7 @@ export const WebSocket = () => {
 		newUser = JSON.parse(newUser);
 		setAvatar(newUser.user.avatar);
     	setUsername(newUser.user.username);
-  })
+  }, [])
 
   const getChan = async () => {
     let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
@@ -228,7 +228,7 @@ export const WebSocket = () => {
 			setMessage(tmp[index].messages)
   	else
 			setMessage([]);
-		if (room != newRoom.id) {
+		if (room !== newRoom.id) {
 			socket.emit('joinRoom', newRoom.id);
 		}
 		setRoom(newRoom.id);
@@ -302,7 +302,7 @@ export const WebSocket = () => {
       <div>
         {messages.length === 0 ? <div>No messages here</div> :
         <div>
-          {messages.map((msg, index) => 
+          {messages.map((msg, index) =>
             msg.sender_socket_id === socket.id ?
             <div key={index} className="outgoing_msg break-text">
             <div className="sent_msg">

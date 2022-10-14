@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { TypeormStore } from 'connect-typeorm';
-import { SessionEntity } from './auth/entities/session-entity';
+// import { SessionEntity } from './auth/entities/session-entity';
 import { DataSource } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';

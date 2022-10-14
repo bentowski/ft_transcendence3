@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
-import Request from "./Requests"
+// import Request from "./Requests"
 
 class HistoryCards extends Component<{ history: any, profil: string }, {}> {
 
   renderStatus = (user: boolean) => {
-    let status: string = "";
+    // let status: string = "";
     if (!user) {
       if (this.props.history.score_one > this.props.history.score_two)
         return (
@@ -35,7 +35,7 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
     let status_one: any = this.renderStatus(false);
     let status_two: any = this.renderStatus(true);
     if (this.props.profil) {
-      if (this.props.profil == this.props.history.user_one)
+      if (this.props.profil === this.props.history.user_one)
         return (
           <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
             <div className='col-4 d-flex flex-row justify-content-start'>{status_one}</div>
