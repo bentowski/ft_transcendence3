@@ -1,14 +1,15 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
+  Req,
   Post,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
   UsePipes,
   ValidationPipe,
   UseGuards,
@@ -17,12 +18,17 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
 import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import UserEntity from './entities/user-entity';
+//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
+//import { fileURLToPath } from 'url';
 
 export const storage = {
   storage: diskStorage({
@@ -43,6 +49,14 @@ import { IntraAuthGuard } from '../auth/guards';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('current')
+  currentUser(@Req() req): Promise<UserEntity> {
+    const user: UserEntity = req.user;
+    console.log('request = ' + req.user);
+    return this.userService.currentUser(user);
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
@@ -80,12 +94,11 @@ export class UserController {
 
   @Patch('settings/:id')
   updateUser(
-      @Param('id') userId: string,
-      @Body() updateUserDto: UpdateUserDto,
-    )
-  {
-      // console.log(updateUserDto);
-      return this.userService.updateUser(userId, updateUserDto);
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    // console.log(updateUserDto);
+    return this.userService.updateUser(userId, updateUserDto);
   }
 
   @Delete(':id')
@@ -95,7 +108,7 @@ export class UserController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
-  uploadFile(@UploadedFile() file: any): Observable<any> {
+  uploadFile(@UploadedFile() file: any): Observable<Object> {
     console.log(file);
     return of({ imagePath: file.filename });
   }

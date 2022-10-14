@@ -1,3 +1,4 @@
+import Request from "../components/utils/Requests";
 import { Component, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -19,11 +20,13 @@ class Login extends Component<any, any> {
 
   render() {
     return (
-      <div>
-        <a href="http://localhost:3000/auth/login">
-          <button onClick={this.remoteLogin}>Login</button>
-        </a>
-      </div>
+      return (
+        <div>
+          <a href="https://api.intra.42.fr/oauth/authorize?client_id=0ca73eb0dd76ab61dabb62b46c3a31885e924d813db06a480056b2080f9b0126&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fredirect&response_type=code">
+            <button>Login</button>
+          </a>
+        </div>
+      );
     );
   }
 }

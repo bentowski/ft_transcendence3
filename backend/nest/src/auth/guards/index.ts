@@ -1,3 +1,4 @@
+/*
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -23,4 +24,5 @@ export class AuthenticatedGuard implements CanActivate {
     return req.isAuthenticated();
   }
 }
-*/
+
+ */

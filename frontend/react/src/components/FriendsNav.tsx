@@ -1,13 +1,13 @@
-import { Component } from 'react';
-import UserCards from './utils/UserCards'
-import Request from "./utils/Requests"
+import { Component } from "react";
+import UserCards from "./utils/UserCards";
+import Request from "./utils/Requests";
 
 class FriendsNav extends Component<{}, { friends: Array<any> }> {
   constructor(props: any) {
     super(props)
     this.state = {
-      friends: []
-    }
+      friends: [],
+    };
   }
 
   componentDidMount: any = async () => {

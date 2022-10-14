@@ -5,6 +5,8 @@ DOCKER_COMPOSE = docker-compose -p transcendence_network --file $(DC_FILE)
 TEST=`docker volume ls -q`
 
 all:
+	cp $(HOME)/transcendence.env ./backend/nest
+	mv ./backend/nest/transcendence.env backend/nest/.env
 	mkdir -p ./frontend/volume
 	mkdir -p ./backend/volume
 	mkdir -p ./data/pgadmin

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component } from "react";
 import Modal from "./utils/Modal";
 import Request from "./utils/Requests"
 import HistoryCards from "./utils/HistoryCards";
@@ -65,11 +65,11 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		this.setState({ modalType: "Login", modalTitle: "Change user name" })
 	}
 
-	getUser = async (username: string) => {
-		let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
-		console.log("ICI : " + user)
-		this.setState({ login: user.username })
-	}
+  /*
+  checkIfJSONisNotEmpty = (obj: any) => {
+    return Object.keys(obj).length > 0;
+  };
+  */
 
 	getHistory = async () => {
 		let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
@@ -112,8 +112,25 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		this.getHistory();
 	}
 
-
-
+  componentDidMount = () => {
+    let newUser: any = sessionStorage.getItem("data");
+    console.log("new user = " + newUser);
+    if (!newUser) return;
+    newUser = JSON.parse(newUser);
+    this.setState({ avatar: newUser.avatar });
+    let url = document.URL;
+    let x = 0;
+    while (url[x] !== "#" && url[x]) {
+      x++;
+    }
+    x++;
+    let tmp = "";
+    while (url[x]) {
+      tmp += url[x++];
+    }
+    console.log("tmp = " + tmp);
+    if (tmp !== "") this.getUser(tmp);
+  };
 
 
 	render() {
