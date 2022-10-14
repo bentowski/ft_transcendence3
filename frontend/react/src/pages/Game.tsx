@@ -18,7 +18,8 @@ class Game extends Component<
                           middle: number,
                           score1: number,
                           score2: number,
-                          end: number
+                          end: number,
+                          first1: boolean
                         }> {
   constructor(props: any)
   {
@@ -36,7 +37,8 @@ class Game extends Component<
       middle: 0,
       score1: 0,
       score2: 0,
-      end: 0
+      end: 0,
+      first1: true
     }
   }
 
@@ -50,9 +52,12 @@ class Game extends Component<
       ctx.fillStyle = "white"
       ctx.fillRect(this.state.middle, y, 10, 25)
       y += 50
+      console.log("h: " + this.state.h)
       h += 50
     }
     //======joueurs========
+    console.log("limit : " + this.state.playerHighStart)
+    console.log("current :" + this.state.playerPos[0])
     while (this.state.playerPos[0] < this.state.playerHighStart) {
       j1Ctx.fillStyle = "white"
       j1Ctx.fillRect(2, this.state.playerPos[0], 10, 5)
@@ -71,14 +76,14 @@ class Game extends Component<
 //=============== Move Player ==================
   movePlayer = (limit: number, jCtx: any, move: number, joueur: any) => {
     if (this.state.playerPos[0] < limit) {
-      // if (first1) {
+      if (this.state.first1) {
         this.state.playerPos[0] += move
-      // }
+      }
       this.state.playerPos[0] += this.state.playerSpeed
       jCtx.clearRect(0, 0, joueur.width, joueur.height);
       jCtx.fillStyle = "white"
       jCtx.fillRect(2, this.state.playerPos[0], 10, 100)
-      // first1 = false
+      this.setState({first1: false})
     }
   }
 
@@ -153,7 +158,24 @@ class Game extends Component<
     else {
       this.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
     }
+    this.setState({h: 1200})
+    console.log("h: " + this.state.h)
+    this.setState({
+      nbPlayer: 1,
+      playerHighStart: this.state.h / 2,
+      playerPos: [this.state.h / 2, this.state.h / 2],
+      playerSpeed: 5,
+      sizeBall: 100,
+      ballPos: [this.state.w / 2, this.state.h / 2],
+      vector: [0, 0],
+      middle: this.state.w / 2
+    })
 
+    console.log("Initvariable ===========================")
+    console.log("h : " + this.state.h)
+    console.log("playerStart : " + this.state.playerHighStart)
+    console.log("playerPos : " + this.state.playerPos[0])
+    console.log("InitGame ===========================")
   //============== variables ==============
     const globale = this.refs.globale as HTMLCanvasElement
     const ctx: any = globale.getContext('2d')
@@ -166,19 +188,20 @@ class Game extends Component<
 
     let infosClavier = (e: KeyboardEvent) => {
       let number = Number(e.keyCode);
+        console.log(number)
         switch (number) {
           case 38:
-            this.movePlayer(800, j2Ctx, 100, joueur2)
+            this.movePlayer(800, j2Ctx, 1, joueur2)
             break;
           case 40:
-            this.movePlayer(0, j2Ctx, -100, joueur2)
+            this.movePlayer(0, j2Ctx, -1, joueur2)
             break;
           default:
       }
     }
     document.addEventListener("keydown", infosClavier);
 
-    this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+    // this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
   }
 
 
