@@ -25,7 +25,7 @@ class Game extends Component<
   {
     super(props)
     this.state = {
-      w: 0,
+      w: 12,
       h: 0,
       nbPlayer: 0,
       playerHighStart: 0,
@@ -63,8 +63,7 @@ class Game extends Component<
       j1Ctx.fillRect(2, this.state.playerPos[0], 10, 5)
       j2Ctx.fillStyle = "white"
       j2Ctx.fillRect(-2, this.state.playerPos[1], 10, 5)
-      this.state.playerPos[0] += 5
-      this.state.playerPos[1] += 5
+      this.setState({playerPos: [this.state.playerPos[0] + 5, this.state.playerPos[1] + 5]})
     }
     //========balle========
     ctx.fillStyle = "white"
@@ -77,9 +76,9 @@ class Game extends Component<
   movePlayer = (limit: number, jCtx: any, move: number, joueur: any) => {
     if (this.state.playerPos[0] < limit) {
       if (this.state.first1) {
-        this.state.playerPos[0] += move
+        this.setState({playerPos: [this.state.playerPos[0] + move, this.state.playerPos[1]]})
       }
-      this.state.playerPos[0] += this.state.playerSpeed
+      this.setState({playerPos: [this.state.playerPos[0] + this.state.playerSpeed, this.state.playerPos[1]]})
       jCtx.clearRect(0, 0, joueur.width, joueur.height);
       jCtx.fillStyle = "white"
       jCtx.fillRect(2, this.state.playerPos[0], 10, 100)
@@ -100,8 +99,7 @@ class Game extends Component<
         y += 50
         h += 50
       }
-      this.state.ballPos[0] += this.state.vector[0]
-      this.state.ballPos[1] += this.state.vector[1]
+      this.setState({ballPos: [this.state.ballPos[0] + this.state.vector[0], this.state.ballPos[1] + this.state.vector[1]]})
       ctx.fillStyle = "white"
       ctx.beginPath();
       ctx.arc(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, 0, 2 * Math.PI);
@@ -116,16 +114,16 @@ class Game extends Component<
       }
       // ============== Fin Bot ===============
       if (this.state.ballPos[1] + this.state.sizeBall <= globale.height) {
-        this.state.vector[1] = -this.state.vector[1]
+        this.setState({vector: [this.state.vector[0], -this.state.vector[1]]})
       }
       if (this.state.ballPos[1] - this.state.sizeBall >= 0) {
-        this.state.vector[1] = -this.state.vector[1]
+        this.setState({vector: [this.state.vector[0], -this.state.vector[1]]})
       }
       if (this.state.ballPos[0] + this.state.sizeBall >= globale.width && this.state.playerPos[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[1] + 100) {
-        this.state.vector[0] = -this.state.vector[0]
+        this.setState({vector: [-this.state.vector[0], this.state.vector[1]]})
       }
       if (this.state.ballPos[0] <= 10 && this.state.playerPos[0] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[0] + 100) {
-        this.state.vector[0] = -this.state.vector[0]
+        this.setState({vector: [-this.state.vector[0], this.state.vector[1]]})
       }
       if (this.state.ballPos[0] + this.state.sizeBall < 0) {
           this.setState({end: 1})
@@ -151,12 +149,17 @@ class Game extends Component<
 
 
 //============ Settings game ===============
-  componentDidMount() {
+  componentDidMount = () => {
     if (window.innerHeight > window.innerWidth) {
       this.setState({ w: window.innerWidth, h : window.innerWidth / 16 * 9 })
     }
     else {
-      this.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
+      console.log("Window width : " + window.innerWidth)
+      console.log(window.innerWidth / 9 * 16)
+      let test: number = window.innerWidth / 9 * 16
+      console.log(test)
+      this.setState({ h: window.innerHeight, w : test })
+      console.log(this.state.w)
     }
     this.setState({h: 1200})
     console.log("h: " + this.state.h)
@@ -201,13 +204,14 @@ class Game extends Component<
     }
     document.addEventListener("keydown", infosClavier);
 
-    // this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+    this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
   }
 
 
 
   render() {
     window.onresize = () => {window.location.reload()}
+    // console.log("Window width : " + window.innerWidth)
     return (
       <div>
       {/*<Menu />*/}
