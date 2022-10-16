@@ -1,4 +1,3 @@
-/*
 import { Strategy, Profile } from 'passport-42';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
@@ -17,12 +16,13 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, username } = profile;
-    console.log('validate strategy called');
-    //console.log(profile);
+    //console.log(id);
+    //console.log(username);
     const user = {
       auth_id: id,
       username: username,
       email: profile['emails'][0]['value'],
+      avatar: 'https://avatars.dicebear.com/api/personas/' + id + '.svg',
     };
     const newUser = await this.authService.validateUser(user);
     //if (!newUser) {
@@ -31,4 +31,3 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
     return newUser;
   }
 }
-*/

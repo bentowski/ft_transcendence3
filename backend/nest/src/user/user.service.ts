@@ -11,7 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { ProfileEntity } from './entities/profile-entity';
 
 @Injectable()
 export class UserService {
@@ -21,30 +21,49 @@ export class UserService {
   ) {}
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
-    const { username } = user42;
-    const user = await this.findOnebyUsername(username);
+    //const { username } = user42;
+    let user: UserEntity = undefined;
+    user = await this.findOnebyUsername(user42.username);
+    console.log('vaildateuser42 username = ' + user42.username);
+    /*
     if (user) {
-      user42.username = username;
+      user.username = username;
+    } else {
+      user = await this.createUser42(user42);
     }
-    const newUser: UserEntity = await this.createUser42(user42);
-    return newUser;
+    */
+    if (!user) user = await this.createUser42(user42);
+    return user;
+  }
+
+  async currentUser(user: UserEntity): Promise<UserEntity> {
+    //let foundUser: UserEntity = undefined;
+    console.log('set test = ' + user.user_id);
+    const foundUser: UserEntity = await this.findOnebyID(user.user_id);
+    if (!user) throw new NotFoundException('cant find user');
+    //const { ...response } = user;
+    //console.log('get current user = ' + response);
+    return foundUser;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {
+    console.log('creating new user42');
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
-    user.username = user42.username;
+    //user.username = user42.username;
     return this.userRepository.save(user);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { auth_id, username, email } = createUserDto;
-    const user: UserEntity = this.userRepository.create(createUserDto);
+    let user: UserEntity = undefined;
+    user = this.userRepository.create(createUserDto);
     try {
       user.auth_id = auth_id;
       user.username = username;
       user.email = email;
-      user.avatar = "https://avatars.dicebear.com/api/personas/" + auth_id + ".svg";
+      user.avatar =
+        'https://avatars.dicebear.com/api/personas/' + auth_id + '.svg';
       user.createdAt = new Date();
       await this.userRepository.save(user);
     } catch (err) {
@@ -54,12 +73,18 @@ export class UserService {
     return user;
   }
 
-  findAll(): Promise<UserEntity[]> {
-    return this.userRepository.find();
+  async findAll(): Promise<UserEntity[]> {
+    let users: UserEntity[] = undefined;
+    users = await this.userRepository.find();
+    return users;
   }
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
-    const findUsername = await this.userRepository.findOneBy({ username });
+    let findUsername: UserEntity = undefined;
+    findUsername = await this.userRepository.findOneBy({ username });
+    //const usr: any = {
+    //  username: findUsername.username,
+    //};
     return findUsername;
   }
 
@@ -67,7 +92,8 @@ export class UserService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    const user = await this.findOneByAuthId(userId);
+    let user: UserEntity = undefined;
+    user = await this.findOneByAuthId(userId);
     console.log(user);
     const { username, avatar } = updateUserDto;
 
@@ -89,12 +115,19 @@ export class UserService {
   }
 
   async findOneByAuthId(auth_id: string): Promise<UserEntity> {
-    const findAuthId = await this.userRepository.findOneBy({ auth_id });
+    let findAuthId: UserEntity = undefined;
+    findAuthId = await this.userRepository.findOneBy({ auth_id });
     return findAuthId;
   }
 
+  async getAvatar(auth_id: string) {
+    //const user: UserEntity = await this.userRepository.findOneBy({ auth_id });
+    return /*user.avatar */;
+  }
+
   async findOnebyID(user_id?: string): Promise<UserEntity> {
-    const findId = await this.userRepository.findOneBy({ user_id });
+    let findId: UserEntity = undefined;
+    findId = await this.userRepository.findOneBy({ user_id });
     return findId;
   }
 }
