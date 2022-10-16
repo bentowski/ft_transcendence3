@@ -50,13 +50,14 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 
 
 	componentDidMount: any = async () => {
-		let user = await Request('GET', {}, {}, "http://localhost:3000/user/" + this.state.id)
+		let user = await Request('GET', {}, {}, "http://localhost:3000/user/id/" + this.state.id)
 		console.log(user)
-		this.setState({ login: user.username })
+		if (user)
+			this.setState({ login: user.username })
 	}
 
 	render() {
-		console.log(this.state.id)
+		console.log("ID :" + this.state.id)
 		let items: any = this.renderUserCards(1)
 		return (
 			<div key={this.state.id * 5 / 3}>

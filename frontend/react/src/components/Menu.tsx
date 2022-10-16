@@ -14,8 +14,8 @@ class Menu extends Component {
     console.log("newUser = " + newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
-      this.setState({ avatar: newUser.avatar });
-      this.setState({ username: newUser.username });
+      this.setState({ avatar: newUser.user.avatar });
+      this.setState({ username: newUser.user.username });
     }
   };
 

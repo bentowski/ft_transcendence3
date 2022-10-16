@@ -28,10 +28,12 @@ class App extends Component {
     const string = JSON.stringify(decoded);
     const user = JSON.parse(string);
     const data = {
-      auth_id: user.auth_id,
-      user_id: user.user_id,
-      avatar: user.avatar,
-      username: user.username,
+      user: {
+        auth_id: user.auth_id,
+        user_id: user.user_id,
+        avatar: user.avatar,
+        username: user.username,
+      }
     };
     sessionStorage.setItem("data", JSON.stringify(data));
     return data;

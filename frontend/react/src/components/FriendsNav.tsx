@@ -11,14 +11,18 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
   }
 
   componentDidMount: any = async () => {
+    console.log("test")
     let friends = await Request('GET', {}, {}, "http://localhost:3000/user/")
+    console.log("friends : "+ friends)
     if (!friends)
       return ;
     this.setState({ friends: friends })
+    console.log("FRIENDS : " + this.state.friends)
   }
 
   render() {
     let friends: Array<any> = [];
+    // console.log("FRIENDS : " + this.state.friends)
     let onlines;
     if (this.state.friends.length > 0)
     {

@@ -1,6 +1,6 @@
-function checkIfJSONisNotEmpty(obj: any) {
-  return Object.keys(obj).length > 0;
-}
+// function checkIfJSONisNotEmpty(obj: any) {
+//   return Object.keys(obj).length > 0;
+// }
 
 async function Request(type: string, headers: any, body: any, url: string) {
   console.log(url);
@@ -9,8 +9,7 @@ async function Request(type: string, headers: any, body: any, url: string) {
       method: type,
     };
     const response: any = await fetch(url, settings);
-    //console.log("check = " + checkIfJSONisNotEmpty(response.json()));
-    if (response.ok && checkIfJSONisNotEmpty(response.json())) {
+    if (response.ok) {
       return await response.json();
     } else {
       return null;
@@ -22,7 +21,7 @@ async function Request(type: string, headers: any, body: any, url: string) {
       body: JSON.stringify(body),
     };
     const response: any = await fetch(url, settings);
-    if (response.ok && checkIfJSONisNotEmpty(response.json())) {
+    if (response.ok) {
       return await response.json();
     } else {
       return null;
