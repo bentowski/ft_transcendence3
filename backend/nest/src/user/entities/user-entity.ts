@@ -32,12 +32,6 @@ export class UserEntity {
   @Column({
     default: '',
   })
-  @Exclude()
-  secret: string;
-
-  @Column({
-    default: '',
-  })
   avatar: string;
 
   @OneToMany(() => HistoryEntity, (parties) => parties.game_id)
@@ -76,8 +70,15 @@ export class UserEntity {
 
   @Column({
     default: '',
+    nullable: true,
   })
-  authStrategy: string;
+  @Exclude()
+  twoFASecret: string;
+
+  @Column({
+    default: 0,
+  })
+  isTwoFA: number;
 
   @Column({
     default: () => '((CURRENT_DATE))',

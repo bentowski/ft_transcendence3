@@ -51,6 +51,7 @@ const configService = new ConfigService(process.env).ensureValues([
   'API_CLIENT_SECRET',
   'API_CALLBACK_URL',
   'SECRET_KEY',
+  'TWO_FA_APP_NAME',
 ]);
 
 export { configService };

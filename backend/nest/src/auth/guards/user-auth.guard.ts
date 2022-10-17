@@ -1,25 +1,30 @@
 import {
+  Injectable,
+  /*
   CanActivate,
   ExecutionContext,
-  Injectable,
   Inject,
+  UnauthorizedException,
+  */
 } from '@nestjs/common';
-import UserEntity from '../../user/entities/user-entity';
-import { AuthService } from '../auth.service';
+import { AuthGuard } from '@nestjs/passport';
+//import { Reflector } from '@nestjs/core';
+//import UserEntity from '../../user/entities/user-entity';
+//import { AuthService } from '../auth.service';
+//import { JwtService } from '@nestjs/jwt';
+//import { Observable } from 'rxjs';
 //import { UserService } from '../user.service';
 //import { Observable } from 'rxjs';
 
+/*
 @Injectable()
 export class UserAuthGuard implements CanActivate {
-  constructor(
-    @Inject(AuthService)
-    private authService: AuthService,
-  ) {}
-
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user: UserEntity = request.user;
-
-    return true;
+    return request.isAuthenticated();
   }
 }
+*/
+
+@Injectable()
+export class UserAuthGuard extends AuthGuard('jwt') {}

@@ -1,3 +1,4 @@
+/*
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -11,3 +12,4 @@ export class ProfileEntity {
   @OneToOne(() => ProfileEntity, (user) => user.username)
   profile: ProfileEntity;
 }
+*/
