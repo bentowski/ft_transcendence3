@@ -3,6 +3,7 @@ import { UserService } from '../user/user.service';
 import UserEntity from '../user/entities/user-entity';
 import { User42Dto } from '../user/dto/user42.dto';
 import { JwtService } from '@nestjs/jwt';
+import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
@@ -26,8 +27,16 @@ export class AuthService {
   getAvatar(authId: string) {
     return this.userService.getAvatar(authId);
   }
+
   findUser(authId: string): Promise<UserEntity> {
     console.log('finduser auth service called');
     return this.userService.findOneByAuthId(authId);
   }
+  /*
+
+  logout(req, res) {
+
+  }
+
+   */
 }

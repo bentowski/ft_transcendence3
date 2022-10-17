@@ -29,6 +29,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: PayloadInterface): Promise<UserEntity> {
     const { auth_id } = payload;
+    //let access_token = undefined;
+    //access_token = req?.cookies['jwt'];
     console.log('auth_id = ' + auth_id);
     //console.log(req.user);
     const newUser = await this.authService.findUser(auth_id);

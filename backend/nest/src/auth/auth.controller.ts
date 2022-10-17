@@ -5,6 +5,7 @@ import { PayloadInterface } from './interfaces/payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import jwt from 'jwt-decode';
 import UserEntity from '../user/entities/user-entity';
+import {serialize} from "cookie";
 
 @Controller('auth')
 export class AuthController {
@@ -61,8 +62,24 @@ export class AuthController {
 
   //@UseGuards(AuthenticatedGuard)
   @Get('logout')
-  logout() {
-    console.log('logout user');
-    return;
+  logout(@Req() req, @Res() res) {
+    //const { cookies } = req;
+    const jwt = req?.cookies['jwt'];
+    console.log(jwt);
+    if (!jwt) {
+      return res.status(401).json({
+        status: 'error',
+        error: 'unauthorized',
+      });
+    }
+    const serialized = serialize('jwt', null, {
+      maxAge: -1,
+      path: '/',
+    });
+    res.setHeader('Set-Cookie', serialized);
+    res.status(200).json({
+      status: 'success',
+      message: 'Logged out',
+    });
   }
 }
