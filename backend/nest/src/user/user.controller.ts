@@ -42,23 +42,23 @@ export const storage = {
   }),
 };
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+import {PayloadInterface} from "../auth/interfaces/payload.interface";
 
 @Controller('user')
-@UseGuards(AuthGuard('jwt'))
+//@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get('current')
-  currentUser(@Req() req): Promise<UserEntity> {
-    const user: UserEntity = req.user;
-    console.log('request = ' + req.user);
-    return this.userService.currentUser(user);
-  }
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
+  }
+
+  @Get('current')
+  currentUser(@Req() req: PayloadInterface): Promise<UserEntity> {
+    console.log('request = ' + req);
+    return this.userService.currentUser(req.auth_id);
   }
 
   @Get('/name/:username')

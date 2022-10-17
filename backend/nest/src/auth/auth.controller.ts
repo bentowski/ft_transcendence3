@@ -1,15 +1,20 @@
-import { Controller, Get, Req, Res, Session, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { IntraAuthGuard } from './guards/intra-auth.guard';
 import { PayloadInterface } from './interfaces/payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import jwt from 'jwt-decode';
-import UserEntity from '../user/entities/user-entity';
-import {serialize} from "cookie";
+import { TwoFACodeDto } from './dto/twofacode.dto';
+//import UserEntity from '../user/entities/user-entity';
+//import { serialize } from "cookie";
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private authService: AuthService,
+  ) {}
 
   @Get('login')
   @UseGuards(IntraAuthGuard)
@@ -60,6 +65,7 @@ export class AuthController {
   }
   */
 
+  /*
   //@UseGuards(AuthenticatedGuard)
   @Get('logout')
   logout(@Req() req, @Res() res) {
@@ -82,4 +88,22 @@ export class AuthController {
       message: 'Logged out',
     });
   }
+  */
+
+  @Post('logout')
+  async logout(@Req() request: PayloadInterface, @Res() response: Response) {
+    response.setHeader('Set-Cookie', this.authService.getCookieLogout());
+    return response.sendStatus(200);
+  }
+
+  @Post('2fa/generate')
+  async register(@Res() response, @Req() request: PayloadInterface) {
+    const { otpauthUrl } = await this.authService.generateTwoFASecret(
+      request.auth_id,
+    );
+    return this.authService.pipeQrCodeStream(response, otpauthUrl);
+  }
+
+  //@Post('2fa/activate')
+  //async turnOnTwoFAAuth(@Req() request: PayloadInterface, @Body() { twoFACode } : TwoFACodeDto)
 }

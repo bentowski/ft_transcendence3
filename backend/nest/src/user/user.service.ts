@@ -36,11 +36,11 @@ export class UserService {
     return user;
   }
 
-  async currentUser(user: UserEntity): Promise<UserEntity> {
+  async currentUser(auth_id: string): Promise<UserEntity> {
     //let foundUser: UserEntity = undefined;
-    console.log('set test = ' + user.user_id);
-    const foundUser: UserEntity = await this.findOnebyID(user.user_id);
-    if (!user) throw new NotFoundException('cant find user');
+    console.log('set test = ' + auth_id);
+    const foundUser: UserEntity = await this.findOneByAuthId(auth_id);
+    if (!foundUser) throw new NotFoundException('cant find user');
     //const { ...response } = user;
     //console.log('get current user = ' + response);
     return foundUser;
@@ -89,16 +89,18 @@ export class UserService {
   }
 
   async updateUser(
-    userId: string,
+    authId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
     let user: UserEntity = undefined;
-    user = await this.findOneByAuthId(userId);
+    user = await this.findOneByAuthId(authId);
     console.log(user);
-    const { username, avatar } = updateUserDto;
+    const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
 
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
+    if (twoFASecret) user.twoFASecret;
+    if (isTwoFA) user.isTwoFA = isTwoFA;
 
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
 
@@ -129,5 +131,23 @@ export class UserService {
     let findId: UserEntity = undefined;
     findId = await this.userRepository.findOneBy({ user_id });
     return findId;
+  }
+
+  async setTwoFASecret(secret: string, user: UserEntity) {
+    return this.updateUser(user.auth_id, {
+      username: user.username,
+      avatar: user.avatar,
+      twoFASecret: secret,
+      isTwoFA: user.isTwoFA,
+    });
+  }
+
+  async turnOnTwoFA(auth_id: string, user: UserEntity) {
+    return this.updateUser(auth_id, {
+      username: user.username,
+      avatar: user.avatar,
+      twoFASecret: user.twoFASecret,
+      isTwoFA: 1,
+    });
   }
 }

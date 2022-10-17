@@ -8,7 +8,7 @@ import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
 import { getCookies } from "./components/utils/GetCookies";
 import jwt_decode from "jwt-decode";
-//import Request from "./components/utils/Requests";
+import Request from "./components/utils/Requests";
 //import axios from "axios";
 //import Cookies from "js-cookie";
 
@@ -17,16 +17,18 @@ class App extends Component {
     super(props)
   //check global state
     this.state = {
-      isAuth: false,
+      //isAuth: false,
       currentUser: undefined,
     }
   }
 
-  getCurrentUser() {
-    const access_token = getCookies("jwt");
-    const decoded = jwt_decode(access_token);
-    const string = JSON.stringify(decoded);
-    const user = JSON.parse(string);
+  async getCurrentUser() {
+    let user = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/current"
+    )
     const data = {
       user: {
         auth_id: user.auth_id,
@@ -41,11 +43,11 @@ class App extends Component {
 
   componentDidMount = async () => {
     const user = this.getCurrentUser();
-
+    //console.log('component did user = ' + user);
     if (user) {
       this.setState({
         currentUser: user,
-        isAuth: true,
+        //isAuth: true,
       });
     }
   };

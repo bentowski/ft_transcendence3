@@ -23,7 +23,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           return access_token;
         },
       ]),
-
+      /*
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          return request?.cookies?.Authentication;
+        },
+      ]),
+       */
     });
   }
 
@@ -46,7 +52,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       //avatar: newUser.avatar,
     }
     */
-    console.log('GOGOGO');
     return newUser;
   }
 }
