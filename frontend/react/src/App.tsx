@@ -6,36 +6,32 @@ import Page from "./pages/Page";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
-import { getCookies } from "./components/utils/GetCookies";
-import jwt_decode from "jwt-decode";
 import Request from "./components/utils/Requests";
 //import axios from "axios";
 //import Cookies from "js-cookie";
 
 class App extends Component {
   constructor(props: any) {
-    super(props)
-  //check global state
+    super(props);
     this.state = {
-      //isAuth: false,
       currentUser: undefined,
-    }
+    };
   }
 
   async getCurrentUser() {
     let user = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/current"
-    )
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/current"
+    );
     const data = {
       user: {
         auth_id: user.auth_id,
         user_id: user.user_id,
         avatar: user.avatar,
         username: user.username,
-      }
+      },
     };
     sessionStorage.setItem("data", JSON.stringify(data));
     return data;
@@ -43,17 +39,14 @@ class App extends Component {
 
   componentDidMount = async () => {
     const user = this.getCurrentUser();
-    //console.log('component did user = ' + user);
     if (user) {
       this.setState({
         currentUser: user,
-        //isAuth: true,
       });
     }
   };
 
   render() {
-    // const { currentUser, isAuth } = this.state;
     return (
       <div>
         <Routes>

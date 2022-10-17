@@ -11,7 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ProfileEntity } from './entities/profile-entity';
+//import { ProfileEntity } from './entities/profile-entity';
 
 @Injectable()
 export class UserService {
@@ -38,19 +38,14 @@ export class UserService {
 
   async currentUser(auth_id: string): Promise<UserEntity> {
     //let foundUser: UserEntity = undefined;
-    console.log('set test = ' + auth_id);
     const foundUser: UserEntity = await this.findOneByAuthId(auth_id);
     if (!foundUser) throw new NotFoundException('cant find user');
-    //const { ...response } = user;
-    //console.log('get current user = ' + response);
     return foundUser;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {
-    console.log('creating new user42');
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
-    //user.username = user42.username;
     return this.userRepository.save(user);
   }
 
@@ -82,9 +77,6 @@ export class UserService {
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     let findUsername: UserEntity = undefined;
     findUsername = await this.userRepository.findOneBy({ username });
-    //const usr: any = {
-    //  username: findUsername.username,
-    //};
     return findUsername;
   }
 
@@ -96,14 +88,11 @@ export class UserService {
     user = await this.findOneByAuthId(authId);
     console.log(user);
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
     if (twoFASecret) user.twoFASecret;
     if (isTwoFA) user.isTwoFA = isTwoFA;
-
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
-
     try {
       await this.userRepository.save(user);
     } catch (err) {

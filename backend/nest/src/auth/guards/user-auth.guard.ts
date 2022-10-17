@@ -1,15 +1,18 @@
 import {
+  Injectable,
+  /*
   CanActivate,
   ExecutionContext,
-  Injectable,
-  Inject, UnauthorizedException,
+  Inject,
+  UnauthorizedException,
+  */
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import UserEntity from '../../user/entities/user-entity';
-import { AuthService } from '../auth.service';
-import { JwtService } from "@nestjs/jwt";
-import { AuthGuard } from "@nestjs/passport";
-import {Observable} from "rxjs";
+import { AuthGuard } from '@nestjs/passport';
+//import { Reflector } from '@nestjs/core';
+//import UserEntity from '../../user/entities/user-entity';
+//import { AuthService } from '../auth.service';
+//import { JwtService } from '@nestjs/jwt';
+//import { Observable } from 'rxjs';
 //import { UserService } from '../user.service';
 //import { Observable } from 'rxjs';
 
@@ -24,5 +27,4 @@ export class UserAuthGuard implements CanActivate {
 */
 
 @Injectable()
-export class UserAuthGuard extends AuthGuard('jwt') {
-}
+export class UserAuthGuard extends AuthGuard('jwt') {}

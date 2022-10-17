@@ -5,8 +5,8 @@ import { User42Dto } from '../user/dto/user42.dto';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
-import { qrcode } from 'qrcode';
-import { serialize } from 'cookie';
+//import { qrcode } from 'qrcode';
+//import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
@@ -17,7 +17,6 @@ export class AuthService {
   ) {}
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
-    console.log('validate user auth service called');
     return this.userService.validateUser42(user42);
   }
 
@@ -32,7 +31,6 @@ export class AuthService {
   }
 
   findUser(authId: string): Promise<UserEntity> {
-    console.log('finduser auth service called');
     return this.userService.findOneByAuthId(authId);
   }
 
@@ -63,7 +61,7 @@ export class AuthService {
     return authenticator.verify({
       token: twoFACode,
       secret: user.twoFASecret,
-    })
+    });
   }
   /*
 
