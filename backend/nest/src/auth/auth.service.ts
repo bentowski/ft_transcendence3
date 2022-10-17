@@ -26,7 +26,7 @@ export class AuthService {
   getAvatar(authId: string) {
     return this.userService.getAvatar(authId);
   }
-  findUser(authId: string): Promise<UserEntity | undefined> {
+  findUser(authId: string): Promise<UserEntity> {
     console.log('finduser auth service called');
     return this.userService.findOneByAuthId(authId);
   }

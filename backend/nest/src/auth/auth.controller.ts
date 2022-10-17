@@ -25,17 +25,18 @@ export class AuthController {
     console.log('successful login thru 42 api');
     const username: string = req.user['username'];
     const auth_id: string = req.user['auth_id'];
-    const avatar: string = req.user['avatar'];
+    //const avatar: string = req.user['avatar'];
     //const status = 0;
-    const payload: PayloadInterface = { auth_id, username, avatar };
+    const payload: PayloadInterface = { auth_id, username };
     //console.log('username = ' + username);
     //console.log('auth_id = ' + auth_id);
+    //const secretOrKey = process.env.SECRET_KEY;
     const access_token: string = await this.jwtService.sign(payload);
     //console.log('verify = ' + this.jwtService.verify(access_token));
-    console.log(res.cookie);
+    console.log(access_token);
     res
       .status(202)
-      .cookie('jwt', access_token, { httpOnly: false })
+      .cookie('jwt', access_token, { httpOnly: true })
       .redirect('http://localhost:8080');
     //return req.user;
   }

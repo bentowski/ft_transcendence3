@@ -22,7 +22,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
       auth_id: id,
       username: username,
       email: profile['emails'][0]['value'],
-      avatar: 'https://avatars.dicebear.com/api/personas/' + id + '.svg',
+      //avatar: 'https://avatars.dicebear.com/api/personas/' + id + '.svg',
     };
     const newUser = await this.authService.validateUser(user);
     //if (!newUser) {

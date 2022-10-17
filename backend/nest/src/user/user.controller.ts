@@ -44,6 +44,7 @@ export const storage = {
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

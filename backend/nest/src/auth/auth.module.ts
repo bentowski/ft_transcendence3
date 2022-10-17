@@ -16,16 +16,16 @@ import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     UserModule,
-    JwtModule.register({
-      secret: process.env.SECRET_KEY,
-      signOptions: {
-        expiresIn: 10000,
-      },
-    }),
     PassportModule.register({
       defaultStrategy: 'jwt',
       session: false,
       property: 'user',
+    }),
+    JwtModule.register({
+      secret: process.env.SECRET_KEY,
+      signOptions: {
+        expiresIn: 1000000,
+      },
     }),
     /* TypeOrmModule.forFeature([UserEntity, SessionEntity ]), */
   ],
