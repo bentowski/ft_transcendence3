@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
-import { ProfileEntity } from './profile-entity';
 
 @Entity('user')
 export class UserEntity {
@@ -64,9 +63,6 @@ export class UserEntity {
 
   @OneToMany(() => UserEntity, (friends) => friends.user_id)
   friends: UserEntity[];
-
-  @OneToOne(() => UserEntity, (profile) => profile.username)
-  profile: ProfileEntity;
 
   @Column({
     default: '',
