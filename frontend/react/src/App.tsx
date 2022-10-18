@@ -25,6 +25,9 @@ class App extends Component {
       {},
       "http://localhost:3000/user/current"
     );
+    if (!user) {
+      return;
+    }
     const data = {
       user: {
         auth_id: user.auth_id,
