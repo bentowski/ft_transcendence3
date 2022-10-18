@@ -29,7 +29,7 @@ class Menu extends Component {
             <p className="m-0">chat</p>
           </Link>
           <Link to={"/history"}>
-            <p className="m-0">history</p>
+            <p className="m-0 mx-2">history</p>
           </Link>
         </div>{" "}
         {/* homeButtonDiv */}
