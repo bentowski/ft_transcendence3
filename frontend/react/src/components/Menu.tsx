@@ -28,6 +28,9 @@ class Menu extends Component {
           <Link to={"/tchat"}>
             <p className="m-0">chat</p>
           </Link>
+          <Link to={"/history"}>
+            <p className="m-0">history</p>
+          </Link>
         </div>{" "}
         {/* homeButtonDiv */}
         <div className="titleDiv">
