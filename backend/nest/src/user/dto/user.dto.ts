@@ -1,6 +1,7 @@
+/*
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
-/* data sent when requesting user informations */
+//data sent when requesting user informations
 
 export class UserDto {
   @IsNotEmpty()
@@ -13,3 +14,4 @@ export class UserDto {
   @IsEmail()
   email: string;
 }
+*/
