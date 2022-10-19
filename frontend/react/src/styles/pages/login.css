@@ -24,12 +24,12 @@ button {
 }
 
 button:hover {
-  background: none;
-  color: 0;
-  background-clip: orange;
-  /* color: rgba(125, 0, 125, 1);
-  -webkit-text-fill-color: transparent; */
-  -webkit-background-clip: text;
+  /* background: none;
+  color: 0; */
+  background: orange;
+  color: rgba(125, 0, 125, 1);
+  /* -webkit-text-fill-color: transparent; */
+  /* -webkit-background-clip: text; */
   /* color: transparent;
   mix-blend-mode: multiply; */
 }
