@@ -1,0 +1,47 @@
+.Login {
+  position: fixed;
+  top: 50vh;
+  bottom: auto;
+  left: 50vw;
+  right: auto;
+  /* width: 50vw;
+  height: 50vh; */
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(125, 0, 125, 0.2);
+  border-radius: 20px;
+}
+
+.Logo {
+  width: 50px;
+}
+
+button {
+  border: 2px solid orange;
+  border-radius: 10px;
+  background: none;
+  color: orange;
+}
+
+button:hover {
+  background: none;
+  color: 0;
+  background-clip: orange;
+  /* color: rgba(125, 0, 125, 1);
+  -webkit-text-fill-color: transparent; */
+  -webkit-background-clip: text;
+  /* color: transparent;
+  mix-blend-mode: multiply; */
+}
+
+.bi {
+  color: orange;
+}
+
+.bi-lock-fill {
+  display: none;
+}
+
+.bi-lock:hover .bi-lock-fill {
+  display: block;
+}
