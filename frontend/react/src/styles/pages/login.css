@@ -24,24 +24,82 @@ button {
 }
 
 button:hover {
-  /* background: none;
-  color: 0; */
-  background: orange;
-  color: rgba(125, 0, 125, 1);
-  /* -webkit-text-fill-color: transparent; */
-  /* -webkit-background-clip: text; */
-  /* color: transparent;
-  mix-blend-mode: multiply; */
+  position: relative;
+  outline: none;
+  color: black;
+  mix-blend-mode: screen;
 }
 
-.bi {
+button:hover::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: orange;
+  border-radius: 4px;
+  content: '';
+  mix-blend-mode: color;
+}
+
+button:focus {
+  position: relative;
+  outline: none;
+  color: black;
+  border: 2px solid white;
+  mix-blend-mode: screen;
+}
+
+button:focus::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: white;
+  border-radius: 4px;
+  content: '';
+  mix-blend-mode: color;
+}
+
+a {
   color: orange;
 }
 
-.bi-lock-fill {
+a:hover + .bi-lock {
+  color: orange;
+}
+
+a:focus {
+  color: white;
+}
+
+/* .bi {
+  color: orange;
+} */
+
+.bi-lock:hover {
+  color: transparent;
+}
+
+/* .bi-lock:focus {
+  color: aqua;
+} */
+
+/* .bi-lock-fill {
+  transform: translate(1.9px, 0);
+} */
+
+.bi-unlock-fill {
+  transform: translate(1.9px, 0);
   display: none;
 }
 
-.bi-lock:hover .bi-lock-fill {
+/* .bi-unlock-fill {
+  display: none;
+} */
+
+.bi-lock:hover .bi-unlock-fill {
   display: block;
+  color: orange;
 }
