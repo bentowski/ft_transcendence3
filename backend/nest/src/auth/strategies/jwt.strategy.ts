@@ -11,7 +11,7 @@ import { Request } from 'express';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private authService: AuthService) {
     super({
-      secretOrKey: process.env.SECRET_KEY,
+      secretOrKey: process.env.JWT_SECRET_KEY,
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {

@@ -9,7 +9,7 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import { getCookies } from "./components/utils/GetCookies";
 import jwt_decode from "jwt-decode";
-//import Request from "./components/utils/Requests";
+import Request from "./components/utils/Requests";
 //import axios from "axios";
 //import Cookies from "js-cookie";
 
