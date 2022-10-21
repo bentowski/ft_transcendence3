@@ -90,8 +90,9 @@ class Profil extends Component<
       {},
       "http://localhost:3000/user/name/" + username
     );
+    console.log("LAAAAA", user)
     if (!user) return;
-    this.setState({ login: user.username });
+      this.setState({ login: user.username, avatar: user.avatar });
   };
 
   getHistory = async () => {

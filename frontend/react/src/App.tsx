@@ -35,7 +35,8 @@ class App extends Component {
       user: {
         auth_id: user.auth_id,
         user_id: user.user_id,
-        avatar: user.avatar,
+        avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
+        // avatar: user.avatar,
         username: user.username,
       },
     };
