@@ -1,4 +1,4 @@
-import { Injectable, Req, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { AuthService } from '../auth.service';
@@ -11,11 +11,8 @@ import { Request } from 'express';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private authService: AuthService) {
     super({
-      secretOrKey: process.env.SECRET_KEY,
-      ignoreExpiration: true,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      passReqToCallback: true,
-      /*
+      secretOrKey: `${process.env.JWT_SECRET_KEY}`,
+      ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           let access_token = undefined;
@@ -23,18 +20,21 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           return access_token;
         },
       ]),
-       */
     });
   }
 
-  async validate(@Req() req: Request, payload: PayloadInterface) {
+  async validate(payload: PayloadInterface): Promise<UserEntity> {
     const { auth_id } = payload;
-    console.log('request');
-    console.log(req.user);
     const newUser = await this.authService.findUser(auth_id);
+    console.log(newUser);
     if (!newUser) {
       throw new UnauthorizedException('Invalid Token');
     }
-    return newUser;
+    if (!newUser.isTwoFA) {
+      return newUser;
+    }
+    if (payload.isAuth) {
+      return newUser;
+    }
   }
 }

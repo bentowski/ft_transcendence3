@@ -1,23 +1,24 @@
-// import Request from "../components/utils/Requests";
 import { Component } from "react";
 import "../styles/pages/login.css";
 // import { AuthContext } from "../context/AuthContext";
 
 class Login extends Component<any, any> {
-  // remoteLogin = () => {
-  //   fetch("http://localhost:3000/auth/login", { credentials: "include" }).then(
-  //     (response) => {
-  //       return response
-  //         .json()
-  //         .then((jsonResponse) => {
-  //           console.log(jsonResponse);
-  //         })
-  //         .catch((err) => {
-  //           console.log("Error: " + err);
-  //         });
-  //     }
-  //   );
-  // };
+  /*
+  remoteLogin = () => {
+     fetch("http://localhost:3000/auth/login", { credentials: "include" }).then(
+       (response) => {
+         return response
+           .json()
+           .then((jsonResponse) => {
+             console.log(jsonResponse);
+           })
+           .catch((err) => {
+             console.log("Error: " + err);
+           });
+       }
+    );
+  };
+   */
 
   render() {
     return (
@@ -44,5 +45,4 @@ class Login extends Component<any, any> {
     );
   }
 }
-//<div>{this.msg}</div>
 export default Login;

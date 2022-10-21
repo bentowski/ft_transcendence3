@@ -9,32 +9,36 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import { getCookies } from "./components/utils/GetCookies";
 import jwt_decode from "jwt-decode";
-//import Request from "./components/utils/Requests";
+import Request from "./components/utils/Requests";
 //import axios from "axios";
 //import Cookies from "js-cookie";
 
 class App extends Component {
   constructor(props: any) {
-    super(props)
-  //check global state
+    super(props);
     this.state = {
-      isAuth: false,
       currentUser: undefined,
-    }
+    };
   }
 
-  getCurrentUser() {
-    const access_token = getCookies("jwt");
-    const decoded = jwt_decode(access_token);
-    const string = JSON.stringify(decoded);
-    const user = JSON.parse(string);
+  async getCurrentUser() {
+    let user = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/current"
+    );
+    if (!user) {
+      return;
+    }
     const data = {
       user: {
         auth_id: user.auth_id,
         user_id: user.user_id,
-        avatar: user.avatar,
+        avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
+        // avatar: user.avatar,
         username: user.username,
-      }
+      },
     };
     sessionStorage.setItem("data", JSON.stringify(data));
     return data;
@@ -42,17 +46,14 @@ class App extends Component {
 
   componentDidMount = async () => {
     const user = this.getCurrentUser();
-
     if (user) {
       this.setState({
         currentUser: user,
-        isAuth: true,
       });
     }
   };
 
   render() {
-    // const { currentUser, isAuth } = this.state;
     return (
       <div>
         <Routes>
