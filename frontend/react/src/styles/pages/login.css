@@ -16,90 +16,21 @@
   width: 50px;
 }
 
-button {
-  border: 2px solid orange;
-  border-radius: 10px;
-  background: none;
-  color: orange;
-}
-
-button:hover {
-  position: relative;
-  outline: none;
-  color: black;
-  mix-blend-mode: screen;
-}
-
-button:hover::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: orange;
-  border-radius: 4px;
-  content: '';
-  mix-blend-mode: color;
-}
-
-button:focus {
-  position: relative;
-  outline: none;
-  color: black;
-  border: 2px solid white;
-  mix-blend-mode: screen;
-}
-
-button:focus::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: white;
-  border-radius: 4px;
-  content: '';
-  mix-blend-mode: color;
-}
-
-a {
-  color: orange;
-}
-
-a:hover + .bi-lock {
-  color: orange;
-}
-
-a:focus {
-  color: white;
-}
-
-/* .bi {
-  color: orange;
-} */
-
 .bi-lock:hover {
   color: transparent;
 }
-
-/* .bi-lock:focus {
-  color: aqua;
-} */
-
-/* .bi-lock-fill {
-  transform: translate(1.9px, 0);
-} */
 
 .bi-unlock-fill {
   transform: translate(1.9px, 0);
   display: none;
 }
 
-/* .bi-unlock-fill {
-  display: none;
-} */
-
 .bi-lock:hover .bi-unlock-fill {
   display: block;
   color: orange;
+}
+
+.bi-lock:active .bi-unlock-fill {
+  display: block;
+  color: white;
 }

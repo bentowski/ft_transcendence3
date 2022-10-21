@@ -65,29 +65,28 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		this.setState({ modalType: "Login", modalTitle: "Change user name" })
 	}
 
-  /*
-  checkIfJSONisNotEmpty = (obj: any) => {
-    return Object.keys(obj).length > 0;
-  };
-  */
+	/*
+	checkIfJSONisNotEmpty = (obj: any) => {
+		return Object.keys(obj).length > 0;
+	};
+	*/
 
 	getUser = async (username: string) => {
-		if (!username)
-		{
+		if (!username) {
 			let newUser: any = sessionStorage.getItem('data');
 			newUser = JSON.parse(newUser);
 			username = newUser.user.username
 		}
 		let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + username)
 		if (!user)
-			return ;
+			return;
 		this.setState({ login: user.username })
-		}
+	}
 
 	getHistory = async () => {
 		let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
 		if (!histories)
-			return ;
+			return;
 		this.setState({ histories: histories })
 	}
 
@@ -138,9 +137,9 @@ class Profil extends Component<{}, { avatar: any, modalType: string, modalTitle:
 		}
 		return (
 			<div className="Profil">
+				<Modal title={this.state.modalTitle} calledBy={this.state.modalType} />
 				<div className="ProfilHeader">
 					<div className="ProfilInfoPers">
-						<Modal title={this.state.modalTitle} calledBy={this.state.modalType} />
 						<img onClick={this.promptAvatar} className="modifAvatar mb-2" src={this.state.avatar} alt="" />
 						<h3 onClick={this.promptLogin}>{this.state.login}</h3>
 					</div> {/* fin ProfilInfPer */}
