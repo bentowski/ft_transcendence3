@@ -20,7 +20,7 @@ import { AuthService } from '../auth/auth.service';
     PassportModule,
     TypeOrmModule.forFeature([UserEntity, HistoryEntity]),
   ],
-  providers: [UserService, AuthService],
+  providers: [UserService /*,  AuthService */],
   controllers: [UserController],
   exports: [UserService],
 })

@@ -24,11 +24,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
+import { AuthGuard } from '@nestjs/passport';
+import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-//import { AuthGuard } from '@nestjs/passport';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
 //import { fileURLToPath } from 'url';
@@ -40,26 +40,26 @@ export const storage = {
       let filename: string = file.originalname.replace(/\s/g, ''); // + uuidv4();
       const lastDot = filename.lastIndexOf('.');
       filename =
-        filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
+          filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
       cb(null, `${filename}`);
     },
   }),
 };
 
 @Controller('user')
-//@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
+  //@UseGuards(AuthGuard('jwt'))
   getUsers() {
     return this.userService.findAll();
   }
 
   @Get('current')
   currentUser(@Req() req: PayloadInterface): Promise<UserEntity> {
-    console.log('request = ' + req);
+    //console.log('request = ' + req);
     return this.userService.currentUser(req.auth_id);
   }
 
@@ -99,8 +99,8 @@ export class UserController {
 
   @Patch('settings/:id')
   updateUser(
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
+      @Param('id') userId: string,
+      @Body() updateUserDto: UpdateUserDto,
   ) {
     // console.log(updateUserDto);
     return this.userService.updateUser(userId, updateUserDto);

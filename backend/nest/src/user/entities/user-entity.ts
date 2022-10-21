@@ -13,7 +13,7 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ default: '' })
+  @Column({ nullable: false, unique: true })
   auth_id: string;
 
   @Column({
@@ -24,7 +24,7 @@ export class UserEntity {
 
   @Column({
     unique: true,
-    default: '',
+    nullable: false,
   })
   email: string;
 
