@@ -11,7 +11,7 @@ import { Request } from 'express';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private authService: AuthService) {
     super({
-      secretOrKey: process.env.JWT_SECRET_KEY,
+      secretOrKey: `${process.env.JWT_SECRET_KEY}`,
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
@@ -26,9 +26,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(payload: PayloadInterface): Promise<UserEntity> {
     const { auth_id } = payload;
     const newUser = await this.authService.findUser(auth_id);
+    console.log(newUser);
     if (!newUser) {
       throw new UnauthorizedException('Invalid Token');
     }
-    return newUser;
+    if (!newUser.isTwoFA) {
+      return newUser;
+    }
+    if (payload.isAuth) {
+      return newUser;
+    }
   }
 }
