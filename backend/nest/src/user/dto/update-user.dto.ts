@@ -7,4 +7,8 @@ export class UpdateUserDto {
 
   @IsNotEmpty()
   avatar: string;
+
+  twoFASecret: string;
+
+  isTwoFA: number;
 }

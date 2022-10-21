@@ -9,23 +9,27 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  UsePipes,
-  ValidationPipe,
   UseGuards,
   Request,
+  /*
+  UsePipes,
+  ValidationPipe,
   Response,
+  */
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
+import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
+//import { UserAuthGuard } from '../auth/guards/user-auth.guard';
+//import { AuthGuard } from '@nestjs/passport';
+//import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
 //import { fileURLToPath } from 'url';
 
@@ -41,23 +45,22 @@ export const storage = {
     },
   }),
 };
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 
 @Controller('user')
+//@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get('current')
-  currentUser(@Req() req): Promise<UserEntity> {
-    const user: UserEntity = req.user;
-    console.log('request = ' + req.user);
-    return this.userService.currentUser(user);
-  }
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
+  }
+
+  @Get('current')
+  currentUser(@Req() req: PayloadInterface): Promise<UserEntity> {
+    console.log('request = ' + req);
+    return this.userService.currentUser(req.auth_id);
   }
 
   @Get('/name/:username')
@@ -75,6 +78,7 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  /*
   @UseGuards(IntraAuthGuard)
   @Post('login')
   login(@Request() req): any {
@@ -83,12 +87,15 @@ export class UserController {
       msg: 'User logged in',
     };
   }
+  */
 
+  /*
   @Get('logout')
   logout(@Request() req): any {
     req.session.destroy();
     return { msg: 'user session has ended' };
   }
+  */
 
   @Patch('settings/:id')
   updateUser(
