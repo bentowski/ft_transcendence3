@@ -1,0 +1,36 @@
+.Login {
+  position: fixed;
+  top: 50vh;
+  bottom: auto;
+  left: 50vw;
+  right: auto;
+  /* width: 50vw;
+  height: 50vh; */
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(125, 0, 125, 0.2);
+  border-radius: 20px;
+}
+
+.Logo {
+  width: 50px;
+}
+
+.bi-lock:hover {
+  color: transparent;
+}
+
+.bi-unlock-fill {
+  transform: translate(1.9px, 0);
+  display: none;
+}
+
+.bi-lock:hover .bi-unlock-fill {
+  display: block;
+  color: orange;
+}
+
+.bi-lock:active .bi-unlock-fill {
+  display: block;
+  color: white;
+}

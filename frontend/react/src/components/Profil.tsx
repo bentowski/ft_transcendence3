@@ -72,11 +72,11 @@ class Profil extends Component<
     this.setState({ modalType: "Login", modalTitle: "Change user name" });
   };
 
-  /*
-  checkIfJSONisNotEmpty = (obj: any) => {
-    return Object.keys(obj).length > 0;
-  };
-  */
+	/*
+	checkIfJSONisNotEmpty = (obj: any) => {
+		return Object.keys(obj).length > 0;
+	};
+	*/
 
   getUser = async (username: string) => {
     if (!username) {
