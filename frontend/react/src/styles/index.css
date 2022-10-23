@@ -6,9 +6,9 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: white;
 	letter-spacing: 0.42px;
-  background-color: #3b3c3a;
+	color: #3b3c3a;
+  background-color: white;
 }
 
 code {
@@ -248,3 +248,10 @@ img {
 	display: inline;
 	float: left;
 } */
+
+@media (prefers-color-scheme: dark) {
+	body {
+		color: white;
+		background-color: #3b3c3a;
+	}
+}
