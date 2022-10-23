@@ -1,38 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import { TypeormStore } from 'connect-typeorm';
-// import { SessionEntity } from './auth/entities/session-entity';
-import { DataSource } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import { ValidationPipe } from '@nestjs/common';
+//import { DocumentBuilder } from '@nestjs/swagger';
+//import { DataSource } from 'typeorm';
+//import bodyParser from 'body-parser';
+//import { ValidationPipe } from '@nestjs/common';
+//import * as session from 'express-session';
+//import * as passport from 'passport';
+//import { TypeormStore } from 'connect-typeorm';
+//import { SessionEntity } from './auth/entities/session-entity';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
       credentials: true,
-      origin: true, //['http://localhost:3000'],
-      //methods: ['GET', 'POST'],
+      origin: true,
     },
   });
-
   app.use(cookieParser());
 
-  const config = new DocumentBuilder()
-    .setTitle("Bob l'ePONGe")
-    .setDescription('The best game in the submarine world.')
-    .setVersion('beta0.0.0.0.1')
-    .addTag('user')
-    .build();
-
-  //const document = SwaggerModule.createDocument(app, config);
-  //SwaggerModule.setup('api', app, document);
-
   /*
-
  const sessionRepo = app
    .get(AppModule)
    .getDataSource()
@@ -67,7 +54,6 @@ async function bootstrap() {
   //app.use(passport.session());
 
   //SWITCH THIS FOLLOWING METHOD ON BEFORE PRODUCTION
-
   //app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }

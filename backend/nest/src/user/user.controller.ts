@@ -9,23 +9,27 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  UsePipes,
-  ValidationPipe,
   UseGuards,
   Request,
+  /*
+  UsePipes,
+  ValidationPipe,
   Response,
+  */
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
+import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
+import { AuthGuard } from '@nestjs/passport';
+import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+//import { UserAuthGuard } from '../auth/guards/user-auth.guard';
+//import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
 //import { fileURLToPath } from 'url';
 
@@ -36,28 +40,27 @@ export const storage = {
       let filename: string = file.originalname.replace(/\s/g, ''); // + uuidv4();
       const lastDot = filename.lastIndexOf('.');
       filename =
-        filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
+          filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
       cb(null, `${filename}`);
     },
   }),
 };
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('current')
-  currentUser(@Req() req): Promise<UserEntity> {
-    const user: UserEntity = req.user;
-    console.log('request = ' + req.user);
-    return this.userService.currentUser(user);
-  }
-
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
+  //@UseGuards(AuthGuard('jwt'))
   getUsers() {
     return this.userService.findAll();
+  }
+
+  @Get('current')
+  currentUser(@Req() req: PayloadInterface): Promise<UserEntity> {
+    //console.log('request = ' + req);
+    return this.userService.currentUser(req.auth_id);
   }
 
   @Get('/name/:username')
@@ -75,6 +78,7 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  /*
   @UseGuards(IntraAuthGuard)
   @Post('login')
   login(@Request() req): any {
@@ -83,17 +87,20 @@ export class UserController {
       msg: 'User logged in',
     };
   }
+  */
 
+  /*
   @Get('logout')
   logout(@Request() req): any {
     req.session.destroy();
     return { msg: 'user session has ended' };
   }
+  */
 
   @Patch('settings/:id')
   updateUser(
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
+      @Param('id') userId: string,
+      @Body() updateUserDto: UpdateUserDto,
   ) {
     // console.log(updateUserDto);
     return this.userService.updateUser(userId, updateUserDto);

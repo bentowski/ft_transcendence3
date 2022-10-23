@@ -16,7 +16,7 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ default: '' })
+  @Column({ nullable: false, unique: true })
   auth_id: string;
 
   @Column({
@@ -27,15 +27,9 @@ export class UserEntity {
 
   @Column({
     unique: true,
-    default: '',
+    nullable: false,
   })
   email: string;
-
-  @Column({
-    default: '',
-  })
-  @Exclude()
-  secret: string;
 
   @Column({
     default: '',
@@ -73,13 +67,17 @@ export class UserEntity {
   @OneToMany(() => UserEntity, (friends) => friends.user_id)
   friends: UserEntity[];
 
-  @OneToOne(() => UserEntity, (profile) => profile.username)
-  profile: ProfileEntity;
-
   @Column({
     default: '',
+    nullable: true,
   })
-  authStrategy: string;
+  @Exclude()
+  twoFASecret: string;
+
+  @Column({
+    default: 0,
+  })
+  isTwoFA: number;
 
   @Column({
     default: () => '((CURRENT_DATE))',

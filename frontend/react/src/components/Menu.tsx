@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
+import Switch from "./utils/Switch";
 // import Request from "./utils/Requests"
 // import "./Menu.css"
 
@@ -28,6 +29,9 @@ class Menu extends Component {
           <Link to={"/tchat"}>
             <p className="m-0">chat</p>
           </Link>
+          <Link to={"/history"}>
+            <p className="m-0 mx-2">history</p>
+          </Link>
         </div>{" "}
         {/* homeButtonDiv */}
         <div className="titleDiv">
@@ -35,6 +39,9 @@ class Menu extends Component {
         </div>{" "}
         {/* titleDiv */}
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
+          <div className="twoFASwitch">
+            <Switch />
+          </div>
           <div className="loginMenu px-2">
             <Link to={"/profil/#user"}>
               <p className="m-0">{this.state.username}</p>
