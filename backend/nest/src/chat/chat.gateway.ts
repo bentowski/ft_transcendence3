@@ -6,6 +6,8 @@ import {
  MessageBody,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { ChanService } from '../chans/chan.service';
+import { UserService } from '../user/user.service';
 
 @WebSocketGateway({
   cors: {
@@ -16,6 +18,7 @@ import { Socket, Server } from 'socket.io';
 export class ChatGateway implements OnModuleInit
  //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+	constructor(private readonly chanService: ChanService, private readonly userService: UserService) {}
 
   @WebSocketServer()
   server: Server
@@ -38,12 +41,22 @@ export class ChatGateway implements OnModuleInit
       avatar: body.avatar,
 	  room: body.room
     })
-  }
+	this.chanService.addMessage({
+		content: body.chat,
+		sender_socket_id: body.sender_socket_id,
+		username: body.username,
+		avatar: body.avatar,
+		room: body.room
+	})
+}
 
   @SubscribeMessage('joinRoom')
-  onJoinRoom(client: Socket, room: string) {
-	client.join(room);
-	client.emit('joinedRoom', room);
+  async onJoinRoom(client: Socket, body: string[]/* room: string, auth_id: string */) {
+	client.join(body[0]);
+	const usr = await this.userService.findOneByAuthId(body[1])
+	await this.chanService.addUserToChannel(usr, body[0])
+	client.emit('joinedRoom', body[0]);
+	this.server.to(body[0]).emit("userJoinChannel");
   }
 
   @SubscribeMessage('leaveRoom')

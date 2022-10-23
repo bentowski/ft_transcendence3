@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
 import { ProfileEntity } from './profile-entity';
+import { ChanEntity } from '../../chans/entities/chan-entity';
 
 @Entity('user')
 export class UserEntity {
@@ -83,6 +85,9 @@ export class UserEntity {
     default: () => '((CURRENT_DATE))',
   })
   createdAt: Date;
+
+  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
+  channelJoined: ChanEntity[]
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
