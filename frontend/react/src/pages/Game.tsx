@@ -10,7 +10,9 @@ class Game extends Component<
                           h: number,
                           nbPlayer: number,
                           playerHighStart: number,
-                          playerPos: number[],
+                          playerSize: number,
+                          player1: number[],
+                          player2: number[],
                           playerSpeed: number,
                           sizeBall: number,
                           ballPos: number[],
@@ -19,7 +21,7 @@ class Game extends Component<
                           score1: number,
                           score2: number,
                           end: number,
-                          first1: boolean
+                          speed: number,
                         }> {
   constructor(props: any)
   {
@@ -29,7 +31,9 @@ class Game extends Component<
       h: 0,
       nbPlayer: 0,
       playerHighStart: 0,
-      playerPos: [0, 0],
+      playerSize: 0,
+      player1: [0, 0],
+      player2: [0, 0],
       playerSpeed: 0,
       sizeBall: 0,
       ballPos: [0, 0],
@@ -38,55 +42,40 @@ class Game extends Component<
       score1: 0,
       score2: 0,
       end: 0,
-      first1: true
+      speed: 1,
     }
   }
 
-
 //=================initialisation================
-  init = (ctx: any, j1Ctx: any, j2Ctx: any, globale: any, joueur1: any, joueur2: any) => {
-    console.log("INIT : " + this.state.h)
+  init = (ctx: any, globale: any) => {
     //======ligne centrale=========
-    let h = 0;
     let y = 0;
-    while (h < this.state.h) {
+    while (y < this.state.h) {
       ctx.fillStyle = "white"
-      ctx.fillRect(this.state.middle, y, 10, 25)
-      y += 50
-      console.log("h: " + this.state.h)
-      h += 50
+      ctx.fillRect(this.state.middle, y, this.state.sizeBall / 10, this.state.sizeBall)
+      y += this.state.sizeBall * 2
     }
     //======joueurs========
-    console.log("limit : " + this.state.playerHighStart)
-    console.log("current :" + this.state.playerPos[0])
-    let test =  this.state.playerPos[0]
-    while (test < this.state.playerHighStart) {
-      j1Ctx.fillStyle = "white"
-      j1Ctx.fillRect(2, test, 10, 5)
-      j2Ctx.fillStyle = "white"
-      j2Ctx.fillRect(-2, test, 10, 5)
-      test += 5
-      // this.setState({playerPos: [this.state.playerPos[0] + 5, this.state.playerPos[1] + 5]})
-      // console.log("current :" + this.state.playerPos[0])
-      // setTimeout(() => {}, 10000)
-    }
+    ctx.fillStyle = "white"
+    ctx.fillRect(this.state.player2[0], this.state.player2[1], this.state.sizeBall, this.state.sizeBall * 4)
+    ctx.fillStyle = "white"
+    ctx.fillRect(this.state.player1[0], this.state.player1[1], this.state.sizeBall, this.state.sizeBall * 4)
+
     //========balle========
     ctx.fillStyle = "white"
-    ctx.arc(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, 0, 2 * Math.PI);
+    ctx.fillRect(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, this.state.sizeBall)
     ctx.fill()
 
-    console.log("Ball : [" + this.state.ballPos[0] + " ," + this.state.ballPos[1] + "]")
-    // this.moveBall(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+    // this.moveBall(ctx, globale)
 
     let infosClavier = (e: KeyboardEvent) => {
       let number = Number(e.keyCode);
-        console.log(number)
         switch (number) {
           case 38:
-            this.movePlayer(800, j2Ctx, 1, joueur2)
+            this.movePlayer(ctx, 1, globale, 1)
             break;
           case 40:
-            this.movePlayer(0, j2Ctx, -1, joueur2)
+            this.movePlayer(ctx, -1, globale, 1)
             break;
           default:
       }
@@ -95,23 +84,23 @@ class Game extends Component<
   }
 
 //=============== Move Player ==================
-  movePlayer = (limit: number, jCtx: any, move: number, joueur: any) => {
-    if (this.state.playerPos[0] < limit) {
-      if (this.state.first1) {
-        this.setState({playerPos: [this.state.playerPos[0] + move, this.state.playerPos[1]]})
+  movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number) => {
+    if (currentPlayer == 1)
+    {
+      let newPos = this.state.player1[1] + (move * this.state.playerSpeed)
+      if (newPos > 0 && newPos < this.state.h) {
+        this.setState({player1: [this.state.player1[0], newPos], speed: this.state.speed + 0.1})
+        ctx.clearRect(this.state.player1[0], 0, this.state.sizeBall, globale.height);
+        ctx.fillStyle = "white"
+        ctx.fillRect(this.state.player1[0], newPos, this.state.sizeBall, this.state.sizeBall * 4)
       }
-      this.setState({playerPos: [this.state.playerPos[0] + this.state.playerSpeed, this.state.playerPos[1]]})
-      jCtx.clearRect(0, 0, joueur.width, joueur.height);
-      jCtx.fillStyle = "white"
-      jCtx.fillRect(2, this.state.playerPos[0], 10, 100)
-      this.setState({first1: false})
     }
   }
 
   //=============== Move Ball===================
 
 
-    moveBall = (ctx: any, j1Ctx: any, j2Ctx: any, globale: any, joueur1: any, joueur2: any) => {
+    moveBall = (ctx: any, globale: any) => {
       ctx.clearRect(0, 0, globale.width, globale.height)
       let y = 0
       let h = 0
@@ -128,11 +117,11 @@ class Game extends Component<
       ctx.fill()
       ctx.closePath();
       // =========== Bot ou joueur distant ==========
-      if (this.state.playerPos[0] + 51 < this.state.ballPos[1]) {
-        this.movePlayer(800, j1Ctx, 100, joueur1)
+      if (this.state.player2[0] + 51 < this.state.ballPos[1]) {
+        this.movePlayer(ctx, 100, globale, 2)
       }
-      if (this.state.playerPos[0] + 49 > this.state.ballPos[1]) {
-        this.movePlayer(0, j1Ctx, -100, joueur1)
+      if (this.state.player2[0] + 49 > this.state.ballPos[1]) {
+        this.movePlayer(ctx, -100, globale, 2)
       }
       // ============== Fin Bot ===============
       if (this.state.ballPos[1] + this.state.sizeBall <= globale.height) {
@@ -141,10 +130,10 @@ class Game extends Component<
       if (this.state.ballPos[1] - this.state.sizeBall >= 0) {
         this.setState({vector: [this.state.vector[0], -this.state.vector[1]]})
       }
-      if (this.state.ballPos[0] + this.state.sizeBall >= globale.width && this.state.playerPos[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[1] + 100) {
+      if (this.state.ballPos[0] + this.state.sizeBall >= globale.width && this.state.player2[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.player2[1] + 100) {
         this.setState({vector: [-this.state.vector[0], this.state.vector[1]]})
       }
-      if (this.state.ballPos[0] <= 10 && this.state.playerPos[0] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.playerPos[0] + 100) {
+      if (this.state.ballPos[0] <= 10 && this.state.player1[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.player1[1] + 100) {
         this.setState({vector: [-this.state.vector[0], this.state.vector[1]]})
       }
       if (this.state.ballPos[0] + this.state.sizeBall < 0) {
@@ -155,12 +144,13 @@ class Game extends Component<
       }
       if (this.state.end) {
         window.requestAnimationFrame(() => {
-          this.moveBall(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)
+          this.moveBall(ctx, globale)
         })
       } else if (this.state.vector[0] > 35) {
         this.gameOver()
       }
     }
+
 
 
   gameOver = () => {
@@ -169,89 +159,63 @@ class Game extends Component<
 
 
 
-
 //============ Settings game ===============
   componentDidMount = () => {
-    let element = document.getElementById('canvas') as HTMLDivElement;
+    let element = document.body as HTMLDivElement;
     console.log("client " + element.clientHeight)
-    if (window.innerHeight > window.innerWidth) {
+    console.log("client " + element.clientWidth)
+    let winWidth = element.clientWidth
+    console.log("Width : " + winWidth)
+    console.log("fuck : " + winWidth / 16 * 9)
+    let winHeight = element.clientHeight
+    console.log("Height : " + winHeight)
+    if (winHeight > winWidth) {
       this.setState({
-          w: window.innerWidth,
-          h : window.innerWidth / 16 * 9,
+        // A Changer ==================== !!!!!!!!!!!!!!!!!!!!!!!
+          h: winHeight,
+          w : winWidth / 16 * 9,
           nbPlayer: 1,
-          playerHighStart: (window.innerWidth / 16 * 9) / 2,
-          playerPos: [(window.innerWidth / 16 * 9) / 2, (window.innerWidth / 16 * 9) / 2],
-          playerSpeed: 5,
-          sizeBall: 100,
-          ballPos: [window.innerWidth, window.innerWidth / 16 * 9],
+          playerHighStart: winHeight / 2 + (winHeight / 25),
+          playerSize: winHeight / 25,
+          player1: [0, (winHeight / 2) - (winHeight / 25)],
+          player2: [0, (winHeight / 2) - (winHeight / 25)],
+          playerSpeed: 20,
+          sizeBall: 20,
+          ballPos: [(winWidth / 9 * 16) / 2, winHeight / 2],
           vector: [0, 0],
-          middle: window.innerWidth
+          middle: (winWidth / 9 * 16) / 2
          })
-
     }
     else {
       this.setState({
-          h: window.innerHeight,
-          w : window.innerWidth / 9 * 16,
+          h: winHeight,
+          w : winWidth,
           nbPlayer: 1,
-          playerHighStart: window.innerHeight,
-          playerPos: [window.innerHeight / 2, window.innerHeight / 2],
+          playerHighStart: winHeight / 2 + (winHeight / 25),
+          playerSize: winHeight / 25,
+          player1: [0, (winHeight / 2) - (winHeight / 25)],
+          player2: [0, (winHeight / 2) - (winHeight / 25)],
           playerSpeed: 20,
           sizeBall: 10,
-          ballPos: [(window.innerWidth / 9 * 16) / 4, window.innerHeight / 2],
+          ballPos: [(winWidth / 9 * 16) / 2, winHeight / 2],
           vector: [0, 0],
-          middle: window.innerWidth / 9 * 16
+          middle: (winWidth / 9 * 16) / 2
         })
     }
-    // this.setState({h: 1200})
-    // setTimeout(() => {
-    //   this.setState({
-    //     nbPlayer: 1,
-    //     playerHighStart: this.state.h / 2,
-    //     playerPos: [this.state.h / 2, this.state.h / 2],
-    //     playerSpeed: 5,
-    //     sizeBall: 100,
-    //     ballPos: [this.state.w, this.state.h],
-    //     vector: [0, 0],
-    //     middle: this.state.w
-    //   })
-    //   console.log("h: " + this.state.h)
-    //   console.log("Initvariable ===========================")
-    //   console.log("h : " + this.state.h)
-    //   console.log("playerPos : " + this.state.playerPos[0])
-    //   console.log("InitGame ===========================")
-    // }, 1000)
-    // console.log("playerStart : " + this.state.playerHighStart)
 
   //============== variables ==============
     const globale = this.refs.globale as HTMLCanvasElement
     const ctx: any = globale.getContext('2d')
-    const joueur1 = this.refs.joueur1 as HTMLCanvasElement
-    const j1Ctx: any = joueur1.getContext('2d')
-    const joueur2 = this.refs.joueur2 as HTMLCanvasElement
-    const j2Ctx: any = joueur2.getContext('2d')
-
   //===============interaction=================
-
-    setTimeout(() => {this.init(ctx, j1Ctx, j2Ctx, globale, joueur1, joueur2)}, 1000)
-
+    setTimeout(() => {this.init(ctx, globale)}, 1000)
   }
-
-
 
   render() {
     window.onresize = () => {window.location.reload()}
-    // console.log("Window width : " + window.innerWidth)
-    console.log(this.state.w)
-    console.log(this.state.h)
     return (
       <div>
-      {/*<Menu />*/}
-        <h1>GAME</h1>
         <div className="canvas" id="canvas">
-          <canvas ref="joueur1" id="joueur1" width={this.state.w / 100} height={this.state.h}></canvas>
           <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
-          <canvas ref="joueur2" id="joueur2" width={this.state.w / 100} height={this.state.h}></canvas>
         </div>
       </div>
     );
