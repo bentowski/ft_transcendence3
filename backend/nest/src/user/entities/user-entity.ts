@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
-import { ProfileEntity } from './profile-entity';
+// import { ProfileEntity } from './profile-entity';
 import { ChanEntity } from '../../chans/entities/chan-entity';
 
 @Entity('user')

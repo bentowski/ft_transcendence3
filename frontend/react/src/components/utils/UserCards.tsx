@@ -12,8 +12,6 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 
 
 	renderUserCards = (id: number) => {
-
-		// let online = this.props.online ? "true" : "false"
 		if (this.props.avatar) {
 			return (
 				<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center m-2">
@@ -26,7 +24,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 					</div>
 					<div className="d-flex flex-row align-items-center">
 						<a href={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</a>
-						<img src="avatar" className="miniAvatar h-100 w-100" alt="" />
+						<img src={this.props.user.avatar} className="miniAvatar" />
 					</div>
 				</div>
 			)

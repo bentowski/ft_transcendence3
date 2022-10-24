@@ -35,8 +35,7 @@ class App extends Component {
       user: {
         auth_id: user.auth_id,
         user_id: user.user_id,
-        avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
-        // avatar: user.avatar,
+        avatar: user.avatar,
         username: user.username,
       },
     };
@@ -54,6 +53,11 @@ class App extends Component {
   };
 
   render() {
+    window.addEventListener("popstate", (event) => {
+      let url = document.URL;
+      if (url === "http:localhost:8080")
+        console.log("test")
+    });
     return (
       <div>
         <Routes>
