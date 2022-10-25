@@ -66,7 +66,7 @@ class Game extends Component<
     ctx.fillRect(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, this.state.sizeBall)
     ctx.fill()
 
-    // this.moveBall(ctx, globale)
+    this.moveBall(ctx, globale)
 
     let infosClavier = (e: KeyboardEvent) => {
       let number = Number(e.keyCode);
@@ -101,23 +101,59 @@ class Game extends Component<
 
   //=============== Move Ball===================
 
+  test = (globale: any) => {
+    this.setState({
+      vector: [this.state.vector[0], -this.state.vector[1]],
+      ballPos: [this.state.ballPos[0], globale.height - (this.state.sizeBall * 2)]
+    })
+ }
+
+    print = (ctx: any, globale: any, newPos: number) => {
+      console.log("New : ", this.state.ballPos[1])
+      console.log("Vector : ", this.state.vector[1])
+      let y = 0;
+      while (y < this.state.h) {
+        ctx.fillStyle = "white"
+        ctx.fillRect(this.state.middle, y, this.state.sizeBall / 10, this.state.sizeBall)
+        y += this.state.sizeBall * 2
+      }
+      ctx.fillStyle = "white"
+      ctx.fillRect(this.state.player2[0], this.state.player2[1], this.state.sizeBall, this.state.sizeBall * 4)
+      ctx.fillStyle = "white"
+      ctx.fillRect(this.state.player1[0], this.state.player1[1], this.state.sizeBall, this.state.sizeBall * 4)
+      this.setState({ballPos: [this.state.ballPos[0] + this.state.vector[0], this.state.ballPos[1] + this.state.vector[1]]})
+      ctx.fillStyle = "white"
+      ctx.beginPath();
+      ctx.fillRect(this.state.ballPos[0], newPos, this.state.sizeBall, this.state.sizeBall)
+      ctx.fill()
+      ctx.closePath();
+    }
 
     moveBall = (ctx: any, globale: any) => {
-      // ctx.clearRect(0, 0, globale.width, globale.height)
-      // let y = 0
-      // let h = 0
-      // while (h < this.state.h) {
-      //   ctx.fillStyle = "white"
-      //   ctx.fillRect(this.state.middle, y, 10, 25)
-      //   y += 50
-      //   h += 50
-      // }
-      // this.setState({ballPos: [this.state.ballPos[0] + this.state.vector[0], this.state.ballPos[1] + this.state.vector[1]]})
-      // ctx.fillStyle = "white"
-      // ctx.beginPath();
-      // ctx.arc(this.state.ballPos[0], this.state.ballPos[1], this.state.sizeBall, 0, 2 * Math.PI);
-      // ctx.fill()
-      // ctx.closePath();
+      // let ballSpeed = this.state.vector[1]
+      ctx.clearRect(0, 0, globale.width, globale.height)
+      console.log("Ball : ",this.state.ballPos[1], " : ", globale.height)
+      let newPos: number = this.state.ballPos[1]
+      if (this.state.ballPos[1] + this.state.sizeBall > globale.height) {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+        console.log(globale.height - this.state.sizeBall)
+        newPos = globale.height - (this.state.sizeBall)
+        this.setState({
+          vector: [this.state.vector[0], -this.state.vector[1]],
+          ballPos: [this.state.ballPos[0], newPos]
+        })
+      }
+      if (this.state.ballPos[1] < 0) {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+        console.log(this.state.sizeBall)
+        newPos = (0)
+        this.setState({
+          vector: [this.state.vector[0], -this.state.vector[1]],
+          ballPos: [this.state.ballPos[0], newPos]
+        })
+      }
+      this.print(ctx, globale, newPos)
+
       // // =========== Bot ou joueur distant ==========
       // if (this.state.player2[0] + 51 < this.state.ballPos[1]) {
       //   this.movePlayer(ctx, 100, globale, 2)
@@ -126,10 +162,7 @@ class Game extends Component<
       //   this.movePlayer(ctx, -100, globale, 2)
       // }
       // // ============== Fin Bot ===============
-      // if (this.state.ballPos[1] + this.state.sizeBall <= globale.height) {
-      //   this.setState({vector: [this.state.vector[0], -this.state.vector[1]]})
-      // }
-      // if (this.state.ballPos[1] - this.state.sizeBall >= 0) {
+      // if (this.state.ballPos[1] - this.state.sizeBall <= 0) {
       //   this.setState({vector: [this.state.vector[0], -this.state.vector[1]]})
       // }
       // if (this.state.ballPos[0] + this.state.sizeBall >= globale.width && this.state.player2[1] < this.state.ballPos[1] + this.state.sizeBall && this.state.ballPos[1] - this.state.sizeBall < this.state.player2[1] + 100) {
@@ -141,22 +174,23 @@ class Game extends Component<
       // if (this.state.ballPos[0] + this.state.sizeBall < 0) {
       //     this.setState({end: 1})
       //  }
-      // if (this.state.ballPos[0] - this.state.sizeBall > globale.width) {
-      //   this.setState({end: 1})
-      // }
-      // if (this.state.end) {
-      //   window.requestAnimationFrame(() => {
-      //     this.moveBall(ctx, globale)
-      //   })
-      // } else if (this.state.vector[0] > 35) {
-      //   this.gameOver()
-      // }
+      if (this.state.ballPos[0] - this.state.sizeBall > globale.width) {
+        this.setState({end: 1})
+      }
+      if (!this.state.end) {
+        window.requestAnimationFrame(() => {
+          this.moveBall(ctx, globale)
+        })
+      } else {
+        this.gameOver()
+      }
     }
 
 
 
   gameOver = () => {
-    alert("GAME OVER")
+    // PRINT WIN & Redirect ==============================
+    // window.location.href = "http://localhost:8080/profil"
   }
 
 
@@ -183,8 +217,9 @@ class Game extends Component<
         playerSpeed: 20,
         sizeBall: winHeight / 30,
         ballPos: [winWidth / 2, winHeight / 2],
-        vector: [0, 0],
-        middle: winWidth / 2
+        vector: [0, 5],
+        middle: winWidth / 2,
+        end: 0
       })
 
 
