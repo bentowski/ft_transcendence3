@@ -1,4 +1,5 @@
 import {Component} from 'react';
+import Request from "./Requests"
 // import Request from "./Requests"
 
 // class RequestUrl extends Component<{inputSelector : string, routeForRequest : string}, {}> {
@@ -22,30 +23,17 @@ class SearchBar extends Component<{inputSelector : string, routeForRequest : str
 		onload: 0
 	}
 
-	requestUrl = () => {
-		let xhr:any;
-		let MatchNav_SearchBar = (document.querySelector(this.props.inputSelector) as HTMLInputElement).value;
-		let url = "http://localhost:3000/" + this.props.routeForRequest + MatchNav_SearchBar;
-		xhr = new XMLHttpRequest();
-    	xhr.open("GET", url);
-		xhr.responseType = 'json';
-    	xhr.send();
-    	xhr.onload = () => {
-			this.props.parentCallBack(xhr.response);
-		}
+	requestUrl = async (event:any) => {
+		let url = "http://localhost:3000/" + this.props.routeForRequest + event.target.value;
+		let parties = await Request('GET', {}, {}, url);
+		this.props.parentCallBack(parties);
 	}
 
-	onloadFct = () => {
-		let xhr:any;
+	onloadFct = async () => {
 		let url = "http://localhost:3000/" + this.props.routeForRequest;
-		xhr = new XMLHttpRequest();
-    	xhr.open("GET", url);
-		xhr.responseType = 'json';
-    	xhr.send();
-    	xhr.onload = () => {
-			this.setState({onload: 1});
-			this.props.parentCallBack(xhr.response);
-		}
+		let parties = await Request('GET', {}, {}, url);
+		this.setState({onload: 1});
+		this.props.parentCallBack(parties);
 	}
 
 	render() {
