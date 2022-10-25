@@ -90,7 +90,6 @@ class Profil extends Component<
       {},
       "http://localhost:3000/user/name/" + username
     );
-    console.log("LAAAAA", user)
     if (!user) return;
       this.setState({ login: user.username, avatar: user.avatar });
   };
@@ -109,7 +108,6 @@ class Profil extends Component<
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
     newUser = JSON.parse(newUser);
-    this.setState({ avatar: newUser.user.avatar });
     let url = document.URL;
     let x = 0;
     while (url[x] !== "#" && url[x]) {
@@ -140,10 +138,7 @@ class Profil extends Component<
       console.log(tmp);
       this.getUser(tmp);
     });
-    // <button className="col-1">
-    // <button className="modifName col-2">
-    // </button>
-    // </button>
+    console.log(this.state.login)
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {

@@ -115,123 +115,146 @@ type chanType = {
 	password: string;
 	isActive: boolean;
 	messages: MessagePayload[];
+	chanUser: any[];
   };
 
 export const WebSocket = () => {
   const [value, setValue] = useState('');
-  const [chans, setChans] = useState<chanType[]>([]);
   const [username, setUsername] = useState<string>('');
   const [avatar, setAvatar] = useState<string>('');
+  const [auth_id, setAuthId] = useState('');
+  const [room, setRoom] = useState('');
+  const [chans, setChans] = useState<chanType[]>([]);
   const [messages, setMessage] = useState<MessagePayload[]>([]);
   const [modalType, setModalType] = useState('');
   const [modalTitle, setModalTitle] = useState('');
-  const [room, setRoom] = useState('');
-  const [channelJoined, setChannelJoined] = useState<chanType[]>([]);
 
   const socket = useContext(WebsocketContext);
 
   useEffect( () => {
     socket.on('connect', () => {
     });
+
     socket.on('onMessage', (newMessage: MessagePayload) => {
-	 //!!!!!!!!!!!!!!!
-	 let tmp:chanType[] = channelJoined;
-   console.log("chan : " + JSON.stringify(channelJoined))
-   console.log("room of new msg : " + newMessage.room)
-	 let index = tmp.findIndex((channel) => channel.id === newMessage.room);
-	  if (tmp[index] !== undefined) {
-		if (tmp[index].messages)
-			tmp[index].messages = [...tmp[index].messages, newMessage];
-		else
-			tmp[index].messages = [newMessage];
-		setChannelJoined(tmp);
-	  }
-	if (tmp[index].isActive) {
-		if (tmp[index].messages)
-	  		setMessage(tmp[index].messages)
-		else
-			setMessage([]);
-	}
+		let channels:chanType[] = chans;
+		let index:number = chans.findIndex((c) => c.id === newMessage.room);
+		if (channels[index] !== undefined) {
+			if (channels[index].messages)
+				channels[index].messages = [...channels[index].messages, newMessage];
+			else
+				channels[index].messages = [newMessage];
+			setChans(channels);
+				if (channels[index].isActive) {
+				if (channels[index].messages)
+					setMessage(channels[index].messages);
+				else
+					setMessage([])
+			}
+		}
     });
 
       socket.on('newChan', () => {
         getChan();
       });
 
+	  socket.on('userJoinChannel', () => {
+		getChan();
+	  })
 
     return () => {
       socket.off('connect');
       socket.off('onMessage');
       socket.off('newChan');
+	  chans.map((c) => {
+		if (c.chanUser) {
+			c.chanUser.map((u) => {
+				if (u.auth_id === auth_id)
+					socket.emit('leaveRoom', c.id, auth_id);
+			})
+		}
+	  })
     }
-
-  }, []);
+  });
 
   useEffect(() => {
     let newUser:any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		setAvatar(newUser.user.avatar);
     	setUsername(newUser.user.username);
+		setAuthId(newUser.user.auth_id);
   }, [])
 
   const getChan = async () => {
     let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+	channels.map((c:any, idx:number) => {
+		if (c.id === room)
+			c.isActive = true;
+		if (c.messages) {
+			c.messages.map((m:any, index:number) => {
+				c.messages[index] = JSON.parse(String(m));
+			})
+		}
+		channels[idx] = c;
+	})
     setChans(channels);
   }
 
     useEffect(() => {
-      getChan();
+    	getChan();
+		chans.map((c:any, idx:number) => {
+			if (c.chanUser.length) {
+				c.chanUser.map((u:any, index:number) => {
+					if (u.auth_id === auth_id) {
+						socket.emit('joinRoom', c.id, auth_id);
+					}
+				})
+			}
+		})
     }, [])
 
   const onSubmit = () => {
     if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
-      console.log("emit ! room : " + room);
-    	socket.emit('newMessage', {"chat": value, "sender_socket_id": socket.id, "username": username, "avatar": avatar, "room": room});
+    	socket.emit('newMessage', {"chat": value, "sender_socket_id": auth_id, "username": username, "avatar": avatar, "room": room});
 	}
     setValue('');
   }
 
-  const unactiveRoom = () => {
-	let tmp:chanType[] = channelJoined;
-	tmp.map((chan) =>
-		chan.isActive = false
-	)
-	setChannelJoined(tmp);
+  const changeActiveRoom = (id: string) => {
+	let tmp:chanType[] = chans;
+	tmp.map((chan) => {
+		if (chan.id === id)
+			chan.isActive = true;
+		else
+			chan.isActive = false
+	})
+	setChans(tmp);
   }
 
   const joinRoom = async (newRoom: chanType) => {
 
-	if (channelJoined.find((chan) => chan.id === newRoom.id) === undefined) {
-		//! faut gerer le mdp si necessaire
-		if (window.confirm("You will join this channel: " + newRoom.name)) {
-			socket.emit('joinRoom', newRoom.id);
-			setRoom(newRoom.id);
-			let tmp: chanType[] = channelJoined;
-			unactiveRoom();
-			newRoom.isActive = true;
-			tmp.push(newRoom)
-			setChannelJoined(tmp);
+	let chanToJoin = chans.find((chan) => chan.id === newRoom.id)
+	if (chanToJoin !== undefined) {
+		//unactiveRoom();
+		if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
+			//socket.emit('joinRoom', newRoom.id, auth_id);
+			setRoom(chanToJoin.id);
+			changeActiveRoom(newRoom.id)
 			if (newRoom.messages)
 				setMessage(newRoom.messages)
-  		else
+  			else
 				setMessage([]);
 		}
-	}
-	else {
-		unactiveRoom();
-    let tmp: chanType[] = channelJoined;
-    let index = tmp.findIndex((channel) => channel.id === newRoom.id);
-    if (tmp[index])
-      tmp[index].isActive = true;
-      setChannelJoined(tmp);
-		if (tmp[index].messages)
-			setMessage(tmp[index].messages)
-  	else
-			setMessage([]);
-		if (room !== newRoom.id) {
-			socket.emit('joinRoom', newRoom.id);
+		else {
+			if (window.confirm("You will join this channel: " + newRoom.name)) {
+				socket.emit('joinRoom', newRoom.id, auth_id);
+				setRoom(chanToJoin.id);
+				changeActiveRoom(chanToJoin.id)
+				if (newRoom.messages)
+					setMessage(newRoom.messages)
+  				else
+					setMessage([]);
+			}
 		}
-		setRoom(newRoom.id);
 	}
   }
 
@@ -245,7 +268,6 @@ export const WebSocket = () => {
     modal.classList.remove('hidden');
     setModalType("addUser");
     setModalTitle("Add an user");
-    //this.setState({modalType: "addUser", modalTitle: "Add an user"})
   }
 
   const createChan = async () => {
@@ -255,10 +277,28 @@ export const WebSocket = () => {
     setModalType("newChan");
   }
 
+  const userInActualchannel = () => {
+	let users: Array<any> = [];
+	const actualChan = chans.find(c => c.isActive === true);
+	if (actualChan?.chanUser)
+		actualChan.chanUser.map((u) => {
+			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
+		
+	})
+	return users;
+  }
+
+  const chanMemberCount = () => {
+	const actualChan = chans.find(c => c.isActive === true);
+	if (actualChan?.chanUser)
+		return actualChan.chanUser.length
+	return 0
+  }
+
 	const chanColor = (channel: any) => {
 		if (channel.id === room)
 			return ("bg-primary");
-		else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
+		else if (channel.chanUser.find((u:any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
 			return ("bg-info");
 		else
 			return ("bg-secondary");
@@ -271,7 +311,7 @@ export const WebSocket = () => {
         <div className="channels col-2">
           <button onClick={createChan}>Create Channel</button>
           <div className="channelsList">
-            <p>0 Channels</p>
+            <p>{chans.length} Channels</p>
             {/* <SearchBar /> */}
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
@@ -303,7 +343,7 @@ export const WebSocket = () => {
         {messages.length === 0 ? <div>No messages here</div> :
         <div>
           {messages.map((msg, index) =>
-            msg.sender_socket_id === socket.id ?
+            msg.sender_socket_id === auth_id ?
             <div key={index} className="outgoing_msg break-text">
             <div className="sent_msg">
               <p>{msg.content}</p>
@@ -325,8 +365,8 @@ export const WebSocket = () => {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-            <p> Channnnnel's members (0) </p>
-            {/* users */}
+        	<p> Channnnnel's members ({chanMemberCount()}) </p>
+			{userInActualchannel()}
         </div>
       </div>
     </div>

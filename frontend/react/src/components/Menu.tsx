@@ -7,7 +7,7 @@ import Switch from "./utils/Switch";
 class Menu extends Component {
   state = {
     username: "",
-    avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+    avatar: "",
   };
 
   componentDidMount = () => {
@@ -43,12 +43,12 @@ class Menu extends Component {
             <Switch />
           </div>
           <div className="loginMenu px-2">
-            <Link to={"/profil/#user"}>
+            <Link to={"/profil/" + this.state.username}>
               <p className="m-0">{this.state.username}</p>
             </Link>
           </div>
           <div className="avatarMenu">
-            <Link to={"/profil/#user"}>
+            <Link to={"/profil/" + this.state.username}>
               <img
                 className="miniAvatar"
                 width="150"

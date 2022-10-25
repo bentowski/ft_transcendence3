@@ -8,6 +8,6 @@ import { ChanEntity } from "./entities/chan-entity";
     imports: [ TypeOrmModule.forFeature([ChanEntity]) ],
     providers: [ ChanService ],
     controllers: [ ChanController ],
-    exports: [ TypeOrmModule ]
+    exports: [ TypeOrmModule, ChanService]
 })
 export class ChanModule {}

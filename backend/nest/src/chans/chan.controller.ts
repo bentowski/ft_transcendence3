@@ -24,8 +24,13 @@ export class ChanController {
         return this.chanService.createChan(createUserDto);
     }
 
-    @Delete()
+    @Delete(':id')
     remove(@Param('id') username: string) {
         return this.chanService.remove(username);
     }
+
+	@Post('chanchat')
+	tryChan(@Body() test: any) {
+		return this.chanService.addMessage(test);
+	}
 }
