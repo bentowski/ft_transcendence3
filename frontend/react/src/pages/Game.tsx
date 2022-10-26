@@ -13,7 +13,7 @@ let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, s
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player1 = [settings.player1[0], newPos]
-      settings.speed = settings.speed + 0.1
+      // settings.speed = settings.speed + 0.1
       ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
       ctx.fillStyle = "white"
       ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
@@ -24,7 +24,7 @@ let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, s
     let newPos = settings.player2[1] + (move * settings.playerSpeed)
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player2 = [settings.player2[0], newPos]
-      settings.speed = settings.speed + 0.1
+      // settings.speed = settings.speed + 0.1
       ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
       ctx.fillStyle = "white"
       ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
@@ -43,7 +43,7 @@ let print = (ctx: any, newPos: number, settings: any) => {
   ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
   ctx.fillStyle = "white"
   ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
-  settings.ballPos = [settings.ballPos[0] + settings.vector[0], settings.ballPos[1] + settings.vector[1]]
+  settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
   ctx.fillStyle = "white"
   ctx.beginPath();
   ctx.fillRect(settings.ballPos[0], newPos, settings.sizeBall, settings.sizeBall)
@@ -74,23 +74,26 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   if (settings.player2[1] < settings.ballPos[1])
     movePlayer(ctx, 1, globale, 2, settings)
   // ============== End Players Moves ===============
-  console.log(settings.ballPos[0])
-  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0])
+  // console.log(settings.ballPos[0])
+  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
   {
     if (settings.ballPos[1] > settings.player1[1])
     {
-      if (settings.ballPos[1] < settings.player[1] + settings.sizeBall)
+      if (settings.ballPos[1] < settings.player1[1] + (settings.playerSize / 3))
       {
-        settings.vector = [-settings.vector[0], settings.vector[1]]
+        settings.vector = [-settings.vector[0], -1]
+				settings.speed++;
       }
-      else if (settings.ballPos[1] < settings.player[1] + settings.sizeBall * 2)
-      {
-        settings.vector = [-settings.vector[0], settings.vector[1]]
-      }
-      else if (settings.ballPos[1] < settings.player[1] + settings.sizeBall * 3)
-      {
-        settings.vector = [-settings.vector[0], settings.vector[1]]
-      }
+			else if (settings.ballPos[1] < settings.player1[1] + ((settings.playerSize / 3) * 2))
+			{
+				settings.vector = [-settings.vector[0], settings.vector[1]]
+				settings.speed++;
+			}
+			else if (settings.ballPos[1] < settings.player1[1] + settings.playerSize)
+			{
+				settings.vector = [-settings.vector[0], 1]
+				settings.speed++;
+			}
     }
   }
   // if (settings.ballPos[0] + settings.sizeBall >= globale.width && settings.player2[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player2[1] + 100) {
@@ -100,14 +103,14 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 
     settings.vector = [-settings.vector[0], settings.vector[1]]
   }
-  // if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
-  // }
-  // if (settings.ballPos[0] + settings.sizeBall < 0) {
-  //       settings.end = 1
-  //  }
-  // if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-  //     settings.end = 1
-  // }
+  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
+  }
+  if (settings.ballPos[0] + settings.sizeBall < 0) {
+        settings.end = 1
+   }
+  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
+      settings.end = 1
+  }
   print(ctx, newPos, settings)
   if (!settings.end) {
     window.requestAnimationFrame(() => {
@@ -192,7 +195,7 @@ let settings = () => {
     playerSpeed: 20,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
-    vector: [5, 5],
+    vector: [1, 1],
     speed: 4,
     middle: winWidth / 2,
     end: 0,
