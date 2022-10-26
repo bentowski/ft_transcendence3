@@ -9,6 +9,10 @@ export class CreateChanDto {
 
     @IsString()
     @IsNotEmpty()
+    public type: string;
+
+    @IsString()
+    @IsNotEmpty()
     @ApiProperty({ description: 'takes name'})
     public name: string;
 

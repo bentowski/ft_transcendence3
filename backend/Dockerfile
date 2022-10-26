@@ -8,6 +8,7 @@
 # Build for local development
 FROM node:alpine As development
 # ... put your development instructions here.
+ENV TZ="Europe/Paris"
 
 WORKDIR /home/node/app
 

@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../user/entities/user-entity'
+
+type Msg = {
+	content: string;
+	sender_socket_id: string;
+	username: string;
+	avatar: string;
+	room: string;
+};
 
 @Entity('chan')
 export class ChanEntity {
@@ -7,6 +16,13 @@ export class ChanEntity {
         name: 'uuid',
     })
     public id: string;
+
+    @Column({
+        name: 'type',
+        type: 'varchar',
+        //nullable: false,
+    })
+    type: string;
 
     @Column({
         unique: true,
@@ -35,5 +51,18 @@ export class ChanEntity {
         // nullable: false,
     })
     password: string;
+
+	@Column({
+		name: 'messages',
+        type: 'varchar',
+		array: true,
+		//default: '',
+		nullable: true,
+	})
+	messages: Msg[];
+
+	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
+	@JoinTable()
+	chanUser: UserEntity[];
 }
 export default ChanEntity;

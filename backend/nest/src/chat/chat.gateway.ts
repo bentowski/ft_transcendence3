@@ -1,42 +1,72 @@
+import { OnModuleInit } from '@nestjs/common';
 import {
  SubscribeMessage,
  WebSocketGateway,
- OnGatewayInit,
  WebSocketServer,
- OnGatewayConnection,
- OnGatewayDisconnect,
+ MessageBody,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { ChatService } from './chat.service';
-import { Chat } from './entities/chat.entity';
+import { ChanService } from '../chans/chan.service';
+import { UserService } from '../user/user.service';
 
-
-@WebSocketGateway({cors:" http://localhost:3000", credentials: true})
-export class ChatGateway
- implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:8080'],
+  },
+  namespace: '/chat',
+})
+export class ChatGateway implements OnModuleInit
+ //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
- constructor(private ChatService: ChatService) {}
+	constructor(private readonly chanService: ChanService, private readonly userService: UserService) {}
 
- @WebSocketServer() server: Server;
+  @WebSocketServer()
+  server: Server
 
- @SubscribeMessage('sendMessage')
- async handleSendMessage(client: Socket, payload: Chat): Promise<void> {
-   await this.ChatService.createMessage(payload);
-   this.server.emit('recMessage', payload);
- }
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log(socket.id);
+      console.log("Connected");
+    });
+  }
 
- afterInit(server: Server) {
-   console.log(server);
-   //Do stuffs
- }
+  @SubscribeMessage('newMessage')
+  onNewMessage(@MessageBody() body: any) {
+    console.log(body);
+    this.server.to(body.room).emit('onMessage', {
+      msg: 'New Message',
+      content: body.chat,
+      sender_socket_id: body.sender_socket_id,
+      username: body.username,
+      avatar: body.avatar,
+	  room: body.room
+    })
+	this.chanService.addMessage({
+		content: body.chat,
+		sender_socket_id: body.sender_socket_id,
+		username: body.username,
+		avatar: body.avatar,
+		room: body.room
+	})
+}
 
- handleDisconnect(client: Socket) {
-   console.log(`Disconnected: ${client.id}`);
-   //Do stuffs
- }
+  @SubscribeMessage('joinRoom')
+  async onJoinRoom(client: Socket, body: string[]/* room: string, auth_id: string */) {
+	client.join(body[0]);
+	const usr = await this.userService.findOneByAuthId(body[1])
+	await this.chanService.addUserToChannel(usr, body[0])
+	client.emit('joinedRoom', body[0]);
+	this.server.to(body[0]).emit("userJoinChannel");
+  }
 
- handleConnection(client: Socket, ...args: any[]) {
-   console.log(`Connected ${client.id}`);
-   //Do stuffs
- }
+  @SubscribeMessage('leaveRoom')
+  onLeaveRoom(client: Socket, room: string) {
+	client.join(room);
+	client.emit('leftRoom', room);
+  }
+
+  @SubscribeMessage('chanCreated')
+  onChanCreated() {
+	this.server.emit('newChan');
+  }
 }

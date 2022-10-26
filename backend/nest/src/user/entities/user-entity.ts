@@ -1,13 +1,22 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
+// import { ProfileEntity } from './profile-entity';
+import { ChanEntity } from '../../chans/entities/chan-entity';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ default: '' })
+  @Column({ nullable: false, unique: true })
   auth_id: string;
 
   @Column({
@@ -18,15 +27,9 @@ export class UserEntity {
 
   @Column({
     unique: true,
-    default: '',
+    nullable: false,
   })
   email: string;
-
-  @Column({
-    default: '',
-  })
-  @Exclude()
-  secret: string;
 
   @Column({
     default: '',
@@ -66,13 +69,23 @@ export class UserEntity {
 
   @Column({
     default: '',
+    nullable: true,
   })
-  authStrategy: string;
+  @Exclude()
+  twoFASecret: string;
+
+  @Column({
+    default: 0,
+  })
+  isTwoFA: number;
 
   @Column({
     default: () => '((CURRENT_DATE))',
   })
   createdAt: Date;
+
+  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
+  channelJoined: ChanEntity[]
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

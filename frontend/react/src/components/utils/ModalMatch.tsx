@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import "../../styles/utils/modal.css";
+import "../../styles/components/utils/modal.css";
 
 class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
 
