@@ -2,273 +2,243 @@ import { Component } from 'react';
 // import Menu from '../components/Menu'
 import '../styles/pages/game.css'
 
-// document.addEventListener('resize', () => {
+let gameOver = () => {
+  // PRINT WIN & Redirect ==============================
+  // window.location.href = "http://localhost:8080/profil"
+}
 
-//   if (window.innerHeight > window.innerWidth) {
-//     // let h = h : window.innerWidth / 16 * 9
-//     Game.setState({ w: window.innerWidth, h : window.innerWidth / 16 * 9 })
-//     // this.state.w = window.innerWidth;
-//     // h = w / 16 * 9;
-//   }
-//   else {
-//     // h = window.innerHeight;
-//     // w = h / 9 * 16;
-//     Game.setState({ h: window.innerHeight, w : window.innerHeight / 9 * 16 })
-//   }
-// })
+let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, settings: any) => {
+  if (currentPlayer == 1)
+  {
+    let newPos = settings.player1[1] + (move * settings.playerSpeed)
+    if (newPos > 0 && newPos < settings.h - settings.playerSize) {
+      settings.player1 = [settings.player1[0], newPos]
+      // settings.speed = settings.speed + 0.1
+      ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
+      ctx.fillStyle = "white"
+      ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+    }
+  }
+  if (currentPlayer == 2)
+  {
+    let newPos = settings.player2[1] + (move * settings.playerSpeed)
+    if (newPos > 0 && newPos < settings.h - settings.playerSize) {
+      settings.player2 = [settings.player2[0], newPos]
+      // settings.speed = settings.speed + 0.1
+      ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
+      ctx.fillStyle = "white"
+      ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+    }
+  }
+}
 
-class Game extends Component<{},{w:number, h: number}> {
+let print = (ctx: any, newPos: number, settings: any) => {
+  let y = 0;
+  while (y < settings.h) {
+    ctx.fillStyle = "white"
+    ctx.fillRect(settings.middle, y, settings.sizeBall / 10, settings.sizeBall)
+    y += settings.sizeBall * 2
+  }
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
+  ctx.fillStyle = "white"
+  ctx.beginPath();
+  ctx.fillRect(settings.ballPos[0], newPos, settings.sizeBall, settings.sizeBall)
+  ctx.fill()
+  ctx.closePath();
+}
+
+let moveBall = (ctx: any, globale: any, settings: any) => {
+  ctx.clearRect(0, 0, globale.width, globale.height)
+  let newPos: number = settings.ballPos[1]
+  if (settings.ballPos[1] + settings.sizeBall > globale.height) {
+    newPos = globale.height - (settings.sizeBall)
+    settings.vector = [settings.vector[0], -settings.vector[1]]
+    settings.ballPos = [settings.ballPos[0], newPos]
+  }
+  if (settings.ballPos[1] < 0) {
+    newPos = (0)
+    settings.vector = [settings.vector[0], -settings.vector[1]]
+    settings.ballPos = [settings.ballPos[0], newPos]
+  }
+  // =========== Players moves ==========
+  if (settings.up == 1)
+    movePlayer(ctx, -1, globale, 1, settings)
+  if (settings.down == 1)
+    movePlayer(ctx, 1, globale, 1, settings)
+  if (settings.player2[1] + (settings.sizeBall * 2) > settings.ballPos[1])
+    movePlayer(ctx, -1, globale, 2, settings)
+  if (settings.player2[1] < settings.ballPos[1])
+    movePlayer(ctx, 1, globale, 2, settings)
+  // ============== End Players Moves ===============
+  // console.log(settings.ballPos[0])
+  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
+  {
+    if (settings.ballPos[1] > settings.player1[1])
+    {
+      if (settings.ballPos[1] < settings.player1[1] + (settings.playerSize / 3))
+      {
+        settings.vector = [-settings.vector[0], -1]
+				settings.speed++;
+      }
+			else if (settings.ballPos[1] < settings.player1[1] + ((settings.playerSize / 3) * 2))
+			{
+				settings.vector = [-settings.vector[0], settings.vector[1]]
+				settings.speed++;
+			}
+			else if (settings.ballPos[1] < settings.player1[1] + settings.playerSize)
+			{
+				settings.vector = [-settings.vector[0], 1]
+				settings.speed++;
+			}
+    }
+  }
+  // if (settings.ballPos[0] + settings.sizeBall >= globale.width && settings.player2[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player2[1] + 100) {
+  // }
+  if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall)
+  {
+
+    settings.vector = [-settings.vector[0], settings.vector[1]]
+  }
+  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
+  }
+  if (settings.ballPos[0] + settings.sizeBall < 0) {
+        settings.end = 1
+   }
+  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
+      settings.end = 1
+  }
+  print(ctx, newPos, settings)
+  if (!settings.end) {
+    window.requestAnimationFrame(() => {
+      moveBall(ctx, globale, settings)
+    })
+  } else {
+    gameOver()
+  }
+}
+
+let init = (ctx: any, globale: any, settings: any) => {
+  //======ligne centrale=========
+  let y = 0;
+  while (y < settings.h) {
+    ctx.fillStyle = "white"
+    ctx.fillRect(settings.middle, y, settings.sizeBall / 10, settings.sizeBall)
+    y += settings.sizeBall * 2
+  }
+  //======joueurs========
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+
+  //========balle========
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
+  ctx.fill()
+
+  moveBall(ctx, globale, settings)
+
+  let infosClavier = (e: KeyboardEvent) => {
+    let number = Number(e.keyCode);
+      switch (number) {
+        case 38:
+          settings.up = 1;
+          break;
+        case 40:
+          settings.down = 1;
+          break;
+        default:
+    }
+  }
+
+  let infosClavier2 = (e: KeyboardEvent) => {
+    let number = Number(e.keyCode);
+      switch (number) {
+        case 38:
+          settings.up = 0;
+          break;
+        case 40:
+          settings.down = 0;
+          break;
+        default:
+    }
+  }
+
+  document.addEventListener("keydown", infosClavier);
+  document.addEventListener("keyup", infosClavier2);
+}
+
+let settings = () => {
+  const globale = document.getElementById('globale') as HTMLCanvasElement
+  const ctx: any = globale.getContext('2d')
+//===============interaction=================
+
+  let element = document.body as HTMLDivElement,
+  winWidth: number = element.clientWidth,
+  winHeight: number = element.clientHeight
+  if ((winWidth * 19) / 26 > winHeight)
+    winWidth = ((winHeight * 26) / 19)
+  else
+    winHeight = ((winWidth * 19) / 26)
+  let settings = {
+    w: winWidth,
+    h: winHeight,
+    nbPlayer: 1,
+    playerHighStart: winHeight / 2 + (winHeight / 25),
+    playerSize: (winHeight / 30) * 4,
+    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 25)],
+    player2: [0, (winHeight / 2) - (winHeight / 25)],
+    playerSpeed: 20,
+    sizeBall:  winHeight / 30,
+    ballPos: [winWidth / 2, winHeight / 2],
+    vector: [1, 1],
+    speed: 4,
+    middle: winWidth / 2,
+    end: 0,
+    move: 0
+  }
+
+  setTimeout(() => {init(ctx, globale, settings)}, 1000)
+}
+
+
+class Game extends Component<{},{ w:number, h: number}> {
   constructor(props: any)
   {
     super(props)
-    this.state = { w: 0, h: 0}
+    this.state = {
+      w: 0,
+      h: 0
+    }
   }
 
 
-
-  //code js pour le jeu
-
-
-
-
-
-
-  componentDidMount() {
-    this.setState({w: window.innerWidth})
-    this.setState({h: window.innerHeight})
-    //============== variables==============
-    let middle: number = (1500 / 2) - 5
-      , hMax: number = window.innerHeight
-      , h: number = 0
-      , jHeight: number = 500
-      , yJ1: number = 400
-      , yJ2: number = 400
-      , first1: boolean = true
-      , first2: boolean = true
-      , xBalle: number = 300
-      , yBalle: number = 400
-      , sizeBalle: number = 10
-      , levelUp: number = 0.5
-      , vitessex: number = sizeBalle / 2
-      , vitessey: number = sizeBalle / 2
-      , game: boolean = true
-      , player: number
-      , speed1: number = 10
-      , speed2: number = 10
-      , y: number = -10
-    const globale = this.refs.globale as HTMLCanvasElement
-    const ctx: any = globale.getContext('2d')
-    const joueur1 = this.refs.joueur1 as HTMLCanvasElement
-    const j1Ctx: any = joueur1.getContext('2d')
-    const joueur2 = this.refs.joueur2 as HTMLCanvasElement
-    const j2Ctx: any = joueur2.getContext('2d')
-
-    //===============interaction=================
-    let test: any = prompt("combien de joueur ?", "1")
-    if (test)
-      player = (parseInt(test))
+//============ Settings game ===============
+  componentDidMount = () => {
+    let element = document.body as HTMLDivElement;
+    let winWidth = element.clientWidth
+    let winHeight = element.clientHeight
+    if ((winWidth * 19) / 26 > winHeight)
+      winWidth = ((winHeight * 26) / 19)
     else
-      player = 1;
-    if (player === 1) {
-      speed2 = 40
-    }
-    if (player === 2) {
-      speed1 = 40
-      speed2 = 40
-    }
-
-    let infosClavier = (e: KeyboardEvent) => {
-      let number = Number(e.keyCode);
-      console.log(number)
-      if (player === 1) {
-        switch (number) {
-          case 38:
-            j2Up()
-            break;
-          case 40:
-            j2Down()
-            break;
-          default:
-            console.log("error one player");
-        }
-      }
-    }
-
-    document.addEventListener("keydown", infosClavier);
-
-
-
-    //===============joueur1===================
-    let j1Down = () => {
-      if (yJ1 < 800) {
-        if (first1) {
-          yJ1 -= 100
-        }
-        yJ1 += speed1
-        j1Ctx.clearRect(0, 0, joueur1.width, joueur1.height);
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 100)
-        first1 = false
-      }
-    }
-
-
-    let j1Up = () => {
-      if (yJ1 > 0) {
-        if (first1) {
-          yJ1 -= 100
-        }
-        yJ1 -= speed1
-        j1Ctx.clearRect(0, 0, joueur1.width, joueur1.height);
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 100)
-        first1 = false
-      }
-    }
-
-
-    //=================joueur2===================
-    let j2Down = () => {
-      if (yJ2 < 800) {
-        if (first2) {
-          yJ2 -= 100
-        }
-        yJ2 += speed2
-        j2Ctx.clearRect(0, 0, joueur2.width, joueur2.height);
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 100)
-        first2 = false
-      }
-    }
-
-    let j2Up = () => {
-      if (yJ2 > 0) {
-        if (first2) {
-          yJ2 -= 100
-        }
-        yJ2 -= speed2
-        j2Ctx.clearRect(0, 0, joueur2.width, joueur2.height);
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 100)
-        first2 = false
-      }
-    }
-
-    //===============ball===================
-
-
-      let moveBall = () => {
-        ctx.clearRect(0, 0, globale.width, globale.height)
-        y = 0
-        h = 0
-        while (h < hMax) {
-          ctx.fillStyle = "white"
-          ctx.fillRect(middle, y, 10, 25)
-          y += 50
-          h += 50
-        }
-        xBalle += vitessex
-        yBalle += vitessey
-        ctx.fillStyle = "white"
-        ctx.beginPath();
-        ctx.arc(xBalle, yBalle, sizeBalle, 0, 2 * Math.PI);
-        ctx.fill()
-        ctx.closePath();
-        if (player === 1) {
-          if (yJ1 + 51 < yBalle) {
-            j1Down()
-          }
-          if (yJ1 + 49 > yBalle) {
-            j1Up()
-          }
-        }
-        if (player === 0) {
-          if (yJ1 + 51 < yBalle) {
-            j1Down()
-          }
-          if (yJ1 + 49 > yBalle) {
-            j1Up()
-          }
-          if (yJ2 + 51 < yBalle) {
-            j2Down()
-          }
-          if (yJ2 + 49 > yBalle) {
-            j2Up()
-          }
-        }
-        if (yBalle + sizeBalle <= globale.height) {
-          vitessey = -vitessey
-
-        }
-        if (yBalle - sizeBalle >= 0) {
-          vitessey = -vitessey
-        }
-        if (xBalle + sizeBalle >= globale.width && yJ2 < yBalle + sizeBalle && yBalle - sizeBalle < yJ2 + 100) {
-          vitessex = -vitessex
-        }
-        if (xBalle <= 10 && yJ1 < yBalle + sizeBalle && yBalle - sizeBalle < yJ1 + 100) {
-          vitessex = -vitessex
-          vitessex += levelUp
-        }
-        if (xBalle + sizeBalle < 0) {
-          game = false
-        }
-        if (xBalle - sizeBalle > globale.width) {
-          game = false
-        }
-        if (game) {
-          window.requestAnimationFrame(moveBall)
-        } else if (vitessex > 35) {
-          gameOver()
-        } else {
-          console.log("WIN !!!");
-        }
-      }
-
-    let gameOver = () => {
-      alert("GAME OVER")
-    }
-
-    //=================initialisation================
-    let init = () => {
-      //======ligne centrale=========
-      while (h < hMax) {
-        ctx.fillStyle = "white"
-        ctx.fillRect(middle, y, 10, 25)
-        y += 50
-        h += 50
-      }
-      //======joueurs========
-      while (yJ1 < jHeight) {
-        j1Ctx.fillStyle = "white"
-        j1Ctx.fillRect(2, yJ1, 10, 5)
-        j2Ctx.fillStyle = "white"
-        j2Ctx.fillRect(-2, yJ2, 10, 5)
-        yJ1 += 5
-        yJ2 += 5
-      }
-      //========balle========
-      ctx.fillStyle = "white"
-      ctx.arc(xBalle, yBalle, sizeBalle, 0, 2 * Math.PI);
-      ctx.fill()
-      moveBall()
-    }
-
-    init()
+      winHeight = ((winWidth * 19) / 26)
+    this.setState({
+        w : winWidth,
+        h: winHeight,
+      })
+      settings()
   }
 
   render() {
-    console.log(this.state.h)
-    console.log(this.state.w)
-
+    window.onresize = () => {window.location.reload()}
     return (
       <div>
-      {/*<Menu />*/}
-        <h1>GAME</h1>
-        <div className="canva">
-          <canvas ref="joueur1" id="joueur1" width="1200" height="630"></canvas>
-          <canvas ref="globale" id="globale" width="1200" height="630"></canvas>
-          <canvas ref="joueur2" id="joueur2" width="1200" height="630"></canvas>
+        <div className="canvas" id="canvas">
+          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
         </div>
       </div>
     );
