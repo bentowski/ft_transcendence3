@@ -19,11 +19,20 @@ let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, s
       ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
     }
   }
+  if (currentPlayer == 2)
+  {
+    let newPos = settings.player2[1] + (move * settings.playerSpeed)
+    if (newPos > 0 && newPos < settings.h - settings.playerSize) {
+      settings.player2 = [settings.player2[0], newPos]
+      settings.speed = settings.speed + 0.1
+      ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
+      ctx.fillStyle = "white"
+      ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+    }
+  }
 }
 
 let print = (ctx: any, newPos: number, settings: any) => {
-  console.log("New : ", settings.ballPos[1])
-  console.log("Vector : ", settings.vector[1])
   let y = 0;
   while (y < settings.h) {
     ctx.fillStyle = "white"
@@ -43,50 +52,63 @@ let print = (ctx: any, newPos: number, settings: any) => {
 }
 
 let moveBall = (ctx: any, globale: any, settings: any) => {
-  // let ballSpeed = settings.vector[1]
   ctx.clearRect(0, 0, globale.width, globale.height)
-  console.log("Ball : ",settings.ballPos[1], " : ", globale.height)
   let newPos: number = settings.ballPos[1]
   if (settings.ballPos[1] + settings.sizeBall > globale.height) {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAA")
-    console.log(globale.height - settings.sizeBall)
     newPos = globale.height - (settings.sizeBall)
-      settings.vector = [settings.vector[0], -settings.vector[1]]
-      settings.ballPos = [settings.ballPos[0], newPos]
+    settings.vector = [settings.vector[0], -settings.vector[1]]
+    settings.ballPos = [settings.ballPos[0], newPos]
   }
   if (settings.ballPos[1] < 0) {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAA")
-    console.log(settings.sizeBall)
     newPos = (0)
-      settings.vector = [settings.vector[0], -settings.vector[1]]
-      settings.ballPos = [settings.ballPos[0], newPos]
+    settings.vector = [settings.vector[0], -settings.vector[1]]
+    settings.ballPos = [settings.ballPos[0], newPos]
   }
-  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-      settings.end = 1
+  // =========== Players moves ==========
+  if (settings.up == 1)
+    movePlayer(ctx, -1, globale, 1, settings)
+  if (settings.down == 1)
+    movePlayer(ctx, 1, globale, 1, settings)
+  if (settings.player2[1] + (settings.sizeBall * 2) > settings.ballPos[1])
+    movePlayer(ctx, -1, globale, 2, settings)
+  if (settings.player2[1] < settings.ballPos[1])
+    movePlayer(ctx, 1, globale, 2, settings)
+  // ============== End Players Moves ===============
+  console.log(settings.ballPos[0])
+  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0])
+  {
+    if (settings.ballPos[1] > settings.player1[1])
+    {
+      if (settings.ballPos[1] < settings.player[1] + settings.sizeBall)
+      {
+        settings.vector = [-settings.vector[0], settings.vector[1]]
+      }
+      else if (settings.ballPos[1] < settings.player[1] + settings.sizeBall * 2)
+      {
+        settings.vector = [-settings.vector[0], settings.vector[1]]
+      }
+      else if (settings.ballPos[1] < settings.player[1] + settings.sizeBall * 3)
+      {
+        settings.vector = [-settings.vector[0], settings.vector[1]]
+      }
+    }
   }
-  // =========== Bot ou joueur distant ==========
-  if (settings.player2[0] + 51 < settings.ballPos[1]) {
-    movePlayer(ctx, 100, globale, 2, settings)
+  // if (settings.ballPos[0] + settings.sizeBall >= globale.width && settings.player2[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player2[1] + 100) {
+  // }
+  if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall)
+  {
+
+    settings.vector = [-settings.vector[0], settings.vector[1]]
   }
-  if (settings.player2[0] + 49 > settings.ballPos[1]) {
-    movePlayer(ctx, -100, globale, 2, settings)
-  }
-  // ============== Fin Bot ===============
-  if (settings.ballPos[1] - settings.sizeBall <= 0) {
-      settings.vector = [settings.vector[0], -settings.vector[1]]
-  }
-  if (settings.ballPos[0] + settings.sizeBall >= globale.width && settings.player2[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player2[1] + 100) {
-      settings.vector = [-settings.vector[0], settings.vector[1]]
-  }
-  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
-      settings.vector = [-settings.vector[0], settings.vector[1]]
-  }
-  if (settings.ballPos[0] + settings.sizeBall < 0) {
-        settings.end = 1
-   }
-  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-      settings.end = 1
-  }
+  // if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
+  // }
+  // if (settings.ballPos[0] + settings.sizeBall < 0) {
+  //       settings.end = 1
+  //  }
+  // if (settings.ballPos[0] - settings.sizeBall > globale.width) {
+  //     settings.end = 1
+  // }
+  print(ctx, newPos, settings)
   if (!settings.end) {
     window.requestAnimationFrame(() => {
       moveBall(ctx, globale, settings)
@@ -94,7 +116,6 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   } else {
     gameOver()
   }
-  print(ctx, newPos, settings)
 }
 
 let init = (ctx: any, globale: any, settings: any) => {
@@ -122,17 +143,30 @@ let init = (ctx: any, globale: any, settings: any) => {
     let number = Number(e.keyCode);
       switch (number) {
         case 38:
-          movePlayer(ctx, -1, globale, 1, settings)
+          settings.up = 1;
           break;
         case 40:
-          movePlayer(ctx, 1, globale, 1, settings)
+          settings.down = 1;
+          break;
+        default:
+    }
+  }
+
+  let infosClavier2 = (e: KeyboardEvent) => {
+    let number = Number(e.keyCode);
+      switch (number) {
+        case 38:
+          settings.up = 0;
+          break;
+        case 40:
+          settings.down = 0;
           break;
         default:
     }
   }
 
   document.addEventListener("keydown", infosClavier);
-  // document.addEventListener("keyup", () => {settings.move = 0});
+  document.addEventListener("keyup", infosClavier2);
 }
 
 let settings = () => {
@@ -183,8 +217,6 @@ class Game extends Component<{},{ w:number, h: number}> {
 //============ Settings game ===============
   componentDidMount = () => {
     let element = document.body as HTMLDivElement;
-    console.log("client " + element.clientHeight)
-    console.log("client " + element.clientWidth)
     let winWidth = element.clientWidth
     let winHeight = element.clientHeight
     if ((winWidth * 19) / 26 > winHeight)
