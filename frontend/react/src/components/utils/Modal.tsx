@@ -25,7 +25,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
 
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
-    console.log(newUser);
+    // console.log(newUser);
     if (!newUser) return;
     newUser = JSON.parse(newUser);
     this.setState({ user: newUser.user });

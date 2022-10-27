@@ -1,4 +1,4 @@
-import { Component, useContext, useEffect, useState } from 'react';
+import { Component, useContext, useEffect, useState, useRef } from 'react';
 import Modal from "./utils/Modal";
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
@@ -128,8 +128,10 @@ export const WebSocket = () => {
   const [messages, setMessage] = useState<MessagePayload[]>([]);
   const [modalType, setModalType] = useState('');
   const [modalTitle, setModalTitle] = useState('');
+  const [loaded, setLoaded] = useState('');
 
   const socket = useContext(WebsocketContext);
+  const msgInput = useRef<HTMLInputElement>(null)
 
   useEffect( () => {
     socket.on('connect', () => {
@@ -161,6 +163,9 @@ export const WebSocket = () => {
 		getChan();
 	  })
 
+	  if (msgInput.current)
+	  	msgInput.current.focus();
+
     return () => {
       socket.off('connect');
       socket.off('onMessage');
@@ -176,41 +181,63 @@ export const WebSocket = () => {
     }
   });
 
-  useEffect(() => {
-    let newUser:any = sessionStorage.getItem('data');
+  	useEffect(() => {
+		let newUser:any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
+		getChan();
 		setAvatar(newUser.user.avatar);
     	setUsername(newUser.user.username);
 		setAuthId(newUser.user.auth_id);
-  }, [])
+  	}, [])
+	
+	useEffect(() => {
+		if (loaded === 'ok')
+			joinUrl()
+	}, [loaded])
 
-  const getChan = async () => {
-    let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-	channels.map((c:any, idx:number) => {
-		if (c.id === room)
-			c.isActive = true;
-		if (c.messages) {
-			c.messages.map((m:any, index:number) => {
-				c.messages[index] = JSON.parse(String(m));
-			})
-		}
-		channels[idx] = c;
-	})
-    setChans(channels);
-  }
+	useEffect(() => {
+		//window.addEventListener("hashchange", (event) => {joinUrl();})
+		if (chans.length && auth_id !== undefined && !room)
+			setLoaded('ok')
+	}, [chans])
+	
+	const joinUrl = () => {
+		let url = document.URL;
+			let chan:chanType|undefined;
+			let index = url.lastIndexOf("#");
+			
+			if (index === -1) {
+				chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
+				if (chan !== undefined)
+					joinRoom(chan, false)
+			}
+			else {
+				url = url.substring(url.lastIndexOf("#") + 1);
+				chan = chans.find((c) => c.id === url);
+				if (chan !== undefined)
+					joinRoom(chan, false)
+				else {
+					chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
+					if (chan !== undefined)
+						joinRoom(chan, false)
+				}
+			}
+	}
 
-    useEffect(() => {
-    	getChan();
-		chans.map((c:any, idx:number) => {
-			if (c.chanUser.length) {
-				c.chanUser.map((u:any, index:number) => {
-					if (u.auth_id === auth_id) {
-						socket.emit('joinRoom', c.id, auth_id);
-					}
+	  const getChan = async () => {
+		let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+		channels.map((c:any, idx:number) => {
+			if (c.id === room)
+				c.isActive = true;
+			if (c.messages) {
+				c.messages.map((m:any, index:number) => {
+					c.messages[index] = JSON.parse(String(m));
 				})
 			}
+			channels[idx] = c;
 		})
-    }, [])
+		setChans(channels);
+	  }
 
   const onSubmit = () => {
     if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
@@ -230,13 +257,11 @@ export const WebSocket = () => {
 	setChans(tmp);
   }
 
-  const joinRoom = async (newRoom: chanType) => {
+  const joinRoom = async (newRoom: chanType, askForJoin: boolean) => {
 
 	let chanToJoin = chans.find((chan) => chan.id === newRoom.id)
 	if (chanToJoin !== undefined) {
-		//unactiveRoom();
 		if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
-			//socket.emit('joinRoom', newRoom.id, auth_id);
 			setRoom(chanToJoin.id);
 			changeActiveRoom(newRoom.id)
 			if (newRoom.messages)
@@ -245,7 +270,8 @@ export const WebSocket = () => {
 				setMessage([]);
 		}
 		else {
-			if (window.confirm("You will join this channel: " + newRoom.name)) {
+			if (askForJoin === false || (askForJoin === true && window.confirm("You will join this channel: " + newRoom.name))) {
+				console.log("check")
 				socket.emit('joinRoom', newRoom.id, auth_id);
 				setRoom(chanToJoin.id);
 				changeActiveRoom(chanToJoin.id)
@@ -260,7 +286,7 @@ export const WebSocket = () => {
 
   const pressEnter = (e:any) => {
     if (e.key === 'Enter')
-      onSubmit();
+    	onSubmit();
   }
 
   const promptAddUser = () => {
@@ -296,6 +322,7 @@ export const WebSocket = () => {
   }
 
 	const chanColor = (channel: any) => {
+		
 		if (channel.id === room)
 			return ("bg-primary");
 		else if (channel.chanUser.find((u:any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
@@ -316,11 +343,13 @@ export const WebSocket = () => {
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
               {chans.map((chan) =>
-                <li key={chan.id} onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+			  <a key={chan.id} href={"#" + chan.id}>
+                <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                   <div className="">
-                    <a href="#">{chan.name}</a>
+                    {chan.name}
                   </div>
                 </li>
+				</a>
               )}
             </ul>
             {/* FIN AFFICHAGE CHAN */}
@@ -334,7 +363,7 @@ export const WebSocket = () => {
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
           <div className="row">
-            <input id="message" className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter}/>
+            <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter}/>
             <button className="col-1" onClick={onSubmit}>send</button>
           </div>
           <div className="row">
