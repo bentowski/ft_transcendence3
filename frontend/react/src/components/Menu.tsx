@@ -12,7 +12,7 @@ class Menu extends Component {
 
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
-    console.log("newUser = " + newUser);
+    // console.log("newUser = " + newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
       this.setState({ avatar: newUser.user.avatar });
@@ -22,7 +22,6 @@ class Menu extends Component {
 
   render() {
     const user = sessionStorage.getItem("username");
-    console.log(user);
     return (
       <div className="Menu d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">

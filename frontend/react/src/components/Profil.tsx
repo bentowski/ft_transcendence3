@@ -135,8 +135,8 @@ class Profil extends Component<
       while (url[x]) {
         tmp += url[x++];
       }
-      console.log(tmp);
-      this.getUser(tmp);
+	  if (document.URL.includes("localhost:8080/profil"))
+      	this.getUser(tmp);
     });
     console.log(this.state.login)
     let histories: Array<any> = [];
