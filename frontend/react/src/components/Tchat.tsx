@@ -136,8 +136,8 @@ export const WebSocket = () => {
     socket.on('onMessage', (newMessage: MessagePayload) => {
 	 //!!!!!!!!!!!!!!!
 	 let tmp:chanType[] = channelJoined;
-   console.log("chan : " + JSON.stringify(channelJoined))
-   console.log("room of new msg : " + newMessage.room)
+   //console.log("chan : " + JSON.stringify(channelJoined))
+   //console.log("room of new msg : " + newMessage.room)
 	 let index = tmp.findIndex((channel) => channel.id === newMessage.room);
 	  if (tmp[index] !== undefined) {
 		if (tmp[index].messages)

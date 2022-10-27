@@ -90,7 +90,7 @@ class Profil extends Component<
       {},
       "http://localhost:3000/user/name/" + username
     );
-    console.log("LAAAAA", user)
+    //console.log("LAAAAA", user)
     if (!user) return;
       this.setState({ login: user.username, avatar: user.avatar });
   };
@@ -120,7 +120,7 @@ class Profil extends Component<
     while (url[x]) {
       tmp += url[x++];
     }
-    console.log(tmp);
+    //console.log(tmp);
     this.getUser(tmp);
     this.getHistory();
   };
@@ -137,7 +137,7 @@ class Profil extends Component<
       while (url[x]) {
         tmp += url[x++];
       }
-      console.log(tmp);
+      //console.log(tmp);
       this.getUser(tmp);
     });
     // <button className="col-1">

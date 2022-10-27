@@ -1,8 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import Switch from "./utils/Switch";
-// import Request from "./utils/Requests"
-// import "./Menu.css"
+import { AuthContext } from "../contexts/AuthProviderContext";
 
 class Menu extends Component {
   state = {
@@ -12,7 +11,7 @@ class Menu extends Component {
 
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
-    console.log("newUser = " + newUser);
+    //console.log("newUser = " + newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
       this.setState({ avatar: newUser.user.avatar });
@@ -21,8 +20,7 @@ class Menu extends Component {
   };
 
   render() {
-    const user = sessionStorage.getItem("username");
-    console.log(user);
+    //console.log(user);
     return (
       <div className="Menu d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">
@@ -59,9 +57,15 @@ class Menu extends Component {
             </Link>
           </div>
           <div className="logoutMenu">
-            <Link to={"/login"}>
-              <p className="m-0">logout</p>
-            </Link>
+            <AuthContext.Consumer>
+              {({ logout }) => {
+                return (
+                  <Link onClick={logout} to="/login">
+                    <p className="m-0">logout</p>
+                  </Link>
+                );
+              }}
+            </AuthContext.Consumer>
           </div>
         </div>{" "}
         {/*profilMenu */}
