@@ -16,7 +16,6 @@ import { UserService } from '../user/user.service';
   namespace: '/chat',
 })
 export class ChatGateway implements OnModuleInit
- //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(private readonly chanService: ChanService, private readonly userService: UserService) {}
 

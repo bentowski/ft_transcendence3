@@ -71,6 +71,7 @@ export class ChanService {
     }
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
+		try {
 		const chan = await this.chanRepository.findOneBy({ id: message.room });
 		if (chan) {
 			if (chan.messages)
@@ -78,6 +79,10 @@ export class ChanService {
 			else
 				chan.messages = [message];
 			return this.chanRepository.save(chan);
+		}
+		}
+		catch (error) {
+			console.log(error);
 		}
 	}
 
