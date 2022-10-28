@@ -23,7 +23,7 @@ class Switch extends Component {
       console.log("current user not found");
       return;
     }
-    //console.log("TWOFA = ", user.isTwoFA);
+    // console.log("TWOFA = ", user.isTwoFA);
     this.setState({ isTwoFA: user.isTwoFA });
     return user;
   };
@@ -132,7 +132,7 @@ class Switch extends Component {
   };
 
   componentDidMount = async () => {
-    //console.log("COMPONENT DID MOUNT ", this.state.value);
+    // console.log("COMPONENT DID MOUNT ", this.state.value);
     let user = await this.requestTwoFA();
     if (user !== undefined && this.state.isTwoFA > 0) {
       this.setState({ value: true });

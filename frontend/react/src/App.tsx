@@ -114,6 +114,11 @@ class App extends Component {
   };
 
   render() {
+    window.addEventListener("popstate", (event) => {
+      let url = document.URL;
+      if (url === "http:localhost:8080")
+        console.log("test")
+    });
     return (
       <BrowserRouter>
         <ContextLoader />

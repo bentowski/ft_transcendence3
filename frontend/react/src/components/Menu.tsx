@@ -6,12 +6,12 @@ import { AuthContext } from "../contexts/AuthProviderContext";
 class Menu extends Component {
   state = {
     username: "",
-    avatar: "https://avatars.dicebear.com/api/personas/undefined.svg",
+    avatar: "",
   };
 
   componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
-    //console.log("newUser = " + newUser);
+    // console.log("newUser = " + newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
       this.setState({ avatar: newUser.user.avatar });
@@ -20,7 +20,7 @@ class Menu extends Component {
   };
 
   render() {
-    //console.log(user);
+    const user = sessionStorage.getItem("username");
     return (
       <div className="Menu d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">
@@ -41,12 +41,12 @@ class Menu extends Component {
             <Switch />
           </div>
           <div className="loginMenu px-2">
-            <Link to={"/profil/#user"}>
+            <Link to={"/profil/" + this.state.username}>
               <p className="m-0">{this.state.username}</p>
             </Link>
           </div>
           <div className="avatarMenu">
-            <Link to={"/profil/#user"}>
+            <Link to={"/profil/" + this.state.username}>
               <img
                 className="miniAvatar"
                 width="150"
