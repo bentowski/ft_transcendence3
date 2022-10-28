@@ -12,7 +12,6 @@ import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 import PageNotFound from "./pages/PageNotFound";
 
-/*
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   const { isAuth, loading } = useAuthData();
 
@@ -46,7 +45,6 @@ const RequireAuth = () => {
     return <Navigate to="/login" />;
   }
 };
-*/
 //
 //<IsAuthenticated>
 //</IsAuthenticated>
@@ -56,7 +54,6 @@ const ContextLoader = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-
         <Route path="/" element={<Page />} >
           <Route path="profil" element={<Profil />} />
           <Route path="chat" element={<Tchat />} />

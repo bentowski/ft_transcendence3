@@ -2,14 +2,11 @@ import {Component} from "react";
 import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 import {Link} from "react-router-dom";
 
-
-
 const GetAvatar = ({className, width, height, alt}:{className: string, width: string, height: string, alt: string}) => {
     const { user } = useAuthData();
 
     if (user)
     {
-        console.log('avatar - ', user.avatar);
         return (
             <img className={className} width={width} height={height} src={user.avatar} alt={alt} />
         )
