@@ -1,8 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import Switch from "./utils/Switch";
-// import Request from "./utils/Requests"
-// import "./Menu.css"
+import { AuthContext } from "../contexts/AuthProviderContext";
 
 class Menu extends Component {
   state = {
@@ -58,9 +57,15 @@ class Menu extends Component {
             </Link>
           </div>
           <div className="logoutMenu">
-            <Link to={"/login"}>
-              <p className="m-0">logout</p>
-            </Link>
+            <AuthContext.Consumer>
+              {({ logout }) => {
+                return (
+                  <Link onClick={logout} to="/login">
+                    <p className="m-0">logout</p>
+                  </Link>
+                );
+              }}
+            </AuthContext.Consumer>
           </div>
         </div>{" "}
         {/*profilMenu */}

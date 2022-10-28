@@ -136,7 +136,6 @@ export const WebSocket = () => {
   useEffect( () => {
     socket.on('connect', () => {
     });
-
     socket.on('onMessage', (newMessage: MessagePayload) => {
 		let channels:chanType[] = chans;
 		let index:number = chans.findIndex((c) => c.id === newMessage.room);

@@ -118,7 +118,7 @@ class Profil extends Component<
     while (url[x]) {
       tmp += url[x++];
     }
-    console.log(tmp);
+    //console.log(tmp);
     this.getUser(tmp);
     this.getHistory();
   };
