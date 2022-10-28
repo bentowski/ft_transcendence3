@@ -35,9 +35,11 @@ class Switch extends Component {
       {},
       "http://localhost:3000/auth/2fa/generate"
     );
-    if (!response.ok) {
-      return ;
-    }
+    //if (!response.ok) {
+     // return ;
+    //}
+    //this.setState({src: URL.createObjectURL(response)});
+
     const reader = await response.body.getReader();
     var parentComponentInReadClientModal = this;
     let chunks: any = [];
@@ -78,7 +80,7 @@ class Switch extends Component {
 
   activateTwoFA = async () => {
     if (!this.checkVal(this.state.code) && this.state.code.length !== 6) {
-      console.log("wrong code format");
+      //console.log("wrong code format");
       return;
     }
     let rep = await Request(
@@ -90,7 +92,7 @@ class Switch extends Component {
     if (rep.ok) {
       this.setState({ value: true });
     } else {
-      console.log("request 2fa activation error");
+      //console.log("request 2fa activation error");
     }
     this.hidden();
   };
