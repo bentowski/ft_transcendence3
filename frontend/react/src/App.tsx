@@ -10,8 +10,8 @@ import { BrowserRouter } from "react-router-dom";
 import Page from "./pages/Page";
 import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
+import PageNotFound from "./pages/PageNotFound";
 
-/*
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   const { isAuth, loading } = useAuthData();
 
@@ -45,9 +45,7 @@ const RequireAuth = () => {
     return <Navigate to="/login" />;
   }
 };
-*/
-
-//<Route element={<RequireAuth />}>
+//
 //<IsAuthenticated>
 //</IsAuthenticated>
 //</Route>
@@ -56,11 +54,14 @@ const ContextLoader = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Page />} />
-      <Route path="/profil" element={<Profil />} />
-      <Route path="/chat" element={<Tchat />} />
-      <Route path="/history" element={<History />} />
-      <Route path="/game" element={<Game />} />
+        <Route path="/" element={<Page />} >
+          <Route path="profil" element={<Profil />} />
+          <Route path="chat" element={<Tchat />} />
+          <Route path="history" element={<History />} />
+          <Route path="game" element={<Game />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+
     </Routes>
   );
 };
@@ -70,12 +71,16 @@ const ContextLoader = () => {
 //<Route element={<RequireAuth />} >
 
 class App extends Component {
-  static contextType = AuthContext;
+  //static contextType = AuthContext;
 
+  /*
   constructor(props: any) {
     super(props);
     this.state = { user: undefined, isAuth: false, loading: false };
   }
+
+   */
+
 
   getCurrentUser = async () => {
     let user = await Request(
@@ -99,18 +104,17 @@ class App extends Component {
     return user;
   };
 
+
+
   componentDidMount = async () => {
-    /*
-    const ctxt = this.context;
-    let obj = JSON.parse(JSON.stringify(ctxt));
-    if (!obj.isAuth) {
-      return;
-    }
-     */
+
     let user = await this.getCurrentUser();
+    /*
     if (user) {
       this.setState({ user: user });
     }
+
+     */
   };
 
   render() {

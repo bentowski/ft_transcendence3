@@ -10,7 +10,6 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 		this.state = { login: "test", id: props.user.auth_id, online: this.props.user.online ? "online" : "offline" };
 	}
 
-
 	renderUserCards = (id: number) => {
 		if (this.props.avatar) {
 			return (
