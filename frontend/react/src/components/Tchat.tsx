@@ -139,7 +139,7 @@ export const WebSocket = () => {
 
     socket.on('onMessage', (newMessage: MessagePayload) => {
 		let channels:chanType[] = chans;
-		let index:number = chans.findIndex((c) => c.id === newMessage.room);
+		let index:number = chans.findIndex((c:any) => c.id === newMessage.room);
 		if (channels[index] !== undefined) {
 			if (channels[index].messages)
 				channels[index].messages = [...channels[index].messages, newMessage];
@@ -170,9 +170,10 @@ export const WebSocket = () => {
       socket.off('connect');
       socket.off('onMessage');
       socket.off('newChan');
-	  chans.map((c) => {
+	  socket.off('userJoinChannel');
+	  chans.map((c:any) => {
 		if (c.chanUser) {
-			c.chanUser.map((u) => {
+			c.chanUser.map((u:any) => {
 				if (u.auth_id === auth_id)
 					socket.emit('leaveRoom', c.id, auth_id);
 			})
@@ -207,17 +208,17 @@ export const WebSocket = () => {
 			let index = url.lastIndexOf("#");
 			
 			if (index === -1) {
-				chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
+				chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
 				if (chan !== undefined)
 					joinRoom(chan, false)
 			}
 			else {
 				url = url.substring(url.lastIndexOf("#") + 1);
-				chan = chans.find((c) => c.id === url);
+				chan = chans.find((c:any) => c.id === url);
 				if (chan !== undefined)
 					joinRoom(chan, false)
 				else {
-					chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
+					chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
 					if (chan !== undefined)
 						joinRoom(chan, false)
 				}
@@ -259,9 +260,9 @@ export const WebSocket = () => {
 
   const joinRoom = async (newRoom: chanType, askForJoin: boolean) => {
 
-	let chanToJoin = chans.find((chan) => chan.id === newRoom.id)
+	let chanToJoin = chans.find((chan:any) => chan.id === newRoom.id)
 	if (chanToJoin !== undefined) {
-		if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
+		if (chanToJoin.chanUser.find((u:any) => u.auth_id === auth_id)) {
 			setRoom(chanToJoin.id);
 			changeActiveRoom(newRoom.id)
 			if (newRoom.messages)
@@ -271,7 +272,6 @@ export const WebSocket = () => {
 		}
 		else {
 			if (askForJoin === false || (askForJoin === true && window.confirm("You will join this channel: " + newRoom.name))) {
-				console.log("check")
 				socket.emit('joinRoom', newRoom.id, auth_id);
 				setRoom(chanToJoin.id);
 				changeActiveRoom(chanToJoin.id)
@@ -307,7 +307,7 @@ export const WebSocket = () => {
 	let users: Array<any> = [];
 	const actualChan = chans.find(c => c.isActive === true);
 	if (actualChan?.chanUser)
-		actualChan.chanUser.map((u) => {
+		actualChan.chanUser.map((u:any) => {
 			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
 		
 	})

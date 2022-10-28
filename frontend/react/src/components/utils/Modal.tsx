@@ -34,9 +34,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
   createChan = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
     const topic = document.querySelector("#chanTopic") as HTMLInputElement;
-    const password = document.querySelector(
-      "#chanPassword"
-    ) as HTMLInputElement;
+    const password = document.querySelector("#chanPassword") as HTMLInputElement;
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
@@ -48,7 +46,9 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       radioCheck = "private";
     else if (radioPro.checked === true)
       radioCheck = "protected";
-    if (radioCheck !== "" || !name.value || !topic.value) {
+	let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+	chans = chans.find((c:any) => c.name === name.value)
+    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
       if (password.value)
         pswd = password.value;
       await Request(
@@ -66,6 +66,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
         },
         "http://localhost:3000/chan/create"
       );
+	  let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
       name.value = "";
       topic.value = "";
       password.value = "";
@@ -74,6 +75,8 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       radioPro.checked = false;
       this.hidden();
       socket.emit('chanCreated');
+	  window.location.replace('http://localhost:8080/tchat#' + chan.id)
+	  window.location.reload();
     }
     else {
       alert("You have to fill each informations");
