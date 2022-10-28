@@ -8,9 +8,10 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import { BrowserRouter } from "react-router-dom";
 import Page from "./pages/Page";
-import { useAuthData } from "./contexts/AuthProviderContext";
+import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 
+/*
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   const { isAuth, loading } = useAuthData();
 
@@ -27,7 +28,7 @@ const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   return <div>{children}</div>;
 };
 
-const RequireAuth = (/**/) => {
+const RequireAuth = () => {
   let { isAuth, loading } = useAuthData();
 
   if (loading) {
@@ -44,25 +45,22 @@ const RequireAuth = (/**/) => {
     return <Navigate to="/login" />;
   }
 };
+*/
+
+//<Route element={<RequireAuth />}>
+//<IsAuthenticated>
+//</IsAuthenticated>
+//</Route>
 
 const ContextLoader = () => {
   return (
     <Routes>
-      <Route
-        path="/login"
-        element={
-          <IsAuthenticated>
-            <Login />
-          </IsAuthenticated>
-        }
-      />
-      <Route element={<RequireAuth />}>
-        <Route path="/" element={<Page />} />
-        <Route path="/profil" element={<Profil />} />
-        <Route path="/chat" element={<Tchat />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/game" element={<Game />} />
-      </Route>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Page />} />
+      <Route path="/profil" element={<Profil />} />
+      <Route path="/chat" element={<Tchat />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/game" element={<Game />} />
     </Routes>
   );
 };
@@ -72,9 +70,12 @@ const ContextLoader = () => {
 //<Route element={<RequireAuth />} >
 
 class App extends Component {
-  state = {
-    user: undefined,
-  };
+  static contextType = AuthContext;
+
+  constructor(props: any) {
+    super(props);
+    this.state = { user: undefined, isAuth: false, loading: false };
+  }
 
   getCurrentUser = async () => {
     let user = await Request(
@@ -99,6 +100,13 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    /*
+    const ctxt = this.context;
+    let obj = JSON.parse(JSON.stringify(ctxt));
+    if (!obj.isAuth) {
+      return;
+    }
+     */
     let user = await this.getCurrentUser();
     if (user) {
       this.setState({ user: user });
