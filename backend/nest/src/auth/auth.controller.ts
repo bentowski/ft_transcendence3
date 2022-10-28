@@ -71,12 +71,12 @@ export class AuthController {
       console.log('invalid token');
     }
     if (!auth) {
-      return res.status(400).json({ isAuth: false });
+      return res.status(200).json({ isAuth: false });
     } else {
       const data = this.jwtService.verify(req_token);
       const user = await this.authService.findUser(data.auth_id);
       if (!user) {
-        return res.status(400).json({
+        return res.status(200).json({
           isAuth: false,
         });
       }

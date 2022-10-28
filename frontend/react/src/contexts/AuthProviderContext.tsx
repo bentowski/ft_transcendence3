@@ -7,24 +7,30 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-
-export interface IAuthContextType {
-  user: any;
-  logout: () => void;
-  isAuth: boolean;
-  loading: boolean;
-  over: boolean;
-}
+import IAuthContextType from "../interfaces/authcontexttype-interface";
+import IUser from "../interfaces/user-interface";
 
 export const AuthContext = createContext<IAuthContextType>(
   {} as IAuthContextType
 );
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isAuth, setIsAuth] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
-  const [over, setOver] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState/*<Promise<IUser> | undefined>*/(undefined);
+  const [over, setOver] = useState(false);
+
+  const getCurrentUser = async () => {
+    let cur = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/current"
+    ) /*.catch(() => {
+      return {};
+    }); */
+    return cur;
+  }
 
   const fetchData = async () => {
     setLoading(true);
@@ -35,11 +41,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       "http://localhost:3000/auth/islogin"
     );
     if (!data) {
-      setLoading(false);
+       setLoading(false);
       return;
     }
     if (data.isAuth) {
       setIsAuth(true);
+      let cur = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/current"
+      )
+      if (cur) {
+        setUser(cur);
+      }
+      //setLoading(false);
     }
     setLoading(false);
     return;
