@@ -2,6 +2,7 @@ import { Component } from "react";
 import Modal from "./utils/Modal";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
+import GetAvatar from "./utils/GetAvatar";
 
 // class History extends Component<{ value: number }, {}> {
 // 	renderHistory(login: string, x: number) {
@@ -162,12 +163,8 @@ class Profil extends Component<
               title={this.state.modalTitle}
               calledBy={this.state.modalType}
             />
-            <img
-              onClick={this.promptAvatar}
-              className="modifAvatar mb-2"
-              src={this.state.avatar}
-              alt=""
-            />
+            <GetAvatar className="modifAvatar mb-2" width="" height="" alt="" />
+
             <h3 onClick={this.promptLogin}>{this.state.login}</h3>
           </div>{" "}
           {/* fin ProfilInfPer */}
@@ -180,3 +177,12 @@ class Profil extends Component<
 } // fin de App
 
 export default Profil;
+
+/*
+<img
+    onClick={this.promptAvatar}
+    className="modifAvatar mb-2"
+    src={this.state.avatar}
+    alt=""
+/>
+*/

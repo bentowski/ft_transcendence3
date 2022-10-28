@@ -62,8 +62,8 @@ export class UserService {
     user.auth_id = auth_id;
     user.username = username;
     user.email = email;
-    //user.avatar =
-    //    'https://avatars.dicebear.com/api/personas/' + auth_id + '.svg';
+    user.avatar =
+        'https://avatars.dicebear.com/api/personas/' + user.auth_id + '.svg';
     user.createdAt = new Date();
     try {
       await this.userRepository.save(user);

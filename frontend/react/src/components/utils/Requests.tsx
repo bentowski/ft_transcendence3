@@ -26,7 +26,7 @@ async function Request(type: string, headers: any, body: any, url: string) {
       headers: headers,
       body: JSON.stringify(body),
     });
-    console.log("response = ", response);
+    //console.log("response = ", response);
     if (response.ok) {
       var myBlob = new Blob(["stream"], { type: "image/png" });
       //console.log("blob - ", myBlob instanceof Blob);
