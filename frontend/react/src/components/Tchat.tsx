@@ -196,7 +196,7 @@ export const WebSocket = () => {
 	}, [loaded])
 
 	useEffect(() => {
-		//window.addEventListener("hashchange", (event) => {joinUrl();})
+		window.addEventListener("hashchange", (event) => {joinUrl();})
 		if (chans.length && auth_id !== undefined && !room)
 			setLoaded('ok')
 	}, [chans])
