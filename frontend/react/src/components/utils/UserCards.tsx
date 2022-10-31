@@ -56,39 +56,19 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 			);
 			socket.emit('chanCreated');
 			let newUrl = "http://localhost:8080/tchat/#" + newChan.id
-			window.location.href = newUrl
-			console.log("create : " + newUrl)
+			setTimeout(() => {
+				window.location.href = newUrl
+			}, 100)
+			return ;
 		// this.setState({chanId: newChan.id.toString()})
 		}
 		// window.location.href = url + "#" + ret
 		let newUrl = "http://localhost:8080/tchat/#" + ret
-		console.log("exist : " + newUrl)
 		window.location.href = newUrl
 		// this.setState({chanId: ret.toString()})
 		// let chans2 = await Request("GET", {}, {}, "http://localhost:3000/chan/" + u1.username + "$" + u2.username);
 		// 	console.log("chans2.id =", chans2.id);
 	}
-
-	// getID = async () => {
-	// 	let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
-	// 	let u1 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.ssname);
-	// 	let u2 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.login);
-	// 	// console.log("length = ", chans.length);
-	// 	// console.log("u1.auth_id = ", u1.auth_id);
-	// 	// console.log("u2.auth_id = ", u2.auth_id);
-	// 	let x = 0;
-	// 	while (x < chans.length) {
-	// 		// console.log("chanUser.length = ", chans[x].chanUser.length);
-	// 		if (chans[x].type === "direct"
-	// 			&& ((chans[x].chanUser[0].auth_id === u1.auth_id && chans[x].chanUser[1].auth_id === u2.auth_id)
-	// 				|| (chans[x].chanUser[0].auth_id === u2.auth_id && chans[x].chanUser[1].auth_id === u1.auth_id))
-	// 		)
-	// 			return(chans[x].id);
-
-	// 		x++;
-	// 	}
-	// 	return (undefined);
-	// }
 
 	renderUserCards = (id: number) => {
 		if (this.props.avatar) {

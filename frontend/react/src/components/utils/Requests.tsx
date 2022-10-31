@@ -22,11 +22,11 @@ async function Request(type: string, headers: any, body: any, url: string) {
     };
     const response: any = await fetch(url, settings);
     if (response.ok) {
-      var myBlob = new Blob(["stream"], { type: "image/png" });
-      //console.log("blob - ", myBlob instanceof Blob);
-      if (myBlob instanceof Blob) {
-        return response;
-      }
+      // var myBlob = new Blob(["stream"], { type: "image/png" });
+      // //console.log("blob - ", myBlob instanceof Blob);
+      // if (myBlob instanceof Blob && myBlob.length) {
+      //   return response;
+      // }
       return await response.json();
     } else {
       return null;
