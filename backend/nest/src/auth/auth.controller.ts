@@ -54,25 +54,33 @@ export class AuthController {
       .redirect('http://localhost:8080');
   }
 
+  //PUT THIS FUNCTION INTO JWT STRATEGY
   @Get('istoken')
   async authenticated(@Req() req, @Res() res): Promise<any> {
     //console.log('cookie = ', req.cookies['jwt']);
     const req_token = req.cookies['jwt'];
     if (!req_token) {
-      //console.log('no cookie for the pookie');
+      console.log('no cookie for the pookie');
       res.status(201).json({ isTok: 0 });
     } else {
       //console.log('welcome to the club mate');
       const token: PayloadInterface = jwt_decode(req_token);
       const user: UserEntity = await this.authService.findUser(token.auth_id);
       if (!user) {
-        res.status(200).json({ isTok: 1 });
+        console.log('cant find user');
+        res.status(202).json({ isTok: 1 });
       } else {
-        res.status(200).json({ isTok: 2 });
+        if (!token.isAuth) {
+          console.log('token said no auth');
+          //console.log('need 2fa please dont cheat');
+          res.status(203).json({ isTok: 2 });
+        } else {
+          console.log('token said you can come in');
+          res.status(204).json({ isTok: 3 });
+        }
       }
     }
   }
-
 
     /*
     const req_token = req.cookies['jwt'];
@@ -122,7 +130,7 @@ export class AuthController {
   }
  */
 
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   @Get('status')
   status(@Req() req: Request) {
     return req.user;
@@ -142,7 +150,7 @@ export class AuthController {
   //KEEP FOLLOWING COMMENTED CODE
 
   //@UseGuards(AuthenticatedGuard)
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   @Delete('logout')
   logout(@Req() req, @Res({ passthrough: true }) res) {
     //const { cookies } = req;
@@ -223,31 +231,36 @@ export class AuthController {
     await this.authService.turnOnTwoFAAuth(request.auth_id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/deactivate')
   async turnOffTwoFAAuth(@Req() request: PayloadInterface, @Res() response) {
     //console.log('deactivate auth controller');
     return this.authService.turnOffTwoFAAuth(request.auth_id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/authenticate')
   async authenticate(
     @Req() req: PayloadInterface,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) res: Response,
     @Body() { twoFACode }: TwoFACodeDto,
   ) {
-    const isValid = this.authService.isTwoFAValid(twoFACode, req.auth_id);
+    console.log('twofacode = ', twoFACode);
+    const isValid = await this.authService.isTwoFAValid(twoFACode, req.auth_id);
+    console.log('isvalid = ', isValid);
     if (!isValid) {
       throw new UnauthorizedException('wrong 2fa code');
+      console.log('moveé code');
+      //res.status(200).json({ message: 'mové code ' });
     }
+    console.log('oksapass');
     const username: string = req.username; //['username'];
     const auth_id: string = req.auth_id; //user['auth_id'];
     const isAuth = 1;
     const payload: PayloadInterface = { auth_id, username, isAuth };
     const access_token: string = await this.jwtService.sign(payload);
     //const access_token = await this.authService.getJwtToken(request.auth_id, 1);
-    response.cookie('jwt', access_token, { httpOnly: true });
+    res.cookie('jwt', access_token, { httpOnly: true });
     let user = undefined;
     user = await this.authService.findUser(req.auth_id);
     return user;

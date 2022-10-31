@@ -29,8 +29,9 @@ async function Request(type: string, headers: any, body: any, url: string): Prom
         headers: headers,
         body: JSON.stringify(body),
       });
-      //console.log("response = ", response);
+      console.log("response = ", response);
       if (response.ok) {
+        //console.log('response - ', response);
         return await response.json();
       } else {
         return undefined;

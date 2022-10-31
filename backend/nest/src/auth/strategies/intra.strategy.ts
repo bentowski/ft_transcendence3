@@ -17,7 +17,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log('validating intra strategy');
+    //console.log('validating intra strategy');
     const { id, username } = profile;
     const user = {
       auth_id: id,
@@ -26,7 +26,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
     };
     let newUser = undefined;
     newUser = await this.authService.validateUser(user);
-    console.log('intra strategy user - ', newUser);
+    //console.log('intra strategy user - ', newUser);
     return newUser;
   }
 }

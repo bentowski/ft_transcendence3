@@ -87,9 +87,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ).then((res: any) =>
             res.json()
         ).then((data: any) => {
-          console.log('data = ', data);
+          console.log('data tok = ', data.isTok);
           if (data.isTok === 0) {
-            console.log('403 baby');
+            //console.log('403 baby');
             setLoading(false);
             return;
           } else if (data.isTok > 0) {
@@ -111,27 +111,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setLoading(false);
                 return ;
               }
+              setUser(user);
               //setIsToken(true);
-              console.log('istoken = ', isToken);
+              //console.log('istoken = ', isToken);
               if (user.isTwoFA === 1) {
                 setIsTwoFa(true);
                 setLoading(false);
-                console.log('two fa activated');
-                console.log('isauth = ', isAuth);
+                //console.log('two fa activated');
+                //console.log('isauth = ', isAuth);
 
-                console.log('istwofa = ', isTwoFa);
-                console.log('loading = ', loading);
+                //console.log('istwofa = ', isTwoFa);
+                //console.log('loading = ', loading);
                 return;
               }
-                console.log('no twofa');
-                setUser(user);
-                setLoading(false);
-                setIsAuth(true);
-                setIsTwoFa(false);
-                return;
+              setLoading(false);
+              setIsAuth(true);
+              return ;
             }).catch((error: any) => {
               console.log('oulala - ', error);
             })
+            /*
+            if (data.isTok === 2) {
+              setIsTwoFa(true);
+              setLoading(false);
+              return ;
+            }
+
+
+            if (data.isTok === 3) {
+              //console.log('no twofa');
+              console.log('is')
+              setUser(user);
+              setLoading(false);
+              setIsAuth(true);
+              setIsTwoFa(false);
+              return;
+            }
+
+             */
+            setLoading(false);
             return;
           }
         }).catch((error: any) => {
@@ -149,41 +167,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
       useEffect(() => {
-        console.log('starts');
+        //console.log('starts');
         fetchData();
-        console.log('ends');
+        //console.log('ends');
       }, [ /* loading, isTwoFa, user, error, isAuth, isLogin */ ]);
 
 
 
-      const validateTwoFa =  useCallback(async (code: any) => {
-        console.log('code = ', code);
-        try {
-          if (isTwoFa) {
-            const body: any = JSON.stringify({twoFACode: code})
-            let res = await Request(
-                "POST",
-                {},
-                { body },
-                "http://localhost:3000/auth/2fa/authenticate"
-            )
-            if (res.ok) {
-              setIsAuth(true);
-              console.log('2fa auth ok');
-              return;
-            }
-          } else {
-            setIsAuth(true)
-            return;
-          }
-        } catch (error) {
-          if (typeof error === 'object' && error !== null) {
-            console.log('oulala -', error);
-          } else {
-            console.log('unexpected error ', error);
-          }
-        }
-      }, [])
 
       const logout = useCallback(async () => {
         try {
@@ -209,41 +199,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }, [])
 
-      const deactivateTwoFa = useCallback(async () => {
-        console.log('eeeee');
-        if (isTwoFa) {
+  /*
+  const validateTwoFa =  useCallback(async (code: any) => {
+    console.log('code = ', code);
+    try {
+      if (isTwoFa) {
+        const body: any = JSON.stringify({twoFACode: code})
+        let res = await Request(
+            "POST",
+            {},
+            { body },
+            "http://localhost:3000/auth/2fa/authenticate"
+        )
+        if (res.ok) {
+          setIsAuth(true);
+          console.log('2fa auth ok');
+          return;
+        }
+      } else {
+        setIsAuth(true)
+        return;
+      }
+    } catch (error) {
+      if (typeof error === 'object' && error !== null) {
+        console.log('oulala -', error);
+      } else {
+        console.log('unexpected error ', error);
+      }
+    }
+  }, [])
+
+
+   */
+
+  /*
+    const deactivateTwoFa = useCallback(async () => {
+      console.log('eeeee');
+      if (isTwoFa) {
+        let res = await Request(
+            "POST",
+            {},
+            {},
+            "http://localhost:3000/auth/2fa/deactivate"
+        )
+        if (res.ok) {
+          console.log('deactivating two fa success');
+          setIsTwoFa(false);
+        } else {
+          console.log('deactivating two fa fail');
+        }
+      }
+    }, [])
+
+      const activateTwoFa = useCallback(async () => {
+        console.log('xxxxx');
+        if (!isTwoFa) {
           let res = await Request(
               "POST",
               {},
               {},
-              "http://localhost:3000/auth/2fa/deactivate"
+              "http://localhost:3000/auth/2fa/activate"
           )
           if (res.ok) {
-            console.log('deactivating two fa success');
-            setIsTwoFa(false);
+            setIsTwoFa(true);
+            console.log('activating two fa success')
           } else {
-            console.log('deactivating two fa fail');
+            console.log('activating two fa fail')
           }
         }
       }, [])
 
-        const activateTwoFa = useCallback(async () => {
-          console.log('xxxxx');
-          if (!isTwoFa) {
-            let res = await Request(
-                "POST",
-                {},
-                {},
-                "http://localhost:3000/auth/2fa/activate"
-            )
-            if (res.ok) {
-              setIsTwoFa(true);
-              console.log('activating two fa success')
-            } else {
-              console.log('activating two fa fail')
-            }
-          }
-        }, [])
+   */
 
       /*
       const logout = async () => {
@@ -272,11 +298,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             loading,
             logout,
             //login,
-            validateTwoFa,
-            activateTwoFa,
-            deactivateTwoFa,
+            //validateTwoFa,
+            //activateTwoFa,
+            //deactivateTwoFa,
           }),
-          [user, isAuth, loading, logout, isToken, isTwoFa, activateTwoFa, deactivateTwoFa]
+          [ error, user, isAuth, loading, logout, isToken, isTwoFa /*, activateTwoFa, deactivateTwoFa */]
       );
 
       return (

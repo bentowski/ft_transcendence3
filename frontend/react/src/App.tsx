@@ -13,6 +13,7 @@ import Request from "./components/utils/Requests";
 import PageNotFound from "./pages/PageNotFound";
 import AskTwoFa from './components/utils/AskTwoFa';
 
+
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
 
@@ -22,7 +23,7 @@ const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
   console.log('is token?', isToken);
   if (isToken) {
     console.log('no toktok');
-    if (isTwoFa) {
+    if (isTwoFa && !isAuth) {
       console.log('but needs to do two fa');
       return (
           <AskTwoFa />
@@ -49,7 +50,7 @@ const RequireAuth = ({children}:{children: any}) => {
   console.log('requireauth user is login?')
   if (isLogin) {
     console.log('user is logged in');
-    if (isTwoFa) {
+    if (isTwoFa && !isAuth) {
       console.log('but needs to do two fa');
       return (
           <AskTwoFa/>
@@ -74,17 +75,19 @@ const RequireAuth = ({children}:{children: any}) => {
 //</IsAuthenticated>
 //</Route>
 
+
+
 const ContextLoader = () => {
   return (
     <Routes>
-      <Route path="/login" element={<IsAuthenticated><Login /></IsAuthenticated>} />
-        <Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
-          <Route path="profil" element={<RequireAuth><Profil /></RequireAuth>} />
-          <Route path="chat" element={<RequireAuth><Tchat /></RequireAuth>} />
-          <Route path="history" element={<RequireAuth><History /></RequireAuth>} />
-          <Route path="game" element={<RequireAuth><Game /></RequireAuth>} />
-          <Route path="*" element={<RequireAuth><PageNotFound /></RequireAuth>} />
-        </Route>
+       <Route path="/login" element={<IsAuthenticated><Login /></IsAuthenticated>} />
+               <Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
+                 <Route path="profil" element={<RequireAuth><Profil /></RequireAuth>} />
+                 <Route path="chat" element={<RequireAuth><Tchat /></RequireAuth>} />
+                 <Route path="history" element={<RequireAuth><History /></RequireAuth>} />
+                 <Route path="game" element={<RequireAuth><Game /></RequireAuth>} />
+                 <Route path="*" element={<RequireAuth><PageNotFound /></RequireAuth>} />
+               </Route>
     </Routes>
   );
 };
@@ -103,7 +106,7 @@ class App extends Component {
   }
 
    */
-  /*
+
 
   getCurrentUser = async () => {
     let user = await Request(
@@ -129,11 +132,11 @@ class App extends Component {
 
 
 
-   */
+
 
   componentDidMount = async () => {
 
-  //  await this.getCurrentUser();
+   await this.getCurrentUser();
 
     /*
     if (user) {

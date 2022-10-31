@@ -101,7 +101,7 @@ class Switch extends Component {
     return true;
   };
 
-  activateTwoFA = async () => {
+  activateTwoFa = async () => {
     console.log('activating two fa...');
     if (!this.checkVal(this.state.code) && this.state.code.length !== 6) {
       console.log("wrong code format");
@@ -161,6 +161,7 @@ class Switch extends Component {
 
   getUser = () => {
     const data: any = this.context;
+    console.log('data user contexxt = ', data);
     return data.user;
   }
 
@@ -184,6 +185,11 @@ class Switch extends Component {
   code={this.state.code}
   />
   */
+
+  //<AuthContext.Consumer>
+  //                           {({ activateTwoFa }) => (
+  //  )}
+  //                         </AuthContext.Consumer>
 
   render() {
     //console.log("istwo fa = ", this.state.isTwoFA);
@@ -211,13 +217,11 @@ class Switch extends Component {
                         <button className="mx-1" onClick={this.hidden}>
                           Cancel
                         </button>
-                        <AuthContext.Consumer>
-                          {({ activateTwoFa }) => (
-                            <button onClick={activateTwoFa} className="mx-1">
+
+                            <button onClick={this.activateTwoFa} className="mx-1">
                               Validate
                             </button>
-                          )}
-                        </AuthContext.Consumer>
+
                       </footer>
                 </div>
               </div>

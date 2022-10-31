@@ -11,6 +11,37 @@ class AskTwoFa extends Component {
         code: '',
     }
 
+    validateTwoFa =  async () => {
+        console.log('code = ', this.state.code);
+        try {
+            //if (isTwoFa) {
+                const body: any = JSON.stringify({twoFaCode: this.state.code})
+                const requestHeaders: any = new Headers();
+                requestHeaders.set('Content-Type', 'application/json')
+                let res: any = await Request(
+                    "POST",
+                    { requestHeaders },
+                    { body },
+                    "http://localhost:3000/auth/2fa/authenticate"
+                )
+                if (res.ok) {
+                    console.log('2fa auth ok');
+                    return;
+                }
+            //} else {
+             //   setIsAuth(true)
+               // return;
+            //}
+        } catch (error) {
+            if (typeof error === 'object' && error !== null) {
+                console.log('oulala -', error);
+                return ;
+            } else {
+                console.log('unexpected error ', error);
+            }
+        }
+    }
+
     handleChange = (evt: any) => {
         this.setState({ code: evt.target.value });
     };
@@ -29,18 +60,18 @@ class AskTwoFa extends Component {
                         value={this.state.code}
                     />
                 </form>
-                <AuthContext.Consumer>
-                    {({ login }) => {
-                        return (
-                            <button onClick={login} className="mx-1">
+
+                            <button onClick={this.validateTwoFa} className="mx-1">
                                 Validate
                             </button>
-                        );
-                    }}
-                </AuthContext.Consumer>
+
 
             </div>
         )
     }
 }
 export default AskTwoFa;
+            //   <AuthContext.Consumer>
+//                     {({ login }) => {
+            // }}
+                    // </AuthContext.Consumer>
