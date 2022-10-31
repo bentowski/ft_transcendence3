@@ -24,19 +24,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: PayloadInterface): Promise<UserEntity> {
-    console.log('validatin jwt strategy');
     const { auth_id } = payload;
     const newUser = await this.authService.findUser(auth_id);
-    //console.log(newUser);
+    console.log(newUser);
     if (!newUser) {
       throw new UnauthorizedException('Invalid Token');
     }
     if (!newUser.isTwoFA) {
-      console.log('jwt strategy user dont need two fa');
       return newUser;
     }
     if (payload.isAuth) {
-      console.log('jwt strategy user is log');
       return newUser;
     }
   }

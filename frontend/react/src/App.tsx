@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import "./styles/App.css";
 import Game from "./pages/Game";
@@ -8,59 +8,35 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import { BrowserRouter } from "react-router-dom";
 import Page from "./pages/Page";
-import {useAuthData } from "./contexts/AuthProviderContext";
+import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 import PageNotFound from "./pages/PageNotFound";
-import AskTwoFa from './components/utils/AskTwoFa';
-
 
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const { isAuth, loading, isTwoFa, isToken } = useAuthData();
+  const { isAuth, loading } = useAuthData();
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
-  console.log('is token?', isToken);
-  if (isToken) {
-    console.log('no toktok');
-    if (isTwoFa && !isAuth) {
-      console.log('but needs to do two fa');
-      return (
-          <AskTwoFa />
-      )
-    }
-    if (isAuth) {
-      console.log('user authenticated!');
-      return (
-          <div>
-            <Navigate to="/" />
-          </div>
-      );
-    }
+  if (isAuth) {
+    return (
+      <div>
+        <Navigate to="/" />
+      </div>
+    );
   }
   return <div>{children}</div>;
 };
 
-const RequireAuth = ({children}:{children: any}) => {
-  let { isLogin, isTwoFa, isAuth, loading } = useAuthData();
+const RequireAuth = () => {
+  let { isAuth, loading } = useAuthData();
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
-  console.log('requireauth user is login?')
-  if (isLogin) {
-    console.log('user is logged in');
-    if (isTwoFa && !isAuth) {
-      console.log('but needs to do two fa');
-      return (
-          <AskTwoFa/>
-      )
-    }
-  }
+
   if (isAuth) {
     return (
-        children ?
-            children :
       <div>
         <Outlet />
       </div>
@@ -69,25 +45,23 @@ const RequireAuth = ({children}:{children: any}) => {
     return <Navigate to="/login" />;
   }
 };
-
 //
 //<IsAuthenticated>
 //</IsAuthenticated>
 //</Route>
 
-
-
 const ContextLoader = () => {
   return (
     <Routes>
-       <Route path="/login" element={<IsAuthenticated><Login /></IsAuthenticated>} />
-               <Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
-                 <Route path="profil" element={<RequireAuth><Profil /></RequireAuth>} />
-                 <Route path="chat" element={<RequireAuth><Tchat /></RequireAuth>} />
-                 <Route path="history" element={<RequireAuth><History /></RequireAuth>} />
-                 <Route path="game" element={<RequireAuth><Game /></RequireAuth>} />
-                 <Route path="*" element={<RequireAuth><PageNotFound /></RequireAuth>} />
-               </Route>
+      <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Page />} >
+          <Route path="profil" element={<Profil />} />
+          <Route path="tchat" element={<Tchat />} />
+          <Route path="history" element={<History />} />
+          <Route path="game" element={<Game />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+
     </Routes>
   );
 };
@@ -132,12 +106,9 @@ class App extends Component {
 
 
 
-
-
   componentDidMount = async () => {
 
-   await this.getCurrentUser();
-
+    let user = await this.getCurrentUser();
     /*
     if (user) {
       this.setState({ user: user });

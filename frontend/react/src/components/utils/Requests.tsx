@@ -1,12 +1,9 @@
 // function checkIfJSONisNotEmpty(obj: any) {
 //   return Object.keys(obj).length > 0;
 // }
-import {IResponseData} from "../../interfaces/responsedata-interface";
-import IError from "../../interfaces/error-interface";
 
-async function Request(type: string, headers: any, body: any, url: string): Promise<any> {
+async function Request(type: string, headers: any, body: any, url: string) {
   console.log(url);
-  //try {
   if (type === "GET") {
     //const settings = ;
     const response: any = await fetch(url, {
@@ -31,12 +28,16 @@ async function Request(type: string, headers: any, body: any, url: string): Prom
     });
     //console.log("response = ", response);
     if (response.ok) {
+      // var myBlob = new Blob(["stream"], { type: "image/png" });
+      // //console.log("blob - ", myBlob instanceof Blob);
+      // if (myBlob instanceof Blob && myBlob.length) {
+      //   return response;
+      // }
       return await response.json();
-       } else {
-        return undefined;
-      }
+    } else {
+      return null;
     }
+  }
 }
 
 export default Request;
-     

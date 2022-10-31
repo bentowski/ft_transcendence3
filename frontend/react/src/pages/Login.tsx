@@ -1,6 +1,5 @@
 import { Component } from "react";
 import "../styles/pages/login.css";
-import {AuthContext} from "../contexts/AuthProviderContext";
 // import { AuthContext } from "../context/AuthContext";
 
 class Login extends Component<any, any> {
@@ -37,21 +36,13 @@ class Login extends Component<any, any> {
         </a>
         <div className="Inf px-5 pb-3">
           <h2 className="d-flex flex-row justify-content-center align-items-center">Sign up with your </h2>
-          <h2 className="d-flex flex-row justify-content-center align-items-center"><img className="Logo mx-2 pt-1" src="./logos/42-logo.svg" alt=""></img> account</h2>
+          <h2 className="d-flex flex-row justify-content-center align-items-center"><img className="Logo mx-2 pt-1" src="./logos/42-logo.svg"></img> account</h2>
         </div>
-
-                  <a href="http://localhost:3000/auth/login">
-                      <button className="mb-2 mx-2">Sign in</button>
-                  </a>
-
-
+        <a href="http://localhost:3000/auth/login">
+          <button className="mb-2 mx-2">Sign in</button>
+        </a>
       </div>
     );
   }
 }
 export default Login;
-
-//<AuthContext.Consumer>
-//               {({ login }) => (
-//   )}
-//           </AuthContext.Consumer>

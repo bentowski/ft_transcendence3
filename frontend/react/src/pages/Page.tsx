@@ -1,7 +1,11 @@
 import React, { Component } from "react";
+import {Navigate, Outlet} from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
+import Request from "../components/utils/Requests";
 import FriendsNav from "../components/FriendsNav";
+import {useAuthUser, useIsAuthenticated, withIsAuthenticated} from "react-auth-kit";
+import AuthContext from "react-auth-kit/dist/AuthContext";
 // import Tchat from '../components/Tchat'
 import Profil from '../components/Profil'
 // import Footer from './Footer'
@@ -46,7 +50,7 @@ class Page extends Component {
             <MatchNav />
           </div>
           <div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2">
-            <Profil />
+            <Outlet />
           </div>
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
             <FriendsNav />
