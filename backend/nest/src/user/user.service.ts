@@ -37,7 +37,10 @@ export class UserService {
   async currentUser(auth_id: string): Promise<UserEntity> {
     //let foundUser: UserEntity = undefined;
     const foundUser: UserEntity = await this.findOneByAuthId(auth_id);
-    if (!foundUser) throw new NotFoundException('cant find user');
+    //console.log('found user = ', foundUser);
+    if (!foundUser) {
+      throw new NotFoundException('cant find user');
+    }
     return foundUser;
   }
 
@@ -60,6 +63,7 @@ export class UserService {
     */
     user = this.userRepository.create(createUserDto);
     user.auth_id = auth_id;
+    user.username = username;
     user.username = username;
     user.email = email;
     user.avatar =
@@ -92,14 +96,14 @@ export class UserService {
     let user: UserEntity = undefined;
     user = await this.findOneByAuthId(authId);
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-    console.log(user);
-    console.log('isTwoFA = ', isTwoFA);
-    console.log('before editing = ' + user.isTwoFA);
+    //console.log(user);
+    //console.log('isTwoFA = ', isTwoFA);
+    //console.log('before editing = ' + user.isTwoFA);
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
     if (twoFASecret) user.twoFASecret = twoFASecret;
     if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
-    console.log('after edit = ' + user.isTwoFA);
+    //console.log('after edit = ' + user.isTwoFA);
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);
@@ -141,7 +145,7 @@ export class UserService {
   }
 
   async turnOnTwoFA(auth_id: string, user: UserEntity) {
-    //console.log('turn on two fa user service');
+    console.log('turn on two fa user service');
     return this.updateUser(auth_id, {
       username: user.username,
       avatar: user.avatar,
@@ -151,7 +155,7 @@ export class UserService {
   }
 
   async turnOffTwoFA(auth_id: string, user: UserEntity) {
-    console.log('turn off two fa user service');
+    //console.log('turn off two fa user service');
     return this.updateUser(auth_id, {
       username: user.username,
       avatar: user.avatar,

@@ -33,6 +33,7 @@ import jwt_decode from 'jwt-decode';
 import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -52,6 +53,7 @@ export const storage = {
 };
 
 @Controller('user')
+//@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -64,10 +66,16 @@ export class UserController {
 
   @Get('current')
   async currentUser(@Req() req: Request): Promise<UserEntity> {
-    //console.log('request = ' + req);
+    //console.log('request = ', req);
     const token = req.cookies['jwt'];
+    /*
+    if (!token) {
+      throw new HttpException('user not logged in', HttpStatus.FORBIDDEN);
+    }
+     */
     try {
       const decoded: PayloadInterface = jwt_decode(token);
+      //console.log('welcome ', decoded.auth_id);
       return this.userService.currentUser(decoded.auth_id);
     } catch (error) {
       throw new HttpException('error decoding token', HttpStatus.BAD_REQUEST);
@@ -132,7 +140,7 @@ export class UserController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file: any): Observable<Object> {
-    console.log(file);
+    //console.log(file);
     return of({ imagePath: file.filename });
   }
 }
