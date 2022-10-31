@@ -1,9 +1,16 @@
 import IUser from "./user-interface";
 
 export default interface IAuthContextType {
-    user: any; /*Promise<IUser> | undefined;*/
+    user: Promise<IUser>;
     logout: () => void;
+    validateTwoFa: (code: any) => void;
+    //login: () => void;
+    activateTwoFa: () => void;
+    deactivateTwoFa: () => void;
     isAuth: boolean;
+    isLogin: boolean;
+    isTwoFa: boolean;
     loading: boolean;
-    over: boolean;
+    error: boolean;
+    //over: boolean;
 }

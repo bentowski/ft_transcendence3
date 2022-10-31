@@ -2,8 +2,8 @@ import { Component } from "react";
 import { Link } from "react-router-dom";
 import Switch from "./utils/Switch";
 import { AuthContext } from "../contexts/AuthProviderContext";
-import GetUsername from "./utils/GetUsername";
-import GetAvatar from "./utils/GetAvatar";
+import UseUsername from "../hooks/useUsername";
+import UseAvatar from "../hooks/useAvatar";
 
 class Menu extends Component {
 
@@ -29,13 +29,13 @@ class Menu extends Component {
             <Switch />
           </div>
           <div className="loginMenu px-2">
-            <Link to={"/profil/" + <GetUsername />}>
-              <p className="m-0">{<GetUsername />}</p>
+            <Link to={"/profil/" + <UseUsername />}>
+              <p className="m-0">{<UseUsername />}</p>
             </Link>
           </div>
           <div className="avatarMenu">
-            <Link to={"/profil/" + <GetUsername />}>
-              <GetAvatar
+            <Link to={"/profil/" + <UseUsername />}>
+              <UseAvatar
                   className="miniAvatar"
                   width="150"
                   height="150"
@@ -65,7 +65,7 @@ class Menu extends Component {
   className="miniAvatar"
   width="150"
   height="150"
-  src={GetAvatar()}
+  src={UseAvatar()}
   alt=""
 >
 

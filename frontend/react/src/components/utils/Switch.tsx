@@ -1,24 +1,36 @@
 import React, { Component } from "react";
 import "../../styles/components/utils/modal.css";
 import Request from "./Requests";
+//import useCurrentUser from '../../hooks/useCurrentUser';
+import useTwoFa from "../../hooks/useTwoFa";
+import {AuthContext} from "../../contexts/AuthProviderContext";
+//import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 //import "../../styles/components/utils/switch.css";
 
 class Switch extends Component {
+
+  static contextType = AuthContext;
+
+  /*
+  constructor(props: any) {
+    super(props);
+  }
+
+   */
+
   state = {
     label: "2fa",
-    isTwoFA: 0,
-    value: false,
+    //isTwoFA: 0,
+    //value: false,
     code: "",
     src: "",
-  };
+  }
 
-  requestTwoFA = async () => {
-    let user = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/current"
-    );
+
+
+  /*
+  requestTwoFA = () => {
+    let user = useCurrentUser();
     if (!user) {
       console.log("current user not found");
       return;
@@ -28,18 +40,29 @@ class Switch extends Component {
     return user;
   };
 
+   */
+
   generateTwoFA = async () => {
-    let response: any = await Request(
-      "POST",
-      {},
-      {},
-      "http://localhost:3000/auth/2fa/generate"
+    let response: any = await fetch( "http://localhost:3000/auth/2fa/generate", {
+          credentials: "include",
+          method: "POST",
+      }
     );
+    if (!response.ok) {
+      console.log('oulalala sa marche pas generate 2fa');
+      return ;
+    }
+    /*
+    var myBlob = new Blob(["stream"], { type: "image/png" });
+    //console.log("blob - ", myBlob instanceof Blob);
+    if (myBlob instanceof Blob) {
+      return response;
+    }
+     */
     //if (!response.ok) {
      // return ;
     //}
     //this.setState({src: URL.createObjectURL(response)});
-
     const reader = await response.body.getReader();
     var parentComponentInReadClientModal = this;
     let chunks: any = [];
@@ -79,22 +102,26 @@ class Switch extends Component {
   };
 
   activateTwoFA = async () => {
+    console.log('activating two fa...');
     if (!this.checkVal(this.state.code) && this.state.code.length !== 6) {
-      //console.log("wrong code format");
+      console.log("wrong code format");
       return;
     }
-    let rep = await Request(
-      "POST",
-      {},
-      { twoFACode: this.state.code },
-      "http://localhost:3000/auth/2fa/activate"
-    );
-    if (rep.ok) {
-      this.setState({ value: true });
-    } else {
-      //console.log("request 2fa activation error");
-    }
-    this.hidden();
+      let rep = await Request(
+          "POST",
+          {},
+          {twoFACode: this.state.code},
+          "http://localhost:3000/auth/2fa/activate"
+      );
+      console.log('rep received = ', rep);
+      if (rep.ok) {
+        //this.setState({ value: true });
+        this.hidden();
+        console.log('yey');
+      } else {
+        console.log('nnoooo');
+        //console.log("request 2fa activation error");
+      }
   };
 
   deactivateTwoFA = async () => {
@@ -107,12 +134,13 @@ class Switch extends Component {
   };
 
   handleToggle = (evt: any) => {
-    this.setState({ isTwoFA: evt.target.checked });
-    if (this.state.value) {
-      this.setState({ value: false });
+    //this.setState({ isTwoFA: evt.target.checked });
+    if (this.getIsTwoFa() === 1) {
+      console.log('deactivating twofa');
       return this.deactivateTwoFA();
     }
-    if (!this.state.value) {
+    if (this.getIsTwoFa() === 0) {
+      console.log('generating twofa');
       return this.generateTwoFA();
     }
     //console.log("evt target = ", evt.target.checked);
@@ -131,17 +159,23 @@ class Switch extends Component {
     this.setState({ code: evt.target.value });
   };
 
-  componentDidMount = async () => {
-    // console.log("COMPONENT DID MOUNT ", this.state.value);
-    let user = await this.requestTwoFA();
-    if (user !== undefined && this.state.isTwoFA > 0) {
-      this.setState({ value: true });
-    }
-    if (user !== undefined && this.state.isTwoFA === 0) {
-      this.setState({ value: false });
-    }
-  };
+  getUser = () => {
+    const data: any = this.context;
+    return data.user;
+  }
 
+  getIsTwoFa = () => {
+    const user: any = this.getUser();
+    return user.isTwoFA;
+  }
+
+  componentDidMount = () => {
+    // console.log("COMPONENT DID MOUNT ", this.state.value);
+    //let user = useCurrentUser();
+
+    //let twoFa = useTwoFa();
+
+  }
   /*
   <ModalCode
   title={this.state.label}
@@ -155,46 +189,51 @@ class Switch extends Component {
     //console.log("istwo fa = ", this.state.isTwoFA);
     //console.log("state value = ", this.state.value);
     return (
-      <div className="activation">
-        <div className="Modal hidden" id="ModalCode">
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.state.label}</h2>
-              <img alt="qrcode" src={this.state.src} />
-            </header>
-            <form className="mb-3">
-              <input
-                type="text"
-                placeholder="2fa activation code"
-                maxLength={6}
-                id="code"
-                name="code"
-                onChange={this.handleChange}
-                value={this.state.code}
-              />
-            </form>
-            <footer>
-              <button className="mx-1" onClick={this.hidden}>
-                Cancel
-              </button>
-              <button onClick={this.activateTwoFA} className="mx-1">
-                Validate
-              </button>
-            </footer>
-          </div>
-        </div>
+            <div className="activation">
+              <div className="Modal hidden" id="ModalCode">
+                <div className="p-4 pb-1">
+                  <header className="mb-3">
+                    <h2>{this.state.label}</h2>
+                    <img alt="qrcode" src={this.state.src} />
+                  </header>
+                  <form className="mb-3">
+                    <input
+                      type="text"
+                      placeholder="2fa activation code"
+                      maxLength={6}
+                      id="code"
+                      name="code"
+                      onChange={this.handleChange}
+                      value={this.state.code}
+                    />
+                  </form>
+                      <footer>
+                        <button className="mx-1" onClick={this.hidden}>
+                          Cancel
+                        </button>
+                        <AuthContext.Consumer>
+                          {({ activateTwoFa }) => (
+                            <button onClick={activateTwoFa} className="mx-1">
+                              Validate
+                            </button>
+                          )}
+                        </AuthContext.Consumer>
+                      </footer>
+                </div>
+              </div>
 
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            2fa
-            <input
-              type="checkbox"
-              checked={this.state.value}
-              onChange={this.handleToggle}
-            />
-          </label>
-        </form>
-      </div>
+              <form onSubmit={this.handleSubmit}>
+                <label>
+                  2fa
+                  <input
+                    type="checkbox"
+                    checked={this.getIsTwoFa()}
+                    onChange={this.handleToggle}
+                  />
+                </label>
+              </form>
+            </div>
+
     );
   }
 }

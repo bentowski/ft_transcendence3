@@ -84,7 +84,7 @@ export class AuthService {
   async turnOnTwoFAAuth(auth_id: string) {
     let user: UserEntity = undefined;
     user = await this.userService.findOneByAuthId(auth_id);
-    //console.log('found user twofa');
+    console.log('found user twofa');
     await this.userService.turnOnTwoFA(auth_id, user);
   }
 
