@@ -5,22 +5,28 @@
 async function Request(type: string, headers: any, body: any, url: string) {
   console.log(url);
   if (type === "GET") {
-    const settings = {
+    //const settings = ;
+    const response: any = await fetch(url, {
       method: type,
-    };
-    const response: any = await fetch(url, settings);
+      credentials: "include",
+      headers: headers,
+    });
+    //console.log('rep fetch = ', response);
     if (response.ok) {
-      return await response.json();
+      const json = await response.json();
+      //console.log("repsoonse json = ", json);
+      return json;
     } else {
       return null;
     }
   } else {
-    const settings = {
+    const response: any = await fetch(url, {
+      credentials: "include",
       method: type,
       headers: headers,
       body: JSON.stringify(body),
-    };
-    const response: any = await fetch(url, settings);
+    });
+    //console.log("response = ", response);
     if (response.ok) {
       // var myBlob = new Blob(["stream"], { type: "image/png" });
       // //console.log("blob - ", myBlob instanceof Blob);

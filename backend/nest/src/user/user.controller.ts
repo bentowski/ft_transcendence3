@@ -6,17 +6,20 @@ import {
   Param,
   Patch,
   Req,
+  Res,
   Post,
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  Request,
-  /*
+  HttpException,
+  HttpStatus,
+  /*Request,
   UsePipes,
   ValidationPipe,
   Response,
   */
 } from '@nestjs/common';
+import { Request } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
@@ -26,6 +29,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
+import jwt_decode from 'jwt-decode';
+import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
@@ -40,7 +45,7 @@ export const storage = {
       let filename: string = file.originalname.replace(/\s/g, ''); // + uuidv4();
       const lastDot = filename.lastIndexOf('.');
       filename =
-          filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
+        filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
       cb(null, `${filename}`);
     },
   }),
@@ -58,10 +63,25 @@ export class UserController {
   }
 
   @Get('current')
-  currentUser(@Req() req: PayloadInterface): Promise<UserEntity> {
+  async currentUser(@Req() req: Request): Promise<UserEntity> {
     //console.log('request = ' + req);
-    return this.userService.currentUser(req.auth_id);
+    const token = req.cookies['jwt'];
+    try {
+      const decoded: PayloadInterface = jwt_decode(token);
+      return this.userService.currentUser(decoded.auth_id);
+    } catch (error) {
+      throw new HttpException('error decoding token', HttpStatus.BAD_REQUEST);
+    }
   }
+
+  /*
+  @Get('isauth')
+  isAuth(@Req() req: Request): boolean {
+    const token = req.cookies['jwt'];
+    console.log('token ', token);
+    return !!token;
+  }
+  */
 
   @Get('/name/:username')
   findOnebyUsername(@Param('username') username: string) {
@@ -89,18 +109,16 @@ export class UserController {
   }
   */
 
-  /*
-  @Get('logout')
-  logout(@Request() req): any {
-    req.session.destroy();
-    return { msg: 'user session has ended' };
+  @Delete('logout')
+  logout(@Res() res): any {
+    res.clearCookie('jwt');
+    return 'User logged out';
   }
-  */
 
   @Patch('settings/:id')
   updateUser(
-      @Param('id') userId: string,
-      @Body() updateUserDto: UpdateUserDto,
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     // console.log(updateUserDto);
     return this.userService.updateUser(userId, updateUserDto);

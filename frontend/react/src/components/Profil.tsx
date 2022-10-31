@@ -2,6 +2,7 @@ import { Component } from "react";
 import Modal from "./utils/Modal";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
+import GetAvatar from "./utils/GetAvatar";
 
 // class History extends Component<{ value: number }, {}> {
 // 	renderHistory(login: string, x: number) {
@@ -118,7 +119,7 @@ class Profil extends Component<
     while (url[x]) {
       tmp += url[x++];
     }
-    console.log(tmp);
+    //console.log(tmp);
     this.getUser(tmp);
     this.getHistory();
   };
@@ -138,7 +139,7 @@ class Profil extends Component<
 	  if (document.URL.includes("localhost:8080/profil"))
       	this.getUser(tmp);
     });
-    console.log(this.state.login)
+    //console.log(this.state.login)
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {
@@ -162,12 +163,8 @@ class Profil extends Component<
               title={this.state.modalTitle}
               calledBy={this.state.modalType}
             />
-            <img
-              onClick={this.promptAvatar}
-              className="modifAvatar mb-2"
-              src={this.state.avatar}
-              alt=""
-            />
+            <GetAvatar className="modifAvatar mb-2" width="" height="" alt="" />
+
             <h3 onClick={this.promptLogin}>{this.state.login}</h3>
           </div>{" "}
           {/* fin ProfilInfPer */}
@@ -180,3 +177,12 @@ class Profil extends Component<
 } // fin de App
 
 export default Profil;
+
+/*
+<img
+    onClick={this.promptAvatar}
+    className="modifAvatar mb-2"
+    src={this.state.avatar}
+    alt=""
+/>
+*/

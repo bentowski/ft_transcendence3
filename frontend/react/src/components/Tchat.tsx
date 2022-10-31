@@ -135,23 +135,22 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {
     });
-
     socket.on('onMessage', (newMessage: MessagePayload) => {
-      let channels: chanType[] = chans;
-      let index: number = chans.findIndex((c) => c.id === newMessage.room);
-      if (channels[index] !== undefined) {
-        if (channels[index].messages)
-          channels[index].messages = [...channels[index].messages, newMessage];
-        else
-          channels[index].messages = [newMessage];
-        setChans(channels);
-        if (channels[index].isActive) {
-          if (channels[index].messages)
-            setMessage(channels[index].messages);
-          else
-            setMessage([])
-        }
-      }
+		let channels:chanType[] = chans;
+		let index:number = chans.findIndex((c:any) => c.id === newMessage.room);
+		if (channels[index] !== undefined) {
+			if (channels[index].messages)
+				channels[index].messages = [...channels[index].messages, newMessage];
+			else
+				channels[index].messages = [newMessage];
+			setChans(channels);
+				if (channels[index].isActive) {
+				if (channels[index].messages)
+					setMessage(channels[index].messages);
+				else
+					setMessage([])
+			}
+		}
     });
 
     socket.on('newChan', () => {
@@ -169,74 +168,75 @@ export const WebSocket = () => {
       socket.off('connect');
       socket.off('onMessage');
       socket.off('newChan');
-      chans.map((c) => {
-        if (c.chanUser) {
-          c.chanUser.map((u) => {
-            if (u.auth_id === auth_id)
-              socket.emit('leaveRoom', c.id, auth_id);
-          })
-        }
-      })
+	  socket.off('userJoinChannel');
+	  chans.map((c:any) => {
+		if (c.chanUser) {
+			c.chanUser.map((u:any) => {
+				if (u.auth_id === auth_id)
+					socket.emit('leaveRoom', c.id, auth_id);
+			})
+		}
+	  })
     }
   });
 
-  useEffect(() => {
-    let newUser: any = sessionStorage.getItem('data');
-    newUser = JSON.parse(newUser);
-    getChan();
-    setAvatar(newUser.user.avatar);
-    setUsername(newUser.user.username);
-    setAuthId(newUser.user.auth_id);
-  }, [])
+  	useEffect(() => {
+		let newUser:any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		getChan();
+		setAvatar(newUser.user.avatar);
+    	setUsername(newUser.user.username);
+		setAuthId(newUser.user.auth_id);
+  	}, [])
+	
+	useEffect(() => {
+		if (loaded === 'ok')
+			joinUrl()
+	}, [loaded])
 
-  useEffect(() => {
-    if (loaded === 'ok')
-      joinUrl()
-  }, [loaded])
+	useEffect(() => {
+		//window.addEventListener("hashchange", (event) => {joinUrl();})
+		if (chans.length && auth_id !== undefined && !room)
+			setLoaded('ok')
+	}, [chans])
+	
+	const joinUrl = () => {
+		let url = document.URL;
+			let chan:chanType|undefined;
+			let index = url.lastIndexOf("#");
+			
+			if (index === -1) {
+				chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
+				if (chan !== undefined)
+					joinRoom(chan, false)
+			}
+			else {
+				url = url.substring(url.lastIndexOf("#") + 1);
+				chan = chans.find((c:any) => c.id === url);
+				if (chan !== undefined)
+					joinRoom(chan, false)
+				else {
+					chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
+					if (chan !== undefined)
+						joinRoom(chan, false)
+				}
+			}
+	}
 
-  useEffect(() => {
-    window.addEventListener("hashchange", (event) => { joinUrl(); })
-    if (chans.length && auth_id !== undefined && !room)
-      setLoaded('ok')
-  }, [chans])
-
-  const joinUrl = () => {
-    let url = document.URL;
-    let chan: chanType | undefined;
-    let index = url.lastIndexOf("#");
-
-    if (index === -1) {
-      chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
-      if (chan !== undefined)
-        joinRoom(chan, false)
-    }
-    else {
-      url = url.substring(url.lastIndexOf("#") + 1);
-      chan = chans.find((c) => c.id === url);
-      if (chan !== undefined)
-        joinRoom(chan, false)
-      else {
-        chan = chans.find((c) => c.chanUser.find((user) => user.auth_id === auth_id));
-        if (chan !== undefined)
-          joinRoom(chan, false)
-      }
-    }
-  }
-
-  const getChan = async () => {
-    let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-    channels.map((c: any, idx: number) => {
-      if (c.id === room)
-        c.isActive = true;
-      if (c.messages) {
-        c.messages.map((m: any, index: number) => {
-          c.messages[index] = JSON.parse(String(m));
-        })
-      }
-      channels[idx] = c;
-    })
-    setChans(channels);
-  }
+	  const getChan = async () => {
+		let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+		channels.map((c:any, idx:number) => {
+			if (c.id === room)
+				c.isActive = true;
+			if (c.messages) {
+				c.messages.map((m:any, index:number) => {
+					c.messages[index] = JSON.parse(String(m));
+				})
+			}
+			channels[idx] = c;
+		})
+		setChans(channels);
+	  }
 
   const onSubmit = () => {
     if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
@@ -303,14 +303,14 @@ export const WebSocket = () => {
   }
 
   const userInActualchannel = () => {
-    let users: Array<any> = [];
-    const actualChan = chans.find(c => c.isActive === true);
-    if (actualChan?.chanUser)
-      actualChan.chanUser.map((u) => {
-        { users.push(<div key={u.user_id}><UserCards user={u} avatar={false} /></div>) }
-
-      })
-    return users;
+	let users: Array<any> = [];
+	const actualChan = chans.find(c => c.isActive === true);
+	if (actualChan?.chanUser)
+		actualChan.chanUser.map((u:any) => {
+			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
+		
+	})
+	return users;
   }
 
   const chanMemberCount = () => {

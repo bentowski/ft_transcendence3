@@ -1,16 +1,46 @@
 import React, { Component } from "react";
-import { Outlet } from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
+import Request from "../components/utils/Requests";
 import FriendsNav from "../components/FriendsNav";
+import {useAuthUser, useIsAuthenticated, withIsAuthenticated} from "react-auth-kit";
+import AuthContext from "react-auth-kit/dist/AuthContext";
 // import Tchat from '../components/Tchat'
-// import Profil from '../components/Profil'
+import Profil from '../components/Profil'
 // import Footer from './Footer'
 
 class Page extends Component {
-  state = {};
+  /*
+  state = {
+    token: false,
+  }
+
+  componentDidMount = async () => {
+    let token = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/current"
+    )
+    console.log('token = ', token);
+    if (token)
+      this.setState({token: true});
+  }
+  */
 
   render() {
+     /*
+    console.log('hello ', this.state.token);
+
+    if (!this.state.token)
+    {
+      return (
+      <Navigate to="/login" />
+      )
+    }
+    */
+
     return (
       <div className="Page p-4">
         <Menu />
@@ -20,7 +50,7 @@ class Page extends Component {
             <MatchNav />
           </div>
           <div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2">
-            <Outlet />
+            <Profil />
           </div>
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
             <FriendsNav />
