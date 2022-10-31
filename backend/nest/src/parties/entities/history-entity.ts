@@ -31,15 +31,15 @@ export class HistoryEntity {
   // })
   // final_score: string;
 
-  // @Column({
-  //   default: '',
-  // })
-  // winner: string;
+  @Column({
+    default: '',
+  })
+  winner: string;
 
-  // @Column({
-  //   default: '',
-  // })
-  // looser: string;
+  @Column({
+    default: '',
+  })
+  looser: string;
 
   @Column({
     default: () => '((CURRENT_DATE))',
