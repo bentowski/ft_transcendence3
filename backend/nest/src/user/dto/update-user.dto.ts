@@ -12,3 +12,12 @@ export class UpdateUserDto {
 
   isTwoFA: number;
 }
+
+export class UpdateUserScoreDto {
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+
+  @IsNotEmpty()
+  status: string;
+}

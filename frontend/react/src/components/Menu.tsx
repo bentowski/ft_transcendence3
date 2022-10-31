@@ -42,12 +42,15 @@ class Menu extends Component {
             <Switch />
           </div>
           <div className="loginMenu px-2">
-            <Link to={"/profil/" + this.state.username}>
-              <p className="m-0">{this.state.username}</p>
-            </Link>
+						<a href={"/profil/#" + this.state.username} className="mx-2">{this.state.username}
+            {/* <Link to={"/profil/" + this.state.username}> */}
+              {/* <p className="m-0">{this.state.username}</p> */}
+            </a>
+            {/* </Link> */}
           </div>
           <div className="avatarMenu">
-            <Link to={"/profil/" + this.state.username}>
+            {/* <Link to={"/profil/" + this.state.username}> */}
+						<a href={"/profil/#" + this.state.username} className="mx-2">
               <img
                 className="miniAvatar"
                 width="150"
@@ -55,7 +58,8 @@ class Menu extends Component {
                 src={this.state.avatar}
                 alt=""
               />
-            </Link>
+            </a>
+            {/* </Link> */}
           </div>
           <div className="logoutMenu">
             <Link to={"/login"}>
