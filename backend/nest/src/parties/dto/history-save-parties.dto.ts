@@ -11,4 +11,10 @@ export class HistorySavePartiesDto {
   @IsNumber()
   public score_two: number;
 
+  @IsNotEmpty()
+  public winner: string;
+
+  @IsNotEmpty()
+  public looser: string;
+
 }
