@@ -1,27 +1,101 @@
 import { Component } from 'react';
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Request from "./Requests"
 import '../../styles/components/utils/userCards.css'
 // import Login from '../../pages/Login';
+import io from 'socket.io-client';
 
-class UserCards extends Component<{ user: any, avatar: boolean }, { login: string, id: number, online: string }> {
+const socket = io('http://localhost:3000/chat');
+
+class UserCards extends Component<{ user: any, avatar: boolean }, { login: string, id: number, online: string, ssname: string, ssid: string, chanId: string }> {
 	constructor(props: any) {
 		super(props);
-		this.state = { login: "test", id: props.user.auth_id, online: this.props.user.online ? "online" : "offline" };
+		this.state = { login: "test", id: props.user.auth_id, online: this.props.user.online ? "online" : "offline", ssname: "", ssid: "", chanId: "" };
+	}
+
+	createChan = async () => {
+		// let url = document.URL
+		let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
+		let u1 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.ssname);
+		let u2 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.login);
+		let ret = 0;
+		// console.log("length = ", chans.length);
+		// console.log("u1.auth_id = ", u1.auth_id);
+		// console.log("u2.auth_id = ", u2.auth_id);
+		let x = 0;
+		while (x < chans.length) {
+			// console.log("chanUser.length = ", chans[x].chanUser.length);
+			if (chans[x].type === "direct"
+				&& ((chans[x].chanUser[0].auth_id === u1.auth_id && chans[x].chanUser[1].auth_id === u2.auth_id)
+					|| (chans[x].chanUser[0].auth_id === u2.auth_id && chans[x].chanUser[1].auth_id === u1.auth_id))
+			)
+			{
+				ret = chans[x].id;				
+				break;
+			}
+
+			x++;
+		}
+		// console.log("x = ", x);
+		if (x === chans.length) {
+			let newChan = await Request(
+				"POST",
+				{
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				{
+					name: u1.username + "$" + u2.username,
+					type: "direct",
+					topic: u1.username + "$" + u2.username,
+					admin: [u1.username, u2.username],
+					password: "",
+					chanUser: [u1, u2],
+				},
+				"http://localhost:3000/chan/create"
+			);
+			socket.emit('chanCreated');
+			let newUrl = "http://localhost:8080/tchat/#" + newChan.id
+			setTimeout(() => {
+				window.location.href = newUrl
+			}, 100)
+			return ;
+		// this.setState({chanId: newChan.id.toString()})
+		}
+		// window.location.href = url + "#" + ret
+		let newUrl = "http://localhost:8080/tchat/#" + ret
+		window.location.href = newUrl
+		// this.setState({chanId: ret.toString()})
+		// let chans2 = await Request("GET", {}, {}, "http://localhost:3000/chan/" + u1.username + "$" + u2.username);
+		// 	console.log("chans2.id =", chans2.id);
 	}
 
 	renderUserCards = (id: number) => {
 		if (this.props.avatar) {
 			return (
-				<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center m-2">
-					<div className="col-3 h-100 overflow-hidden buttons">
-						<button className="w-100 h-50">Tchat</button>
-						<button className="w-100 h-50">Play</button>
+				<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+					<div className="col-5 h-100 overflow-hidden buttons">
+						{/* <Link to={"/tchat#" + this.state.chanId}> */}
+							<button className=" p-1" onClick={this.createChan}>
+								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-chat-left-dots" viewBox="0 0 16 16">
+									<path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+									<path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+								</svg>
+							</button>
+						{/* </Link> */}
+						<Link to={"/game"}>
+							<button className="mx-2 p-1">
+								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-joystick" viewBox="0 0 16 16">
+									<path d="M10 2a2 2 0 0 1-1.5 1.937v5.087c.863.083 1.5.377 1.5.726 0 .414-.895.75-2 .75s-2-.336-2-.75c0-.35.637-.643 1.5-.726V3.937A2 2 0 1 1 10 2z" />
+									<path d="M0 9.665v1.717a1 1 0 0 0 .553.894l6.553 3.277a2 2 0 0 0 1.788 0l6.553-3.277a1 1 0 0 0 .553-.894V9.665c0-.1-.06-.19-.152-.23L9.5 6.715v.993l5.227 2.178a.125.125 0 0 1 .001.23l-5.94 2.546a2 2 0 0 1-1.576 0l-5.94-2.546a.125.125 0 0 1 .001-.23L6.5 7.708l-.013-.988L.152 9.435a.25.25 0 0 0-.152.23z" />
+								</svg>
+							</button>
+						</Link>
 					</div>
-					<div className="">
+					<div className="col-2 d-flex flex-row d-flex justify-content-center">
 						<input className={this.state.online} type="radio"></input>
 					</div>
-					<div className="d-flex flex-row align-items-center">
+					<div className="col-5 d-flex flex-row justify-content-end align-items-center">
 						<a href={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</a>
 						<img src={this.props.user.avatar} className="miniAvatar" />
 					</div>
@@ -31,11 +105,11 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 
 		return (
 			<div key={id} className="friendsDiv row my-2">
-				<div className="col-3 button">
+				{/* <div className="col-3 button">
 					<button className="buttons">Chat</button>
 					<button className="buttons">Play</button>
-				</div>
-				<div className="col-3">
+				</div> */}
+				<div className="col-6">
 					<input className={this.state.online} type="radio"></input>
 				</div>
 				<div className="col-6 row">
@@ -51,12 +125,16 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 		// console.log(user)
 		if (user)
 			this.setState({ login: user.username })
+		let newUser: any = sessionStorage.getItem('data');
+		newUser = JSON.parse(newUser);
+		this.setState({ ssid: newUser.user.auth_id });
+		this.setState({ ssname: newUser.user.username });
 	}
 
 	render() {
 		let items: any = this.renderUserCards(1)
 		return (
-			<div key={this.state.id * 5 / 3}>
+			<div key={this.state.id * 5 / 3} className="my-2">
 				{items}
 			</div>
 		);
