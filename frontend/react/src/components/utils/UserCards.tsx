@@ -96,7 +96,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 						<input className={this.state.online} type="radio"></input>
 					</div>
 					<div className="col-5 d-flex flex-row justify-content-end align-items-center">
-						<a href={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</a>
+						<Link to={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</Link>
 						<img src={this.props.user.avatar} className="miniAvatar" />
 					</div>
 				</div>

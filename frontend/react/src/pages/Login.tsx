@@ -1,8 +1,10 @@
 import { Component } from "react";
 import "../styles/pages/login.css";
+import {useAuthData} from "../contexts/AuthProviderContext";
+import {Navigate, useLocation} from "react-router-dom";
 // import { AuthContext } from "../context/AuthContext";
 
-class Login extends Component<any, any> {
+const Login = () => {
   /*
   remoteLogin = () => {
      fetch("http://localhost:3000/auth/login", { credentials: "include" }).then(
@@ -20,7 +22,20 @@ class Login extends Component<any, any> {
   };
    */
 
-  render() {
+    const { isAuth, loading } = useAuthData();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
+    if (isAuth) {
+        return (
+            <div>
+                <Navigate to={from} />
+            </div>
+            );
+    }
     return (
       <div className="Login">
         <a href="https://api.intra.42.fr/oauth/authorize?client_id=0ca73eb0dd76ab61dabb62b46c3a31885e924d813db06a480056b2080f9b0126&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fredirect&response_type=code" className="pt-5 pb-3 d-flex flex-row justify-content-center align-items-center">
@@ -43,6 +58,5 @@ class Login extends Component<any, any> {
         </a>
       </div>
     );
-  }
 }
 export default Login;
