@@ -2,8 +2,7 @@ import { Component } from "react";
 import Modal from "./utils/Modal";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
-import UseAvatar from "../hooks/useAvatar";
-import {AuthContext} from "../contexts/AuthProviderContext";
+import GetAvatar from "./utils/GetAvatar";
 
 // class History extends Component<{ value: number }, {}> {
 // 	renderHistory(login: string, x: number) {
@@ -42,20 +41,22 @@ import {AuthContext} from "../contexts/AuthProviderContext";
 // }
 
 class Profil extends Component<
-  {},
-  {
-    modalType: string;
-    modalTitle: string;
-    histories: Array<any>;
-  }
-> {
-  static contextType = AuthContext
-
+    {},
+    {
+      avatar: any;
+      modalType: string;
+      modalTitle: string;
+      login: string;
+      histories: Array<any>;
+    }
+    > {
   constructor(props: any) {
     super(props);
     this.state = {
+      avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
       modalType: "",
       modalTitle: "",
+      login: "",
       histories: [],
     };
   }
@@ -72,47 +73,42 @@ class Profil extends Component<
     this.setState({ modalType: "Login", modalTitle: "Change user name" });
   };
 
-	/*
-	checkIfJSONisNotEmpty = (obj: any) => {
-		return Object.keys(obj).length > 0;
-	};
-	*/
-
-  getUser = () => {
-    const data: any = this.context;
-    return data.user;
-  }
-
-  getUsername = () => {
-    const newUser: any = this.getUser();
-     return newUser.username;
-  };
-
-  getAvatar = () => {
-    const newUser: any = this.getUser();
-    return newUser.avatar;
-  };
-
-  getHistory = () => {
-    const newUser: any = this.getUser();
-    return newUser.histories;
-  }
-
   /*
+  checkIfJSONisNotEmpty = (obj: any) => {
+      return Object.keys(obj).length > 0;
+  };
+  */
+
+  getUser = async (username: string) => {
+    if (!username) {
+      let newUser: any = sessionStorage.getItem("data");
+      newUser = JSON.parse(newUser);
+      username = newUser.user.username;
+    }
+    let user = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/name/" + username
+    );
+    if (!user) return;
+    this.setState({ login: user.username, avatar: user.avatar });
+  };
+
   getHistory = async () => {
     let histories = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/parties/histories/all"
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/parties/histories/all"
     );
     if (!histories) return;
     this.setState({ histories: histories });
   };
 
-   */
-
   componentDidMount = () => {
+    let newUser: any = sessionStorage.getItem("data");
+    newUser = JSON.parse(newUser);
     let url = document.URL;
     let x = 0;
     while (url[x] !== "#" && url[x]) {
@@ -124,8 +120,8 @@ class Profil extends Component<
       tmp += url[x++];
     }
     //console.log(tmp);
-    //this.getUser(tmp);
-    //this.getHistory();
+    this.getUser(tmp);
+    this.getHistory();
   };
 
   render() {
@@ -140,53 +136,44 @@ class Profil extends Component<
       while (url[x]) {
         tmp += url[x++];
       }
-	  //if (document.URL.includes("localhost:8080/profil"))
-      	//this.getUser(tmp);
+      if (document.URL.includes("localhost:8080/profil"))
+        this.getUser(tmp);
     });
     //console.log(this.state.login)
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {
       if (
-        this.state.histories[i].user_one === this.getUsername() ||
-        this.state.histories[i].user_two === this.getUsername()
+          this.state.histories[i].user_one === this.state.login ||
+          this.state.histories[i].user_two === this.state.login
       )
         histories.push(
-          <HistoryCards
-            history={this.getHistory()}
-            profil={this.getUsername()}
-          />
+            <HistoryCards
+                history={this.state.histories[i]}
+                profil={this.state.login}
+            />
         );
       i--;
     }
     return (
-      <div className="Profil">
-        <div className="ProfilHeader">
-          <div className="ProfilInfoPers">
-            <Modal
-              title={this.state.modalTitle}
-              calledBy={this.state.modalType}
-            />
-            <UseAvatar className="modifAvatar mb-2" width="" height="" alt="" />
+        <div className="Profil">
+          <div className="ProfilHeader">
+            <div className="ProfilInfoPers">
+              <Modal
+                  title={this.state.modalTitle}
+                  calledBy={this.state.modalType}
+              />
+              <GetAvatar className="modifAvatar mb-2" width="" height="" alt="" />
 
-            <h3 onClick={this.promptLogin}>{this.getUsername()}</h3>
+              <h3 onClick={this.promptLogin}>{this.state.login}</h3>
+            </div>{" "}
+            {/* fin ProfilInfPer */}
+            <div className=" mt-5 pt-5">{histories}</div>
           </div>{" "}
-          {/* fin ProfilInfPer */}
-          <div className=" mt-5 pt-5">{histories}</div>
-        </div>{" "}
-        {/* fin ProfilHeader*/}
-      </div>
+          {/* fin ProfilHeader*/}
+        </div>
     ); // fin de return
   } // fin de render
 } // fin de App
 
 export default Profil;
-
-/*
-<img
-    onClick={this.promptAvatar}
-    className="modifAvatar mb-2"
-    src={this.state.avatar}
-    alt=""
-/>
-*/

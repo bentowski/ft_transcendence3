@@ -46,7 +46,7 @@ class Menu extends Component {
             <AuthContext.Consumer>
               {({ logout }) => {
                 return (
-                  <Link onClick={logout} to="/login">
+                  <Link onClick={() => logout()} to="/login">
                     <p className="m-0">logout</p>
                   </Link>
                 );

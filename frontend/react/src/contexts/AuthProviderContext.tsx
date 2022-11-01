@@ -18,7 +18,7 @@ export const AuthContext = createContext<any>(
 );
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
 
     const fetchData = () => {
-      setLoading(true);
       setIsToken(false);
       setUser(undefined);
       //try {
@@ -89,7 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ).then((data: any) => {
           console.log('data tok = ', data.isTok);
           if (data.isTok === 0) {
-            //console.log('403 baby');
+            console.log('403 baby');
             setLoading(false);
             return;
           } else if (data.isTok > 0) {
@@ -117,7 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               if (user.isTwoFA === 1) {
                 setIsTwoFa(true);
                 setLoading(false);
-                //console.log('two fa activated');
+                console.log('two fa activated');
                 //console.log('isauth = ', isAuth);
 
                 //console.log('istwofa = ', isTwoFa);
@@ -125,10 +124,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 return;
               }
               setLoading(false);
+              console.log('set is auth true');
               setIsAuth(true);
               return ;
             }).catch((error: any) => {
-              console.log('oulala - ', error);
+              //console.log('oulala - ', error);
+            }).finally(() => {
+              setLoading(false);
             })
             /*
             if (data.isTok === 2) {
@@ -154,8 +156,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         }).catch((error: any) => {
           console.log('1error = ', error);
+          //setLoading(false);
+        }).finally(() => {
           setLoading(false);
-        })
+       })
       //} catch (error) {
         //if (typeof error === 'object' && error !== null) {
           //console.log('oulala -', error);
@@ -168,12 +172,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       useEffect(() => {
         //console.log('starts');
-        fetchData();
+        if (!isToken) {
+          fetchData();
+        } else {
+          setLoading(false);
+        }
+
+         //:
+          //
         //console.log('ends');
       }, [ /* loading, isTwoFa, user, error, isAuth, isLogin */ ]);
 
-
-
+    /*
+      useEffect(() => {
+        console.log(`is loading: ${loading}`)
+        console.log(`is token: ${isToken}`)
+      }, [loading]);
+    */
 
       const logout = useCallback(async () => {
         try {
@@ -192,9 +207,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error) {
           if (typeof error === 'object' && error !== null) {
-            console.log('oulala -', error);
+            //console.log('oulala -', error);
           } else {
-            console.log('unexpected error ', error);
+            //console.log('unexpected error ', error);
           }
         }
       }, [])
@@ -290,6 +305,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const memoedValue = useMemo(
           () => ({
+            //fetchData,
             user,
             isAuth,
             isToken,

@@ -12,7 +12,7 @@ class AskTwoFa extends Component {
     }
 
     validateTwoFa =  async () => {
-        console.log('code = ', this.state.code);
+        //console.log('code = ', this.state.code);
         try {
             //if (isTwoFa) {
                 const body: any = JSON.stringify({twoFaCode: this.state.code})
@@ -25,7 +25,7 @@ class AskTwoFa extends Component {
                     "http://localhost:3000/auth/2fa/authenticate"
                 )
                 if (res.ok) {
-                    console.log('2fa auth ok');
+                    //console.log('2fa auth ok');
                     return;
                 }
             //} else {
@@ -34,10 +34,10 @@ class AskTwoFa extends Component {
             //}
         } catch (error) {
             if (typeof error === 'object' && error !== null) {
-                console.log('oulala -', error);
+                //console.log('oulala -', error);
                 return ;
             } else {
-                console.log('unexpected error ', error);
+               // console.log('unexpected error ', error);
             }
         }
     }

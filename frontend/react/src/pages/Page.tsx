@@ -4,7 +4,12 @@ import MatchNav from "../components/MatchNav";
 import FriendsNav from "../components/FriendsNav";
 // import Tchat from '../components/Tchat'
 import Profil from '../components/Profil'
+import {Outlet} from "react-router-dom";
 // import Footer from './Footer'
+
+//function Outlet() {
+//  return null;
+//}
 
 class Page extends Component {
   /*
@@ -46,7 +51,7 @@ class Page extends Component {
             <MatchNav />
           </div>
           <div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2">
-            <Profil />
+            <Outlet />
           </div>
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
             <FriendsNav />

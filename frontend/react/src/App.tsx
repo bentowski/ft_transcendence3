@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import React, {Component, useEffect, useState} from "react";
+import {Routes, Route, Outlet, Navigate, useLocation} from "react-router-dom";
 import "./styles/App.css";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
@@ -8,66 +8,51 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import { BrowserRouter } from "react-router-dom";
 import Page from "./pages/Page";
-import {useAuthData } from "./contexts/AuthProviderContext";
+import {AuthContext, useAuthData} from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 import PageNotFound from "./pages/PageNotFound";
 import AskTwoFa from './components/utils/AskTwoFa';
 
-
+/*
 const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const { isAuth, loading, isTwoFa, isToken } = useAuthData();
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-  console.log('is token?', isToken);
-  if (isToken) {
-    console.log('no toktok');
-    if (isTwoFa && !isAuth) {
-      console.log('but needs to do two fa');
-      return (
-          <AskTwoFa />
-      )
-    }
-    if (isAuth) {
-      console.log('user authenticated!');
-      return (
-          <div>
-            <Navigate to="/" />
-          </div>
-      );
-    }
-  }
-  return <div>{children}</div>;
 };
+*/
 
-const RequireAuth = ({children}:{children: any}) => {
-  let { isLogin, isTwoFa, isAuth, loading } = useAuthData();
+const RequireAuth = ( /*{ children }:{ children: JSX.Element }*/) => {
+//const RequireAuth = ({children}:{children: JSX.Element}) => {
+  let { isAuth, isLogin, isTwoFa, loading } = useAuthData();
+  const location = useLocation();
+  //let isAuth: any = sessionStorage.getItem("isAuth");
+  console.log('ISAUTH=',isAuth);
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
-  console.log('requireauth user is login?')
+  //console.log('requireauth user is login?')
+  /*
   if (isLogin) {
-    console.log('user is logged in');
+
+    //console.log('user is logged in');
     if (isTwoFa && !isAuth) {
-      console.log('but needs to do two fa');
-      return (
-          <AskTwoFa/>
-      )
+      //console.log('but needs to do two fa');
+      return
+
+          <AskTwoFa />
+
     }
   }
+  */
+  console.log('is auth = ', isAuth);
+
   if (isAuth) {
     return (
-        children ?
-            children :
-      <div>
+       /* children ?
+            children : */
         <Outlet />
-      </div>
     );
-  } else {
-    return <Navigate to="/login" />;
   }
+  return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 //
@@ -75,29 +60,106 @@ const RequireAuth = ({children}:{children: any}) => {
 //</IsAuthenticated>
 //</Route>
 
+const Layout = () => {
+  return (
+      <main className="App">
+        <Outlet />
+      </main>
+  )
+}
 
+const PersistLogin = () => {
+  const [loading, setIsLoading] = useState(true);
+  const { isAuth, isToken } = useAuthData();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        fetch("http://localhost:3000/auth/istoken", {
+              method: "GET",
+              credentials: "include",
+            }
+        )
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (!isAuth) {
+      checkToken();
+    } else {
+      setIsLoading(false);
+    }
+  }, [])
+
+  return (
+     <>
+     {loading ?
+         <p>loading...</p>
+         : <Outlet />
+     }
+     </>
+  )
+}
 
 const ContextLoader = () => {
+  /*
+  const [loggedIn, setLoggedIn] = useState(false);
+  const { isAuth } = useAuthData();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (isAuth) {
+      history.push('/');
+      setLoggedIn(true);
+    }
+  }, [isAuth]);
+
+   */
+
+  //console.log('loggedin = ', loggedIn);
+  //useEffect(() => {
+    //setLoggedIn(true);
+  //}, [])
+
+  //
+
   return (
     <Routes>
-       <Route path="/login" element={<IsAuthenticated><Login /></IsAuthenticated>} />
-               <Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
-                 <Route path="profil" element={<RequireAuth><Profil /></RequireAuth>} />
-                 <Route path="chat" element={<RequireAuth><Tchat /></RequireAuth>} />
-                 <Route path="history" element={<RequireAuth><History /></RequireAuth>} />
-                 <Route path="game" element={<RequireAuth><Game /></RequireAuth>} />
-                 <Route path="*" element={<RequireAuth><PageNotFound /></RequireAuth>} />
-               </Route>
+      <Route path="/" element={<Layout />} >
+          {/* public route (add unauthorized) */}
+          <Route path="/login" element={<Login />} />
+
+          {/* private route */}
+        <Route element={<PersistLogin />} >
+          <Route element={<RequireAuth />} >
+              <Route path="/" element={<Page />} >
+                <Route path="/profil" element={<Profil />} />
+                <Route path="/tchat" element={<Tchat />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/game" element={<Game />} />
+                <Route path="/*" element={<Profil />} />
+                <Route path="/" element={<Profil />} />
+              </Route>
+          </Route>
+          </Route>
+
+        {/* catch all */}
+      </Route>
     </Routes>
-  );
-};
+  ); //
+  //<Route path="*" element={<PageNotFound />} />
+};//        </Route>
+
+//<Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
 
 //
 
 //<Route element={<RequireAuth />} >
 
 class App extends Component {
-  //static contextType = AuthContext;
+  static contextType = AuthContext;
 
   /*
   constructor(props: any) {
@@ -118,6 +180,10 @@ class App extends Component {
     if (!user) {
       return null;
     }
+    //let ctx: any = this.context;
+    //let usr: any = ctx.user;
+    //let isa: boolean = usr.isAuth;
+    //console.log('isa = ', isa);
     const data = {
       user: {
         auth_id: user.auth_id,
@@ -125,9 +191,9 @@ class App extends Component {
         avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
         username: user.username,
       },
+      //isAuth: isa,
     };
     sessionStorage.setItem("data", JSON.stringify(data));
-    return user;
   };
 
 
@@ -153,9 +219,9 @@ class App extends Component {
         console.log("test")
     });
     return (
-      <BrowserRouter>
+
         <ContextLoader />
-      </BrowserRouter>
+
     ); // fin de return
   } // fin de render
 } // fin de App

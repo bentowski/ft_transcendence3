@@ -49,7 +49,7 @@ class Switch extends Component {
       }
     );
     if (!response.ok) {
-      console.log('oulalala sa marche pas generate 2fa');
+      //console.log('oulalala sa marche pas generate 2fa');
       return ;
     }
     /*
@@ -102,9 +102,9 @@ class Switch extends Component {
   };
 
   activateTwoFa = async () => {
-    console.log('activating two fa...');
+    //console.log('activating two fa...');
     if (!this.checkVal(this.state.code) && this.state.code.length !== 6) {
-      console.log("wrong code format");
+      //console.log("wrong code format");
       return;
     }
       let rep = await Request(
@@ -117,9 +117,9 @@ class Switch extends Component {
       if (rep.ok) {
         //this.setState({ value: true });
         this.hidden();
-        console.log('yey');
+        //console.log('yey');
       } else {
-        console.log('nnoooo');
+        //console.log('nnoooo');
         //console.log("request 2fa activation error");
       }
   };
@@ -136,11 +136,11 @@ class Switch extends Component {
   handleToggle = (evt: any) => {
     //this.setState({ isTwoFA: evt.target.checked });
     if (this.getIsTwoFa() === 1) {
-      console.log('deactivating twofa');
+      //console.log('deactivating twofa');
       return this.deactivateTwoFA();
     }
     if (this.getIsTwoFa() === 0) {
-      console.log('generating twofa');
+      //console.log('generating twofa');
       return this.generateTwoFA();
     }
     //console.log("evt target = ", evt.target.checked);
@@ -161,7 +161,7 @@ class Switch extends Component {
 
   getUser = () => {
     const data: any = this.context;
-    console.log('data user contexxt = ', data);
+    //console.log('data user contexxt = ', data);
     return data.user;
   }
 
