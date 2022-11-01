@@ -2,10 +2,13 @@ import { Component } from 'react';
 import "../../styles/components/utils/modal.css";
 import Request from "./Requests"
 import io from 'socket.io-client';
+import FriendsNav from '../FriendsNav';
+import { useResolvedPath } from 'react-router-dom';
+import UserCards from './UserCards';
 
 const socket = io('http://localhost:3000/chat');
 
-class Modal extends Component<{ title: string; calledBy: string }, {}> {
+class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any}, {}> {
   state = {
     user: {
       auth_id: 0,
@@ -13,6 +16,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       avatar: "",
       username: "",
     },
+	friends: [],
   };
 
 
@@ -23,12 +27,17 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
     // login.value = "";
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
     // console.log(newUser);
-    if (!newUser) return;
-    newUser = JSON.parse(newUser);
-    this.setState({ user: newUser.user });
+    if (newUser) {
+    	newUser = JSON.parse(newUser);
+    	this.setState({ user: newUser.user });
+	}
+	let friends:any = await Request('GET', {}, {}, "http://localhost:3000/user/")
+	  if (!friends)
+		return ;
+	  this.setState({ friends: friends })
   };
 
   createChan = async () => {
@@ -82,6 +91,42 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       alert("You have to fill each informations");
     }
   };
+
+  displayUser = (id:number, user:any) => {
+	return (
+		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+			<div className="col-5 h-100 overflow-hidden buttons">
+				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>TEST!</button>
+			</div>
+			<div className="col-2 d-flex flex-row d-flex justify-content-center">
+				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
+			</div>
+			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
+				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
+				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
+			</div>
+		</div>
+	)
+  }
+
+  users = () => {
+	let friends: Array<any> = [];
+    if (this.state.friends.length > 0)
+    {
+	  let chanUser:any[]|undefined = this.props.userChan;
+	  let x:number = 0;
+      while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
+		let friend:any = this.state.friends[x];
+		if (!chanUser.find(user => user.auth_id === friend.auth_id))
+        	friends.push(this.displayUser(x, this.state.friends[x]));
+        x++;
+      }
+  	}
+	if (friends.length === 0) {
+		friends.push(<p>No available users to add</p>)
+	}
+	return friends
+  }
 
   sendRequest = async () => {
     let newUser: any = sessionStorage.getItem("data");
@@ -225,13 +270,14 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <p></p>
+              <p>
+				{this.users()}
+			  </p>
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
-                Cancel
+                Close
               </button>
-              <button className="mx-1">Add</button>
             </footer>
           </div>
         );

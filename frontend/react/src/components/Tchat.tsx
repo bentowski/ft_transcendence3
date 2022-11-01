@@ -128,6 +128,7 @@ export const WebSocket = () => {
   const [modalType, setModalType] = useState('');
   const [modalTitle, setModalTitle] = useState('');
   const [loaded, setLoaded] = useState('');
+  const [chanUser, setChanUser] = useState<any[]>([])
 
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -200,6 +201,12 @@ export const WebSocket = () => {
 			setLoaded('ok')
 	}, [chans])
 	
+	useEffect(() => {
+		let chanUserFind:any[]|undefined = chans.find((c:any) => c.id === room)?.chanUser
+		if (chanUserFind !== undefined)
+			setChanUser(chanUserFind)
+	}, [room, chans])
+
 	const joinUrl = () => {
 		let url = document.URL;
 			let chan:chanType|undefined;
@@ -292,7 +299,7 @@ export const WebSocket = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
     setModalType("addUser");
-    setModalTitle("Add an user");
+    setModalTitle("Add a user");
   }
 
   const createChan = async () => {
@@ -300,6 +307,14 @@ export const WebSocket = () => {
     modal.classList.remove('hidden');
     setModalTitle("Create a new channel");
     setModalType("newChan");
+  }
+
+  const arrayUserInActualchannel = () => {
+	let users: Array<any> = [];
+	const actualChan = chans.find(c => c.isActive === true);
+	if (actualChan?.chanUser)
+		users = actualChan.chanUser
+	return users;
   }
 
   const userInActualchannel = () => {
@@ -358,7 +373,7 @@ export const WebSocket = () => {
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} />
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
         <div className="channels col-2">
           <button onClick={createChan}>Create Channel</button>
           <div className="channelsList">

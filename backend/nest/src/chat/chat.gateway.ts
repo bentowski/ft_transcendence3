@@ -58,6 +58,14 @@ export class ChatGateway implements OnModuleInit
 	this.server.to(body[0]).emit("userJoinChannel");
   }
 
+  @SubscribeMessage('addToChannel')
+  async onAddTochannel(client: Socket, body: {room: string, auth_id: string}) {
+	const usr = await this.userService.findOneByAuthId(body.auth_id)
+	await this.chanService.addUserToChannel(usr, body.room)
+	client.emit('joinedRoom', body.room);
+	this.server.to(body.room).emit("userJoinChannel");
+  }
+
   @SubscribeMessage('leaveRoom')
   onLeaveRoom(client: Socket, room: string) {
 	client.join(room);
