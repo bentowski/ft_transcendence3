@@ -15,6 +15,7 @@ import PageNotFound from "./pages/PageNotFound";
 
 const RequireAuth = () => {
   let { isAuth, loading } = useAuthData();
+  const location = useLocation();
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -22,12 +23,10 @@ const RequireAuth = () => {
 
   if (isAuth) {
     return (
-      <div>
         <Outlet />
-      </div>
     );
   } else {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login"  state={{ from: location }} replace />;
   }
 };
 //
@@ -58,8 +57,7 @@ const ContextLoader = () => {
               <Route path="/tchat" element={<Tchat />} />
               <Route path="/history" element={<History />} />
               <Route path="/game" element={<Game />} />
-              <Route path="/*" element={<Profil />} />
-              <Route path="*" element={<Profil />} />
+
             </Route>
           </Route>
         </Route>
@@ -70,7 +68,8 @@ const ContextLoader = () => {
   );
 };
 
-//
+//   <Route path="/*" element={<Profil />} />
+//               <Route path="*" element={<Profil />} />
 
 //<Route element={<RequireAuth />} >
 
