@@ -124,8 +124,8 @@ class App extends Component {
   render() {
     window.addEventListener("popstate", (event) => {
       let url = document.URL;
-      if (url === "http:localhost:8080")
-        console.log("test")
+      // if (url === "http:localhost:8080")
+        // console.log("test")
     });
     return (
 

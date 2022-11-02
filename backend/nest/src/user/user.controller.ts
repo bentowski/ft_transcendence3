@@ -26,7 +26,7 @@ import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
 import jwt_decode from 'jwt-decode';
@@ -122,6 +122,15 @@ export class UserController {
   ) {
     // console.log(updateUserDto);
     return this.userService.updateUser(userId, updateUserDto);
+  }
+
+  @Patch('addFriends/:id')
+  updateFriends(
+    @Param('id') userId: string,
+    @Body() updateFriendsDto: UpdateFriendsDto,
+  ) {
+    console.log(updateFriendsDto);
+    return this.userService.updateFriends(userId, updateFriendsDto);
   }
 
   @Delete(':id')
