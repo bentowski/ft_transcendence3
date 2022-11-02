@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -81,7 +81,10 @@ export class UserService {
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     let findUsername: UserEntity = undefined;
-    findUsername = await this.userRepository.findOneBy({ username });
+    findUsername = await this.userRepository.findOne({
+      where: { username: username },
+      relations: {friends: true, channelJoined: true},
+    });
     return findUsername;
   }
 
@@ -100,6 +103,21 @@ export class UserService {
     if (twoFASecret) user.twoFASecret = twoFASecret;
     if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
     console.log('after edit = ' + user.isTwoFA);
+    //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
+    try {
+      await this.userRepository.save(user);
+    } catch (err) {
+      throw new InternalServerErrorException('error while modifying user');
+    }
+    return user;
+  }
+
+  async updateFriends(authId: string, updateFriendsDto: UpdateFriendsDto): Promise<UserEntity> {
+    let user: UserEntity = undefined;
+    user = await this.findOneByAuthId(authId);
+    const { username, friends } = updateFriendsDto;
+    if (username) user.username = username;
+    if (friends) user.friends = friends
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);
