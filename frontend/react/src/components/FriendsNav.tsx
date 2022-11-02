@@ -54,7 +54,13 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
         "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
     if (!test)
       return ;
+      // input.value = "";
     this.setState({friends: newFriendsArray})
+  }
+
+  pressEnter = (e: any) => {
+    if (e.key === 'Enter')
+    this.addFriends();
   }
 
   render() {
@@ -78,7 +84,7 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
           <p>{onlines}/{this.state.friends.length} friends online</p>
         </div>
         <div className="addFriends my-3">
-          <input id="InputAddFriends" className="col-8" type="text" placeholder="login"></input>
+          <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
           <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
           <div>
             {friends}
