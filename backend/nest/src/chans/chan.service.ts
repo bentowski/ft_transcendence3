@@ -68,6 +68,11 @@ export class ChanService {
         return chan;
     }
 
+	async findOnebyID(id?: string): Promise<ChanEntity> {
+        const chan = await this.chanRepository.findOneBy({id: id});
+        return chan;
+    }
+
     async remove(id: string): Promise<void> {
         await this.chanRepository.delete(id);
     }
