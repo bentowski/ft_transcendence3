@@ -6,6 +6,7 @@ import '../../styles/components/utils/userCards.css'
 // import Login from '../../pages/Login';
 import io from 'socket.io-client';
 
+
 const socket = io('http://localhost:3000/chat');
 
 class UserCards extends Component<{ user: any, avatar: boolean }, { login: string, id: number, online: string, ssname: string, ssid: string, chanId: string }> {
@@ -15,6 +16,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 	}
 
 	createChan = async () => {
+		//const navigate = useNavigate();
 		// let url = document.URL
 		let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
 		let u1 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.ssname);
@@ -57,15 +59,20 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 			);
 			socket.emit('chanCreated');
 			let newUrl = "http://localhost:8080/tchat/#" + newChan.id
+			let title = 'test'
 			setTimeout(() => {
 				window.location.href = newUrl
+				//navigate(newUrl);
 			}, 100)
 			return ;
 		// this.setState({chanId: newChan.id.toString()})
 		}
 		// window.location.href = url + "#" + ret
 		let newUrl = "http://localhost:8080/tchat/#" + ret
+		//let title = 'test'
 		window.location.href = newUrl
+		//window.history.pushState(newUrl, title)
+		//navigate(newUrl);
 		// this.setState({chanId: ret.toString()})
 		// let chans2 = await Request("GET", {}, {}, "http://localhost:3000/chan/" + u1.username + "$" + u2.username);
 		// 	console.log("chans2.id =", chans2.id);
