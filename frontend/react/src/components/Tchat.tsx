@@ -329,13 +329,6 @@ export const WebSocket = () => {
 	return users;
   }
 
-  const chanMemberCount = () => {
-    const actualChan = chans.find(c => c.isActive === true);
-    if (actualChan?.chanUser)
-      return actualChan.chanUser.length
-    return 0
-  }
-
   const chanColor = (channel: any) => {
 
     if (channel.id === room)
