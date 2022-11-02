@@ -50,6 +50,11 @@ export class AuthController {
     const payload: PayloadInterface = { auth_id, username, isAuth };
     //console.log('creating token : ', payload);
     const access_token: string = this.jwtService.sign(payload);
+    try {
+      this.authService.changeStatusUser(auth_id, 1);
+    } catch (error) {
+      throw new Error(error);
+    }
     res
       .status(202)
       .cookie('jwt', access_token, { httpOnly: true })
@@ -98,17 +103,30 @@ export class AuthController {
 
   //@UseGuards(AuthenticatedGuard)
   @Delete('logout')
-  logout(@Res({ passthrough: true }) res) {
+  logout(@Req() req, @Res({ passthrough: true }) res) {
     //res.clearCookie('jwt');
+    const token: any = req.cookies['jwt'];
+    const decoded: any = jwt_decode(token);
+    try {
+      this.authService.changeStatusUser(decoded.auth_id, 0);
+    } catch (error) {
+      throw new Error(error);
+    }
     res.status(200).cookie('jwt', '', { expires: new Date() });
   }
 
   @Post('2fa/generate')
-  async register(@Res() response, @Req() request: PayloadInterface) {
+  async register(@Res() response, @Req() req) {
     //console.log('calling 2fa generate');
     //console.log(request);
+    const token: any = req.cookies['jwt'];
+    const decoded: any = jwt_decode(token);
+    const user = this.authService.findUser(decoded.auth_id);
+    if (!user) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
     const { otpauthUrl } = await this.authService.generateTwoFASecret(
-      request.auth_id,
+      decoded.auth_id,
     );
     return this.authService.pipeQrCodeStream(response, otpauthUrl);
   }
