@@ -1,32 +1,28 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import "../../styles/components/utils/modal.css";
 import Request from "./Requests";
 //import useCurrentUser from '../../hooks/useCurrentUser';
 import useTwoFa from "../../hooks/useTwoFa";
-import {AuthContext} from "../../contexts/AuthProviderContext";
+import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
+import { Modal, Button, Form } from "react-bootstrap";
 //import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 //import "../../styles/components/utils/switch.css";
 
-class Switch extends Component {
+const Switch = () => {
+  const [label, setLabel] = useState("2fa");
+  const [code, setCode] = useState("");
+  const [src, setSrc] = useState("");
+  const [show, setShow] = useState(false);
+  const [tick, setTick] = useState(false);
+  const { isTwoFa, isAuth, isToken, loading } = useAuthData();
 
-  static contextType = AuthContext;
+  //console.log("IS IT TWO FA??", isTwoFa);
 
-  /*
-  constructor(props: any) {
-    super(props);
-  }
-
-   */
-
-  state = {
-    label: "2fa",
-    //isTwoFA: 0,
-    //value: false,
-    code: "",
-    src: "",
-  }
-
-
+  useEffect(() => {
+    if (isTwoFa) {
+      setTick(true);
+    }
+  }, []);
 
   /*
   requestTwoFA = () => {
@@ -42,29 +38,17 @@ class Switch extends Component {
 
    */
 
-  generateTwoFA = async () => {
-    let response: any = await fetch( "http://localhost:3000/auth/2fa/generate", {
-          credentials: "include",
-          method: "POST",
-      }
-    );
+  const generateTwoFA = async () => {
+    let response: any = await fetch("http://localhost:3000/auth/2fa/generate", {
+      credentials: "include",
+      method: "POST",
+    });
     if (!response.ok) {
       //console.log('oulalala sa marche pas generate 2fa');
-      return ;
+      return;
     }
-    /*
-    var myBlob = new Blob(["stream"], { type: "image/png" });
-    //console.log("blob - ", myBlob instanceof Blob);
-    if (myBlob instanceof Blob) {
-      return response;
-    }
-     */
-    //if (!response.ok) {
-     // return ;
-    //}
-    //this.setState({src: URL.createObjectURL(response)});
     const reader = await response.body.getReader();
-    var parentComponentInReadClientModal = this;
+    //var parentComponentInReadClientModal = this;
     let chunks: any = [];
     reader
       .read()
@@ -77,9 +61,8 @@ class Switch extends Component {
             type: "image/png",
           });
           //console.log(blob);
-          parentComponentInReadClientModal.setState({
-            src: URL.createObjectURL(blob),
-          });
+          setSrc(URL.createObjectURL(blob));
+          //parentComponentInReadClientModal.;
           return;
         }
         //console.log(`received ${chunks.length} chars so far!`);
@@ -89,10 +72,10 @@ class Switch extends Component {
         chunks = tempArray;
         return reader.read().then(processText);
       });
-    this.prompt();
+    handleShow();
   };
 
-  checkVal = (value: string) => {
+  const checkVal = (value: string) => {
     for (let i = 0; i < value.length; i++) {
       if (value[i] < "0" || value[i] > "9") {
         return false;
@@ -101,150 +84,180 @@ class Switch extends Component {
     return true;
   };
 
-  activateTwoFa = async () => {
+  const activateTwoFa = async () => {
     //console.log('activating two fa...');
-    if (!this.checkVal(this.state.code) && this.state.code.length !== 6) {
+    if (!checkVal(code) && code.length !== 6) {
       //console.log("wrong code format");
       return;
     }
-      let rep = await Request(
-          "POST",
-          {},
-          {twoFACode: this.state.code},
-          "http://localhost:3000/auth/2fa/activate"
-      );
-      console.log('rep received = ', rep);
-      if (rep.ok) {
-        //this.setState({ value: true });
-        this.hidden();
-        //console.log('yey');
-      } else {
-        //console.log('nnoooo');
-        //console.log("request 2fa activation error");
-      }
+    //console.log("before fetch request");
+    fetch("http://localhost:3000/auth/2fa/activate", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        twoFACode: code,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          handleClose();
+          handleTick();
+          //console.log("yey");
+          return;
+        } else {
+          console.log("nnoooo ");
+          setCode("");
+          return;
+        }
+      })
+      .catch((error) => {
+        //console.log("nnoooo ", error);
+        handleClose();
+        handleUnTick();
+        return;
+      });
   };
 
-  deactivateTwoFA = async () => {
-    await Request("POST", {}, {}, "http://localhost:3000/auth/2fa/deactivate");
+  const deactivateTwoFA = async () => {
+    fetch("http://localhost:3000/auth/2fa/deactivate", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
+      .then((res) => {
+        if (res.ok) {
+          handleUnTick();
+          //console.log("deactivated ok ");
+          return;
+        }
+      })
+      .catch((error) => {
+        //console.log("failed deactivate ", error);
+      });
   };
 
-  prompt = () => {
-    let modal = document.getElementById("ModalCode") as HTMLDivElement;
-    modal.classList.remove("hidden");
-  };
+  const handleTick = () => setTick(true);
+  const handleUnTick = () => setTick(false);
 
-  handleToggle = (evt: any) => {
+  const handleToggle = (evt: any) => {
     //this.setState({ isTwoFA: evt.target.checked });
-    if (this.getIsTwoFa() === 1) {
-      //console.log('deactivating twofa');
-      return this.deactivateTwoFA();
+    if (tick) {
+      //console.log("deactivating twofa");
+      return deactivateTwoFA();
     }
-    if (this.getIsTwoFa() === 0) {
-      //console.log('generating twofa');
-      return this.generateTwoFA();
+    if (!tick) {
+      //console.log("generating twofa");
+      return generateTwoFA();
     }
     //console.log("evt target = ", evt.target.checked);
   };
 
-  handleSubmit = (evt: any) => {
+  const handleSubmit = (evt: any) => {
     evt.preventDefault();
   };
 
-  hidden = () => {
+  /*
+  const hidden = () => {
     let modal = document.getElementById("ModalCode") as HTMLDivElement;
     modal.classList.add("hidden");
   };
 
-  handleChange = (evt: any) => {
-    this.setState({ code: evt.target.value });
+    const prompt = () => {
+    let modal = document.getElementById("ModalCode") as HTMLDivElement;
+    modal.classList.remove("hidden");
   };
 
-  getUser = () => {
-    const data: any = this.context;
-    //console.log('data user contexxt = ', data);
-    return data.user;
-  }
+   */
 
-  getIsTwoFa = () => {
-    const user: any = this.getUser();
-    return user.isTwoFA;
-  }
+  const handleChange = (evt: any) => {
+    evt.preventDefault();
+    setCode(evt.target.value);
+  };
 
-  componentDidMount = () => {
-    // console.log("COMPONENT DID MOUNT ", this.state.value);
-    //let user = useCurrentUser();
+  const canceling = () => {
+    setCode("");
+    handleClose();
+  };
 
-    //let twoFa = useTwoFa();
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-  }
-  /*
-  <ModalCode
-  title={this.state.label}
-  src={this.state.src}
-  activate={this.state.activate}
-  code={this.state.code}
-  />
-  */
+  return (
+    <div className="activation">
+      <Modal show={show} id="ModalCode" onHide={handleClose}>
+        <div className="p-4 pb-1">
+          <Modal.Header className="mb-3">
+            <h2>{label}</h2>
+            <img alt="qrcode" src={src} />
+          </Modal.Header>
+          <Modal.Body>
+            <Form className="mb-3">
+              <input
+                type="text"
+                placeholder="2fa activation code"
+                maxLength={6}
+                id="code"
+                name="code"
+                onChange={handleChange}
+                value={code}
+              />
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button className="mx-1" onClick={canceling}>
+              Cancel
+            </Button>
 
-  //<AuthContext.Consumer>
-  //                           {({ activateTwoFa }) => (
-  //  )}
-  //                         </AuthContext.Consumer>
+            <button onClick={activateTwoFa} className="mx-1">
+              Validate
+            </button>
+          </Modal.Footer>
+        </div>
+      </Modal>
 
-  render() {
-    //console.log("istwo fa = ", this.state.isTwoFA);
-    //console.log("state value = ", this.state.value);
-    return (
-            <div className="activation">
-              <div className="Modal hidden" id="ModalCode">
-                <div className="p-4 pb-1">
-                  <header className="mb-3">
-                    <h2>{this.state.label}</h2>
-                    <img alt="qrcode" src={this.state.src} />
-                  </header>
-                  <form className="mb-3">
-                    <input
-                      type="text"
-                      placeholder="2fa activation code"
-                      maxLength={6}
-                      id="code"
-                      name="code"
-                      onChange={this.handleChange}
-                      value={this.state.code}
-                    />
-                  </form>
-                      <footer>
-                        <button className="mx-1" onClick={this.hidden}>
-                          Cancel
-                        </button>
+      <form onSubmit={handleSubmit}>
+        <label>
+          2fa
+          <input type="checkbox" checked={tick} onChange={handleToggle} />
+        </label>
+      </form>
+    </div>
+  );
+};
 
-                            <button onClick={this.activateTwoFa} className="mx-1">
-                              Validate
-                            </button>
-
-                      </footer>
-                </div>
-              </div>
-
-              <form onSubmit={this.handleSubmit}>
-                <label>
-                  2fa
-                  <input
-                    type="checkbox"
-                    checked={this.getIsTwoFa()}
-                    onChange={this.handleToggle}
-                  />
-                </label>
-              </form>
-            </div>
-
-    );
-  }
-}
-/*
-       {this.state.src && (
-         <img alt="qrcode" src={this.state.src} width="100" height="100" />
-       )}
-
- */
 export default Switch;
+
+//<div className="Modal hidden" id="ModalCode">
+//         <div className="p-4 pb-1">
+//           <header className="mb-3">
+//             <h2>{label}</h2>
+//             <img alt="qrcode" src={src} />
+//           </header>
+//           <form className="mb-3">
+//             <input
+//               type="text"
+//               placeholder="2fa activation code"
+//               maxLength={6}
+//               id="code"
+//               name="code"
+//               onChange={handleChange}
+//               value={code}
+//             />
+//           </form>
+//           <footer>
+//             <button className="mx-1" onClick={hidden}>
+//               Cancel
+//             </button>
+//
+//             <button onClick={activateTwoFa} className="mx-1">
+//               Validate
+//             </button>
+//           </footer>
+//         </div>
+//       </div>

@@ -92,6 +92,7 @@ class Profil extends Component<
         "http://localhost:3000/user/name/" + username
     );
     if (!user) return;
+    console.log('user = ', user.username, ', avatar = ', user.avatar);
     this.setState({ login: user.username, avatar: user.avatar });
   };
 
@@ -136,7 +137,7 @@ class Profil extends Component<
       while (url[x]) {
         tmp += url[x++];
       }
-      if (document.URL.includes("localhost:8080/profil"))
+      //if (document.URL.includes("localhost:8080/profil"))
         this.getUser(tmp);
     });
     //console.log(this.state.login)

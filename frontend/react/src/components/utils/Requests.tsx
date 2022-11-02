@@ -1,10 +1,15 @@
 // function checkIfJSONisNotEmpty(obj: any) {
 //   return Object.keys(obj).length > 0;
 // }
-import {IResponseData} from "../../interfaces/responsedata-interface";
+import { IResponseData } from "../../interfaces/responsedata-interface";
 import IError from "../../interfaces/error-interface";
 
-async function Request(type: string, headers: any, body: any, url: string): Promise<any> {
+async function Request(
+  type: string,
+  headers: any,
+  body: any,
+  url: string
+): Promise<any> {
   console.log(url);
   //try {
   if (type === "GET") {
@@ -29,14 +34,16 @@ async function Request(type: string, headers: any, body: any, url: string): Prom
       headers: headers,
       body: JSON.stringify(body),
     });
-    //console.log("response = ", response);
+    console.log("response = ", response);
     if (response.ok) {
       return await response.json();
-       } else {
-        return undefined;
-      }
+    } else {
+      return undefined;
     }
+  }
+  //} catch (error) {
+  //throw new Error("Request error");
+  //}
 }
 
 export default Request;
-     
