@@ -38,10 +38,15 @@ class Menu extends Component {
         </div>{" "}
         {/* titleDiv */}
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
-          <div className="twoFASwitch">
+          <div className="twoFASwitch mx-2">
             <Switch />
           </div>
-          <div className="loginMenu px-2">
+          <div className="logoutMenu ml-1">
+            <Link to={"/login"}>
+              <p className="m-0">logout</p>
+            </Link>
+          </div>
+          <div className="loginMenu ml-1">
 						<a href={"/profil/#" + this.state.username} className="mx-2">{this.state.username}
             {/* <Link to={"/profil/" + this.state.username}> */}
               {/* <p className="m-0">{this.state.username}</p> */}
@@ -60,11 +65,6 @@ class Menu extends Component {
               />
             </a>
             {/* </Link> */}
-          </div>
-          <div className="logoutMenu">
-            <Link to={"/login"}>
-              <p className="m-0">logout</p>
-            </Link>
           </div>
         </div>{" "}
         {/*profilMenu */}
