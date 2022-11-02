@@ -8,97 +8,138 @@ import {
 } from "react";
 import Request from "../components/utils/Requests";
 import IAuthContextType from "../interfaces/authcontexttype-interface";
+import ResponseData from "../interfaces/error-interface";
+import IError from "../interfaces/error-interface";
+import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
 
-export const AuthContext = createContext<IAuthContextType>(
-  {} as IAuthContextType
-);
+export const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [loading, setLoading] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
-  const [user, setUser] = useState/*<Promise<IUser> | undefined>*/(undefined);
-  const [over, setOver] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
+  const [isToken, setIsToken] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(undefined);
 
-  const getCurrentUser = async () => {
-    let cur = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/current"
-    ) /*.catch(() => {
-      return {};
-    }); */
-    return cur;
-  }
-
-  const fetchData = async () => {
+  const fetchData = () => {
+    setIsToken(false);
+    setUser(undefined);
     setLoading(true);
-    let data = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/auth/islogin"
-    );
-    if (!data) {
-       setLoading(false);
-      return;
-    }
-    if (data.isAuth) {
-      setIsAuth(true);
-      let cur = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/current"
-      )
-      if (cur) {
-        setUser(cur);
+    //console.log("here we go");
+    try {
+      fetch("http://localhost:3000/auth/istoken", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res: any) => res.json())
+        .then((data: any) => {
+          //console.log("data tok = ", data.isTok);
+          if (data.isTok === 0) {
+            //console.log("403 baby");
+            setLoading(false);
+            return;
+          } else if (data.isTok > 0) {
+            //console.log("before fetching");
+            setIsToken(true);
+            if (data.isTok === 1) {
+              setLoading(false);
+              return;
+            }
+            //console.log("fetching user");
+            fetch("http://localhost:3000/user/current", {
+              method: "GET",
+              credentials: "include",
+            })
+              .then((resp: any) => resp.json())
+              .then((user: any) => {
+                //console.log("user = ", user);
+                if (user.statusCode === 404) {
+                  setLoading(false);
+                  return;
+                }
+                setUser(user);
+                if (data.isTok === 2) {
+                  setIsTwoFa(true);
+                  setLoading(false);
+                  //console.log("istok = 2");
+                  return;
+                }
+                if (data.isTok === 3) {
+                  //console.log("istok = 3");
+                  setIsAuth(true);
+                  setIsTwoFa(true);
+                  setLoading(false);
+                  return;
+                }
+                if (data.isTok === 4) {
+                  setLoading(false);
+                  //console.log("istok = 4");
+                  setIsAuth(true);
+                  return;
+                }
+                //console.log("ENDED NOWHERE!");
+                return;
+              })
+              .catch((error: any) => {
+                //console.log("oulala - ", error);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+            setLoading(false);
+            return;
+          }
+        })
+        .catch((error: any) => {
+          //console.log("1error = ", error);
+          setLoading(false);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      if (typeof error === "object" && error !== null) {
+        //console.log("oulala -", error);
+        setLoading(false);
+      } else {
+        //console.log("unexpected error ", error);
+        setLoading(false);
       }
-      //setLoading(false);
     }
-    setLoading(false);
-    return;
   };
 
   useEffect(() => {
-    if (!isAuth) {
+    //console.log('starts');
+    if (!isToken) {
       fetchData();
     } else {
       setLoading(false);
     }
   }, []);
 
-  const logout = async () => {
-    console.log("logout called");
-    let res = await Request(
-      "DELETE",
-      {},
-      {},
-      "http://localhost:3000/auth/logout"
-    );
-    //console.log("res = ", res);
-    if (res.status === 200) {
-      //console.log("loooooogggggeedddd oooo uuuuutttt");
-      setIsAuth(false);
-    }
-  };
-
   const memoedValue = useMemo(
     () => ({
       user,
       isAuth,
+      isToken,
+      isTwoFa,
+      error,
       loading,
-      over,
-      logout,
     }),
-    [user, isAuth, loading, over, logout]
+    [error, user, isAuth, loading, isToken, isTwoFa]
   );
 
   return (
     <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>
   );
 };
+
 export const useAuthData = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useUserContext was used outside of its Provider");
+  }
+  return context;
 };

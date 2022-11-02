@@ -10,6 +10,10 @@ import AuthContext from "react-auth-kit/dist/AuthContext";
 import Profil from '../components/Profil'
 // import Footer from './Footer'
 
+//function Outlet() {
+//  return null;
+//}
+
 class Page extends Component {
   /*
   state = {

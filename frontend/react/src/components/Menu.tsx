@@ -1,8 +1,38 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Switch from "./utils/Switch";
+import {useAuthData} from "../contexts/AuthProviderContext"
 // import Request from "./utils/Requests"
 // import "./Menu.css"
+
+const LogoutSession = () => {
+  const { setIsAuth, setUser, setIsToken, setIsTwoFa } = useAuthData();
+  const navigate = useNavigate();
+  //console.log("loging out");
+  fetch("http://localhost:3000/auth/logout", {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      //console.log("response logout = ", data);
+      if (data.status === 200) {
+        console.log("yey");
+        setUser(undefined);
+        setIsAuth(false);
+        setIsToken(false);
+        setIsTwoFa(false);
+        //console.log("navigating");
+        navigate("/login");
+      }
+    })
+    .catch((error) => {
+      console.log("some shit happened");
+    });
+}
 
 class Menu extends Component {
   state = {
@@ -58,7 +88,7 @@ class Menu extends Component {
               </Link>
             </div>
             <div className="logoutMenu">
-              <Link to={"/login"}>
+              <Link onClick={LogoutSession} to={"/login"}>
                 <p className="m-0">logout</p>
               </Link>
             </div>
