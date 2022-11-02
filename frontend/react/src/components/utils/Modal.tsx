@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import FriendsNav from '../FriendsNav';
 import { useResolvedPath } from 'react-router-dom';
 import UserCards from './UserCards';
+import SearchBar from './SearchBar';
 
 const socket = io('http://localhost:3000/chat');
 
@@ -16,7 +17,8 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       avatar: "",
       username: "",
     },
-	friends: [],
+	  friends: [],
+    input: "",
   };
 
 
@@ -96,7 +98,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
 	return (
 		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
 			<div className="col-5 h-100 overflow-hidden buttons">
-				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>TEST!</button>
+				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
 			</div>
 			<div className="col-2 d-flex flex-row d-flex justify-content-center">
 				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
@@ -111,19 +113,26 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
 
   users = () => {
 	let friends: Array<any> = [];
-    if (this.state.friends.length > 0)
-    {
+  let isUsers:boolean = false;
+  let x:number = 0;
+  if (this.state.friends.length > 0)
+  {
 	  let chanUser:any[]|undefined = this.props.userChan;
-	  let x:number = 0;
-      while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
-		let friend:any = this.state.friends[x];
-		if (!chanUser.find(user => user.auth_id === friend.auth_id))
+    while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
+		  let friend:any = this.state.friends[x];
+		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
+      {
+        isUsers = true;
+        if (this.state.input.length === 0 || friend.username.includes(this.state.input))
         	friends.push(this.displayUser(x, this.state.friends[x]));
-        x++;
       }
-  	}
-	if (friends.length === 0) {
-		friends.push(<p>No available users to add</p>)
+      x++;
+    }
+  }
+  if (isUsers) 
+    friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
+	if ((isUsers && friends.length === 1) || !isUsers) {
+		friends.push(<p key={x}>No available users to add</p>)
 	}
 	return friends
   }
@@ -270,9 +279,9 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <p>
-				{this.users()}
-			  </p>
+              <div key={"febzuiafbndjqfbe"}>
+                {this.users()}
+              </div>
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>

@@ -220,6 +220,7 @@ export const WebSocket = () => {
 			else {
 				url = url.substring(url.lastIndexOf("#") + 1);
 				chan = chans.find((c:any) => c.id === url);
+        console.log("chan", chan)
 				if (chan !== undefined)
 					joinRoom(chan, false)
 				else {
@@ -270,6 +271,7 @@ export const WebSocket = () => {
       if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id)
+        setChanUser(newRoom.chanUser)
         if (newRoom.messages)
           setMessage(newRoom.messages)
         else
@@ -319,11 +321,10 @@ export const WebSocket = () => {
 
   const userInActualchannel = () => {
 	let users: Array<any> = [];
-	const actualChan = chans.find(c => c.isActive === true);
-	if (actualChan?.chanUser)
-		actualChan.chanUser.map((u:any) => {
+	const actualChan = chanUser;//chans.find(c => c.isActive === true);
+	if (actualChan.length)
+		actualChan.map((u:any) => {
 			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
-		
 	})
 	return users;
   }
@@ -434,7 +435,7 @@ export const WebSocket = () => {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-          <p> Channnnnel's members ({chanMemberCount()}) </p>
+          <p> Channnnnel's members ({chanUser.length}) </p>
           {userInActualchannel()}
         </div>
       </div>
