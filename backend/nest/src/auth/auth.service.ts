@@ -73,4 +73,12 @@ export class AuthService {
     user = await this.userService.findOneByAuthId(auth_id);
     await this.userService.turnOffTwoFA(auth_id, user);
   }
+
+  async changeStatusUser(auth_id: string, status: number) {
+    try {
+      await this.userService.setStatus(auth_id, status);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

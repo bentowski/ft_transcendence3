@@ -24,7 +24,7 @@ const Switch = () => {
     }
   }, []);
 
-/*
+  /*
   requestTwoFA = async () => {
     let user = await Request(
       "GET",
@@ -43,15 +43,33 @@ const Switch = () => {
 
    */
 
-  const generateTwoFA = async () => {
-    let response: any = await fetch("http://localhost:3000/auth/2fa/generate", {
+  const generateTwoFA = () => {
+    //setSrc("");
+    fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
-    });
-    if (!response.ok) {
-      //console.log('oulalala sa marche pas generate 2fa');
-      return;
-    }
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        //console.log("sendsendsend");
+        const blobURL = URL.createObjectURL(blob);
+        setSrc(blobURL);
+        const image = document.getElementById("myImg");
+        if (!image) {
+          return;
+        }
+        image.onload = function () {
+          URL.revokeObjectURL(src);
+        };
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    /*
     const reader = await response.body.getReader();
     //var parentComponentInReadClientModal = this;
     let chunks: any = [];
@@ -77,6 +95,8 @@ const Switch = () => {
         chunks = tempArray;
         return reader.read().then(processText);
       });
+
+     */
     handleShow();
   };
 
@@ -113,7 +133,7 @@ const Switch = () => {
           //console.log("yey");
           return;
         } else {
-          console.log("nnoooo ");
+          //console.log("nnoooo ");
           setCode("");
           return;
         }
