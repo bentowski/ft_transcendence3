@@ -1,12 +1,11 @@
 import React, { Component, useEffect, useState } from "react";
-import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation, BrowserRouter } from "react-router-dom";
 import "./styles/App.css";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
 import History from "./components/History";
-import { BrowserRouter } from "react-router-dom";
 import Page from "./pages/Page";
 import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
@@ -23,13 +22,13 @@ const RequireAuth = () => {
   //console.log("requireauth user is login?");
 
   if (isToken) {
-    //console.log("user is logged in");
+    console.log("user is logged in");
     if (isTwoFa && !isAuth) {
-      //console.log("but needs to do two fa");
+      console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-      //console.log("welcome buddy");
+      console.log("welcome buddy");
       return <Outlet />;
     }
   }
@@ -47,23 +46,29 @@ const Layout = () => {
 const ContextLoader = () => {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout />} >
         {/* public route (add unauthorized) */}
         <Route path="/login" element={<Login />} />
 
         {/* private route */}
 
-        <Route element={<RequireAuth />}>
-          <Route path="/" element={<Page />}>
-            <Route path="/profil" element={<Profil />} />
+        <Route element={<RequireAuth />} >
+          <Route path="/" element={<Page />} >
             <Route path="/tchat" element={<Tchat />} />
+            <Route path="/tchat/*" element={<Tchat />} />
+            <Route path="/profil" element={<Profil />} />
+            <Route path="/profil/*" element={<Profil />} />
             <Route path="/history" element={<History />} />
             <Route path="/game" element={<Game />} />
+            <Route path="/game/*" element={<Game />} />
+            <Route path="/*" element={<Profil />} />
+
           </Route>
         </Route>
       </Route>
 
       {/* catch all */}
+
     </Routes>
   ); //
   //<Route path="*" element={<PageNotFound />} />
@@ -119,9 +124,14 @@ class App extends Component {
   render() {
     window.addEventListener("popstate", (event) => {
       let url = document.URL;
-      if (url === "http:localhost:8080") console.log("test");
+      // if (url === "http:localhost:8080")
+        // console.log("test")
     });
-    return <ContextLoader />; // fin de return
+    return (
+
+        <ContextLoader />
+
+    ); // fin de return
   } // fin de render
 } // fin de App
 //

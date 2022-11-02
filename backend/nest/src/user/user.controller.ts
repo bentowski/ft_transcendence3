@@ -26,14 +26,13 @@ import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
 import jwt_decode from 'jwt-decode';
 import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
-import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -53,7 +52,6 @@ export const storage = {
 };
 
 @Controller('user')
-//@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -66,16 +64,10 @@ export class UserController {
 
   @Get('current')
   async currentUser(@Req() req: Request): Promise<UserEntity> {
-    //console.log('request = ', req);
+    //console.log('request = ' + req);
     const token = req.cookies['jwt'];
-    /*
-    if (!token) {
-      throw new HttpException('user not logged in', HttpStatus.FORBIDDEN);
-    }
-     */
     try {
       const decoded: PayloadInterface = jwt_decode(token);
-      //console.log('welcome ', decoded.auth_id);
       return this.userService.currentUser(decoded.auth_id);
     } catch (error) {
       throw new HttpException('error decoding token', HttpStatus.BAD_REQUEST);
@@ -132,6 +124,15 @@ export class UserController {
     return this.userService.updateUser(userId, updateUserDto);
   }
 
+  @Patch('addFriends/:id')
+  updateFriends(
+    @Param('id') userId: string,
+    @Body() updateFriendsDto: UpdateFriendsDto,
+  ) {
+    console.log(updateFriendsDto);
+    return this.userService.updateFriends(userId, updateFriendsDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') username: string) {
     return this.userService.remove(username);
@@ -140,7 +141,7 @@ export class UserController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file: any): Observable<Object> {
-    //console.log(file);
+    console.log(file);
     return of({ imagePath: file.filename });
   }
 }

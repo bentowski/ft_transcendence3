@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import {Navigate, Outlet} from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
+import Request from "../components/utils/Requests";
 import FriendsNav from "../components/FriendsNav";
+import {useAuthUser, useIsAuthenticated, withIsAuthenticated} from "react-auth-kit";
+import AuthContext from "react-auth-kit/dist/AuthContext";
 // import Tchat from '../components/Tchat'
 import Profil from '../components/Profil'
-import {Outlet} from "react-router-dom";
 // import Footer from './Footer'
 
 //function Outlet() {

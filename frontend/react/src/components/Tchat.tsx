@@ -1,5 +1,6 @@
 import { Component, useContext, useEffect, useState, useRef } from 'react';
 import Modal from "./utils/Modal";
+import { Link } from 'react-router-dom'
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
@@ -128,6 +129,7 @@ export const WebSocket = () => {
   const [modalType, setModalType] = useState('');
   const [modalTitle, setModalTitle] = useState('');
   const [loaded, setLoaded] = useState('');
+  const [chanUser, setChanUser] = useState<any[]>([])
 
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -188,31 +190,38 @@ export const WebSocket = () => {
     	setUsername(newUser.user.username);
 		setAuthId(newUser.user.auth_id);
   	}, [])
-	
+
 	useEffect(() => {
 		if (loaded === 'ok')
 			joinUrl()
 	}, [loaded])
 
 	useEffect(() => {
-		//window.addEventListener("hashchange", (event) => {joinUrl();})
+		window.addEventListener("hashchange", (event) => {joinUrl();})
 		if (chans.length && auth_id !== undefined && !room)
 			setLoaded('ok')
 	}, [chans])
-	
+
+	useEffect(() => {
+		let chanUserFind:any[]|undefined = chans.find((c:any) => c.id === room)?.chanUser
+		if (chanUserFind !== undefined)
+			setChanUser(chanUserFind)
+	}, [room, chans])
+
 	const joinUrl = () => {
 		let url = document.URL;
 			let chan:chanType|undefined;
-			let index = url.lastIndexOf("#");
-			
+			let index = url.lastIndexOf("/");
+
 			if (index === -1) {
 				chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
 				if (chan !== undefined)
 					joinRoom(chan, false)
 			}
 			else {
-				url = url.substring(url.lastIndexOf("#") + 1);
+				url = url.substring(url.lastIndexOf("/") + 1);
 				chan = chans.find((c:any) => c.id === url);
+        console.log("chan", chan)
 				if (chan !== undefined)
 					joinRoom(chan, false)
 				else {
@@ -263,6 +272,7 @@ export const WebSocket = () => {
       if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id)
+        setChanUser(newRoom.chanUser)
         if (newRoom.messages)
           setMessage(newRoom.messages)
         else
@@ -292,7 +302,7 @@ export const WebSocket = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
     setModalType("addUser");
-    setModalTitle("Add an user");
+    setModalTitle("Add a user");
   }
 
   const createChan = async () => {
@@ -302,22 +312,22 @@ export const WebSocket = () => {
     setModalType("newChan");
   }
 
-  const userInActualchannel = () => {
+  const arrayUserInActualchannel = () => {
 	let users: Array<any> = [];
 	const actualChan = chans.find(c => c.isActive === true);
 	if (actualChan?.chanUser)
-		actualChan.chanUser.map((u:any) => {
-			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
-		
-	})
+		users = actualChan.chanUser
 	return users;
   }
 
-  const chanMemberCount = () => {
-    const actualChan = chans.find(c => c.isActive === true);
-    if (actualChan?.chanUser)
-      return actualChan.chanUser.length
-    return 0
+  const userInActualchannel = () => {
+	let users: Array<any> = [];
+	const actualChan = chanUser;//chans.find(c => c.isActive === true);
+	if (actualChan.length)
+		actualChan.map((u:any) => {
+			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
+	})
+	return users;
   }
 
   const chanColor = (channel: any) => {
@@ -349,7 +359,7 @@ export const WebSocket = () => {
 
   const fuckingPrint = (chans: any) => {
     let url: string = document.URL
-    url = url.substring(url.lastIndexOf("#") + 1);
+    url = url.substring(url.lastIndexOf("/") + 1);
     let id = parseInt(url)
     if (id && id > 0 && chans[id - 1] && !(chans[id - 1].type === "direct"))
       return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
@@ -358,7 +368,7 @@ export const WebSocket = () => {
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} />
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
         <div className="channels col-2">
           <button onClick={createChan}>Create Channel</button>
           <div className="channelsList">
@@ -367,13 +377,13 @@ export const WebSocket = () => {
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
               {chans.map((chan) =>
-                <a key={chan.id} href={"#" + chan.id}>
+                <Link key={chan.id} to={"/tchat/" + chan.id}>
                   <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                     <div className="">
                       {printName(chan)}
                     </div>
                   </li>
-                </a>
+                </Link>
               )}
             </ul>
             {/* FIN AFFICHAGE CHAN */}
@@ -419,7 +429,7 @@ export const WebSocket = () => {
           </div>
         </div> {/*fin tchatMain*/}
         <div className="tchatMembers col-2">
-          <p> Channnnnel's members ({chanMemberCount()}) </p>
+          <p> Channnnnel's members ({chanUser.length}) </p>
           {userInActualchannel()}
         </div>
       </div>

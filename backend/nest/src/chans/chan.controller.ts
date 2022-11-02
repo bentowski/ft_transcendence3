@@ -14,10 +14,10 @@ export class ChanController {
         return this.chanService.findOne(username);
     }
 
-    // @Get(':id')
-    // findOnebyID(@Param('id') id: string) {
-    //     return this.chanService.findOnebyID(id);
-    // }
+    @Get('/id/:id')
+    findOnebyID(@Param('id') id: string) {
+        return this.chanService.findOnebyID(id);
+    }
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {

@@ -18,7 +18,6 @@ import { PayloadInterface } from './interfaces/payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { TwoFACodeDto } from './dto/twofacode.dto';
-//import jwt_decode from 'jwt-decode';
 //import UserEntity from "../user/entities/user-entity";
 //import {JwtPayload} from "jwt-decode";
 //import serialize from 'cookie';
@@ -33,14 +32,14 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
-  @UseGuards(IntraAuthGuard)
   @Get('login')
+  @UseGuards(IntraAuthGuard)
   login() {
     return;
   }
 
-  @UseGuards(IntraAuthGuard)
   @Get('redirect')
+  @UseGuards(IntraAuthGuard)
   async redirect(
     @Res({ passthrough: true }) res: Response,
     @Req() req: Request,
@@ -57,7 +56,6 @@ export class AuthController {
       .redirect('http://localhost:8080');
   }
 
-  //PUT THIS FUNCTION INTO JWT STRATEGY
   @Get('istoken')
   async authenticated(@Req() req, @Res() res): Promise<any> {
     //console.log('cookie = ', req.cookies['jwt']);
@@ -99,17 +97,15 @@ export class AuthController {
   }
 
   //@UseGuards(AuthenticatedGuard)
-  //@UseGuards(AuthGuard('jwt'))
   @Delete('logout')
   logout(@Res({ passthrough: true }) res) {
     //res.clearCookie('jwt');
     res.status(200).cookie('jwt', '', { expires: new Date() });
   }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/generate')
   async register(@Res() response, @Req() request: PayloadInterface) {
-    console.log('calling 2fa generate');
+    //console.log('calling 2fa generate');
     //console.log(request);
     const { otpauthUrl } = await this.authService.generateTwoFASecret(
       request.auth_id,
@@ -117,37 +113,37 @@ export class AuthController {
     return this.authService.pipeQrCodeStream(response, otpauthUrl);
   }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/activate')
   async turnOnTwoFAAuth(
     @Req() req,
     @Body() obj: TwoFACodeDto,
     @Res({ passthrough: true }) res,
   ) {
-    //console.log('code = ', obj.twoFACode);
+    console.log('code = ', obj.twoFACode);
     const token: any = req.cookies['jwt'];
     const decoded: PayloadInterface = jwt_decode(token);
     //twoFACode = JSON.stringify(twoFACode);
+    console.log('auth_id - ', decoded.auth_id);
     const isValid = await this.authService.isTwoFAValid(
       obj.twoFACode,
       decoded.auth_id,
     );
-    //console.log('is valid - ', isValid);
+    console.log('is valid - ', isValid);
     if (!isValid) {
       throw new UnauthorizedException('wrong 2fa code');
     }
-    //console.log('validation ok');
+    console.log('validation ok');
     const username: string = decoded.username; //['username'];
     const auth_id: string = decoded.auth_id; //user['auth_id'];
     const isAuth = true;
     const payload: PayloadInterface = { auth_id, username, isAuth };
     const access_token: string = this.jwtService.sign(payload);
     //const access_token = await this.authService.getJwtToken(request.auth_id, 1);
+    console.log('access token : ', access_token);
     await this.authService.turnOnTwoFAAuth(req.auth_id);
     res.status(200).cookie('jwt', access_token, { httpOnly: true });
   }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/deactivate')
   async turnOffTwoFAAuth(
     @Req() request: PayloadInterface,
@@ -158,7 +154,6 @@ export class AuthController {
     res.status(200);
   }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Post('2fa/authenticate')
   async authenticate(
     @Req() req,

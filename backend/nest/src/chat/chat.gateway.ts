@@ -24,8 +24,8 @@ export class ChatGateway implements OnModuleInit
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      //console.log(socket.id);
-      //console.log("Connected");
+      console.log(socket.id);
+      console.log("Connected");
     });
   }
 
@@ -56,6 +56,14 @@ export class ChatGateway implements OnModuleInit
 	await this.chanService.addUserToChannel(usr, body[0])
 	client.emit('joinedRoom', body[0]);
 	this.server.to(body[0]).emit("userJoinChannel");
+  }
+
+  @SubscribeMessage('addToChannel')
+  async onAddTochannel(client: Socket, body: {room: string, auth_id: string}) {
+	const usr = await this.userService.findOneByAuthId(body.auth_id)
+	await this.chanService.addUserToChannel(usr, body.room)
+	client.emit('joinedRoom', body.room);
+	this.server.to(body.room).emit("userJoinChannel");
   }
 
   @SubscribeMessage('leaveRoom')

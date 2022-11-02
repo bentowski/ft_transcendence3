@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from "react";
 import "../../styles/components/utils/modal.css";
 import Request from "./Requests";
 //import useCurrentUser from '../../hooks/useCurrentUser';
-import useTwoFa from "../../hooks/useTwoFa";
+// import useTwoFa from "../../hooks/useTwoFa";
 import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
 import { Modal, Button, Form } from "react-bootstrap";
 //import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
@@ -24,9 +24,14 @@ const Switch = () => {
     }
   }, []);
 
-  /*
-  requestTwoFA = () => {
-    let user = useCurrentUser();
+/*
+  requestTwoFA = async () => {
+    let user = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/current"
+    );
     if (!user) {
       console.log("current user not found");
       return;

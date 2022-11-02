@@ -11,17 +11,60 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
   }
 
   componentDidMount: any = async () => {
-    let friends = await Request('GET', {}, {}, "http://localhost:3000/user/")
-    // console.log("friends : "+ friends)
-    if (!friends)
+    let currentUser:any = sessionStorage.getItem('data');
+    currentUser = JSON.parse(currentUser);
+    let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.user.username)
+    // console.log("friends : ", user.friends)
+    if (!user.friends.length)
       return ;
-    this.setState({ friends: friends })
-    // console.log("FRIENDS : " + this.state.friends)
+    this.setState({ friends: user.friends })
+  }
+
+  promptError = () => {
+    let input = document.getElementById("InputAddFriends") as HTMLInputElement
+    input.value = "This user not exist"
+    setTimeout(() => {
+      input.value = ""
+    }, 1000);
+  }
+
+  addFriends = async () => {
+    let currentUser:any = sessionStorage.getItem('data');
+    currentUser = JSON.parse(currentUser);
+    let input = document.getElementById("InputAddFriends") as HTMLInputElement
+    if (input.value === "")
+      return ;
+    let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
+    if (!userToAdd)
+    {
+      this.promptError()
+      return ;
+    }
+    let newFriendsArray = this.state.friends
+    newFriendsArray  = [...newFriendsArray , userToAdd];
+    let test = await Request('PATCH',
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        {
+          username: currentUser.user.username,
+          friends: newFriendsArray
+        },
+        "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+    if (!test)
+      return ;
+      // input.value = "";
+    this.setState({friends: newFriendsArray})
+  }
+
+  pressEnter = (e: any) => {
+    if (e.key === 'Enter')
+    this.addFriends();
   }
 
   render() {
     let friends: Array<any> = [];
-    // console.log("FRIENDS : " + this.state.friends)
     let onlines;
     if (this.state.friends.length > 0)
     {
@@ -41,8 +84,8 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
           <p>{onlines}/{this.state.friends.length} friends online</p>
         </div>
         <div className="addFriends my-3">
-          <input className="col-8" type="text" placeholder="login"></input>
-          <button className="col-2 mx-2">ADD</button>
+          <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
+          <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
           <div>
             {friends}
           </div>

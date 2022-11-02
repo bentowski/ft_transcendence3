@@ -8,7 +8,7 @@ let gameOver = () => {
 }
 
 let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, settings: any) => {
-  if (currentPlayer === 1)
+  if (currentPlayer == 1)
   {
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
@@ -19,7 +19,7 @@ let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, s
       ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
     }
   }
-  if (currentPlayer === 2)
+  if (currentPlayer == 2)
   {
     let newPos = settings.player2[1] + (move * settings.playerSpeed)
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
@@ -65,9 +65,9 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
     settings.ballPos = [settings.ballPos[0], newPos]
   }
   // =========== Players moves ==========
-  if (settings.up === 1)
+  if (settings.up == 1)
     movePlayer(ctx, -1, globale, 1, settings)
-  if (settings.down === 1)
+  if (settings.down == 1)
     movePlayer(ctx, 1, globale, 1, settings)
   if (settings.player2[1] + (settings.sizeBall * 2) > settings.ballPos[1])
     movePlayer(ctx, -1, globale, 2, settings)

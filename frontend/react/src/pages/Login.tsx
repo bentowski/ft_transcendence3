@@ -1,15 +1,8 @@
 import { Component } from "react";
 import "../styles/pages/login.css";
-import { AuthContext, useAuthData } from "../contexts/AuthProviderContext";
-// import { AuthContext } from "../context/AuthContext";
+import {AuthContext, useAuthData} from "../contexts/AuthProviderContext";
 import { useRef, useState, useEffect } from "react";
-import {
-  Link,
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Request from "../components/utils/Requests";
 import AskTwoFa from "./AskTwoFa";
 
