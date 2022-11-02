@@ -20,14 +20,14 @@ const Menu = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("response logout = ", data);
+        //console.log("response logout = ", data);
         if (data.status === 200) {
-          console.log("yey");
+          //console.log("yey");
           setUser(undefined);
           setIsAuth(false);
           setIsToken(false);
           setIsTwoFa(false);
-          console.log("navigating");
+          //console.log("navigating");
           navigate("/login");
         }
       })

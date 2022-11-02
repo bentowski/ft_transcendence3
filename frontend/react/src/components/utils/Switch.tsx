@@ -54,7 +54,7 @@ const Switch = () => {
     })
       .then((res) => res.blob())
       .then((blob) => {
-        console.log("sendsendsend");
+        //console.log("sendsendsend");
         const blobURL = URL.createObjectURL(blob);
         setSrc(blobURL);
         const image = document.getElementById("myImg");
@@ -133,7 +133,7 @@ const Switch = () => {
           //console.log("yey");
           return;
         } else {
-          console.log("nnoooo ");
+          //console.log("nnoooo ");
           setCode("");
           return;
         }
