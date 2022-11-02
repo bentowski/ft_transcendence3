@@ -1,5 +1,6 @@
 import { Component, useContext, useEffect, useState, useRef } from 'react';
 import Modal from "./utils/Modal";
+import { Link } from 'react-router-dom'
 // import socketio from "socket.io-client";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
@@ -189,18 +190,18 @@ export const WebSocket = () => {
     	setUsername(newUser.user.username);
 		setAuthId(newUser.user.auth_id);
   	}, [])
-	
+
 	useEffect(() => {
 		if (loaded === 'ok')
 			joinUrl()
 	}, [loaded])
 
 	useEffect(() => {
-		//window.addEventListener("hashchange", (event) => {joinUrl();})
+		window.addEventListener("hashchange", (event) => {joinUrl();})
 		if (chans.length && auth_id !== undefined && !room)
 			setLoaded('ok')
 	}, [chans])
-	
+
 	useEffect(() => {
 		let chanUserFind:any[]|undefined = chans.find((c:any) => c.id === room)?.chanUser
 		if (chanUserFind !== undefined)
@@ -210,15 +211,15 @@ export const WebSocket = () => {
 	const joinUrl = () => {
 		let url = document.URL;
 			let chan:chanType|undefined;
-			let index = url.lastIndexOf("#");
-			
+			let index = url.lastIndexOf("/");
+
 			if (index === -1) {
 				chan = chans.find((c:any) => c.chanUser.find((user:any) => user.auth_id === auth_id));
 				if (chan !== undefined)
 					joinRoom(chan, false)
 			}
 			else {
-				url = url.substring(url.lastIndexOf("#") + 1);
+				url = url.substring(url.lastIndexOf("/") + 1);
 				chan = chans.find((c:any) => c.id === url);
         console.log("chan", chan)
 				if (chan !== undefined)
@@ -365,7 +366,7 @@ export const WebSocket = () => {
 
   const fuckingPrint = (chans: any) => {
     let url: string = document.URL
-    url = url.substring(url.lastIndexOf("#") + 1);
+    url = url.substring(url.lastIndexOf("/") + 1);
     let id = parseInt(url)
     if (id && id > 0 && chans[id - 1] && !(chans[id - 1].type === "direct"))
       return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
@@ -383,13 +384,13 @@ export const WebSocket = () => {
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
               {chans.map((chan) =>
-                <a key={chan.id} href={"#" + chan.id}>
+                <Link key={chan.id} to={"/tchat/" + chan.id}>
                   <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                     <div className="">
                       {printName(chan)}
                     </div>
                   </li>
-                </a>
+                </Link>
               )}
             </ul>
             {/* FIN AFFICHAGE CHAN */}
