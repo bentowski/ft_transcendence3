@@ -1,5 +1,6 @@
 import { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, Navigate, redirect } from "react-router-dom";
+// import { A } from "hookrouter"
 import Request from "./Requests"
 import '../../styles/components/utils/userCards.css'
 // import Login from '../../pages/Login';
@@ -30,7 +31,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 					|| (chans[x].chanUser[0].auth_id === u2.auth_id && chans[x].chanUser[1].auth_id === u1.auth_id))
 			)
 			{
-				ret = chans[x].id;				
+				ret = chans[x].id;
 				break;
 			}
 
@@ -96,7 +97,7 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 						<input className={this.state.online} type="radio"></input>
 					</div>
 					<div className="col-5 d-flex flex-row justify-content-end align-items-center">
-						<Link to={"/profil/#" + this.state.login} className="mx-2">{this.state.login}</Link>
+						<Link to={"/profil/" + this.state.login} className="mx-2">{this.state.login}</Link>
 						<img src={this.props.user.avatar} className="miniAvatar" />
 					</div>
 				</div>

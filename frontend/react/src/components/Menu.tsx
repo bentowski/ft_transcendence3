@@ -42,7 +42,7 @@ class Menu extends Component {
               <Switch />
             </div>
             <div className="loginMenu px-2">
-              <Link to={"/profil/" + this.state.username}>
+              <Link to={"/profil/#" + this.state.username}>
                 <p className="m-0">{this.state.username}</p>
               </Link>
             </div>
