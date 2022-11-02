@@ -50,7 +50,7 @@ class Page extends Component {
             <MatchNav />
           </div>
           <div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2">
-            <Profil />
+            <Outlet />
           </div>
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
             <FriendsNav />

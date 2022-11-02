@@ -62,7 +62,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (!isAuth) {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const logout = async () => {

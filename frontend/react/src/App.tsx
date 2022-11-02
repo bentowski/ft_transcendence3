@@ -6,30 +6,16 @@ import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
 import History from "./components/History";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useLocation } from "react-router-dom";
 import Page from "./pages/Page";
 import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 import PageNotFound from "./pages/PageNotFound";
 
-const IsAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const { isAuth, loading } = useAuthData();
-
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-  if (isAuth) {
-    return (
-      <div>
-        <Navigate to="/" />
-      </div>
-    );
-  }
-  return <div>{children}</div>;
-};
 
 const RequireAuth = () => {
   let { isAuth, loading } = useAuthData();
+  const location = useLocation();
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -37,12 +23,10 @@ const RequireAuth = () => {
 
   if (isAuth) {
     return (
-      <div>
         <Outlet />
-      </div>
     );
   } else {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login"  state={{ from: location }} replace />;
   }
 };
 //
@@ -50,23 +34,43 @@ const RequireAuth = () => {
 //</IsAuthenticated>
 //</Route>
 
+const Layout = () => {
+  return (
+      <main className="App">
+        <Outlet />
+      </main>
+  )
+}
+
 const ContextLoader = () => {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Page />} >
-          <Route path="profil" element={<Profil />} />
-          <Route path="chat" element={<Tchat />} />
-          <Route path="history" element={<History />} />
-          <Route path="game" element={<Game />} />
-          <Route path="*" element={<PageNotFound />} />
+      <Routes>
+        <Route path="/" element={<Layout />} >
+          {/* public route (add unauthorized) */}
+          <Route path="/login" element={<Login />} />
+
+          {/* private route */}
+
+          <Route element={<RequireAuth />} >
+            <Route path="/" element={<Page />} >
+              <Route path="/profil" element={<Profil />} />
+              <Route path="/tchat" element={<Tchat />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="/*" element={<Profil />} />
+
+            </Route>
+          </Route>
         </Route>
 
-    </Routes>
+        {/* catch all */}
+
+      </Routes>
   );
 };
 
-//
+//   <Route path="/*" element={<Profil />} />
+//               <Route path="*" element={<Profil />} />
 
 //<Route element={<RequireAuth />} >
 
@@ -124,9 +128,9 @@ class App extends Component {
         console.log("test")
     });
     return (
-      <BrowserRouter>
+
         <ContextLoader />
-      </BrowserRouter>
+
     ); // fin de return
   } // fin de render
 } // fin de App

@@ -48,6 +48,7 @@ class Profil extends Component<
     modalTitle: string;
     login: string;
     histories: Array<any>;
+    location: string
   }
 > {
   constructor(props: any) {
@@ -58,6 +59,7 @@ class Profil extends Component<
       modalTitle: "",
       login: "",
       histories: [],
+      location: ""
     };
   }
 
@@ -107,39 +109,41 @@ class Profil extends Component<
   };
 
   componentDidMount = () => {
+    // window.addEventListener("hashchange", (event) => {
+    //   console.log("AAAAAAAAAAAA")
+    //   let url = document.URL;
+    //   url = url.substring(url.lastIndexOf("#") + 1)
+    //   if (document.URL.includes("localhost:8080/profil"))
+    //   	this.getUser(url);
+    // });
     let newUser: any = sessionStorage.getItem("data");
     newUser = JSON.parse(newUser);
-    let url = document.URL;
-    let x = 0;
-    while (url[x] !== "#" && url[x]) {
-      x++;
-    }
-    x++;
-    let tmp = "";
-    while (url[x]) {
-      tmp += url[x++];
-    }
-    //console.log(tmp);
-    this.getUser(tmp);
-    this.getHistory();
+    // let url = document.URL;
+    // url = url.substring(url.lastIndexOf("#") + 1)
+    // console.log(url)
+    // this.getUser(url);
+    // this.getHistory();
+    setInterval(() => {
+      let url = document.URL
+      url = url.substring(url.lastIndexOf("/") + 1)
+      if (url !== this.state.location)
+      {
+        this.getUser(url);
+        this.getHistory();
+        this.setState({location: url})
+      }
+    }, 10)
+
   };
 
   render() {
-    window.addEventListener("popstate", (event) => {
-      let url = document.URL;
-      let x = 0;
-      while (url[x] !== "#" && url[x]) {
-        x++;
-      }
-      x++;
-      let tmp = "";
-      while (url[x]) {
-        tmp += url[x++];
-      }
-	  if (document.URL.includes("localhost:8080/profil"))
-      	this.getUser(tmp);
-    });
-    //console.log(this.state.login)
+    // window.addEventListener("hashchange", (event) => {
+    //   console.log("AAAAAAAAAAAA")
+    //   let url = document.URL;
+    //   url = url.substring(url.lastIndexOf("#") + 1)
+    //   if (document.URL.includes("localhost:8080/profil"))
+    //   	this.getUser(url);
+    // });
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {
