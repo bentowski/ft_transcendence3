@@ -38,11 +38,11 @@ a:active {
 }
 
 .logoutMenu p {
-	color: red;
+	color: orangered;
 }
 
 .logoutMenu:hover p {
-	color: red;
+	color: orangered;
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 }

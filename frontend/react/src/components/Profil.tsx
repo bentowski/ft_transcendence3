@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 // import Modal from "./utils/Modal";
@@ -110,6 +111,11 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
           <div className="form-check form-switch">
             <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />2fa
             {/* <label className="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label> */}
+          </div>
+          <div className="logoutMenu ml-1">
+            <Link to={"/login"}>
+              <p className="m-0">logout</p>
+            </Link>
           </div>
         </div>
       )
