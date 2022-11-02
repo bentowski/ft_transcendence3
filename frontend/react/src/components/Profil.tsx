@@ -123,7 +123,10 @@ class Profil extends Component<
     // console.log(url)
     // this.getUser(url);
     // this.getHistory();
+    // if (!document.URL.includes("localhost:8080/profil"))
+    //   return;
     setInterval(() => {
+
       let url = document.URL
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== this.state.location)
@@ -141,7 +144,6 @@ class Profil extends Component<
     //   console.log("AAAAAAAAAAAA")
     //   let url = document.URL;
     //   url = url.substring(url.lastIndexOf("#") + 1)
-    //   if (document.URL.includes("localhost:8080/profil"))
     //   	this.getUser(url);
     // });
     let histories: Array<any> = [];
