@@ -1,12 +1,8 @@
 import React, { Component, useEffect, useState } from "react";
-import "../../styles/components/utils/modal.css";
-import Request from "./Requests";
-//import useCurrentUser from '../../hooks/useCurrentUser';
-// import useTwoFa from "../../hooks/useTwoFa";
-import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
 import { Modal, Button, Form } from "react-bootstrap";
-//import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
-//import "../../styles/components/utils/switch.css";
+import Request from "./Requests";
+import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
+import "../../styles/components/utils/modal.css";
 
 const Switch = () => {
   const [label, setLabel] = useState("2fa");
@@ -16,35 +12,13 @@ const Switch = () => {
   const [tick, setTick] = useState(false);
   const { isTwoFa, isAuth, isToken, loading } = useAuthData();
 
-  //console.log("IS IT TWO FA??", isTwoFa);
-
   useEffect(() => {
     if (isTwoFa) {
       setTick(true);
     }
   }, []);
 
-  /*
-  requestTwoFA = async () => {
-    let user = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/current"
-    );
-    if (!user) {
-      console.log("current user not found");
-      return;
-    }
-    // console.log("TWOFA = ", user.isTwoFA);
-    this.setState({ isTwoFA: user.isTwoFA });
-    return user;
-  };
-
-   */
-
   const generateTwoFA = () => {
-    //setSrc("");
     fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",

@@ -6,49 +6,13 @@ import Request from "../components/utils/Requests";
 import FriendsNav from "../components/FriendsNav";
 import {useAuthUser, useIsAuthenticated, withIsAuthenticated} from "react-auth-kit";
 import AuthContext from "react-auth-kit/dist/AuthContext";
-// import Tchat from '../components/Tchat'
 import Profil from '../components/Profil'
-// import Footer from './Footer'
-
-//function Outlet() {
-//  return null;
-//}
 
 class Page extends Component {
-  /*
-  state = {
-    token: false,
-  }
-
-  componentDidMount = async () => {
-    let token = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/current"
-    )
-    console.log('token = ', token);
-    if (token)
-      this.setState({token: true});
-  }
-  */
-
   render() {
-     /*
-    console.log('hello ', this.state.token);
-
-    if (!this.state.token)
-    {
-      return (
-      <Navigate to="/login" />
-      )
-    }
-    */
-
     return (
       <div className="Page p-4">
         <Menu />
-        {/* <div className="mt-4 row h-100"> */}
         <div className="main row">
           <div className="mt-4 col-sm-12 order-2 col-lg-3 order-lg-1">
             <MatchNav />
@@ -59,18 +23,6 @@ class Page extends Component {
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
             <FriendsNav />
           </div>
-          {/*}
-			// 	</div>
-			// 	<div  className="col-6">
-			// 		{/*
-			// 			<Printer />
-			//
-			// 			<Tchat />
-			// 	</div>
-			// 	<div  className="col-3">
-			// 		<FriendsNav />
-			// 	</div>
-		*/}
         </div>
       </div>
     ); // fin de return

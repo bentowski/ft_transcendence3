@@ -13,7 +13,6 @@ const AskTwoFa = () => {
   const validateTwoFa = async () => {
     console.log("code = ", code);
     try {
-      //if (isTwoFa) {
       console.log("before fetch");
       let res: any = await Request(
         "POST",
@@ -29,10 +28,6 @@ const AskTwoFa = () => {
         navigate(from);
         return;
       }
-      //} else {
-      //   setIsAuth(true)
-      // return;
-      //}
     } catch (error) {
       if (typeof error === "object" && error !== null) {
         console.log("oulala -", error);
@@ -73,7 +68,3 @@ const AskTwoFa = () => {
   );
 };
 export default AskTwoFa;
-//   <AuthContext.Consumer>
-//                     {({ login }) => {
-// }}
-// </AuthContext.Consumer>

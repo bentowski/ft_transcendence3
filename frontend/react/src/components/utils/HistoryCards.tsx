@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
-// import Request from "./Requests"
 
 class HistoryCards extends Component<{ history: any, profil: string }, {}> {
 
   renderStatus = (user: boolean) => {
-    // let status: string = "";
     if (!user) {
       if (this.props.history.score_one > this.props.history.score_two)
         return (
@@ -91,7 +89,6 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
   }
 
   render() {
-    // console.log(this.props.history.user_one);
     let items: any = this.renderHistoryCards();
     return (
       <div>

@@ -71,19 +71,9 @@ const ContextLoader = () => {
 
     </Routes>
   ); //
-  //<Route path="*" element={<PageNotFound />} />
-}; //        </Route>
-// </Route>
-//<Route path="/" element={<RequireAuth><Page /></RequireAuth>} >
-// <Route path="/*" element={<Profil />} />
-//                 <Route path="/" element={<Profil />} />
-//
-
-//<Route element={<RequireAuth />} >
+}; //
 
 class App extends Component {
-  //static contextType = AuthContext;
-
   getCurrentUser = async () => {
     let user = await Request(
       "GET",
@@ -94,10 +84,6 @@ class App extends Component {
     if (!user) {
       return null;
     }
-    //let ctx: any = this.context;
-    //let usr: any = ctx.user;
-    //let isa: boolean = usr.isAuth;
-    //console.log('isa = ', isa);
     const data = {
       user: {
         auth_id: user.auth_id,
@@ -105,32 +91,17 @@ class App extends Component {
         avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
         username: user.username,
       },
-      //isAuth: isa,
     };
     sessionStorage.setItem("data", JSON.stringify(data));
   };
 
   componentDidMount = async () => {
     await this.getCurrentUser();
-
-    /*
-    if (user) {
-      this.setState({ user: user });
-    }
-
-     */
   };
 
   render() {
-    window.addEventListener("popstate", (event) => {
-      let url = document.URL;
-      // if (url === "http:localhost:8080")
-        // console.log("test")
-    });
     return (
-
         <ContextLoader />
-
     ); // fin de return
   } // fin de render
 } // fin de App
