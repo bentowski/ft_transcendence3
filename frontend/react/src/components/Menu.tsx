@@ -9,7 +9,7 @@ const Menu = () => {
   const navigate = useNavigate();
 
   const logoutSession = () => {
-    console.log("loging out");
+    //console.log("loging out");
     fetch("http://localhost:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
@@ -64,7 +64,7 @@ const Menu = () => {
               className="miniAvatar"
               width="150"
               height="150"
-              src={user.avatar}
+              src={"http://localhost:3000/user/" + user.auth_id + "/avatar"}
               alt=""
             />
           </Link>

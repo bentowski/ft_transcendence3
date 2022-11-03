@@ -178,7 +178,7 @@ const Switch = () => {
     setCode(evt.target.value);
   };
 
-  const canceling = () => {
+  const cancelling = () => {
     setCode("");
     handleClose();
   };
@@ -208,13 +208,13 @@ const Switch = () => {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="mx-1" onClick={canceling}>
+            <Button className="mx-1" onClick={cancelling}>
               Cancel
             </Button>
 
-            <button onClick={activateTwoFa} className="mx-1">
+            <Button onClick={activateTwoFa} className="mx-1">
               Validate
-            </button>
+            </Button>
           </Modal.Footer>
         </div>
       </Modal>
