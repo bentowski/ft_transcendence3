@@ -66,6 +66,7 @@ export const WebSocket = () => {
 
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
+  let location = ""
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -130,7 +131,15 @@ export const WebSocket = () => {
 	}, [loaded])
 
 	useEffect(() => {
-		window.addEventListener("hashchange", (event) => {joinUrl();})
+    let test = setInterval(() => {
+      let url = document.URL
+      if (!document.URL.includes("localhost:8080/profil"))
+        clearInterval(test);
+      url = url.substring(url.lastIndexOf("/") + 1)
+      if (url !== location) {
+        joinUrl()
+      }
+    }, 10)
 		if (chans.length && auth_id !== undefined && !room)
 			setLoaded('ok')
 	}, [chans])
@@ -254,7 +263,7 @@ export const WebSocket = () => {
   const banUser = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
-    setModalTitle("Manage banned");
+    setModalTitle("Ban Users");
     setModalType("banUser");
   }
 
@@ -339,8 +348,8 @@ export const WebSocket = () => {
   const adminButtons = () => {
     return (
       <div className="row">
-        <button className="col-6" onClick={banUser}>BANNED</button>
-        <button className="col-6" onClick={muteUser}>MUTED</button>
+        <button className="col-6" onClick={banUser}>BAN</button>
+        <button className="col-6" onClick={muteUser}>MUTE</button>
       </div>
     )
   }

@@ -135,7 +135,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
 
     for(let x = 0; x < test.length; x++)
     {
-      if (this.state.friends[x].name !== user.username)
+      if (this.state.friends[x].username !== user.username)
         ret.push(this.displayUser(x, this.state.friends[x]));
     }
     return ret
