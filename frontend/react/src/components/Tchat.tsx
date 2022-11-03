@@ -104,6 +104,57 @@ export const WebSocket = () => {
 			setChanUser(chanUserFind)
 	}, [room, chans])
 
+  const createChannel = async () => {
+    const name = document.querySelector("#chanName") as HTMLInputElement;
+    const topic = document.querySelector("#chanTopic") as HTMLInputElement;
+    const password = document.querySelector("#chanPassword") as HTMLInputElement;
+    const radioPub = document.querySelector("#public") as HTMLInputElement;
+    const radioPri = document.querySelector("#private") as HTMLInputElement;
+    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    let radioCheck = "";
+    let pswd = "";
+    if (radioPub.checked === true)
+      radioCheck = "public";
+    else if (radioPri.checked === true)
+      radioCheck = "private";
+    else if (radioPro.checked === true)
+      radioCheck = "protected";
+  let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+  chans = chans.find((c:any) => c.name === name.value)
+    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
+      if (password.value)
+        pswd = password.value;
+      await Request(
+        "POST",
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        {
+          name: name.value,
+          type: radioCheck,
+          topic: topic.value,
+          admin: [username],
+          password: pswd,
+        },
+        "http://localhost:3000/chan/create"
+      );
+    let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
+      name.value = "";
+      topic.value = "";
+      password.value = "";
+      radioPub.checked = false;
+      radioPri.checked = false;
+      radioPro.checked = false;
+      socket.emit('chanCreated');
+    window.location.replace('http://localhost:8080/tchat#' + chan.id)
+    window.location.reload();
+    }
+    else {
+      alert("You have to fill each informations");
+    }
+  };
+
 	const joinUrl = () => {
 		let url = document.URL;
 		let chan:ChanType|undefined;
@@ -271,169 +322,197 @@ export const WebSocket = () => {
     return ret;
   }
 
+
+    const chansJoined = (chan: ChanType[]) => {
+      let count = 0;
+      for (let x = 0; x < chans.length; x++)
+        if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
+          count++;
+      return count;
+    }
+
+
 // ======================== RENDER ==========================
 
-  const userInActualchannel = () => {
-    let users: Array<any> = [];
-    const actualChan = chanUser;
-    if (actualChan.length)
-      actualChan.map((u:any) => {
-        {users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)}
-    })
-    return users;
+  class UsersInActualchannel extends Component<{}, {}> {
+    render() {
+      let users: Array<any> = [];
+      const actualChan = chanUser;
+      if (actualChan.length)
+        actualChan.map((u:any) => {
+          {users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)}
+      })
+      return users;
+    }
   }
 
-  const dispatchMsg = () => {
-    let ret: any[] = []
-    messages.map((msg, index) => {
-      if (msg.sender_socket_id === auth_id)
-        ret.push(
-          <div key={index} className="outgoing_msg break-text">
-            <div className="sent_msg">
-              <p>{msg.content}</p>
-            </div>
-          </div>
-        )
-      else
-        ret.push(
-          <div key={index} className="incoming_msg break-text">
-            <div className="incoming_msg_img align-bottom"> <img src={msg.avatar} alt="sunil" /> </div>
-            <div className="received_msg">
-              <div className="received_withd_msg">
-                <div className="received_withd_msg"><span className="time_date"> {msg.username}</span></div>
+  class DispatchMsg extends Component<{}, {}> {
+    render()
+    {
+      let ret: any[] = []
+      messages.map((msg, index) => {
+        if (msg.sender_socket_id === auth_id)
+          ret.push(
+            <div key={index} className="outgoing_msg break-text">
+              <div className="sent_msg">
                 <p>{msg.content}</p>
               </div>
             </div>
-          </div>
-        )
-    })
-    return ret
-  }
-
-  const printMessages = () => {
-    if (messages.length === 0)
-      return (<div>No messages here</div>)
-    return (
-      <div className='messages'>
-        {dispatchMsg()}
-      </div>
-    )
-  }
-
-  const adminButtons = () => {
-    return (
-      <div className="row">
-        <button className="col-6" onClick={banUser}>BAN</button>
-        <button className="col-6" onClick={muteUser}>MUTE</button>
-      </div>
-    )
-  }
-
-  const printAddUserButton = (chans: ChanType[]) => {
-    let url: string = document.URL
-    url = url.substring(url.lastIndexOf("/") + 1);
-    let id = parseInt(url)
-    if (id && id > 0 && chans[id - 1] && !(chans[id - 1].type === "direct"))
-      return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
-  }
-
-  const printHeaderChan = () => {
-    return (
-      <div className="tchatMainTitle row">
-        <h1 className="col-10">Channel Name</h1>
-        {printAddUserButton(chans)}
-        {adminButtons()}
-      </div>
-    )
-  }
-
-  const printChannel = () => {
-    return (
-      <div className="inTchat row col-10">
-        <div className="tchatMain col-10">
-          {printHeaderChan()}
-          <div className="row">
-            {printMessages()}
-            <div className="row">
-              <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-              <button className="col-1" onClick={onSubmit}>send</button>
+          )
+        else
+          ret.push(
+            <div key={index} className="incoming_msg break-text">
+              <div className="incoming_msg_img align-bottom"> <img src={msg.avatar} alt="sunil" /> </div>
+              <div className="received_msg">
+                <div className="received_withd_msg">
+                  <div className="received_withd_msg"><span className="time_date"> {msg.username}</span></div>
+                  <p>{msg.content}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div> {/*fin tchatMain*/}
-        <div className="tchatMembers col-2">
-          <p> Channnnnel's members ({chanUser.length}) </p>
-          {userInActualchannel()}
+          )
+      })
+      return ret
+    }
+  }
+
+
+  class PrintMessages extends Component<{}, {}>{
+    render() {
+      if (messages.length === 0)
+        return (<div>No messages here</div>)
+      return (
+        <div className='messages'>
+          <DispatchMsg />
         </div>
-      </div>
-    )
+      )
+    }
   }
 
-  const listOfPrivateMessages = () => {
-    let ret: any[] = []
-    chans.map((chan) => {
-      if (chan.type === "direct")
-        ret.push(
-          <Link key={chan.id} to={"/tchat/" + chan.id}>
-            <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                {printName(chan)}
-            </li>
-          </Link>
-        )
-      }
-    )
-    return ret
+  class AdminButtons extends Component<{}, {}> {
+    render() {
+      return (
+        <div className="row">
+          <button className="col-6" onClick={banUser}>BAN</button>
+          <button className="col-6" onClick={muteUser}>MUTE</button>
+        </div>
+      )
+    }
   }
 
-  const listOfJoinedChans = () => {
-    let ret: any[] = []
-    chans.map((chan) => {
-        if (chan.type !== "direct" && inChan(chan))
+  class PrintAddUserButton extends Component<{}, {}> {
+    render() {
+      let url: string = document.URL
+      url = url.substring(url.lastIndexOf("/") + 1);
+      let id = parseInt(url)
+      if (id && id > 0 && chans[id - 1] && !(chans[id - 1].type === "direct"))
+        return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
+
+    }
+  }
+
+  class PrintHeaderChan extends Component<{}, {}> {
+    render() {
+      return (
+        <div className="tchatMainTitle row">
+          <h1 className="col-10">Channel Name</h1>
+          <PrintAddUserButton />
+          <AdminButtons />
+        </div>
+      )
+    }
+  }
+
+  class PrintChannel extends Component<{}, {}> {
+    render() {
+      return (
+        <div className="inTchat row col-10">
+          <div className="tchatMain col-10">
+            <PrintHeaderChan />
+            <div className="row">
+              <PrintMessages />
+              <div className="row">
+                <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                <button className="col-1" onClick={onSubmit}>send</button>
+              </div>
+            </div>
+          </div> {/*fin tchatMain*/}
+          <div className="tchatMembers col-2">
+            <p> Channnnnel's members ({chanUser.length}) </p>
+            <UsersInActualchannel />
+          </div>
+        </div>
+      )
+    }
+  }
+
+  class ListOfPrivateMessages extends Component< {}, {} >{
+    render()
+    {
+      let ret: any[] = []
+      chans.map((chan) => {
+        if (chan.type === "direct")
           ret.push(
             <Link key={chan.id} to={"/tchat/" + chan.id}>
               <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                {printName(chan)}
+                  {printName(chan)}
               </li>
             </Link>
           )
         }
-    )
-    return ret
+      )
+      return ret
+    }
   }
 
-  const chansJoined = (chan: ChanType[]) => {
-    let count = 0;
-    for (let x = 0; x < chans.length; x++)
-      if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
-        count++;
-    return count;
+  class ListOfJoinedChans extends Component<{}, {}> {
+    render()
+    {
+      let ret: any[] = []
+      chans.map((chan) => {
+          if (chan.type !== "direct" && inChan(chan))
+            ret.push(
+              <Link key={chan.id} to={"/tchat/" + chan.id}>
+                <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                  {printName(chan)}
+                </li>
+              </Link>
+            )
+          }
+      )
+      return ret
+    }
   }
 
-  const channelList = () => {
-    return (
-      <div className="channels col-2">
-      <button onClick={createChan}>Create Channel</button>
-        <button onClick={joinChan}>Join Channel</button>
-        <div className="channelsList">
-          <p>{chansJoined(chans)} Channels</p>
-          <div className="list-group">
-            <ul>
-              {listOfJoinedChans()}
-            </ul>
-            <ul>
-              {listOfPrivateMessages()}
-            </ul>
+  class ChannelList extends Component<{}, {}> {
+    render()
+    {
+      return (
+        <div className="channels col-2">
+          <button onClick={createChan}>Create Channel</button>
+          <button onClick={joinChan}>Join Channel</button>
+          <div className="channelsList">
+            <p>{chansJoined(chans)} Channels</p>
+            <div className="list-group">
+              <ul>
+                <ListOfJoinedChans />
+              </ul>
+              <ul>
+                <ListOfPrivateMessages />
+              </ul>
+            </div>
           </div>
-        </div> {/*fin channelsList*/}
-      </div>
-    )
+        </div>
+      )
+    }
   }
 
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom}} chans={listChansJoined(chans)}/>
-        {channelList()}
-        {printChannel()}
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
+        <ChannelList />
+        <PrintChannel />
       </div>
     </div>
   ); // fin de return

@@ -1,10 +1,7 @@
 import { Component } from 'react';
-import io from 'socket.io-client';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
-
-const socket = io('http://localhost:3000/chat');
 
 type chanType = {
   id: string;
@@ -39,12 +36,10 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
-    // login.value = "";
   };
 
   componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
-    // console.log(newUser);
     if (newUser) {
     	newUser = JSON.parse(newUser);
     	this.setState({ user: newUser.user });
@@ -58,73 +53,21 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   this.setState({ friends: friends, allChans: allChans })
   };
 
-  createChan = async () => {
-    const name = document.querySelector("#chanName") as HTMLInputElement;
-    const topic = document.querySelector("#chanTopic") as HTMLInputElement;
-    const password = document.querySelector("#chanPassword") as HTMLInputElement;
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    let radioCheck = "";
-    let pswd = "";
-    if (radioPub.checked === true)
-      radioCheck = "public";
-    else if (radioPri.checked === true)
-      radioCheck = "private";
-    else if (radioPro.checked === true)
-      radioCheck = "protected";
-	let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-	chans = chans.find((c:any) => c.name === name.value)
-    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
-      if (password.value)
-        pswd = password.value;
-      await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: name.value,
-          type: radioCheck,
-          topic: topic.value,
-          admin: [this.state.user.username],
-          password: pswd,
-        },
-        "http://localhost:3000/chan/create"
-      );
-	  let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
-      name.value = "";
-      topic.value = "";
-      password.value = "";
-      radioPub.checked = false;
-      radioPri.checked = false;
-      radioPro.checked = false;
-      this.hidden();
-      socket.emit('chanCreated');
-	  window.location.replace('http://localhost:8080/tchat#' + chan.id)
-	  window.location.reload();
-    }
-    else {
-      alert("You have to fill each informations");
-    }
-  };
-
   displayUser = (id:number, user:any) => {
-	return (
-		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-			<div className="col-5 h-100 overflow-hidden buttons">
-				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
-			</div>
-			<div className="col-2 d-flex flex-row d-flex justify-content-center">
-				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
-			</div>
-			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
-				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
-				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
-			</div>
-		</div>
-	)
+  	return (
+  		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+  			<div className="col-5 h-100 overflow-hidden buttons">
+  				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
+  			</div>
+  			<div className="col-2 d-flex flex-row d-flex justify-content-center">
+  				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
+  			</div>
+  			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
+  				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
+  			</div>
+  		</div>
+  	)
   }
 
   usersChan = () => {
@@ -216,7 +159,6 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     }
   }
 
-
   sendRequest = async () => {
     let newUser: any = sessionStorage.getItem("data");
     newUser = JSON.parse(newUser);
@@ -253,14 +195,16 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     input.click();
   };
 
+  createChan = () => {
+    this.props.parentCallBack.createChannel()
+    this.hidden()
+  }
+
   printer = () => {
     switch (this.props.calledBy) {
       case "Avatar":
         return (
-          <div className="p-4 pb-1">
-            <header className="p-1 mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
+          <div>
             <form>
               <input type="text" placeholder="new user name"></input>
             </form>
@@ -274,10 +218,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         );
       case "Login":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
+          <div>
             <form className="mb-3">
               <input
                 type="text"
@@ -300,10 +241,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         );
       case "newChan":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
+          <div>
             <form className="mb-3">
               <p>
                 <input
@@ -354,10 +292,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         );
       case "addUser":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
+          <div>
             <form className="mb-3">
               <div>
                 {this.users()}
@@ -372,10 +307,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         );
       case "joinChan":
       return (
-        <div className="p-4 pb-1">
-          <header className="mb-3">
-            <h2>{this.props.title}</h2>
-          </header>
+        <div>
           <div>
             <div>
               <input id="InputJoinPrivateChan" className="col-8" type="text" placeholder="Enter Private Channel" onKeyDown={this.pressEnter}></input>
@@ -394,10 +326,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       );
       case "banUser":
       return (
-        <div className="p-4 pb-1">
-          <header className="mb-3">
-            <h2>{this.props.title}</h2>
-          </header>
+        <div>
           <form className="mb-3">
             <div>
               {this.usersChan()}
@@ -412,10 +341,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       );
       case "muteUser":
       return (
-        <div className="p-4 pb-1">
-          <header className="mb-3">
-            <h2>{this.props.title}</h2>
-          </header>
+        <div>
           <form className="mb-3">
             <div>
               {this.usersChan()}
@@ -434,7 +360,13 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   render() {
     return (
       <div className="Modal hidden" id="Modal">
+      <div className="p-4 pb-1">
+        <header className="mb-3">
+          <h2>{this.props.title}</h2>
+        </header>
         {this.printer()}
+        </div>
+
       </div>
     );
   }
