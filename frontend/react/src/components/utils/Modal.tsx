@@ -49,6 +49,11 @@ class Modal extends Component<
     // login.value = "";
   };
 
+  getCurrentUser = () => {
+    const ctx: any = this.context;
+    return ctx.user;
+  };
+
   componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
     // console.log(newUser);
@@ -209,8 +214,8 @@ class Modal extends Component<
 
   chans = () => {
     let ret: any[] = [];
-    let currentUser: any = sessionStorage.getItem("data");
-    currentUser = JSON.parse(currentUser);
+    //let currentUser: any = sessionStorage.getItem("data");
+    //currentUser = JSON.parse(currentUser);
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
@@ -283,8 +288,6 @@ class Modal extends Component<
   sendRequest = async () => {
     //let newUser: any = sessionStorage.getItem("data");
     //newUser = JSON.parse(newUser);
-    const ctx: any = this.context;
-    const user: any = JSON.parse(ctx.user);
     const login = document.getElementById("changeLogin") as HTMLInputElement;
     let ret = await Request(
       "PATCH",
@@ -294,9 +297,9 @@ class Modal extends Component<
       },
       {
         username: login.value,
-        avatar: user.avatar,
+        avatar: this.getCurrentUser().avatar,
       },
-      "http://localhost:3000/user/settings/" + user.auth_id
+      "http://localhost:3000/user/settings/" + this.getCurrentUser().auth_id
     );
 
     if (!ret.ok) {

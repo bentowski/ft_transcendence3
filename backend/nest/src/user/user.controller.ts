@@ -40,6 +40,7 @@ import path, { join } from 'path';
 import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -63,12 +64,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
-  //@UseGuards(AuthGuard('jwt'))
   getUsers() {
     return this.userService.findAll();
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('current')
   async currentUser(@Req() req: Request): Promise<UserEntity> {
     //console.log('request = ' + req);
@@ -90,16 +92,19 @@ export class UserController {
   }
   */
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   findOnebyUsername(@Param('username') username: string) {
     return this.userService.findOnebyUsername(username);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOneByAuthId(id);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
@@ -116,12 +121,14 @@ export class UserController {
   }
   */
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete('logout')
   logout(@Res() res): any {
     res.clearCookie('jwt');
     return 'User logged out';
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('addFriends/:id')
   updateFriends(
     @Param('id') userId: string,
@@ -131,11 +138,13 @@ export class UserController {
     return this.userService.updateFriends(userId, updateFriendsDto);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete(':id')
   remove(@Param('id') username: string) {
     return this.userService.remove(username);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('picture', storage))
   async uploadFile(
@@ -160,6 +169,7 @@ export class UserController {
     res.status(200);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/avatar')
   async getAvatar(@Req() req, @Param('id') id: string, @Res() res) {
     //console.log('requesting image');
@@ -171,6 +181,7 @@ export class UserController {
     );
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -182,6 +193,7 @@ export class UserController {
     }
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/avatar')
   updateAvatar(@Req() req, @Body() updateAvatarDto: UpdateAvatarDto) {
     try {
