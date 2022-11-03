@@ -1,9 +1,10 @@
-import { Component } from 'react';
-import io from 'socket.io-client';
-import Request from "./Requests"
+import { Component } from "react";
+import io from "socket.io-client";
+import Request from "./Requests";
 import "../../styles/components/utils/modal.css";
+import { AuthContext } from "../../contexts/AuthProviderContext";
 
-const socket = io('http://localhost:3000/chat');
+const socket = io("http://localhost:3000/chat");
 
 type chanType = {
   id: string;
@@ -16,9 +17,19 @@ type chanType = {
   chanUser: any[];
 };
 
-class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any, chans?: any}, {user: any, friends: any[], input: string, allChans: Array<chanType> }> {
-  constructor(props: any){
-    super(props)
+class Modal extends Component<
+  {
+    title: string;
+    calledBy: string;
+    userChan?: any[];
+    parentCallBack?: any;
+    chans?: any;
+  },
+  { user: any; friends: any[]; input: string; allChans: Array<chanType> }
+> {
+  static context = AuthContext;
+  constructor(props: any) {
+    super(props);
     this.state = {
       user: {
         auth_id: 0,
@@ -28,10 +39,9 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       },
       friends: [],
       input: "",
-      allChans: []
+      allChans: [],
     };
   }
-
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -43,38 +53,44 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     let newUser: any = sessionStorage.getItem("data");
     // console.log(newUser);
     if (newUser) {
-    	newUser = JSON.parse(newUser);
-    	this.setState({ user: newUser.user });
-	}
-	let friends:any = await Request('GET', {}, {}, "http://localhost:3000/user/")
-  if (!friends)
-		return ;
-  let allChans: Array<chanType> = await Request('GET', {}, {}, "http://localhost:3000/chan")
-  if (!allChans)
-    return ;
-  this.setState({ friends: friends, allChans: allChans })
+      newUser = JSON.parse(newUser);
+      this.setState({ user: newUser.user });
+    }
+    let friends: any = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/"
+    );
+    if (!friends) return;
+    let allChans: Array<chanType> = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/chan"
+    );
+    if (!allChans) return;
+    this.setState({ friends: friends, allChans: allChans });
   };
 
   createChan = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
     const topic = document.querySelector("#chanTopic") as HTMLInputElement;
-    const password = document.querySelector("#chanPassword") as HTMLInputElement;
+    const password = document.querySelector(
+      "#chanPassword"
+    ) as HTMLInputElement;
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
     let radioCheck = "";
     let pswd = "";
-    if (radioPub.checked === true)
-      radioCheck = "public";
-    else if (radioPri.checked === true)
-      radioCheck = "private";
-    else if (radioPro.checked === true)
-      radioCheck = "protected";
-	let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-	chans = chans.find((c:any) => c.name === name.value)
+    if (radioPub.checked === true) radioCheck = "public";
+    else if (radioPri.checked === true) radioCheck = "private";
+    else if (radioPro.checked === true) radioCheck = "protected";
+    let chans = await Request("GET", {}, {}, "http://localhost:3000/chan/");
+    chans = chans.find((c: any) => c.name === name.value);
     if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
-      if (password.value)
-        pswd = password.value;
+      if (password.value) pswd = password.value;
       await Request(
         "POST",
         {
@@ -90,7 +106,12 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         },
         "http://localhost:3000/chan/create"
       );
-	  let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
+      let chan = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan/" + name.value
+      );
       name.value = "";
       topic.value = "";
       password.value = "";
@@ -98,111 +119,172 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       radioPri.checked = false;
       radioPro.checked = false;
       this.hidden();
-      socket.emit('chanCreated');
-	  window.location.replace('http://localhost:8080/tchat#' + chan.id)
-	  window.location.reload();
-    }
-    else {
+      socket.emit("chanCreated");
+      window.location.replace("http://localhost:8080/tchat#" + chan.id);
+      window.location.reload();
+    } else {
       alert("You have to fill each informations");
     }
   };
 
-  displayUser = (id:number, user:any) => {
-	return (
-		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-			<div className="col-5 h-100 overflow-hidden buttons">
-				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
-			</div>
-			<div className="col-2 d-flex flex-row d-flex justify-content-center">
-				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
-			</div>
-			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
-				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
-				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
-			</div>
-		</div>
-	)
-  }
+  displayUser = (id: number, user: any) => {
+    return (
+      <div
+        key={id}
+        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+      >
+        <div className="col-5 h-100 overflow-hidden buttons">
+          <button
+            onClick={() =>
+              this.props.parentCallBack.socket.emit("addToChannel", {
+                room: this.props.parentCallBack.room,
+                auth_id: user.auth_id,
+              })
+            }
+          >
+            ADD
+          </button>
+        </div>
+        <div className="col-2 d-flex flex-row d-flex justify-content-center">
+          <input
+            className={user.isOnline ? "online" : "offline"}
+            type="radio"
+          ></input>
+        </div>
+        <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+          <a href={"/profil/#" + user.username} className="mx-2">
+            {user.username}
+          </a>
+          <img
+            src={user.avatar}
+            className="miniAvatar"
+            width={150}
+            height={150}
+          />
+        </div>
+      </div>
+    );
+  };
 
   users = () => {
-  	let friends: Array<any> = [];
-    let isUsers:boolean = false;
-    let x:number = 0;
-    if (this.state.friends.length > 0)
-    {
-  	  let chanUser:any[]|undefined = this.props.userChan;
-      while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
-  		  let friend:any = this.state.friends[x];
-  		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
-        {
+    let friends: Array<any> = [];
+    let isUsers: boolean = false;
+    let x: number = 0;
+    if (this.state.friends.length > 0) {
+      let chanUser: any[] | undefined = this.props.userChan;
+      while (
+        chanUser?.length &&
+        chanUser?.length > 0 &&
+        x < this.state.friends.length
+      ) {
+        let friend: any = this.state.friends[x];
+        if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
-          if (this.state.input.length === 0 || friend.username.includes(this.state.input))
-          	friends.push(this.displayUser(x, this.state.friends[x]));
+          if (
+            this.state.input.length === 0 ||
+            friend.username.includes(this.state.input)
+          )
+            friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
       }
     }
     if (isUsers)
-      friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
-  	if ((isUsers && friends.length === 1) || !isUsers) {
-  		friends.push(<p key={x}>No available users to add</p>)
-  	}
-  	return friends
-  }
+      friends.unshift(
+        <input
+          key={x++}
+          id="searchUserToAdd"
+          className="w-100"
+          type="text"
+          placeholder="Search user here"
+          value={this.state.input}
+          onChange={(e) => this.setState({ input: e.target.value })}
+        />
+      );
+    if ((isUsers && friends.length === 1) || !isUsers) {
+      friends.push(<p key={x}>No available users to add</p>);
+    }
+    return friends;
+  };
 
   chans = () => {
-    let ret: any[] = []
+    let ret: any[] = [];
     let currentUser: any = sessionStorage.getItem("data");
     currentUser = JSON.parse(currentUser);
-    for (let x = 0; x < this.state.allChans.length; x++)
-    {
-      if (this.state.allChans[x].type !== "private" && this.state.allChans[x].type !== "direct")
-      {
-        for (let y = 0; y < this.props.chans.length; y++)
-        {
+    for (let x = 0; x < this.state.allChans.length; x++) {
+      if (
+        this.state.allChans[x].type !== "private" &&
+        this.state.allChans[x].type !== "direct"
+      ) {
+        for (let y = 0; y < this.props.chans.length; y++) {
           if (this.state.allChans[x].name === this.props.chans[y].name)
             continue;
           ret.push(
             <div className="row" key={x}>
-              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <button
+                className="col-6"
+                onClick={() =>
+                  this.props.parentCallBack.joinRoom(
+                    this.state.allChans[x],
+                    true
+                  )
+                }
+              >
+                JOIN
+              </button>
               <p className="col-6">{this.state.allChans[x].name}</p>
             </div>
-          )
+          );
           break;
         }
-        if (!this.props.chans.length)
-        {
+        if (!this.props.chans.length) {
           ret.push(
             <div className="row" key={x}>
-              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <button
+                className="col-6"
+                onClick={() =>
+                  this.props.parentCallBack.joinRoom(
+                    this.state.allChans[x],
+                    true
+                  )
+                }
+              >
+                JOIN
+              </button>
               <p className="col-6">{this.state.allChans[x].name}</p>
             </div>
-          )
+          );
         }
       }
     }
-    return ret
-  }
+    return ret;
+  };
 
   joinPrivateChan = async () => {
-    let input = document.getElementById('InputJoinPrivateChan') as HTMLInputElement
-    let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + input.value)
-    if (!chan)
-      return ;
-    this.props.parentCallBack.joinRoom(chan, true)
-  }
+    let input = document.getElementById(
+      "InputJoinPrivateChan"
+    ) as HTMLInputElement;
+    let chan = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/chan/" + input.value
+    );
+    if (!chan) return;
+    this.props.parentCallBack.joinRoom(chan, true);
+  };
 
   pressEnter = (e: any) => {
-    if (e.key === 'Enter')
-    {
-      this.joinPrivateChan()
+    if (e.key === "Enter") {
+      this.joinPrivateChan();
     }
-  }
-
+  };
 
   sendRequest = async () => {
-    let newUser: any = sessionStorage.getItem("data");
-    newUser = JSON.parse(newUser);
+    //let newUser: any = sessionStorage.getItem("data");
+    //newUser = JSON.parse(newUser);
+    const ctx: any = this.context;
+    const user: any = JSON.parse(ctx.user);
     const login = document.getElementById("changeLogin") as HTMLInputElement;
     let ret = await Request(
       "PATCH",
@@ -212,9 +294,9 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       },
       {
         username: login.value,
-        avatar: newUser.user.avatar,
+        avatar: user.avatar,
       },
-      "http://localhost:3000/user/settings/" + newUser.user.auth_id
+      "http://localhost:3000/user/settings/" + user.auth_id
     );
 
     if (!ret.ok) {
@@ -342,9 +424,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <div>
-                {this.users()}
-              </div>
+              <div>{this.users()}</div>
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
@@ -354,27 +434,31 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
           </div>
         );
       case "joinChan":
-      return (
-        <div className="p-4 pb-1">
-          <header className="mb-3">
-            <h2>{this.props.title}</h2>
-          </header>
-          <div>
+        return (
+          <div className="p-4 pb-1">
+            <header className="mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <div>
-              <input id="InputJoinPrivateChan" className="col-8" type="text" placeholder="Enter Private Channel" onKeyDown={this.pressEnter}></input>
-              <button onClick={this.joinPrivateChan}>JOIN</button>
+              <div>
+                <input
+                  id="InputJoinPrivateChan"
+                  className="col-8"
+                  type="text"
+                  placeholder="Enter Private Channel"
+                  onKeyDown={this.pressEnter}
+                ></input>
+                <button onClick={this.joinPrivateChan}>JOIN</button>
+              </div>
+              <div>{this.chans()}</div>
             </div>
-            <div>
-              {this.chans()}
-            </div>
+            <footer>
+              <button className="mx-1" onClick={this.hidden}>
+                Close
+              </button>
+            </footer>
           </div>
-          <footer>
-            <button className="mx-1" onClick={this.hidden}>
-              Close
-            </button>
-          </footer>
-        </div>
-      )
+        );
     }
   };
 

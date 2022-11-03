@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import UserEntity from "../entities/user-entity"
+import UserEntity from '../entities/user-entity';
+
 export class UpdateUserDto {
   @IsNotEmpty()
   @IsString()
@@ -11,6 +12,17 @@ export class UpdateUserDto {
   twoFASecret: string;
 
   isTwoFA: number;
+}
+
+export class UpdateUsernameDto {
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+}
+
+export class UpdateAvatarDto {
+  @IsNotEmpty()
+  avatar: string;
 }
 
 export class UpdateFriendsDto {
