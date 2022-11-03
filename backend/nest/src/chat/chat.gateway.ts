@@ -68,7 +68,9 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('banToChannel')
   async banUserToChannel(client: Socket, body: {room: string, auth_id: string}) {
+    console.log("auth_id : " + body.auth_id)
     const usr = await this.userService.findOneByAuthId(body.auth_id)
+    console.log("USSSEEEER : ", usr)
     await this.chanService.banUserToChannel(usr, body.room)
     console.log("AAAAAAAAAAAAAAAAAAAAAA")
     client.emit('leaveRoom', body.room);

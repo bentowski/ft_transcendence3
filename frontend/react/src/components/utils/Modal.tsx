@@ -374,11 +374,9 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       case "banUser":
       return (
         <div>
-          <form className="mb-3">
             <div>
               {this.usersChan()}
             </div>
-          </form>
           <footer>
             <button className="mx-1" onClick={this.hidden}>
               Close
