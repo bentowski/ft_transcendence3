@@ -11,8 +11,8 @@ class History extends Component< {}, {histories: Array<any>} > {
   }
 
   componentDidMount: any =async () => {
-    let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
-    this.setState({histories: histories})
+    // let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
+    // this.setState({histories: histories})
   }
 
   render() {

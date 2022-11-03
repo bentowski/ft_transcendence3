@@ -21,3 +21,12 @@ export class UpdateFriendsDto {
   @IsNotEmpty()
   friends: Array<UserEntity>;
 }
+
+export class UpdateUserScoreDto {
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+
+  @IsNotEmpty()
+  status: string;
+}
