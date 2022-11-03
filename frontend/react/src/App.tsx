@@ -43,14 +43,14 @@ const Layout = () => {
 const ContextLoader = () => {
   return (
     <Routes>
-      <Route path="/" element={<Layout />} >
+      <Route path="/" element={<Layout />}>
         {/* public route (add unauthorized) */}
         <Route path="/login" element={<Login />} />
 
         {/* private route */}
 
-        <Route element={<RequireAuth />} >
-          <Route path="/" element={<Page />} >
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<Page />}>
             <Route path="/tchat" element={<Tchat />} />
             <Route path="/tchat/*" element={<Tchat />} />
             <Route path="/profil" element={<Profil />} />
@@ -59,18 +59,17 @@ const ContextLoader = () => {
             <Route path="/game" element={<Game />} />
             <Route path="/game/*" element={<Game />} />
             <Route path="/*" element={<Profil />} />
-
           </Route>
         </Route>
       </Route>
 
       {/* catch all */}
-
     </Routes>
   ); //
 }; //
 
 class App extends Component {
+  /*
   getCurrentUser = async () => {
     let user = await Request(
       "GET",
@@ -94,11 +93,10 @@ class App extends Component {
   componentDidMount = async () => {
     await this.getCurrentUser();
   };
+  */
 
   render() {
-    return (
-        <ContextLoader />
-    ); // fin de return
+    return <ContextLoader />; // fin de return
   } // fin de render
 } // fin de App
 
