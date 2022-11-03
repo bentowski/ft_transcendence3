@@ -59,8 +59,8 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 	}
 
 	renderUserCards = (id: number) => {
-		if (this.props.avatar) {
-     if (!this.props.stat) {
+		if (!this.props.stat) {
+			if (this.props.avatar) {
 			return (
 				<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
 					<div className="col-5 h-100 overflow-hidden buttons">
@@ -93,10 +93,6 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 
 			return (
 				<div key={id} className="friendsDiv row my-2">
-					{/* <div className="col-3 button">
-					<button className="buttons">Chat</button>
-					<button className="buttons">Play</button>
-				</div> */}
 					<div className="col-6">
 						<input className={this.state.online} type="radio"></input>
 					</div>
@@ -114,9 +110,6 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 					<Link to={"/profil/" + this.state.login} className="mx-2">{this.state.login}</Link>
 				</div>
 				<div className="Score col-9 d-flex justify-content-between align-items-center">
-					{/* <div className="col-3 d-flex flex-row justify-content-between">
-						{this.props.user.game_won}
-					</div> */}
 					<div className="">
 						won
 					</div>
@@ -124,9 +117,6 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 						<div className="Rwon col-6">{this.props.user.game_won}</div>
 						<div className="col-6">{this.props.user.game_lost}</div>
 					</div>
-					{/* <div className="col-3 d-flex flex-row justify-content-between">
-						{this.props.user.game_lost}
-					</div> */}
 					<div className="">
 						lost
 					</div>

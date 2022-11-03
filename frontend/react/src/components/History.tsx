@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import Request from "./utils/Requests"
-import HistoryCards from "./utils/HistoryCards";
 import UserCards from './utils/UserCards';
 
 class History extends Component<{}, { users: Array<any>, histories: Array<any> }> {
@@ -13,9 +12,9 @@ class History extends Component<{}, { users: Array<any>, histories: Array<any> }
   }
 
   componentDidMount: any = async () => {
-    // let histories = await Request('GET', {}, {}, "http://localhost:3000/parties/histories/all")
-    // this.setState({histories: histories})
     let users = await Request('GET', {}, {}, "http://localhost:3000/user");
+    if (!users)
+      return ;
     users.sort(function (a: any, b: any) {
       return a.game_lost - b.game_lost;
     });
@@ -26,12 +25,6 @@ class History extends Component<{}, { users: Array<any>, histories: Array<any> }
   }
 
   render() {
-    // let histories: Array<any> = [];
-    // let x = this.state.histories.length - 1;
-    // while (x >= 0) {
-    //   histories.push(<HistoryCards history={this.state.histories[x]} profil={""} />)
-    //   x--;
-    // }
     let user: Array<any> = [];
     let y = 0;
     while (y < this.state.users.length) {
