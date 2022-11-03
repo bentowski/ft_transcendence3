@@ -69,7 +69,7 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
       onlines = 0;
       let x = 0;
       while (x < this.state.friends.length) {
-        if (this.state.friends[x].online)
+        if (this.state.friends[x].status)
           onlines++;
         friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} stat={false} />)
         x++;
