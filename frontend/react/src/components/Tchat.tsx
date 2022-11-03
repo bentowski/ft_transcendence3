@@ -104,6 +104,10 @@ export const WebSocket = () => {
 			setChanUser(chanUserFind)
 	}, [room, chans])
 
+  const banningUser = async (userToBan: any) => {
+    socket.emit('banToChannel', room, userToBan.auth_id)
+  }
+
   const createChannel = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
     const topic = document.querySelector("#chanTopic") as HTMLInputElement;
@@ -510,7 +514,7 @@ export const WebSocket = () => {
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel, banningUser}} chans={listChansJoined(chans)}/>
         <ChannelList />
         <PrintChannel />
       </div>

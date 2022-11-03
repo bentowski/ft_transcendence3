@@ -69,6 +69,38 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   		</div>
   	)
   }
+  //
+  // usersChanBan = () => {
+  //   let test: any = this.props.userChan
+  //   let ret: any[] = []
+  //   const context: any = this.context
+  //   const user: any = context.user
+  //
+  //   // for(let x = 0; x < test.length; x++)
+  //   // {
+  //   //   if (this.state.friends[x].username !== user.username)
+  //   //     ret.push(
+  //   //       <div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+  //   //         <div className="col-5 h-100 overflow-hidden buttons">
+  //   //           <button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
+  //   //         </div>
+  //   //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
+  //   //           <input className={user.isOnline ? "online" : "offline"} type="radio"></input>
+  //   //         </div>
+  //   //         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  //   //           <a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
+  //   //           <img src={user.avatar} className="miniAvatar" width={150} height={150}/>
+  //   //         </div>
+  //   //       </div>
+  //   //     );
+  //   // }
+  //   return ret
+  // }
+
+  test = (user: any) => {
+    this.props.parentCallBack.banningUser(user)
+    this.hidden()
+  }
 
   usersChan = () => {
     let test: any = this.props.userChan
@@ -79,7 +111,22 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     for(let x = 0; x < test.length; x++)
     {
       if (this.state.friends[x].username !== user.username)
-        ret.push(this.displayUser(x, this.state.friends[x]));
+      {
+        ret.push(
+          <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+            <div className="col-5 h-100 overflow-hidden buttons">
+              <button onClick={() => this.test(this.state.friends[x])}>BAN</button>
+            </div>
+            <div className="col-2 d-flex flex-row d-flex justify-content-center">
+              <input className={this.state.friends[x].isOnline ? "online" : "offline"} type="radio"></input>
+            </div>
+            <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+              <a href={"/profil/#" + this.state.friends[x].username} className="mx-2">{this.state.friends[x].username}</a>
+              <img src={this.state.friends[x].avatar} className="miniAvatar" width={150} height={150}/>
+            </div>
+          </div>
+        );
+      }
     }
     return ret
   }

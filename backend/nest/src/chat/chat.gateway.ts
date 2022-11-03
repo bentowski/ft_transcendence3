@@ -51,28 +51,29 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(client: Socket, body: string[]/* room: string, auth_id: string */) {
-	client.join(body[0]);
-	const usr = await this.userService.findOneByAuthId(body[1])
-	await this.chanService.addUserToChannel(usr, body[0])
-	client.emit('joinedRoom', body[0]);
-	this.server.to(body[0]).emit("userJoinChannel");
+  	client.join(body[0]);
+  	const usr = await this.userService.findOneByAuthId(body[1])
+  	await this.chanService.addUserToChannel(usr, body[0])
+  	client.emit('joinedRoom', body[0]);
+  	this.server.to(body[0]).emit("userJoinChannel");
   }
 
   @SubscribeMessage('addToChannel')
   async onAddTochannel(client: Socket, body: {room: string, auth_id: string}) {
-	const usr = await this.userService.findOneByAuthId(body.auth_id)
-	await this.chanService.addUserToChannel(usr, body.room)
-	client.emit('joinedRoom', body.room);
-	this.server.to(body.room).emit("userJoinChannel");
+  	const usr = await this.userService.findOneByAuthId(body.auth_id)
+  	await this.chanService.addUserToChannel(usr, body.room)
+  	client.emit('joinedRoom', body.room);
+  	this.server.to(body.room).emit("userJoinChannel");
   }
 
-  // @SubscribeMessage('banToChannel')
-  // async banUserToChannel(client: Socket, body: {room: string, auth_id: string}) {
-  // const usr = await this.userService.findOneByAuthId(body.auth_id)
-  // await this.chanService.banUserToChannel(usr, body.room)
-  // client.emit('leaveRoom', body.room);
-  // this.server.to(body.room).emit("bannedChannel");
-  // }
+  @SubscribeMessage('banToChannel')
+  async banUserToChannel(client: Socket, body: {room: string, auth_id: string}) {
+    const usr = await this.userService.findOneByAuthId(body.auth_id)
+    await this.chanService.banUserToChannel(usr, body.room)
+    console.log("AAAAAAAAAAAAAAAAAAAAAA")
+    client.emit('leaveRoom', body.room);
+    this.server.to(body.room).emit("bannedChannel");
+  }
 
   @SubscribeMessage('leaveRoom')
   onLeaveRoom(client: Socket, room: string) {

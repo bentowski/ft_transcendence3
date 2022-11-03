@@ -106,16 +106,16 @@ export class ChanService {
 		return await this.chanRepository.save(chan);
 	}
 
-  // async banUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-	// 	const chan = await this.chanRepository.findOneBy({ id: room });
-	// 	if (!chan)
-	// 		return ;
-	// 	if (chan.chanUser && chan.chanUser.length)
-	// 		chan.chanUser = [...chan.chanUser, user];
-	// 	else
-	// 		chan.chanUser = [user];
-	// 	console.log(chan);
-	// 	console.log(user);
-	// 	return await this.chanRepository.save(chan);
-	// }
+  async banUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOneBy({ id: room });
+		if (!chan)
+			return ;
+		if (chan.banUser && chan.banUser.length)
+			chan.banUser = [...chan.banUser, user];
+		else
+			chan.banUser = [user];
+		console.log(chan);
+		console.log(user);
+		return await this.chanRepository.save(chan);
+	}
 }
