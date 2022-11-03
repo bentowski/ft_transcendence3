@@ -1,0 +1,18 @@
+se login avec un identifiants deja pris
+s'ajouter soit meme en ami
+ajouter plusieurs fois meme ami
+refresh page login visible
+not refresh pour les status amis
+no refresh pour creation parties
+clear modales quand on le cancel
+restreindre caracteres et longueur formulaire
+channels meme nom print correct error
+channel nom user
+channels nom user pas encore existant
+bug bouton Add User (fonctionnement random parfois)
+redirect quand logout
+redirect quand expire
+redirect vers Profil quand connection
+Check longueur max messages tchat
+limites channels direct 2 Users
+changer les any par des types

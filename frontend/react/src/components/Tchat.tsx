@@ -244,6 +244,13 @@ export const WebSocket = () => {
     setModalType("newChan");
   }
 
+  const joinChan = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    setModalTitle("Join a channel");
+    setModalType("joinChan");
+  }
+
   const arrayUserInActualchannel = () => {
 	let users: Array<any> = [];
 	const actualChan = chans.find(c => c.isActive === true);
@@ -266,10 +273,10 @@ export const WebSocket = () => {
 
     if (channel.id === room)
       return ("bg-primary");
-    else if (channel.chanUser.find((u: any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
+    else //if (channel.chanUser.find((u: any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
       return ("bg-info");
-    else
-      return ("bg-secondary");
+    // else
+    //   return ("bg-secondary");
   }
 
   const printName = (chan: any) => {
@@ -293,27 +300,67 @@ export const WebSocket = () => {
       return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
   }
 
+  const inChan = (chan: any) => {
+    if (chan.chanUser.find((u: any) => u.auth_id === auth_id))
+      return 1
+    return 0
+  }
+
+  const chansJoined = (chan: any) => {
+    let count = 0;
+    for (let x = 0; x < chans.length; x++)
+      if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
+        count++;
+    return count;
+  }
+
+  const listChansJoined = (chan: any) => {
+    let ret: any[] = [];
+    for (let x = 0; x < chans.length; x++)
+      if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
+        ret.push(chan[x]);
+    return ret;
+  }
+
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom}} chans={listChansJoined(chans)}/>
         <div className="channels col-2">
-          <button onClick={createChan}>Create Channel</button>
+        <button onClick={createChan}>Create Channel</button>
+          <button onClick={joinChan}>Join Channel</button>
           <div className="channelsList">
-            <p>{chans.length} Channels</p>
+            <p>{chansJoined(chans)} Channels</p>
             {/* <SearchBar /> */}
             {/* DEBUT AFFICHAGE CHAN */}
-            <ul className="list-group">
-              {chans.map((chan) =>
-                <Link key={chan.id} to={"/tchat/" + chan.id}>
-                  <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                    <div className="">
-                      {printName(chan)}
-                    </div>
-                  </li>
-                </Link>
-              )}
-            </ul>
+            <div className="list-group">
+              <ul>
+                {chans.map((chan) =>
+                  chan.type !== "direct" && inChan(chan)  ?
+                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                    <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                      <div className="">
+                        {printName(chan)}
+                      </div>
+                    </li>
+                  </Link> :
+                  <div key={chan.id}></div>
+                )}
+              </ul>
+              <ul>
+                {chans.map((chan) =>
+                  chan.type === "direct" ?
+                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                    <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                      <div className="">
+                        {printName(chan)}
+                      </div>
+                    </li>
+                  </Link> :
+                  <div key={chan.id}></div>
+                )}
+              </ul>
+            </div>
             {/* FIN AFFICHAGE CHAN */}
           </div> {/*fin channelsList*/}
         </div> {/*fin channels*/}

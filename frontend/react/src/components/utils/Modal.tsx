@@ -5,17 +5,32 @@ import "../../styles/components/utils/modal.css";
 
 const socket = io('http://localhost:3000/chat');
 
-class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any}, {}> {
-  state = {
-    user: {
-      auth_id: 0,
-      user_id: 0,
-      avatar: "",
-      username: "",
-    },
-	  friends: [],
-    input: "",
-  };
+type chanType = {
+  id: string;
+  type: string;
+  name: string;
+  admin: string[];
+  topic: string;
+  password: string;
+  messages: any[];
+  chanUser: any[];
+};
+
+class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any, chans?: any}, {user: any, friends: any[], input: string, allChans: Array<chanType> }> {
+  constructor(props: any){
+    super(props)
+    this.state = {
+      user: {
+        auth_id: 0,
+        user_id: 0,
+        avatar: "",
+        username: "",
+      },
+      friends: [],
+      input: "",
+      allChans: []
+    };
+  }
 
 
   hidden = () => {
@@ -32,9 +47,12 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     	this.setState({ user: newUser.user });
 	}
 	let friends:any = await Request('GET', {}, {}, "http://localhost:3000/user/")
-	  if (!friends)
+  if (!friends)
 		return ;
-	  this.setState({ friends: friends })
+  let allChans: Array<chanType> = await Request('GET', {}, {}, "http://localhost:3000/chan")
+  if (!allChans)
+    return ;
+  this.setState({ friends: friends, allChans: allChans })
   };
 
   createChan = async () => {
@@ -107,30 +125,80 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   }
 
   users = () => {
-	let friends: Array<any> = [];
-  let isUsers:boolean = false;
-  let x:number = 0;
-  if (this.state.friends.length > 0)
-  {
-	  let chanUser:any[]|undefined = this.props.userChan;
-    while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
-		  let friend:any = this.state.friends[x];
-		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
-      {
-        isUsers = true;
-        if (this.state.input.length === 0 || friend.username.includes(this.state.input))
-        	friends.push(this.displayUser(x, this.state.friends[x]));
+  	let friends: Array<any> = [];
+    let isUsers:boolean = false;
+    let x:number = 0;
+    if (this.state.friends.length > 0)
+    {
+  	  let chanUser:any[]|undefined = this.props.userChan;
+      while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
+  		  let friend:any = this.state.friends[x];
+  		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
+        {
+          isUsers = true;
+          if (this.state.input.length === 0 || friend.username.includes(this.state.input))
+          	friends.push(this.displayUser(x, this.state.friends[x]));
+        }
+        x++;
       }
-      x++;
+    }
+    if (isUsers)
+      friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
+  	if ((isUsers && friends.length === 1) || !isUsers) {
+  		friends.push(<p key={x}>No available users to add</p>)
+  	}
+  	return friends
+  }
+
+  chans = () => {
+    let ret: any[] = []
+    let currentUser: any = sessionStorage.getItem("data");
+    currentUser = JSON.parse(currentUser);
+    for (let x = 0; x < this.state.allChans.length; x++)
+    {
+      if (this.state.allChans[x].type !== "private" && this.state.allChans[x].type !== "direct")
+      {
+        for (let y = 0; y < this.props.chans.length; y++)
+        {
+          if (this.state.allChans[x].name === this.props.chans[y].name)
+            continue;
+          ret.push(
+            <div className="row" key={x}>
+              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <p className="col-6">{this.state.allChans[x].name}</p>
+            </div>
+          )
+          break;
+        }
+        if (!this.props.chans.length)
+        {
+          ret.push(
+            <div className="row" key={x}>
+              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <p className="col-6">{this.state.allChans[x].name}</p>
+            </div>
+          )
+        }
+      }
+    }
+    return ret
+  }
+
+  joinPrivateChan = async () => {
+    let input = document.getElementById('InputJoinPrivateChan') as HTMLInputElement
+    let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + input.value)
+    if (!chan)
+      return ;
+    this.props.parentCallBack.joinRoom(chan, true)
+  }
+
+  pressEnter = (e: any) => {
+    if (e.key === 'Enter')
+    {
+      this.joinPrivateChan()
     }
   }
-  if (isUsers)
-    friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
-	if ((isUsers && friends.length === 1) || !isUsers) {
-		friends.push(<p key={x}>No available users to add</p>)
-	}
-	return friends
-  }
+
 
   sendRequest = async () => {
     let newUser: any = sessionStorage.getItem("data");
@@ -274,7 +342,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <div key={"febzuiafbndjqfbe"}>
+              <div>
                 {this.users()}
               </div>
             </form>
@@ -285,6 +353,28 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
             </footer>
           </div>
         );
+      case "joinChan":
+      return (
+        <div className="p-4 pb-1">
+          <header className="mb-3">
+            <h2>{this.props.title}</h2>
+          </header>
+          <div>
+            <div>
+              <input id="InputJoinPrivateChan" className="col-8" type="text" placeholder="Enter Private Channel" onKeyDown={this.pressEnter}></input>
+              <button onClick={this.joinPrivateChan}>JOIN</button>
+            </div>
+            <div>
+              {this.chans()}
+            </div>
+          </div>
+          <footer>
+            <button className="mx-1" onClick={this.hidden}>
+              Close
+            </button>
+          </footer>
+        </div>
+      )
     }
   };
 
