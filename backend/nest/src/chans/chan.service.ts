@@ -29,19 +29,8 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-        //const chan: Chan = new Chan();
         let { name, type, password, admin, topic, chanUser } = createChanDto;
-        // console.log(password)
-        // let save = password
         password = await argon2.hash(password)
-        // let test = await argon2.verify(password, save)
-        // let test2 = await argon2.verify("$argon2id$v=19$m=4096,t=3,p=1$/2pEtE21mtUAE111ksKy5Q$RGed2Dsv9Pcoknp3LAgGnnt3VmUL6BYes7c+cPfIZU0", save)
-        // console.log(test)
-        // console.log(test2)
-        // console.log("$argon2id$v=19$m=4096,t=3,p=1$/2pEtE21mtUAE111ksKy5Q$RGed2Dsv9Pcoknp3LAgGnnt3VmUL6BYes7c+cPfIZU0")
-        // console.log(password)
-
-        //checks if the chan exists in db
         const chanInDb = await this.chanRepository.findOne({
             where: { name }
         });
@@ -52,15 +41,12 @@ export class ChanService {
         const chan: ChanEntity = await this.chanRepository.create({
             name, type, password, admin, topic, chanUser
         })
-        // chan.chanUser = undefined;
-		// chan.chanUser = [];
-        
         await this.chanRepository.save(chan);
         return chan;
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find();
+        return this.chanRepository.find({relations: { chanUser: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
@@ -79,7 +65,7 @@ export class ChanService {
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
 		try {
-		const chan = await this.chanRepository.findOneBy({ id: message.room });
+		const chan = await this.chanRepository.findOneBy({ id: message.room, });
 		if (chan) {
 			if (chan.messages)
 				chan.messages = [...chan.messages, message];
@@ -101,8 +87,22 @@ export class ChanService {
 			chan.chanUser = [...chan.chanUser, user];
 		else
 			chan.chanUser = [user];
-		console.log(chan);
-		console.log(user);
+		return await this.chanRepository.save(chan);
+	}
+
+	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOne({
+			where: {id: room},
+			relations: { chanUser: true },
+		});
+		if (!chan)
+			return ;
+		if (chan.chanUser && chan.chanUser.length) {
+			let index = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
+			if (index >= 0) {
+				chan.chanUser = chan.chanUser.filter((u) => u.auth_id !== user.auth_id);
+			}
+		}
 		return await this.chanRepository.save(chan);
 	}
 }
