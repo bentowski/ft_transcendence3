@@ -1,6 +1,4 @@
-import {Component} from "react";
-import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
-import {Link} from "react-router-dom";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 
 const GetUsername = () => {
     const { user } = useAuthData();
