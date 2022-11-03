@@ -1,22 +1,5 @@
 import {Component} from 'react';
 import Request from "./Requests"
-// import Request from "./Requests"
-
-// class RequestUrl extends Component<{inputSelector : string, routeForRequest : string}, {}> {
-// 	render() {
-// 		let xhr:any;
-// 		let MatchNav_SearchBar = (document.querySelector(this.props.inputSelector) as HTMLInputElement).value;
-// 		let url = "http://localhost:3000/" + this.props.routeForRequest + MatchNav_SearchBar;
-// 		xhr = new XMLHttpRequest();
-//     	xhr.open("GET", url);
-// 		xhr.responseType = 'json';
-//     	xhr.send();
-//     	xhr.onload = () => {
-// 			return(xhr.response);
-// 		}
-// 		return xhr.response;
-// 	}
-// }
 
 class SearchBar extends Component<{inputSelector : string, routeForRequest : string, parentCallBack : any}, {}> {
 	state = {

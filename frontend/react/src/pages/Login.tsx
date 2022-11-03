@@ -1,24 +1,16 @@
-import { Component } from "react";
 import "../styles/pages/login.css";
-import {AuthContext, useAuthData} from "../contexts/AuthProviderContext";
-import { useRef, useState, useEffect } from "react";
-import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
-import Request from "../components/utils/Requests";
+import { useAuthData} from "../contexts/AuthProviderContext";
+import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
 
 const Login = () => {
-  //const userRef: any = useRef();
-  //const errRef: any = useRef();
 
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
-
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const [user, setUser] = useState(null);
-  //let isAuth: any = sessionStorage.getItem("isAuth");
-  //console.log("ISAUTH=", isAuth);
+  // const [user, setUser] = useState(null);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -55,8 +47,6 @@ const Login = () => {
           viewBox="0 0 16 16"
         >
           <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
-          {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-lock-fill" viewBox="0 0 16 16">
-              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" /> */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -67,7 +57,6 @@ const Login = () => {
           >
             <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z" />
           </svg>
-          {/* </svg> */}
         </svg>
       </a>
       <div className="Inf px-5 pb-3">
@@ -87,14 +76,8 @@ const Login = () => {
         <button className="mb-2 mx-2">Sign in</button>
       </a>
     </div>
-  ); //<form onSubmit={handleSubmit} >
+  ); //
 
-  // </button>
-}; //          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+}; //
 
 export default Login;
-
-//<AuthContext.Consumer>
-//               {({ login }) => (
-//   )}
-//           </AuthContext.Consumer>

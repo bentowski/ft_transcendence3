@@ -78,7 +78,6 @@ class MatchNav extends Component {
 	prompt = () => {
 		let modal = document.getElementById("ModalMatch") as HTMLDivElement;
 		modal.classList.remove('hidden');
-		// this.setState({modalType: "Avatar", modalTitle: "Change avatar"})
 	}
 
 	render() {
