@@ -1,10 +1,6 @@
 import { Component } from 'react';
-import { useResolvedPath } from 'react-router-dom';
 import io from 'socket.io-client';
 import Request from "./Requests"
-import UserCards from './UserCards';
-import SearchBar from './SearchBar';
-import FriendsNav from '../FriendsNav';
 import "../../styles/components/utils/modal.css";
 
 const socket = io('http://localhost:3000/chat');
@@ -25,7 +21,6 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
-    const login = document.getElementById("changeLogin") as HTMLInputElement;
     // login.value = "";
   };
 

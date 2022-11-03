@@ -1,19 +1,16 @@
-import { Component } from "react";
 import "../styles/pages/login.css";
-import {AuthContext, useAuthData} from "../contexts/AuthProviderContext";
-import { useRef, useState, useEffect } from "react";
-import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
-import Request from "../components/utils/Requests";
+import { useAuthData} from "../contexts/AuthProviderContext";
+import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
 
 const Login = () => {
 
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   if (loading) {
     return <h1>Loading...</h1>;

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Link, Navigate, redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import io from 'socket.io-client';
 import Request from "./Requests"
 import '../../styles/components/utils/userCards.css'
@@ -50,7 +50,6 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 			);
 			socket.emit('chanCreated');
 			let newUrl = "http://localhost:8080/tchat/#" + newChan.id
-			let title = 'test'
 			setTimeout(() => {
 				window.location.href = newUrl
 			}, 100)

@@ -1,12 +1,8 @@
-import React, { Component } from "react";
-import {Navigate, Outlet} from "react-router-dom";
+import { Component } from "react";
+import { Outlet } from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
-import Request from "../components/utils/Requests";
 import FriendsNav from "../components/FriendsNav";
-import {useAuthUser, useIsAuthenticated, withIsAuthenticated} from "react-auth-kit";
-import AuthContext from "react-auth-kit/dist/AuthContext";
-import Profil from '../components/Profil'
 
 class Page extends Component {
   render() {

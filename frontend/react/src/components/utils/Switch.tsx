@@ -1,7 +1,6 @@
-import React, { Component, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import Request from "./Requests";
-import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
 
 const Switch = () => {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
 
 class HistoryCards extends Component<{ history: any, profil: string }, {}> {

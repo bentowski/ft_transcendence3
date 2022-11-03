@@ -1,5 +1,4 @@
-import { Component } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Switch from "./utils/Switch";
 import { useAuthData } from "../contexts/AuthProviderContext";
 // import Request from "./utils/Requests"

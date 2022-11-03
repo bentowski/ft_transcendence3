@@ -1,16 +1,15 @@
-import React, { Component, useEffect, useState } from "react";
-import { Routes, Route, Outlet, Navigate, useLocation, BrowserRouter } from "react-router-dom";
-import "./styles/App.css";
+import { Component } from "react";
+import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
 import History from "./components/History";
 import Page from "./pages/Page";
-import { AuthContext, useAuthData } from "./contexts/AuthProviderContext";
+import { useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
-import PageNotFound from "./pages/PageNotFound";
 import AskTwoFa from "./pages/AskTwoFa";
+import "./styles/App.css";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
@@ -19,16 +18,14 @@ const RequireAuth = () => {
   if (loading) {
     return <h1>Loading...</h1>;
   }
-  //console.log("requireauth user is login?");
-
   if (isToken) {
-    console.log("user is logged in");
+    // console.log("user is logged in");
     if (isTwoFa && !isAuth) {
-      console.log("but needs to do two fa");
+      // console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-      console.log("welcome buddy");
+      // console.log("welcome buddy");
       return <Outlet />;
     }
   }
@@ -81,9 +78,8 @@ class App extends Component {
       {},
       "http://localhost:3000/user/current"
     );
-    if (!user) {
+    if (!user)
       return null;
-    }
     const data = {
       user: {
         auth_id: user.auth_id,
@@ -105,7 +101,5 @@ class App extends Component {
     ); // fin de return
   } // fin de render
 } // fin de App
-//
-//
 
 export default App;
