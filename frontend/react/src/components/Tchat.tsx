@@ -96,6 +96,11 @@ export const WebSocket = () => {
       getChan();
     })
 
+	socket.on('userLeaveChannel', () => {
+		getChan();
+		window.location.replace("http://localhost:8080/tchat")
+	  })
+
     if (msgInput.current)
       msgInput.current.focus();
 
@@ -104,6 +109,7 @@ export const WebSocket = () => {
       socket.off('onMessage');
       socket.off('newChan');
 	  socket.off('userJoinChannel');
+	  socket.off('userLeaveChannel');
 	  chans.map((c:any) => {
 		if (c.chanUser) {
 			c.chanUser.map((u:any) => {
@@ -154,7 +160,6 @@ export const WebSocket = () => {
 			else {
 				url = url.substring(url.lastIndexOf("/") + 1);
 				chan = chans.find((c:any) => c.id === url);
-        console.log("chan", chan)
 				if (chan !== undefined)
 					joinRoom(chan, false)
 				else {
@@ -182,7 +187,13 @@ export const WebSocket = () => {
 
   const onSubmit = () => {
     if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
-      socket.emit('newMessage', { "chat": value, "sender_socket_id": auth_id, "username": username, "avatar": avatar, "room": room });
+		if (value === '/leave') {
+			socket.emit('leaveRoom', {"room": room, "auth_id": auth_id})
+			changeActiveRoom('')
+			setMessage([])
+		}
+		else
+			socket.emit('newMessage', { "chat": value, "sender_socket_id": auth_id, "username": username, "avatar": avatar, "room": room });
     }
     setValue('');
   }
