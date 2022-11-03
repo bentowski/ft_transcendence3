@@ -158,8 +158,10 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     for (let x = 0; x < this.state.allChans.length; x++)
     {
       if (this.state.allChans[x].type !== "private" && this.state.allChans[x].type !== "direct")
+      {
         for (let y = 0; y < chans.length; y++)
         {
+          console.log("AAAAAAAAAA")
           if (this.state.allChans[x].name === chans[y].name)
             continue;
           ret.push(
@@ -170,6 +172,16 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
           )
           break;
         }
+        if (!chans.length)
+        {
+          ret.push(
+            <div className="row" key={x}>
+              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <p className="col-6">{this.state.allChans[x].name}</p>
+            </div>
+          )
+        }
+      }
     }
     return ret
   }

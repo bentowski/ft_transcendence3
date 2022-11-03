@@ -344,7 +344,7 @@ export const WebSocket = () => {
                       </div>
                     </li>
                   </Link> :
-                  <div></div>
+                  <div key={chan.id}></div>
                 )}
               </ul>
               <ul>
@@ -357,7 +357,7 @@ export const WebSocket = () => {
                       </div>
                     </li>
                   </Link> :
-                  <div></div>
+                  <div key={chan.id}></div>
                 )}
               </ul>
             </div>
