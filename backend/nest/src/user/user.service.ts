@@ -10,13 +10,13 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-      @InjectRepository(UserEntity)
-      private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
@@ -44,7 +44,7 @@ export class UserService {
   async createUser42(user42: User42Dto): Promise<UserEntity> {
     const user: UserEntity = this.userRepository.create(user42);
     user.avatar =
-        'https://avatars.dicebear.com/api/personas/' + user.auth_id + '.svg';
+      'https://avatars.dicebear.com/api/personas/' + user.auth_id + '.svg';
     user.friends = [];
     return this.userRepository.save(user);
   }
@@ -63,7 +63,7 @@ export class UserService {
     user.username = username;
     user.email = email;
     user.avatar =
-        'https://avatars.dicebear.com/api/personas/' + auth_id + '.svg';
+      'https://avatars.dicebear.com/api/personas/' + user.auth_id + '.svg';
     user.createdAt = new Date();
     try {
       await this.userRepository.save(user);
@@ -81,13 +81,16 @@ export class UserService {
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     let findUsername: UserEntity = undefined;
-    findUsername = await this.userRepository.findOneBy({ username });
+    findUsername = await this.userRepository.findOne({
+      where: { username: username },
+      relations: { friends: true, channelJoined: true },
+    });
     return findUsername;
   }
 
   async updateUser(
-      authId: string,
-      updateUserDto: UpdateUserDto,
+    authId: string,
+    updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
     let user: UserEntity = undefined;
     user = await this.findOneByAuthId(authId);
@@ -100,6 +103,24 @@ export class UserService {
     if (twoFASecret) user.twoFASecret = twoFASecret;
     if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
     console.log('after edit = ' + user.isTwoFA);
+    //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
+    try {
+      await this.userRepository.save(user);
+    } catch (err) {
+      throw new InternalServerErrorException('error while modifying user');
+    }
+    return user;
+  }
+
+  async updateFriends(
+    authId: string,
+    updateFriendsDto: UpdateFriendsDto,
+  ): Promise<UserEntity> {
+    let user: UserEntity = undefined;
+    user = await this.findOneByAuthId(authId);
+    const { username, friends } = updateFriendsDto;
+    if (username) user.username = username;
+    if (friends) user.friends = friends;
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);
@@ -158,5 +179,26 @@ export class UserService {
       twoFASecret: user.twoFASecret,
       isTwoFA: 0,
     });
+  }
+
+  async setStatus(auth_id: string, status: number) {
+    let user: UserEntity = undefined;
+    user = await this.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+    if (status == 1 || status == 0) {
+      user.status = status;
+      try {
+        await this.userRepository.save(user);
+      } catch (error) {
+        throw new HttpException(
+          'problem editing status user',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+    } else {
+      throw new HttpException('unknown status', HttpStatus.BAD_REQUEST);
+    }
   }
 }

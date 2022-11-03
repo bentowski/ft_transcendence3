@@ -2,10 +2,14 @@ import { Component } from 'react';
 import "../../styles/components/utils/modal.css";
 import Request from "./Requests"
 import io from 'socket.io-client';
+import FriendsNav from '../FriendsNav';
+import { useResolvedPath } from 'react-router-dom';
+import UserCards from './UserCards';
+import SearchBar from './SearchBar';
 
 const socket = io('http://localhost:3000/chat');
 
-class Modal extends Component<{ title: string; calledBy: string }, {}> {
+class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any}, {}> {
   state = {
     user: {
       auth_id: 0,
@@ -13,6 +17,8 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       avatar: "",
       username: "",
     },
+	  friends: [],
+    input: "",
   };
 
 
@@ -23,20 +29,23 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
     // login.value = "";
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
     // console.log(newUser);
-    if (!newUser) return;
-    newUser = JSON.parse(newUser);
-    this.setState({ user: newUser.user });
+    if (newUser) {
+    	newUser = JSON.parse(newUser);
+    	this.setState({ user: newUser.user });
+	}
+	let friends:any = await Request('GET', {}, {}, "http://localhost:3000/user/")
+	  if (!friends)
+		return ;
+	  this.setState({ friends: friends })
   };
 
   createChan = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
     const topic = document.querySelector("#chanTopic") as HTMLInputElement;
-    const password = document.querySelector(
-      "#chanPassword"
-    ) as HTMLInputElement;
+    const password = document.querySelector("#chanPassword") as HTMLInputElement;
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
@@ -48,7 +57,9 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       radioCheck = "private";
     else if (radioPro.checked === true)
       radioCheck = "protected";
-    if (radioCheck !== "" || !name.value || !topic.value) {
+	let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+	chans = chans.find((c:any) => c.name === name.value)
+    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
       if (password.value)
         pswd = password.value;
       await Request(
@@ -66,6 +77,7 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
         },
         "http://localhost:3000/chan/create"
       );
+	  let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
       name.value = "";
       topic.value = "";
       password.value = "";
@@ -74,11 +86,56 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
       radioPro.checked = false;
       this.hidden();
       socket.emit('chanCreated');
+	  window.location.replace('http://localhost:8080/tchat#' + chan.id)
+	  window.location.reload();
     }
     else {
       alert("You have to fill each informations");
     }
   };
+
+  displayUser = (id:number, user:any) => {
+	return (
+		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+			<div className="col-5 h-100 overflow-hidden buttons">
+				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
+			</div>
+			<div className="col-2 d-flex flex-row d-flex justify-content-center">
+				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
+			</div>
+			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
+				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
+				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
+			</div>
+		</div>
+	)
+  }
+
+  users = () => {
+	let friends: Array<any> = [];
+  let isUsers:boolean = false;
+  let x:number = 0;
+  if (this.state.friends.length > 0)
+  {
+	  let chanUser:any[]|undefined = this.props.userChan;
+    while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
+		  let friend:any = this.state.friends[x];
+		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
+      {
+        isUsers = true;
+        if (this.state.input.length === 0 || friend.username.includes(this.state.input))
+        	friends.push(this.displayUser(x, this.state.friends[x]));
+      }
+      x++;
+    }
+  }
+  if (isUsers) 
+    friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
+	if ((isUsers && friends.length === 1) || !isUsers) {
+		friends.push(<p key={x}>No available users to add</p>)
+	}
+	return friends
+  }
 
   sendRequest = async () => {
     let newUser: any = sessionStorage.getItem("data");
@@ -222,13 +279,14 @@ class Modal extends Component<{ title: string; calledBy: string }, {}> {
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <p></p>
+              <div key={"febzuiafbndjqfbe"}>
+                {this.users()}
+              </div>
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
-                Cancel
+                Close
               </button>
-              <button className="mx-1">Add</button>
             </footer>
           </div>
         );

@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
-// import Modal from "./utils/Modal";
+import GetAvatar from "./utils/GetAvatar";
 import '../styles/components/profil.css'
 
-class Profil extends Component<{}, { user: any; histories: Array<any> }> {
+class Profil extends Component< {},
+  {
+    user: any,
+    histories: Array<any>;
+    location: string
+  }> {
   constructor(props: any) {
     super(props);
     this.state = {
       user: {},
       histories: [],
-      // modalType: "",
-      // modalTitle: "",
+      location: ""
     };
   }
 
@@ -48,36 +52,39 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
 
   getHistory = async () => {
     let histories = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/parties/histories/all"
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/parties/histories/all"
     );
     if (!histories) return;
     this.setState({ histories: histories });
   };
 
-  componentDidMount = () => {
-    let url = document.URL;
-    let x = 0;
-    while (url[x] !== "#" && url[x]) {
-      x++;
-    }
-    x++;
-    let tmp = "";
-    while (url[x]) {
-      tmp += url[x++];
-    }
-    // console.log("tmp = ", tmp);
-    // if (tmp === "") {
-    //   console.log("caca");
-    //   this.setState({ user: currentUser.user });
-    //   console.log("user = ", this.state.user);
-    // }
-    // else
-    this.getUser(tmp);
-    this.getHistory();
-  }
+componentDidMount = () => {
+    let newUser: any = sessionStorage.getItem("data");
+    newUser = JSON.parse(newUser);
+    // let url = document.URL;
+    // url = url.substring(url.lastIndexOf("#") + 1)
+    // console.log(url)
+    // this.getUser(url);
+    // this.getHistory();
+    //   return;
+    let test = setInterval(() => {
+
+      let url = document.URL
+      if (!document.URL.includes("localhost:8080/profil"))
+        clearInterval(test);
+      url = url.substring(url.lastIndexOf("/") + 1)
+      if (url !== this.state.location)
+      {
+        this.getUser(url);
+        this.getHistory();
+        this.setState({location: url})
+      }
+    }, 10)
+
+};
 
   printHeader = () => {
     let currentUser: any = sessionStorage.getItem("data");
@@ -91,13 +98,7 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
             calledBy={this.state.modalType}
           /> */}
           <div className="Avatar d-flex flex-row justify-content-start">
-            <img
-              // onClick={this.promptAvatar}
-              className="modifAvatar mb-2"
-              src={this.state.user.avatar}
-              alt=""
-              data-bs-toggle="modal" data-bs-target="#changeAvatar"
-            />
+            <GetAvatar className="modifAvatar mb-2" width="" height="" alt="" />
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill mx-2" viewBox="0 0 16 16">
               <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
             </svg>
@@ -123,11 +124,7 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
     else {
       return (
         <div className='ProfilHeader'>
-          <img
-            className="Avatar mb-2"
-            src={this.state.user.avatar}
-            alt=""
-          />
+          <GetAvatar className="modifAvatar mb-2" width="" height="" alt="" />
           <h3>{this.state.user.username}</h3>
         </div>
       )
@@ -135,22 +132,22 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
   }
 
   render() {
-    window.addEventListener("popstate", (event) => {
-      let url = document.URL;
-      let x = 0;
-      while (url[x] !== "#" && url[x]) {
-        x++;
-      }
-      x++;
-      let tmp = "";
-      // console.log("tmp = ", tmp, ";")
-      while (url[x]) {
-        tmp += url[x++];
-      }
-      // console.log("tmp = ", tmp, ";")
-      if (document.URL.includes("/profil"))
-        this.getUser(tmp);
-    });
+    // window.addEventListener("popstate", (event) => {
+    //   let url = document.URL;
+    //   let x = 0;
+    //   while (url[x] !== "#" && url[x]) {
+    //     x++;
+    //   }
+    //   x++;
+    //   let tmp = "";
+    //   // console.log("tmp = ", tmp, ";")
+    //   while (url[x]) {
+    //     tmp += url[x++];
+    //   }
+    //   // console.log("tmp = ", tmp, ";")
+    //   if (document.URL.includes("/profil"))
+    //     this.getUser(tmp);
+    // });
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {
@@ -231,3 +228,12 @@ class Profil extends Component<{}, { user: any; histories: Array<any> }> {
 }
 
 export default Profil;
+
+/*
+<img
+    onClick={this.promptAvatar}
+    className="modifAvatar mb-2"
+    src={this.state.avatar}
+    alt=""
+/>
+*/

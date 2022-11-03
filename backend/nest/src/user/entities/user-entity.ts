@@ -5,6 +5,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  JoinTable
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
@@ -64,8 +65,12 @@ export class UserEntity {
   })
   status: number;
 
-  @OneToMany(() => UserEntity, (friends) => friends.user_id)
-  friends: UserEntity[];
+  @ManyToMany(() => UserEntity, (friend) => friend.friends,
+	{
+		onDelete: "CASCADE"
+	})
+	@JoinTable({name: "Friends"})
+	friends: UserEntity[]
 
   @Column({
     default: '',
