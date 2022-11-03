@@ -244,6 +244,13 @@ export const WebSocket = () => {
     setModalType("newChan");
   }
 
+  const joinChan = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    setModalTitle("Join a channel");
+    setModalType("joinChan");
+  }
+
   const arrayUserInActualchannel = () => {
 	let users: Array<any> = [];
 	const actualChan = chans.find(c => c.isActive === true);
@@ -299,15 +306,31 @@ export const WebSocket = () => {
     return 0
   }
 
+  const chansJoined = (chan: any) => {
+    let count = 0;
+    for (let x = 0; x < chans.length; x++)
+      if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
+        count++;
+    return count;
+  }
+
+  const listChansJoined = (chan: any) => {
+    let ret: any[] = [];
+    for (let x = 0; x < chans.length; x++)
+      if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
+        ret.push(chan[x]);
+    return ret;
+  }
+
   return (
     <div>
       <div className="tchat row">
-        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
+        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom}} chans={listChansJoined(chans)}/>
         <div className="channels col-2">
         <button onClick={createChan}>Create Channel</button>
-          <button>Join Channel</button>
+          <button onClick={joinChan}>Join Channel</button>
           <div className="channelsList">
-            <p>{chans.length} Channels</p>
+            <p>{chansJoined(chans)} Channels</p>
             {/* <SearchBar /> */}
             {/* DEBUT AFFICHAGE CHAN */}
             <div className="list-group">
