@@ -128,22 +128,26 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 		}
 
 		return (
-			<div key={id} className="friendsDiv col-12 mr-2 d-flex flex-row align-items-center">
+			<div key={id} className="friendsDiv col-11 mr-2 d-flex flex-row align-items-center">
 				<div className="col-3 d-flex flex-row justify-content-start align-items-center">
 					<img src={this.props.user.avatar} className="miniAvatar" />
 					<Link to={"/profil/" + this.state.login} className="mx-2">{this.state.login}</Link>
 				</div>
-				<div className="Score col-9 d-flex flex-row align-items-center">
-					<div className="col-3">
+				<div className="Score col-9 d-flex justify-content-between align-items-center">
+					{/* <div className="col-3 d-flex flex-row justify-content-between">
 						{this.props.user.game_won}
-					</div>
-					<div className="col-3">
+					</div> */}
+					<div className="">
 						won
 					</div>
-					<div className="col-3">
-						{this.props.user.game_lost}
+					<div className="Ratio mx-2 d-flex flex-row justify-content-between align-items-center">
+						<div className="Rwon col-6">{this.props.user.game_won}</div>
+						<div className="col-6">{this.props.user.game_lost}</div>
 					</div>
-					<div className="col-3">
+					{/* <div className="col-3 d-flex flex-row justify-content-between">
+						{this.props.user.game_lost}
+					</div> */}
+					<div className="">
 						lost
 					</div>
 				</div>

@@ -17,7 +17,10 @@ class History extends Component<{}, { users: Array<any>, histories: Array<any> }
     // this.setState({histories: histories})
     let users = await Request('GET', {}, {}, "http://localhost:3000/user");
     users.sort(function (a: any, b: any) {
-      return a.game_won - b.game_won;
+      return a.game_lost - b.game_lost;
+    });
+    users.sort(function (a: any, b: any) {
+      return b.game_won - a.game_won;
     });
     this.setState({ users: users });
   }

@@ -5,10 +5,11 @@ import HistoryCards from "./utils/HistoryCards";
 import GetAvatar from "./utils/GetAvatar";
 import '../styles/components/profil.css'
 
-class Profil extends Component< {},
+class Profil extends Component<{},
   {
     user: any,
     histories: Array<any>;
+    rank: number;
     location: string
   }> {
   constructor(props: any) {
@@ -16,6 +17,7 @@ class Profil extends Component< {},
     this.state = {
       user: {},
       histories: [],
+      rank: 0,
       location: ""
     };
   }
@@ -52,16 +54,31 @@ class Profil extends Component< {},
 
   getHistory = async () => {
     let histories = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/parties/histories/all"
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/parties/histories/all"
     );
     if (!histories) return;
     this.setState({ histories: histories });
   };
 
-componentDidMount = () => {
+  getRank = async () => {
+    let users = await Request('GET', {}, {}, "http://localhost:3000/user");
+    users.sort(function (a: any, b: any) {
+      return a.game_lost - b.game_lost;
+    });
+    users.sort(function (a: any, b: any) {
+      return b.game_won - a.game_won;
+    });
+    let x = 0;
+    while (users[x].auth_id != this.state.user.auth_id)
+      x++;
+    this.setState({ rank: x + 1 })
+    // this.setState({ users: users });
+  }
+
+  componentDidMount = () => {
     let newUser: any = sessionStorage.getItem("data");
     newUser = JSON.parse(newUser);
     // let url = document.URL;
@@ -76,15 +93,14 @@ componentDidMount = () => {
       if (!document.URL.includes("localhost:8080/profil"))
         clearInterval(test);
       url = url.substring(url.lastIndexOf("/") + 1)
-      if (url !== this.state.location)
-      {
+      if (url !== this.state.location) {
         this.getUser(url);
         this.getHistory();
-        this.setState({location: url})
+        this.getRank();
+        this.setState({ location: url })
       }
     }, 10)
-
-};
+  };
 
   printHeader = () => {
     let currentUser: any = sessionStorage.getItem("data");
@@ -169,8 +185,26 @@ componentDidMount = () => {
         {this.printHeader()}
         <div className="Stats mt-5">
           <h3>Stats</h3>
-          Games won : {this.state.user.game_won}/{this.state.user.total_games}<br />
-          Games lost : {this.state.user.game_lost}/{this.state.user.total_games}
+          <div className="Score col-9 d-flex justify-content-between align-items-center">
+            <div className="">
+              won
+            </div>
+            <div className="Ratio mx-2 d-flex flex-row justify-content-between align-items-center">
+              <div className="Rwon col-6">{this.state.user.game_won}</div>
+              <div className="col-6">{this.state.user.game_lost}</div>
+            </div>
+            <div className="">
+              lost
+            </div>
+          </div>
+          {/* Games won : {this.state.user.game_won}/{this.state.user.total_games}<br />
+          Games lost : {this.state.user.game_lost}/{this.state.user.total_games} */}
+        </div>
+        <div className="Rank">
+          <h3>Rank </h3>
+          <Link to={"/history"}>
+            <h3>{this.state.rank}</h3>
+          </Link>
         </div>
         <div className=" mt-5">
           <h3>History</h3>
