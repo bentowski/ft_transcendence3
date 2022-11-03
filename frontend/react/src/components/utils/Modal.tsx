@@ -150,19 +150,17 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   	return friends
   }
 
-  chans = (chans: any) => {
+  chans = () => {
     let ret: any[] = []
-    console.log(chans)
     let currentUser: any = sessionStorage.getItem("data");
     currentUser = JSON.parse(currentUser);
     for (let x = 0; x < this.state.allChans.length; x++)
     {
       if (this.state.allChans[x].type !== "private" && this.state.allChans[x].type !== "direct")
       {
-        for (let y = 0; y < chans.length; y++)
+        for (let y = 0; y < this.props.chans.length; y++)
         {
-          console.log("AAAAAAAAAA")
-          if (this.state.allChans[x].name === chans[y].name)
+          if (this.state.allChans[x].name === this.props.chans[y].name)
             continue;
           ret.push(
             <div className="row" key={x}>
@@ -172,7 +170,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
           )
           break;
         }
-        if (!chans.length)
+        if (!this.props.chans.length)
         {
           ret.push(
             <div className="row" key={x}>
@@ -185,6 +183,22 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     }
     return ret
   }
+
+  joinPrivateChan = async () => {
+    let input = document.getElementById('InputJoinPrivateChan') as HTMLInputElement
+    let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + input.value)
+    if (!chan)
+      return ;
+    this.props.parentCallBack.joinRoom(chan, true)
+  }
+
+  pressEnter = (e: any) => {
+    if (e.key === 'Enter')
+    {
+      this.joinPrivateChan()
+    }
+  }
+
 
   sendRequest = async () => {
     let newUser: any = sessionStorage.getItem("data");
@@ -328,7 +342,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
               <h2>{this.props.title}</h2>
             </header>
             <form className="mb-3">
-              <div key={"febzuiafbndjqfbe"}>
+              <div>
                 {this.users()}
               </div>
             </form>
@@ -345,11 +359,15 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
           <header className="mb-3">
             <h2>{this.props.title}</h2>
           </header>
-          <form className="mb-3">
-            <div key={"febzuiafbndjqfbe"}>
-              {this.chans(this.props.chans)}
+          <div>
+            <div>
+              <input id="InputJoinPrivateChan" className="col-8" type="text" placeholder="Enter Private Channel" onKeyDown={this.pressEnter}></input>
+              <button onClick={this.joinPrivateChan}>JOIN</button>
             </div>
-          </form>
+            <div>
+              {this.chans()}
+            </div>
+          </div>
           <footer>
             <button className="mx-1" onClick={this.hidden}>
               Close
