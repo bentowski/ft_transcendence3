@@ -61,7 +61,7 @@ export class ChanEntity {
 	})
 	messages: Msg[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {cascade: true})
 	@JoinTable()
 	chanUser: UserEntity[];
 }
