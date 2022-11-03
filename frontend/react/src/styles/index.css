@@ -152,7 +152,7 @@ img {
 }
 
 .Menu {
-	height: 70px;
+	height: 62px;
 	padding: 20px;
 	padding-right: 10px;
 }
@@ -163,13 +163,30 @@ img {
 }
 
 .FriendsNav, .MatchNav {
-	height: 75vh;
+	height: 100%;
 	padding: 10px;
 }
 
+.Ratio {
+	color: #3b3c3a;
+	background-color: gray;
+	height: 42px;
+	width: 100%;
+	border-radius: 10px;
+	/* width: ; */
+}
+
+.Rwon {
+	/* color: #3b3c3a; */
+	background-color: yellowgreen;
+	/* height: 100%; */
+}
+
 .miniAvatar {
-	max-width: 50px;
-	max-height: 50px;
+	max-width: 42px;
+	max-height: 42px;
+	width: 42px;
+	height: 42px;
 	display: block;
 	left: -20px;
 	border-radius: 10px;

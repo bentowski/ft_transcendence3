@@ -257,7 +257,7 @@ export const WebSocket = () => {
 	const actualChan = chanUser;//chans.find(c => c.isActive === true);
 	if (actualChan.length)
 		actualChan.map((u:any) => {
-			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false}/></div>)}
+			{users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)}
 	})
 	return users;
   }
@@ -380,7 +380,7 @@ class Tchat extends Component<{}, { message: number, chans: any, userChan: any, 
     let users: any = [];
     let x = 0;
     while (x < this.state.userChan.length) {
-      users.push(<UserCards user={this.state.userChan[x]} avatar={true} />)
+      users.push(<UserCards user={this.state.userChan[x]} avatar={true} stat={false} />)
       x++;
     }
     let chans: any = []
