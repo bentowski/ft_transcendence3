@@ -14,7 +14,6 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
     let currentUser:any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.user.username)
-    // console.log("friends : ", user.friends)
     if (!user.friends.length)
       return ;
     this.setState({ friends: user.friends })
@@ -54,7 +53,6 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
         "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
     if (!test)
       return ;
-      // input.value = "";
     this.setState({friends: newFriendsArray})
   }
 

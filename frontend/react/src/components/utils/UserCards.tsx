@@ -1,10 +1,8 @@
 import { Component } from 'react';
-import { Link, Navigate, redirect } from "react-router-dom";
-// import { A } from "hookrouter"
+import { Link } from "react-router-dom";
+import io from 'socket.io-client';
 import Request from "./Requests"
 import '../../styles/components/utils/userCards.css'
-// import Login from '../../pages/Login';
-import io from 'socket.io-client';
 
 
 const socket = io('http://localhost:3000/chat');
@@ -16,18 +14,12 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 	}
 
 	createChan = async () => {
-		//const navigate = useNavigate();
-		// let url = document.URL
 		let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
 		let u1 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.ssname);
 		let u2 = await Request("GET", {}, {}, "http://localhost:3000/user/name/" + this.state.login);
 		let ret = 0;
-		// console.log("length = ", chans.length);
-		// console.log("u1.auth_id = ", u1.auth_id);
-		// console.log("u2.auth_id = ", u2.auth_id);
 		let x = 0;
 		while (x < chans.length) {
-			// console.log("chanUser.length = ", chans[x].chanUser.length);
 			if (chans[x].type === "direct"
 				&& ((chans[x].chanUser[0].auth_id === u1.auth_id && chans[x].chanUser[1].auth_id === u2.auth_id)
 					|| (chans[x].chanUser[0].auth_id === u2.auth_id && chans[x].chanUser[1].auth_id === u1.auth_id))
@@ -38,7 +30,6 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 
 			x++;
 		}
-		// console.log("x = ", x);
 		if (x === chans.length) {
 			let newChan = await Request(
 				"POST",
@@ -58,32 +49,21 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 			);
 			socket.emit('chanCreated');
 			let newUrl = "http://localhost:8080/tchat/#" + newChan.id
-			let title = 'test'
 			setTimeout(() => {
 				window.location.href = newUrl
-				//navigate(newUrl);
 			}, 100)
-			return;
-			// this.setState({chanId: newChan.id.toString()})
+			return ;
 		}
-		// window.location.href = url + "#" + ret
 		let newUrl = "http://localhost:8080/tchat/#" + ret
-		//let title = 'test'
 		window.location.href = newUrl
-		//window.history.pushState(newUrl, title)
-		//navigate(newUrl);
-		// this.setState({chanId: ret.toString()})
-		// let chans2 = await Request("GET", {}, {}, "http://localhost:3000/chan/" + u1.username + "$" + u2.username);
-		// 	console.log("chans2.id =", chans2.id);
 	}
 
 	renderUserCards = (id: number) => {
-		if (!this.props.stat) {
-			if (this.props.avatar) {
-				return (
-					<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-						<div className="col-5 h-100 overflow-hidden buttons">
-							{/* <Link to={"/tchat#" + this.state.chanId}> */}
+		if (this.props.avatar) {
+     if (!this.props.stat) {
+			return (
+				<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+					<div className="col-5 h-100 overflow-hidden buttons">
 							<button className=" p-1" onClick={this.createChan}>
 								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-chat-left-dots" viewBox="0 0 16 16">
 									<path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
@@ -158,9 +138,13 @@ class UserCards extends Component<{ user: any, avatar: boolean, stat: boolean },
 
 	componentDidMount: any = async () => {
 		let user = await Request('GET', {}, {}, "http://localhost:3000/user/id/" + this.state.id)
-		// console.log(user)
+		let status = "offline"
 		if (user)
-			this.setState({ login: user.username })
+		{
+			if (user.status == 1)
+				status = "online"
+			this.setState({ login: user.username, online: status })
+		}
 		let newUser: any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		this.setState({ ssid: newUser.user.auth_id });

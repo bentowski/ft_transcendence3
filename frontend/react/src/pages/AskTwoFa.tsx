@@ -1,15 +1,14 @@
-import React, { Component, useEffect, useState } from "react";
-import Request from "../components/utils/Requests";
-import { AuthContext, useAuthData } from "../contexts/AuthProviderContext";
-import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useState } from "react";
+// import { useAuthData } from "../contexts/AuthProviderContext";
+import { useNavigate } from "react-router-dom";
 
 const AskTwoFa = () => {
-  const { isAuth, isTwoFa, isToken, loading } = useAuthData();
+  // const { isAuth, isTwoFa, isToken, loading } = useAuthData();
   const [code, setCode] = useState("");
   const [validate, setValidate] = useState(false);
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
-  const from = location.state?.from?.pathname || "/";
+  // const from = location.state?.from?.pathname || "/";
 
   const validateTwoFa = () => {
     //console.log("code = ", code);
