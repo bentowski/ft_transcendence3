@@ -10,7 +10,12 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import UserEntity from './entities/user-entity';
 import { User42Dto } from './dto/user42.dto';
-import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
+import {
+  UpdateUserDto,
+  UpdateAvatarDto,
+  UpdateFriendsDto,
+} from './dto/update-user.dto';
+import { UpdateUsernameDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -88,6 +93,39 @@ export class UserService {
     return findUsername;
   }
 
+  async updateUsername(auth_id: string, updateUsernameDto: UpdateUsernameDto) {
+    const user: UserEntity = await this.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    const findUser: UserEntity = await this.findOnebyUsername(
+      updateUsernameDto.username,
+    );
+    if (findUser) {
+      throw new HttpException('name already taken', HttpStatus.BAD_REQUEST);
+    } else {
+      user.username = updateUsernameDto.username;
+      try {
+        await this.userRepository.save(user);
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+  }
+
+  async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto) {
+    const user: UserEntity = await this.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    user.avatar = updateAvatarDto.avatar;
+    try {
+      await this.userRepository.save(user);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async updateUser(
     authId: string,
     updateUserDto: UpdateUserDto,
@@ -95,14 +133,14 @@ export class UserService {
     let user: UserEntity = undefined;
     user = await this.findOneByAuthId(authId);
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-    console.log(user);
-    console.log('isTwoFA = ', isTwoFA);
-    console.log('before editing = ' + user.isTwoFA);
+    //console.log(user);
+    //console.log('isTwoFA = ', isTwoFA);
+    //console.log('before editing = ' + user.isTwoFA);
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
     if (twoFASecret) user.twoFASecret = twoFASecret;
     if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
-    console.log('after edit = ' + user.isTwoFA);
+    //console.log('after edit = ' + user.isTwoFA);
     //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);

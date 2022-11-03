@@ -13,6 +13,7 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  NotFoundException,
   /*Request,
   UsePipes,
   ValidationPipe,
@@ -26,10 +27,16 @@ import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
+import {
+  UpdateUserDto,
+  UpdateFriendsDto,
+  UpdateAvatarDto,
+} from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
 import jwt_decode from 'jwt-decode';
+import { Express } from 'express';
+import path, { join } from 'path';
 import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
@@ -115,15 +122,6 @@ export class UserController {
     return 'User logged out';
   }
 
-  @Patch('settings/:id')
-  updateUser(
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    // console.log(updateUserDto);
-    return this.userService.updateUser(userId, updateUserDto);
-  }
-
   @Patch('addFriends/:id')
   updateFriends(
     @Param('id') userId: string,
@@ -139,9 +137,59 @@ export class UserController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', storage))
-  uploadFile(@UploadedFile() file: any): Observable<Object> {
-    console.log(file);
-    return of({ imagePath: file.filename });
+  @UseInterceptors(FileInterceptor('picture', storage))
+  async uploadFile(
+    @Res({ passthrough: true }) res,
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    //console.log('salut les amis');
+    //console.log(file);
+    const token = req.cookies['jwt'];
+    const decoded: PayloadInterface = jwt_decode(token);
+    const user: UserEntity = await this.userService.findOneByAuthId(
+      decoded.auth_id,
+    );
+    if (!user) throw new NotFoundException('user not found');
+    //of({ imagePath: file.filename });
+    const newNameAvatar: UpdateAvatarDto = {
+      avatar: file.filename,
+    };
+    //console.log('newUrlAvatar ; ', newNameAvatar);
+    await this.userService.updateAvatar(decoded.auth_id, newNameAvatar);
+    res.status(200);
+  }
+
+  @Get(':id/avatar')
+  async getAvatar(@Req() req, @Param('id') id: string, @Res() res) {
+    //console.log('requesting image');
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    const imagename: any = user.avatar;
+    //console.log('===== ', join('/uploads/profileimages/' + imagename));
+    return of(
+      res.sendFile(join(process.cwd(), './uploads/profileimages/' + imagename)),
+    );
+  }
+
+  @Patch('update/username')
+  updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      const token = req.cookies['jwt'];
+      const decoded: PayloadInterface = jwt_decode(token);
+      return this.userService.updateUsername(decoded.auth_id, updateUserDto);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @Patch('update/avatar')
+  updateAvatar(@Req() req, @Body() updateAvatarDto: UpdateAvatarDto) {
+    try {
+      const token = req.cookies['jwt'];
+      const decoded: PayloadInterface = jwt_decode(token);
+      return this.userService.updateAvatar(decoded.auth_id, updateAvatarDto);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
