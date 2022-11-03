@@ -1,5 +1,4 @@
-import { Component } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Switch from "./utils/Switch";
 import { useAuthData } from "../contexts/AuthProviderContext";
 // import Request from "./utils/Requests"
@@ -35,21 +34,6 @@ const Menu = () => {
         console.log("some shit happened");
       });
   };
-  /*
-  componentDidMount = () => {
-    let newUser: any = sessionStorage.getItem("data");
-    // console.log("newUser = " + newUser);
-    if (newUser) {
-      newUser = JSON.parse(newUser);
-      this.setState({ avatar: newUser.user.avatar });
-      this.setState({ username: newUser.user.username });
-    }
-  };
-
-   */
-
-  //render() {
-  //const user = sessionStorage.getItem("username");
   return (
     <div className="Menu d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">

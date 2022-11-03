@@ -1,11 +1,7 @@
 import { Component } from 'react';
-import "../../styles/components/utils/modal.css";
-import Request from "./Requests"
 import io from 'socket.io-client';
-import FriendsNav from '../FriendsNav';
-import { useResolvedPath } from 'react-router-dom';
-import UserCards from './UserCards';
-import SearchBar from './SearchBar';
+import Request from "./Requests"
+import "../../styles/components/utils/modal.css";
 
 const socket = io('http://localhost:3000/chat');
 
@@ -25,7 +21,6 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
-    const login = document.getElementById("changeLogin") as HTMLInputElement;
     // login.value = "";
   };
 
@@ -129,7 +124,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       x++;
     }
   }
-  if (isUsers) 
+  if (isUsers)
     friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
 	if ((isUsers && friends.length === 1) || !isUsers) {
 		friends.push(<p key={x}>No available users to add</p>)

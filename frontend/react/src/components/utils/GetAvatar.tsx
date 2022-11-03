@@ -1,6 +1,4 @@
-import { Component } from "react";
-import { AuthContext, useAuthData } from "../../contexts/AuthProviderContext";
-import { Link } from "react-router-dom";
+import { useAuthData} from "../../contexts/AuthProviderContext";
 
 const GetAvatar = ({ className, width, height, alt }: { className: string, width: string, height: string, alt: string }) => {
     const { user } = useAuthData();
