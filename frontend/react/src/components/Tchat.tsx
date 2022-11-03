@@ -251,6 +251,20 @@ export const WebSocket = () => {
     setModalType("joinChan");
   }
 
+  const banUser = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    setModalTitle("Manage banned");
+    setModalType("banUser");
+  }
+
+  const muteUser = async () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    modal.classList.remove('hidden');
+    setModalTitle("Mute Users");
+    setModalType("muteUser");
+  }
+
   const arrayUserInActualchannel = () => {
 	let users: Array<any> = [];
 	const actualChan = chans.find(c => c.isActive === true);
@@ -322,6 +336,15 @@ export const WebSocket = () => {
     return ret;
   }
 
+  const adminButtons = () => {
+    return (
+      <div className="row">
+        <button className="col-6" onClick={banUser}>BANNED</button>
+        <button className="col-6" onClick={muteUser}>MUTED</button>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="tchat row">
@@ -371,11 +394,10 @@ export const WebSocket = () => {
           </div>{/*fin tchatMainTitle*/}
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
-          <div className="row">
-            <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-            <button className="col-1" onClick={onSubmit}>send</button>
-          </div>
-          <div className="row">
+          <div className="row"> {/* Message et barre de Tchat */}
+            <div className="row">
+              {adminButtons()}
+            </div>
             <div className='messages'>
               <div>
                 {messages.length === 0 ? <div>No messages here</div> :
@@ -399,6 +421,10 @@ export const WebSocket = () => {
                     )}
                   </div>}
               </div>
+            </div>
+            <div className="row">
+              <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+              <button className="col-1" onClick={onSubmit}>send</button>
             </div>
           </div>
         </div> {/*fin tchatMain*/}

@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import io from 'socket.io-client';
 import Request from "./Requests"
+import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
 
 const socket = io('http://localhost:3000/chat');
@@ -31,6 +32,8 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       allChans: []
     };
   }
+
+  static contextType = AuthContext
 
 
   hidden = () => {
@@ -122,6 +125,20 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
 			</div>
 		</div>
 	)
+  }
+
+  usersChan = () => {
+    let test: any = this.props.userChan
+    let ret: any[] = []
+    const context: any = this.context
+    const user: any = context.user
+
+    for(let x = 0; x < test.length; x++)
+    {
+      if (this.state.friends[x].name !== user.username)
+        ret.push(this.displayUser(x, this.state.friends[x]));
+    }
+    return ret
   }
 
   users = () => {
@@ -374,7 +391,43 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
             </button>
           </footer>
         </div>
-      )
+      );
+      case "banUser":
+      return (
+        <div className="p-4 pb-1">
+          <header className="mb-3">
+            <h2>{this.props.title}</h2>
+          </header>
+          <form className="mb-3">
+            <div>
+              {this.usersChan()}
+            </div>
+          </form>
+          <footer>
+            <button className="mx-1" onClick={this.hidden}>
+              Close
+            </button>
+          </footer>
+        </div>
+      );
+      case "muteUser":
+      return (
+        <div className="p-4 pb-1">
+          <header className="mb-3">
+            <h2>{this.props.title}</h2>
+          </header>
+          <form className="mb-3">
+            <div>
+              {this.usersChan()}
+            </div>
+          </form>
+          <footer>
+            <button className="mx-1" onClick={this.hidden}>
+              Close
+            </button>
+          </footer>
+        </div>
+      );
     }
   };
 
