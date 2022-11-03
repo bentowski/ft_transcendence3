@@ -54,7 +54,7 @@ export class ChanService {
         })
         // chan.chanUser = undefined;
 		// chan.chanUser = [];
-        
+
         await this.chanRepository.save(chan);
         return chan;
     }
@@ -105,4 +105,17 @@ export class ChanService {
 		console.log(user);
 		return await this.chanRepository.save(chan);
 	}
+
+  // async banUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+	// 	const chan = await this.chanRepository.findOneBy({ id: room });
+	// 	if (!chan)
+	// 		return ;
+	// 	if (chan.chanUser && chan.chanUser.length)
+	// 		chan.chanUser = [...chan.chanUser, user];
+	// 	else
+	// 		chan.chanUser = [user];
+	// 	console.log(chan);
+	// 	console.log(user);
+	// 	return await this.chanRepository.save(chan);
+	// }
 }

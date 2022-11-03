@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../../user/entities/user-entity'
 
 type Msg = {
@@ -64,5 +64,9 @@ export class ChanEntity {
 	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
 	@JoinTable()
 	chanUser: UserEntity[];
+
+	// @OneToMany(() => UserEntity, (user) => user.username, {eager: true})
+	// @JoinTable()
+	// banUser: UserEntity[];
 }
 export default ChanEntity;
