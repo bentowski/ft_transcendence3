@@ -105,8 +105,13 @@ class UserCards extends Component<{ user: any, avatar: boolean }, { login: strin
 
 	componentDidMount: any = async () => {
 		let user = await Request('GET', {}, {}, "http://localhost:3000/user/id/" + this.state.id)
+		let status = "offline"
 		if (user)
-			this.setState({ login: user.username })
+		{
+			if (user.status == 1)
+				status = "online"
+			this.setState({ login: user.username, online: status })
+		}
 		let newUser: any = sessionStorage.getItem('data');
 		newUser = JSON.parse(newUser);
 		this.setState({ ssid: newUser.user.auth_id });
