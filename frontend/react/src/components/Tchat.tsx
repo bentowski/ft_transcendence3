@@ -266,10 +266,10 @@ export const WebSocket = () => {
 
     if (channel.id === room)
       return ("bg-primary");
-    else if (channel.chanUser.find((u: any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
+    else //if (channel.chanUser.find((u: any) => u.auth_id === auth_id)) //else if (channelJoined.find((chan) => chan.id === channel.id) !== undefined)
       return ("bg-info");
-    else
-      return ("bg-secondary");
+    // else
+    //   return ("bg-secondary");
   }
 
   const printName = (chan: any) => {
@@ -293,27 +293,51 @@ export const WebSocket = () => {
       return (<button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button>)
   }
 
+  const inChan = (chan: any) => {
+    if (chan.chanUser.find((u: any) => u.auth_id === auth_id))
+      return 1
+    return 0
+  }
+
   return (
     <div>
       <div className="tchat row">
         <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
         <div className="channels col-2">
-          <button onClick={createChan}>Create Channel</button>
+        <button onClick={createChan}>Create Channel</button>
+          <button>Join Channel</button>
           <div className="channelsList">
             <p>{chans.length} Channels</p>
             {/* <SearchBar /> */}
             {/* DEBUT AFFICHAGE CHAN */}
-            <ul className="list-group">
-              {chans.map((chan) =>
-                <Link key={chan.id} to={"/tchat/" + chan.id}>
-                  <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                    <div className="">
-                      {printName(chan)}
-                    </div>
-                  </li>
-                </Link>
-              )}
-            </ul>
+            <div className="list-group">
+              <ul>
+                {chans.map((chan) =>
+                  chan.type !== "direct" && inChan(chan)  ?
+                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                    <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                      <div className="">
+                        {printName(chan)}
+                      </div>
+                    </li>
+                  </Link> :
+                  <div></div>
+                )}
+              </ul>
+              <ul>
+                {chans.map((chan) =>
+                  chan.type === "direct" ?
+                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                    <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                      <div className="">
+                        {printName(chan)}
+                      </div>
+                    </li>
+                  </Link> :
+                  <div></div>
+                )}
+              </ul>
+            </div>
             {/* FIN AFFICHAGE CHAN */}
           </div> {/*fin channelsList*/}
         </div> {/*fin channels*/}
