@@ -25,13 +25,10 @@ export class CreateChanDto {
     public admin: Array<string>;
 
     @IsString()
-    // @IsNotEmpty()
+    @IsNotEmpty()
     password: string;
 
     @IsNotEmpty()
     public chanUser: Array<UserEntity>;
-
-    @IsNotEmpty()
-    public banUser: Array<UserEntity>;
 
 }

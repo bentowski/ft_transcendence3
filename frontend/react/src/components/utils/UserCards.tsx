@@ -92,8 +92,8 @@ class UserCards extends Component<
       }, 100);
       return;
     }
-    // let newUrl = "http://localhost:8080/tchat/#" + ret;
-    // window.location.href = newUrl;
+    let newUrl = "http://localhost:8080/tchat/#" + ret;
+    window.location.href = newUrl;
   };
 
   renderUserCards = (id: number) => {

@@ -30,7 +30,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   UpdateUserDto,
   UpdateFriendsDto,
-  UpdateAvatarDto
+  UpdateAvatarDto,
 } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
