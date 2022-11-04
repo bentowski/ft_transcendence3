@@ -29,8 +29,10 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-        let { name, type, password, admin, topic, chanUser } = createChanDto;
+        let { name, type, password, admin, topic, chanUser} = createChanDto;
         password = await argon2.hash(password)
+
+        //checks if the chan exists in db
         const chanInDb = await this.chanRepository.findOne({
             where: { name }
         });
@@ -41,6 +43,7 @@ export class ChanService {
         const chan: ChanEntity = await this.chanRepository.create({
             name, type, password, admin, topic, chanUser
         })
+
         await this.chanRepository.save(chan);
         return chan;
     }
@@ -64,25 +67,28 @@ export class ChanService {
     }
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
-		try {
-		const chan = await this.chanRepository.findOneBy({ id: message.room, });
-		if (chan) {
-			if (chan.messages)
-				chan.messages = [...chan.messages, message];
-			else
-				chan.messages = [message];
-			return this.chanRepository.save(chan);
+		// try {
+  		const chan = await this.chanRepository.findOneBy({ id: message.room, });
+  		if (chan) {
+  			if (chan.messages)
+  				chan.messages = [...chan.messages, message];
+  			else
+  				chan.messages = [message];
+  			return this.chanRepository.save(chan);
 		}
-		}
-		catch (error) {
-			console.log(error);
-		}
+		// }
+		// catch (error) {
+		// 	console.log(error);
+		// }
 	}
 
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
 		const chan = await this.chanRepository.findOneBy({ id: room });
 		if (!chan)
 			return ;
+    console.log(chan);
+    // if (chan.banUser && (chan.banUser.indexOf(user)) > -1)
+    //   return ;
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
 		else
@@ -103,6 +109,20 @@ export class ChanService {
 				chan.chanUser = chan.chanUser.filter((u) => u.auth_id !== user.auth_id);
 			}
 		}
+		return await this.chanRepository.save(chan);
+	}
+
+  async banUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOneBy({ id: room });
+		if (!chan)
+			return ;
+    chan.chanUser.splice(chan.chanUser.indexOf(user) - 1, 1)
+		if (chan.banUser && chan.banUser.length)
+			chan.banUser = [...chan.banUser, user];
+		else
+			chan.banUser = [user];
+		console.log(chan);
+		console.log(user);
 		return await this.chanRepository.save(chan);
 	}
 }

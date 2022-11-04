@@ -63,10 +63,9 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
 
   render() {
     let friends: Array<any> = [];
-    let onlines;
+    let onlines = 0;
     if (this.state.friends.length > 0)
     {
-      onlines = 0;
       let x = 0;
       while (x < this.state.friends.length) {
         if (this.state.friends[x].status)
