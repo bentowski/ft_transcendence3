@@ -4,6 +4,7 @@ import {
   /* Inject, UnauthorizedException, */ Injectable,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
+import UserEntity from '../../user/entities/user-entity';
 
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy, '42') {
@@ -23,9 +24,8 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
       username: username,
       email: profile['emails'][0]['value'],
     };
-    let newUser = undefined;
-    newUser = await this.authService.validateUser(user);
-    console.log('welcome buddy');
+    const newUser: UserEntity = await this.authService.validateUser(user);
+    //console.log('welcome buddy');
     return newUser;
   }
 }

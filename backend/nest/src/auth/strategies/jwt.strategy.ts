@@ -14,23 +14,29 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: `${process.env.JWT_SECRET_KEY}`,
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          let access_token = undefined;
-          access_token = request?.cookies['jwt'];
-          console.log('access toktok = ', access_token);
-          return access_token;
+        (req: Request) => {
+          const token = req?.cookies['jwt'];
+          //console.log('access toktok = ', token);
+          return token;
         },
       ]),
     });
   }
 
   async validate(payload: PayloadInterface): Promise<UserEntity> {
+    /*
+    if (done) {
+      console.log('error system = ', done);
+      throw new UnauthorizedException('no cookie for the pookie');
+    }
+     */
     const { auth_id } = payload;
     const user: UserEntity = await this.authService.findUser(auth_id);
-    console.log('user from strategy = ', user);
+    //console.log('user from strategy = ', user);
     if (!user) {
       throw new UnauthorizedException('Invalid Token');
     }
+    //console.log('useeer = ', user);
     return user;
     /*if (!newUser.isTwoFA) {
       return newUser;
