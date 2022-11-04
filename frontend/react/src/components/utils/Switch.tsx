@@ -41,35 +41,6 @@ const Switch = () => {
       .catch((error) => {
         console.error(error);
       });
-
-    /*
-    const reader = await response.body.getReader();
-    //var parentComponentInReadClientModal = this;
-    let chunks: any = [];
-    reader
-      .read()
-      .then(function processText({ done, value }: { done: any; value: any }) {
-        //console.log(parentComponentInReadClientModal);
-        if (done) {
-          //console.log("stream finished, content received:");
-          //console.log(chunks);
-          const blob = new Blob([chunks as unknown as ArrayBuffer], {
-            type: "image/png",
-          });
-          //console.log(blob);
-          setSrc(URL.createObjectURL(blob));
-          //parentComponentInReadClientModal.;
-          return;
-        }
-        //console.log(`received ${chunks.length} chars so far!`);
-        const tempArray = new Uint8Array(chunks.length + value.length);
-        tempArray.set(chunks);
-        tempArray.set(value, chunks.length);
-        chunks = tempArray;
-        return reader.read().then(processText);
-      });
-
-     */
     handleShow();
   };
 
@@ -160,19 +131,6 @@ const Switch = () => {
     evt.preventDefault();
   };
 
-  /*
-  const hidden = () => {
-    let modal = document.getElementById("ModalCode") as HTMLDivElement;
-    modal.classList.add("hidden");
-  };
-
-    const prompt = () => {
-    let modal = document.getElementById("ModalCode") as HTMLDivElement;
-    modal.classList.remove("hidden");
-  };
-
-   */
-
   const handleChange = (evt: any) => {
     evt.preventDefault();
     setCode(evt.target.value);
@@ -230,32 +188,3 @@ const Switch = () => {
 };
 
 export default Switch;
-
-//<div className="Modal hidden" id="ModalCode">
-//         <div className="p-4 pb-1">
-//           <header className="mb-3">
-//             <h2>{label}</h2>
-//             <img alt="qrcode" src={src} />
-//           </header>
-//           <form className="mb-3">
-//             <input
-//               type="text"
-//               placeholder="2fa activation code"
-//               maxLength={6}
-//               id="code"
-//               name="code"
-//               onChange={handleChange}
-//               value={code}
-//             />
-//           </form>
-//           <footer>
-//             <button className="mx-1" onClick={hidden}>
-//               Cancel
-//             </button>
-//
-//             <button onClick={activateTwoFa} className="mx-1">
-//               Validate
-//             </button>
-//           </footer>
-//         </div>
-//       </div>
