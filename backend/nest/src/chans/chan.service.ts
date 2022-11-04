@@ -87,6 +87,8 @@ export class ChanService {
 		if (!chan)
 			return ;
     console.log(chan);
+    if (chan.banUser && (chan.banUser.indexOf(user)) > -1)
+      return ;
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
 		else
@@ -100,7 +102,7 @@ export class ChanService {
 		const chan = await this.chanRepository.findOneBy({ id: room });
 		if (!chan)
 			return ;
-    chan.chanUser.splice(chan.chanUser.indexOf(user), 1)
+    chan.chanUser.splice(chan.chanUser.indexOf(user) - 1, 1)
 		if (chan.banUser && chan.banUser.length)
 			chan.banUser = [...chan.banUser, user];
 		else

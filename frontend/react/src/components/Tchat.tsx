@@ -107,6 +107,7 @@ export const WebSocket = () => {
   const banningUser = async (userToBan: any) => {
     console.log("USEEEER", userToBan)
     socket.emit('banToChannel', { "room": room, "auth_id": userToBan.auth_id })
+    window.location.reload();
   }
 
   const createChannel = async () => {
