@@ -27,7 +27,6 @@ clear: clear_volume
 	sudo rm -rf ./frontend/volume/node_modules
 	sudo rm -rf ./backend/volume/node_modules
 	sudo rm -rf ./backend/volume/dist
-	sudo rm -rf ./backend/nest/uploads
 	sudo cp -rf ./frontend/volume/* ./frontend/react/
 	sudo cp -rf ./backend/volume/* ./backend/nest/
 	sudo chmod 775 ./backend/

@@ -63,14 +63,13 @@ export const storage = {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get('current')
   async currentUser(@Req() req: Request): Promise<UserEntity> {
     //console.log('request = ' + req);
@@ -92,43 +91,32 @@ export class UserController {
   }
   */
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get('/name/:username')
   findOnebyUsername(@Param('username') username: string) {
     return this.userService.findOnebyUsername(username);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get('/id/:id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOneByAuthId(id);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(UserAuthGuard)
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
-  /*
-  @UseGuards(IntraAuthGuard)
-  @Post('login')
-  login(@Request() req): any {
-    return {
-      User: req.user,
-      msg: 'User logged in',
-    };
-  }
-  */
-
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Delete('logout')
   logout(@Res() res): any {
     res.clearCookie('jwt');
     return 'User logged out';
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Patch('addFriends/:id')
   updateFriends(
     @Param('id') userId: string,
@@ -138,13 +126,13 @@ export class UserController {
     return this.userService.updateFriends(userId, updateFriendsDto);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(UserAuthGuard)
   @Delete(':id')
   remove(@Param('id') username: string) {
     return this.userService.remove(username);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('picture', storage))
   async uploadFile(
@@ -169,11 +157,16 @@ export class UserController {
     res.status(200);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get(':id/avatar')
   async getAvatar(@Req() req, @Param('id') id: string, @Res() res) {
     //console.log('requesting image');
+    //console.log('reqqqqq = ', req);
     const user: UserEntity = await this.userService.findOneByAuthId(id);
+    if (!user.avatar) {
+      throw new NotFoundException('avatar null');
+    }
+    console.log('[ass pass');
     const imagename: any = user.avatar;
     //console.log('===== ', join('/uploads/profileimages/' + imagename));
     return of(
@@ -181,7 +174,7 @@ export class UserController {
     );
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -193,7 +186,7 @@ export class UserController {
     }
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Patch('update/avatar')
   updateAvatar(@Req() req, @Body() updateAvatarDto: UpdateAvatarDto) {
     try {
