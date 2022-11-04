@@ -13,8 +13,6 @@ const ModalChangeUsername = ({
   const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [field, setField] = useState("");
-  //let newUser: any = sessionStorage.getItem("data");
-  //newUser = JSON.parse(newUser);
 
   const requestChangeUsername = () => {
     //const login = document.getElementById("changeLogin") as HTMLInputElement;

@@ -8,9 +8,9 @@ const Menu = () => {
   const { user, setIsAuth, setUser, setIsToken, setIsTwoFa } = useAuthData();
   const navigate = useNavigate();
 
-  const logoutSession = () => {
+  const logoutSession = async () => {
     //console.log("loging out");
-    fetch("http://localhost:3000/auth/logout", {
+    await fetch("http://localhost:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
       headers: {
@@ -26,13 +26,12 @@ const Menu = () => {
           setIsAuth(false);
           setIsToken(false);
           setIsTwoFa(false);
-          //console.log("navigating");
-          navigate("/login");
         }
       })
       .catch((error) => {
         console.log("some shit happened");
       });
+      window.location.reload()
   };
   return (
     <div className="Menu d-flex justify-content-between align-items-center">
