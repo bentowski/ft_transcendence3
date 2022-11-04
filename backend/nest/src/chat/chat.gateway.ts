@@ -51,17 +51,17 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(client: Socket, body: string[]/* room: string, auth_id: string */) {
+    client.join(body[0]);
     const usr = await this.userService.findOneByAuthId(body[1])
-    try{
+    // try{
       await this.chanService.addUserToChannel(usr, body[0])
-      client.join(body[0]);
       client.emit('joinedRoom', body[0]);
       this.server.to(body[0]).emit("userJoinChannel");
-    }
-    catch
-    {
-      console.log("user is banned")
-    }
+    // }
+    // catch
+    // {
+    //   console.log("user is banned")
+    // }
   }
 
   @SubscribeMessage('addToChannel')

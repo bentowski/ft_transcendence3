@@ -29,7 +29,7 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-        let { name, type, password, admin, topic} = createChanDto;
+        let { name, type, password, admin, topic, chanUser} = createChanDto;
         password = await argon2.hash(password)
 
         //checks if the chan exists in db
@@ -40,8 +40,8 @@ export class ChanService {
             throw new HttpException('Chan already exists', HttpStatus.BAD_REQUEST);
         }
 
-        const chan: ChanEntity = this.chanRepository.create({
-            name, type, password, admin, topic
+        const chan: ChanEntity = await this.chanRepository.create({
+            name, type, password, admin, topic, chanUser
         })
 
         await this.chanRepository.save(chan);
@@ -67,19 +67,19 @@ export class ChanService {
     }
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
-		try {
-		const chan = await this.chanRepository.findOneBy({ id: message.room, });
-		if (chan) {
-			if (chan.messages)
-				chan.messages = [...chan.messages, message];
-			else
-				chan.messages = [message];
-			return this.chanRepository.save(chan);
+		// try {
+  		const chan = await this.chanRepository.findOneBy({ id: message.room, });
+  		if (chan) {
+  			if (chan.messages)
+  				chan.messages = [...chan.messages, message];
+  			else
+  				chan.messages = [message];
+  			return this.chanRepository.save(chan);
 		}
-		}
-		catch (error) {
-			console.log(error);
-		}
+		// }
+		// catch (error) {
+		// 	console.log(error);
+		// }
 	}
 
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
@@ -87,8 +87,8 @@ export class ChanService {
 		if (!chan)
 			return ;
     console.log(chan);
-    if (chan.banUser && (chan.banUser.indexOf(user)) > -1)
-      return ;
+    // if (chan.banUser && (chan.banUser.indexOf(user)) > -1)
+    //   return ;
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
 		else

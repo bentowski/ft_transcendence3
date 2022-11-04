@@ -20,9 +20,9 @@ export class ChanController {
     }
 
     @Post('create')
-    createChan(@Body() createUserDto: CreateChanDto) {
-        let ret = this.chanService.createChan(createUserDto);
-        console.log(ret)
+    async createChan(@Body() createUserDto: CreateChanDto) {
+        let ret = await this.chanService.createChan(createUserDto);
+        console.log("DONe : ", ret)
         return ret
     }
 

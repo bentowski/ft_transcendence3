@@ -28,6 +28,7 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {});
     socket.on('onMessage', (newMessage: MessagePayload) => {
+      console.log("RECEIVE ////////////////")
   		let channels:ChanType[] = chans;
   		let index:number = chans.findIndex((c:ChanType) => c.id === newMessage.room);
   		if (channels[index] !== undefined) {
@@ -107,7 +108,6 @@ export const WebSocket = () => {
 	}, [room, chans])
 
   const banningUser = async (userToBan: any) => {
-    console.log("USEEEER", userToBan)
     socket.emit('banToChannel', { "room": room, "auth_id": userToBan.auth_id })
     window.location.reload();
   }
@@ -311,13 +311,22 @@ export const WebSocket = () => {
   }
 
   const printName = (chan: ChanType) => {
-    if (chan.type === "direct") {
+    if (chan && chan.type === "direct") {
       // let currentUser: any = sessionStorage.getItem("data");
       // currentUser = JSON.parse(currentUser);
       if (user.username === chan.chanUser[0].username)
+      {
         return chan.chanUser[1].username;
-      else return chan.chanUser[0].username;
-    } else return chan.name;
+      }
+      else
+      {
+        return chan.chanUser[0].username;
+      }
+    }
+    else
+    {
+      return chan.name;
+    }
   };
 
   const inChan = (chan: ChanType) => {
@@ -467,7 +476,7 @@ export const WebSocket = () => {
           ret.push(
             <Link key={chan.id} to={"/tchat/" + chan.id}>
               <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                  {printName(chan)}
+                {printName(chan)}
               </li>
             </Link>
           )
