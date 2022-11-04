@@ -58,7 +58,7 @@ const AskTwoFa = () => {
 
    */
 
-  const handleChange = (evt: any) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setCode(evt.target.value);
   };
 
