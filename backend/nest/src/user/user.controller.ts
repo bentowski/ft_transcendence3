@@ -12,6 +12,9 @@ import {
   UploadedFile,
   UseGuards,
   NotFoundException,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
   /*Request,
   UsePipes,
   HttpException,
@@ -41,7 +44,7 @@ import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import {JwtStrategy} from "../auth/strategies/jwt.strategy";
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -57,8 +60,6 @@ export const storage = {
         filename.substring(0, lastDot) + uuidv4() + filename.substring(lastDot);
       cb(null, `${filename}`);
     },
-    //add filter for certain types of files
-    //add filter to limit number of files
   }),
 };
 
@@ -122,8 +123,17 @@ export class UserController {
   async uploadFile(
     @Res({ passthrough: true }) res,
     @Req() req,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
+    console.log('saloute');
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {
@@ -142,10 +152,13 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
-    const imagename: Promise<string> = this.userService.getAvatar(id);
+    const imagename: string = await this.userService.getAvatar(id);
     const fs = require('fs');
+    console.log('image name = ', imagename);
     const files = fs.readdirSync('./uploads/profileimages/');
+    console.log('files = ', files);
     if (Object.values(files).indexOf(imagename) === -1) {
+      console.log('no file in folder');
       return of(
         res.sendFile(
           join(process.cwd(), './uploads/profileimages/default.jpg'),
