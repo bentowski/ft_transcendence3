@@ -69,57 +69,8 @@ class Modal extends Component<
   };
 
   createChan = async () => {
-    const name = document.querySelector("#chanName") as HTMLInputElement;
-    const topic = document.querySelector("#chanTopic") as HTMLInputElement;
-    const password = document.querySelector(
-      "#chanPassword"
-    ) as HTMLInputElement;
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    let radioCheck = "";
-    let pswd = "";
-    if (radioPub.checked === true) radioCheck = "public";
-    else if (radioPri.checked === true) radioCheck = "private";
-    else if (radioPro.checked === true) radioCheck = "protected";
-    let chans = await Request("GET", {}, {}, "http://localhost:3000/chan/");
-    chans = chans.find((c: ChanType) => c.name === name.value);
-    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
-      if (password.value) pswd = password.value;
-      await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: name.value,
-          type: radioCheck,
-          topic: topic.value,
-          admin: [this.state.user.username],
-          password: pswd,
-        },
-        "http://localhost:3000/chan/create"
-      );
-      let chan = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan/" + name.value
-      );
-      name.value = "";
-      topic.value = "";
-      password.value = "";
-      radioPub.checked = false;
-      radioPri.checked = false;
-      radioPro.checked = false;
-      this.hidden();
-      socket.emit("chanCreated");
-      window.location.replace("http://localhost:8080/tchat#" + chan.id);
-      window.location.reload();
-    } else {
-      alert("You have to fill each informations");
-    }
+    this.props.parentCallBack.createChannel()
+    this.hidden()
   };
 
   displayUser = (id: number, user: UserType) => {

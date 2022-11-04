@@ -91,10 +91,11 @@ export const WebSocket = () => {
 	useEffect(() => {
     let checkUrl = setInterval(() => {
       let url = document.URL
-      if (!document.URL.includes("localhost:8080/profil"))
+      if (!document.URL.includes("localhost:8080/tchat"))
         clearInterval(checkUrl);
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== location) {
+        location = url
         joinUrl()
       }
     }, 10)
@@ -128,8 +129,8 @@ export const WebSocket = () => {
       radioCheck = "private";
     else if (radioPro.checked === true)
       radioCheck = "protected";
-  let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-  chans = chans.find((c:ChanType) => c.name === name.value)
+    let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+    chans = chans.find((c:ChanType) => c.name === name.value)
     if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
       if (password.value)
         pswd = password.value;
@@ -156,11 +157,8 @@ export const WebSocket = () => {
       radioPri.checked = false;
       radioPro.checked = false;
       socket.emit('chanCreated');
-    window.location.replace('http://localhost:8080/tchat#' + chan.id)
-    window.location.reload();
-    }
-    else {
-      alert("You have to fill each informations");
+    window.location.replace('http://localhost:8080/tchat/' + chan.id)
+    // window.location.reload();
     }
   };
 
@@ -242,11 +240,12 @@ export const WebSocket = () => {
         if (newRoom.messages) setMessage(newRoom.messages);
         else setMessage([]);
       } else {
-        if (
-          askForJoin === false ||
-          (askForJoin === true &&
-            window.confirm("You will join this channel: " + newRoom.name))
-        ) {
+        // if (
+        //   askForJoin === false ||
+        //   (askForJoin === true &&
+        //     window.confirm("You will join this channel: " + newRoom.name))
+        // )
+        {
           socket.emit("joinRoom", newRoom.id, auth_id);
           setRoom(chanToJoin.id);
           changeActiveRoom(chanToJoin.id);
