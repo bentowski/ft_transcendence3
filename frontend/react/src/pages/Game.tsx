@@ -3,11 +3,13 @@ import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSock
 import Request from "../components/utils/Requests"
 // import Menu from '../components/Menu'
 import '../styles/pages/game.css'
+import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
+  socket.off('userJoinChannel')
 	// window.location.href = "http://localhost:8080/profil"
 }
 
@@ -147,7 +149,10 @@ let init = (ctx: any, globale: any, settings: any) => {
   ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
   ctx.fill()
 
-  moveBall(ctx, globale, settings)
+  //moveBall(ctx, globale, settings)
+
+  // let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+	// modal.classList.remove('hidden');
 
   let infosClavier = (e: KeyboardEvent) => {
     let number = Number(e.keyCode);
@@ -177,6 +182,7 @@ let init = (ctx: any, globale: any, settings: any) => {
 
   document.addEventListener("keydown", infosClavier);
   document.addEventListener("keyup", infosClavier2);
+  joinUrl(ctx, globale)
 	socket.on('player2', (infos) => {
     if (infos.room !== settings.room)
       return ;
@@ -223,12 +229,14 @@ let settings = {
   spec: true,
   admin: false,
   room: '',
+  gameStarted: false,
+  timer: 5,
 }
 
 let setSettings = () => {
+  //===============interaction=================
   const globale = document.getElementById('globale') as HTMLCanvasElement
   const ctx: any = globale.getContext('2d')
-//===============interaction=================
 
 	let currentUser:any = sessionStorage.getItem('data');
 	currentUser = JSON.parse(currentUser);
@@ -261,11 +269,70 @@ let setSettings = () => {
     spec: true,
     admin: settings.admin,
     room: url,
+    gameStarted: settings.gameStarted,
+    timer: settings.timer,
   }
 	// if (url === currentUser.user.username)
 	// 	settings.admin = true
 
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
+}
+
+let startGame = (ctx: any, globale: any) => {
+  if (settings.gameStarted === false) {
+    settings.gameStarted = true;
+    let countdown = setInterval(() => {
+      console.log('Game start in ' + settings.timer + '...');
+      settings.timer--;
+      if (settings.timer === -1) {
+        let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+        modal.classList.add("hidden")
+        moveBall(ctx, globale, settings)
+        clearInterval(countdown);
+      }
+    }, 1000);
+  }
+}
+
+let joinRoom = (game: any, ctx: any, globale: any) => {
+  let currentUser:any = sessionStorage.getItem('data');
+  currentUser = JSON.parse(currentUser);
+  // console.log("join room ", game);
+  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
+  if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
+    settings.admin = true;
+    // console.log('IM THE ADMIN')
+  }
+  if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
+    settings.spec = false
+  socket.on('userJoinChannel', (game:any) => {
+    // let modal:any;
+    // console.log("lets go")
+    console.log(game)
+    if (game.id === settings.room) {
+      if (game.p1 !== null && game.p2 !== null) {
+        startGame(ctx, globale);
+      }
+    }
+  })
+}
+
+let joinUrl = async (ctx: any, globale: any) => {
+  const games = await Request('GET', {}, {}, "http://localhost:3000/parties")
+  let url = document.URL
+  let index = url.lastIndexOf("/")
+  if (index === -1) {
+    window.location.href = "http://localhost:8080/profil"
+  }
+  else {
+    url = url.substring(index + 1)
+    let game: any = games.find((c:any) => c.id === url)
+    if (game === undefined) {
+      window.location.href = "http://localhost:8080/profil"
+    }
+    else
+      joinRoom(game, ctx, globale)
+  }
 }
 
 
@@ -279,6 +346,9 @@ class Game extends Component<{},{ w:number, h: number}> {
     }
   }
 
+  componentWillUnmount = () => {
+    gameOver();
+  }
 
 //============ Settings game ===============
   componentDidMount = () => {
@@ -296,47 +366,16 @@ class Game extends Component<{},{ w:number, h: number}> {
     setSettings()
   }
 
-	joinRoom = (game: any) => {
-		let currentUser:any = sessionStorage.getItem('data');
-		currentUser = JSON.parse(currentUser);
-    // console.log("join room ", game);
-		socket.emit('joinRoom', game.id, currentUser.user.auth_id)
-    if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
-      settings.admin = true;
-      // console.log('IM THE ADMIN')
-    }
-    if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
-      settings.spec = false
-		socket.on('joinedRoom', (ret:any) => {
-    })
-	}
-
-	joinUrl = async () => {
-		const games = await Request('GET', {}, {}, "http://localhost:3000/parties")
-		let url = document.URL
-		let index = url.lastIndexOf("/")
-		if (index === -1) {
-      window.location.href = "http://localhost:8080/profil"
-    }
-		else {
-      url = url.substring(index + 1)
-			let game: any = games.find((c:any) => c.id === url)
-			if (game === undefined) {
-				window.location.href = "http://localhost:8080/profil"
-      }
-			else
-				this.joinRoom(game)
-		}
-	}
+ 
 
   render() {
 		//document.addEventListener('hashchange', (event) => {this.joinUrl()})
-    this.joinUrl()
     window.onresize = () => {window.location.reload()}
     return (
       <div>
         <div className="canvas" id="canvas">
           <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
+          <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
     );
