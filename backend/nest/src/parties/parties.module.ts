@@ -10,9 +10,10 @@ import { UserModule } from '../user/user.module';
   imports: [
     TypeOrmModule.forFeature([PartiesEntity, HistoryEntity]),
     UserModule,
+    PartiesModule,
   ],
   controllers: [PartiesController],
   providers: [PartiesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, PartiesService],
 })
 export class PartiesModule {}
