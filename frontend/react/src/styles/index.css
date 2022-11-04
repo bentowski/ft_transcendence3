@@ -167,6 +167,11 @@ img {
 	padding: 10px;
 }
 
+.messError {
+	color: orangered;
+	font-size: small;
+}
+
 .Ratio {
 	color: #3b3c3a;
 	background-color: gray;

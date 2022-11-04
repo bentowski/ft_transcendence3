@@ -13,24 +13,70 @@ const ModalChangeUsername = ({
   const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [field, setField] = useState("");
+  const [err, setErr] = useState("");
 
-  const requestChangeUsername = () => {
-    //const login = document.getElementById("changeLogin") as HTMLInputElement;
-    fetch("http://localhost:3000/user/update/username", {
-      method: "PATCH",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: field }),
-    }).then((res) => {
-      if (res.ok) {
-        setField("");
-        handleClose();
-      } else {
-        console.log("wrong request");
-      }
-    });
+  const getUsers = async () => {
+    let users = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/"
+    );
+    return users;
+  }
+
+  const verifField = async () => {
+    let users = await getUsers();
+    var regex = /^[\w-]+$/
+    var minmax = /^.{3,12}$/
+    
+    if (!regex.test(field)) {
+      setErr("Non valid character")
+      setTimeout(() => {
+        setErr("")
+      }, 1800)
+      return false;
+    }
+    else if (!minmax.test(field)) {
+      setErr("Username must contains between 3 and 12 characters")
+      setTimeout(() => {
+        setErr("")
+      }, 1800)
+      return false;
+    }
+    else if (users.findIndex((u: any) => u.username === field) > -1) {
+      setErr("This username already exists")
+      setTimeout(() => {
+        setErr("")
+      }, 1800)
+      return false;
+    }
+    //user deja pris
+
+    return true;
+  };
+
+  const requestChangeUsername = async () => {
+    // verifField();
+    // var regex = /^[\w-]+$/
+    if (await verifField()) {
+      const login = document.getElementById("changeLogin") as HTMLInputElement;
+      fetch("http://localhost:3000/user/update/username", {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: field }),
+      }).then((res) => {
+        if (res.ok) {
+          setField("");
+          handleClose();
+        } else {
+          console.log("wrong request");
+        }
+      });
+    }
   };
 
   const handleChange = (evt: any) => {
@@ -46,6 +92,11 @@ const ModalChangeUsername = ({
   const handleClose = () => parentCallBack(false);
   //const handleShow = () => changeShowing(true);
 
+  // let form = document.querySelector("#usernameForm")
+
+  // console.log(form.username)
+  // form.username;
+
   return (
     <div className="changeusername">
       <Modal show={show} id="" onHide={handleClose}>
@@ -54,7 +105,7 @@ const ModalChangeUsername = ({
             <h2>Change Username</h2>
           </Modal.Header>
           <Modal.Body>
-            <Form className="mb-3">
+            <Form className="mb-3" id="usernameForm">
               <input
                 type="text"
                 placeholder="new username"
@@ -64,6 +115,7 @@ const ModalChangeUsername = ({
                 onChange={handleChange}
                 value={field}
               />
+              <div className="messError">{err}</div>
             </Form>
           </Modal.Body>
           <Modal.Footer>
