@@ -2,12 +2,32 @@ import { Component } from 'react';
 // import Menu from '../components/Menu'
 import '../styles/pages/game.css'
 
+type Settings = {
+    w: number,
+    h: number,
+    nbPlayer: number,
+    playerHighStart: number,
+    playerSize: number,
+    player1: [number, number],
+    player2: [number, number],
+    playerSpeed: number,
+    sizeBall: number,
+    ballPos: [number, number],
+    vector: [number, number],
+    speed: number,
+    middle: number,
+    end: number,
+    move: number,
+    up: boolean,
+    down: boolean
+  }
+
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
   // window.location.href = "http://localhost:8080/profil"
 }
 
-let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, settings: any) => {
+let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, settings: Settings) => {
   if (currentPlayer == 1)
   {
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
@@ -32,7 +52,7 @@ let movePlayer = (ctx: any, move: number, globale: any, currentPlayer: number, s
   }
 }
 
-let print = (ctx: any, newPos: number, settings: any) => {
+let print = (ctx: any, newPos: number, settings: Settings) => {
   let y = 0;
   while (y < settings.h) {
     ctx.fillStyle = "white"
@@ -51,7 +71,7 @@ let print = (ctx: any, newPos: number, settings: any) => {
   ctx.closePath();
 }
 
-let moveBall = (ctx: any, globale: any, settings: any) => {
+let moveBall = (ctx: any, globale: any, settings: Settings) => {
   ctx.clearRect(0, 0, globale.width, globale.height)
   let newPos: number = settings.ballPos[1]
   if (settings.ballPos[1] + settings.sizeBall > globale.height) {
@@ -65,9 +85,9 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
     settings.ballPos = [settings.ballPos[0], newPos]
   }
   // =========== Players moves ==========
-  if (settings.up == 1)
+  if (settings.up == true)
     movePlayer(ctx, -1, globale, 1, settings)
-  if (settings.down == 1)
+  if (settings.down == true)
     movePlayer(ctx, 1, globale, 1, settings)
   if (settings.player2[1] + (settings.sizeBall * 2) > settings.ballPos[1])
     movePlayer(ctx, -1, globale, 2, settings)
@@ -121,7 +141,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   }
 }
 
-let init = (ctx: any, globale: any, settings: any) => {
+let init = (ctx: any, globale: any, settings: Settings) => {
   //======ligne centrale=========
   let y = 0;
   while (y < settings.h) {
@@ -143,26 +163,26 @@ let init = (ctx: any, globale: any, settings: any) => {
   moveBall(ctx, globale, settings)
 
   let infosClavier = (e: KeyboardEvent) => {
-    let number = Number(e.keyCode);
+    let number = Number(e.key);
       switch (number) {
         case 38:
-          settings.up = 1;
+          settings.up = true;
           break;
         case 40:
-          settings.down = 1;
+          settings.down = true;
           break;
         default:
     }
   }
 
   let infosClavier2 = (e: KeyboardEvent) => {
-    let number = Number(e.keyCode);
+    let number = Number(e.key);
       switch (number) {
         case 38:
-          settings.up = 0;
+          settings.up = false;
           break;
         case 40:
-          settings.down = 0;
+          settings.down = false;
           break;
         default:
     }
@@ -184,7 +204,7 @@ let settings = () => {
     winWidth = ((winHeight * 26) / 19)
   else
     winHeight = ((winWidth * 19) / 26)
-  let settings = {
+  let settings: Settings = {
     w: winWidth,
     h: winHeight,
     nbPlayer: 1,
@@ -199,7 +219,9 @@ let settings = () => {
     speed: 4,
     middle: winWidth / 2,
     end: 0,
-    move: 0
+    move: 0,
+    up: false,
+    down: false
   }
 
   setTimeout(() => {init(ctx, globale, settings)}, 1000)

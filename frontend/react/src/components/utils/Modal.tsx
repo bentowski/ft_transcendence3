@@ -3,37 +3,27 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/modal.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
+import { ChanType, UserType } from "../../types"
 
 const socket = io("http://localhost:3000/chat");
-
-type chanType = {
-  id: string;
-  type: string;
-  name: string;
-  admin: string[];
-  topic: string;
-  password: string;
-  messages: any[];
-  chanUser: any[];
-};
 
 class Modal extends Component<
   {
     title: string;
     calledBy: string;
-    userChan?: any[];
+    userChan?: Array<UserType>;
     parentCallBack?: any;
-    chans?: any;
+    chans: Array<ChanType>;
   },
-  { user: any; friends: any[]; input: string; allChans: Array<chanType> }
+  { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType> }
 > {
   static context = AuthContext;
   constructor(props: any) {
     super(props);
     this.state = {
       user: {
-        auth_id: 0,
         user_id: 0,
+        auth_id: 0,
         avatar: "",
         username: "",
       },
@@ -61,14 +51,14 @@ class Modal extends Component<
       newUser = JSON.parse(newUser);
       this.setState({ user: newUser.user });
     }
-    let friends: any = await Request(
+    let friends: Array<UserType> = await Request(
       "GET",
       {},
       {},
       "http://localhost:3000/user/"
     );
     if (!friends) return;
-    let allChans: Array<chanType> = await Request(
+    let allChans: Array<ChanType> = await Request(
       "GET",
       {},
       {},
@@ -93,7 +83,7 @@ class Modal extends Component<
     else if (radioPri.checked === true) radioCheck = "private";
     else if (radioPro.checked === true) radioCheck = "protected";
     let chans = await Request("GET", {}, {}, "http://localhost:3000/chan/");
-    chans = chans.find((c: any) => c.name === name.value);
+    chans = chans.find((c: ChanType) => c.name === name.value);
     if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
       if (password.value) pswd = password.value;
       await Request(
@@ -132,7 +122,7 @@ class Modal extends Component<
     }
   };
 
-  displayUser = (id: number, user: any) => {
+  displayUser = (id: number, user: UserType) => {
     return (
       <div
         key={id}
@@ -152,7 +142,7 @@ class Modal extends Component<
         </div>
         <div className="col-2 d-flex flex-row d-flex justify-content-center">
           <input
-            className={user.isOnline ? "online" : "offline"}
+            className={user.status ? "online" : "offline"}
             type="radio"
           ></input>
         </div>
@@ -176,13 +166,13 @@ class Modal extends Component<
     let isUsers: boolean = false;
     let x: number = 0;
     if (this.state.friends.length > 0) {
-      let chanUser: any[] | undefined = this.props.userChan;
+      let chanUser: Array<UserType> | undefined = this.props.userChan;
       while (
         chanUser?.length &&
         chanUser?.length > 0 &&
         x < this.state.friends.length
       ) {
-        let friend: any = this.state.friends[x];
+        let friend: UserType = this.state.friends[x];
         if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
           if (
@@ -376,7 +366,7 @@ class Modal extends Component<
               <p>
                 <input
                   type="radio"
-                  name="chanType"
+                  name="ChanType"
                   value="public"
                   id="public"
                 />
@@ -384,7 +374,7 @@ class Modal extends Component<
                 <br />
                 <input
                   type="radio"
-                  name="chanType"
+                  name="ChanType"
                   value="private"
                   id="private"
                 />
@@ -392,7 +382,7 @@ class Modal extends Component<
                 <br />
                 <input
                   type="radio"
-                  name="chanType"
+                  name="ChanType"
                   value="protected"
                   id="protected"
                 />
