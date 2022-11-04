@@ -1,10 +1,11 @@
 import { Component } from "react";
 import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
+import { UserType } from "../types"
 
 class History extends Component<
   {},
-  { users: Array<any>; histories: Array<any> }
+  { users: Array<UserType>; histories: Array<any> }
 > {
   constructor(props: any) {
     super(props);
@@ -14,13 +15,13 @@ class History extends Component<
     };
   }
 
-  componentDidMount: any = async () => {
+  componentDidMount = async () => {
     let users = await Request("GET", {}, {}, "http://localhost:3000/user");
     if (!users) return;
-    users.sort(function (a: any, b: any) {
+    users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
-    users.sort(function (a: any, b: any) {
+    users.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
     this.setState({ users: users });

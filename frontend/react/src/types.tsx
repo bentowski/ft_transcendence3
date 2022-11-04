@@ -20,10 +20,9 @@ export type ChanType = {
 };
 
 export type UserType = {
-  user_id: number,
+  user_id: string,
   auth_id: string,
   username: string,
-  email: string,
   avatar: string,
   game_won: number,
   game_lost: number,
@@ -32,5 +31,5 @@ export type UserType = {
   status: number,
   twoFASecret: string,
   isTwoFA: number,
-  createdAt: number
+  channelJoind: Array<ChanType>
 }

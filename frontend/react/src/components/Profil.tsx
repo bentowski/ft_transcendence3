@@ -1,10 +1,11 @@
-import { Component, useState } from "react";
+import { Component } from "react";
 import { Link } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import GetAvatar from "./utils/GetAvatar";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
+import { MessagePayload, ChanType, UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 
 class Profil extends Component<
@@ -55,6 +56,7 @@ class Profil extends Component<
           "http://localhost:3000/user/name/" + username
         );
     };
+    console.log(newUser)
     this.setState({ user: newUser });
   };
 
@@ -70,12 +72,12 @@ class Profil extends Component<
   };
 
   getRank = async () => {
-    let users = await Request("GET", {}, {}, "http://localhost:3000/user");
+    let users: any = await Request("GET", {}, {}, "http://localhost:3000/user");
     if (!users) return;
-    users.sort(function (a: any, b: any) {
+    users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
-    users.sort(function (a: any, b: any) {
+    users.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
     let x = 0;
@@ -84,9 +86,7 @@ class Profil extends Component<
   };
 
   componentDidMount = () => {
-    //let newUser: any = sessionStorage.getItem("data");
     const cxt: any = this.context;
-    //newUser: any = JSON.parse(cxt.user);
     this.setState({ user: JSON.stringify(cxt.user) });
     let test = setInterval(() => {
       let url = document.URL;
@@ -105,9 +105,8 @@ class Profil extends Component<
   };
 
   printHeader = () => {
-    //let currentUser: any = sessionStorage.getItem("data");
     const ctx: any = this.context;
-    const user: any = ctx.user;
+    const user: UserType = ctx.user;
     if (this.state.user.auth_id === user.auth_id) {
       return (
         <div className="ProfilHeader">

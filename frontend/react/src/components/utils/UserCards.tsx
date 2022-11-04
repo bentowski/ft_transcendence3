@@ -4,13 +4,14 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
-import IUser from "../../interfaces/user-interface";
-import IAuthContextType from "../../interfaces/authcontexttype-interface";
+// import IUser from "../../interfaces/user-interface";
+// import IAuthContextType from "../../interfaces/authcontexttype-interface";
+import { UserType } from "../../types"
 
 const socket = io("http://localhost:3000/chat");
 
 class UserCards extends Component<
-  { user: any; avatar: boolean; stat: boolean },
+  { user: UserType; avatar: boolean; stat: boolean },
   {
     login: string;
     id: number;
@@ -26,7 +27,7 @@ class UserCards extends Component<
     this.state = {
       login: "test",
       id: props.user.auth_id,
-      online: this.props.user.online ? "online" : "offline",
+      online: this.props.user.status ? "online" : "offline",
       ssname: "",
       ssid: "",
       chanId: "",
@@ -197,7 +198,7 @@ class UserCards extends Component<
     );
   };
 
-  componentDidMount: any = async () => {
+  componentDidMount = async () => {
     let user = await Request(
       "GET",
       {},
@@ -209,8 +210,6 @@ class UserCards extends Component<
       if (user.status == 1) status = "online";
       this.setState({ login: user.username, online: status });
     }
-    //let newUser: any = sessionStorage.getItem("data");
-    //newUser = JSON.parse(newUser);
     this.setState({ ssid: this.getCurrentUser().auth_id });
     this.setState({ ssname: this.getCurrentUser().username });
   };

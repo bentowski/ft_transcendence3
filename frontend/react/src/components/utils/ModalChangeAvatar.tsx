@@ -14,8 +14,6 @@ const ModalChangeAvatar = ({
   const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  //let newUser: any = sessionStorage.getItem("data");
-  //newUser = JSON.parse(newUser);
 
   const requestChangeAvatar = () => {
     const formData = new FormData();
