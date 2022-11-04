@@ -28,7 +28,7 @@ const ModalChangeUsername = ({
   const verifField = async () => {
     let users = await getUsers();
     var regex = /^[\w-]+$/
-    var minmax = /^.{3,12}$/
+    var minmax = /^.{3,10}$/
     
     if (!regex.test(field)) {
       setErr("Non valid character")
@@ -38,7 +38,7 @@ const ModalChangeUsername = ({
       return false;
     }
     else if (!minmax.test(field)) {
-      setErr("Username must contains between 3 and 12 characters")
+      setErr("Username must contains between 3 and 10 characters")
       setTimeout(() => {
         setErr("")
       }, 1800)

@@ -15,7 +15,7 @@ class Modal extends Component<
     parentCallBack?: any;
     chans: Array<ChanType>;
   },
-  { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType> }
+  { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType>; fieldName: string; errName: string }
 > {
   static context = AuthContext;
   constructor(props: any) {
@@ -30,8 +30,15 @@ class Modal extends Component<
       friends: [],
       input: "",
       allChans: [],
+      fieldName: "",
+      errName: "",
     };
   }
+
+  handleName = (evt: any) => {
+    evt.preventDefault();
+    this.setState({ fieldName: evt.target.value });
+  };
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -68,9 +75,37 @@ class Modal extends Component<
     this.setState({ friends: friends, allChans: allChans });
   };
 
+  verifName = () => {
+    // let chans = getChans();
+    var regex = /^[\w-]+$/
+    var max = /^.{1,10}$/
+    if (!regex.test(this.state.fieldName)) {
+      this.setState({ errName: "Non valid character" })
+      return false;
+    }
+    else if (!max.test(this.state.fieldName)) {
+      this.setState({ errName: "Too long (10 max)" })
+      return false;
+    }
+    else if (this.state.allChans.findIndex((u: any) => u.name === this.state.fieldName) > -1) {
+      this.setState({ errName: "This name already exists" })
+      return false;
+    }
+    return true;
+  }
+
+  verifField = () => {
+    if (!this.verifName())
+      return false;
+    return true;
+  }
+
   createChan = async () => {
-    this.props.parentCallBack.createChannel()
-    this.hidden()
+    // if (this.state.fieldName === "") {
+    if (this.verifField()) {
+      this.props.parentCallBack.createChannel()
+      this.hidden()
+    }
   };
 
   displayUser = (id: number, user: UserType) => {
@@ -339,8 +374,9 @@ class Modal extends Component<
                 />
                 Protected
                 <br />
-                <input type="text" id="chanName" placeholder="name"></input>
+                <input type="text" id="chanName" placeholder="name" onChange={this.handleName}></input>
                 <br />
+                <div className="messError">{this.state.errName}</div>
                 <input type="text" id="chanTopic" placeholder="topic"></input>
                 <br />
                 <input
