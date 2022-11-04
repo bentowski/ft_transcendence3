@@ -70,7 +70,6 @@ const ContextLoader = () => {
 }; //
 
 class App extends Component {
-  /*
   getCurrentUser = async () => {
     let user = await Request(
       "GET",
@@ -94,7 +93,6 @@ class App extends Component {
   componentDidMount = async () => {
     await this.getCurrentUser();
   };
-  */
 
   render() {
     return <ContextLoader />; // fin de return
