@@ -15,7 +15,8 @@ class Modal extends Component<
     parentCallBack?: any;
     chans: Array<ChanType>;
   },
-  { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType>; fieldName: string; errName: string }
+  { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType>; fieldName: string; errName: string;
+  fieldPass: string;  errPass: string }
 > {
   static context = AuthContext;
   constructor(props: any) {
@@ -32,12 +33,19 @@ class Modal extends Component<
       allChans: [],
       fieldName: "",
       errName: "",
+      fieldPass: "",
+      errPass: "",
     };
   }
 
   handleName = (evt: any) => {
     evt.preventDefault();
     this.setState({ fieldName: evt.target.value });
+  };
+
+  handlePass = (evt: any) => {
+    evt.preventDefault();
+    this.setState({ fieldPass: evt.target.value });
   };
 
   hidden = () => {
@@ -94,8 +102,22 @@ class Modal extends Component<
     return true;
   }
 
+  verifPass = () => {
+    var regex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+    // var regex = /^[\w-]+$/
+    // var max = /^.{1,10}$/
+    if (!regex.test(this.state.fieldPass)) {
+      this.setState({ errPass: "alphanum 6 min" })
+      return false;
+    }
+    return true;
+  }
+
   verifField = () => {
-    if (!this.verifName())
+    let r1 = this.verifName();
+    let r2 = this.verifPass();
+  
+    if (!r1 || !r2)
       return false;
     return true;
   }
@@ -380,11 +402,13 @@ class Modal extends Component<
                 <input type="text" id="chanTopic" placeholder="topic"></input>
                 <br />
                 <input
-                  type="text"
+                  type="password"
                   id="chanPassword"
                   placeholder="password"
+                  onChange={this.handlePass}
                 ></input>
                 <br />
+                <div className="messError">{this.state.errPass}</div>
               </p>
             </form>
             <footer>
