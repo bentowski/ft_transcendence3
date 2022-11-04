@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 
 class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
@@ -6,6 +7,26 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
   hidden = () => {
     let modal = document.getElementById("ModalMatch") as HTMLDivElement;
     modal.classList.add('hidden')
+  }
+
+  createParties = async () => {
+    let currentUser: any = sessionStorage.getItem("data");
+    currentUser = JSON.parse(currentUser);
+    // console.log(currentUser.user.username)
+    await Request(
+      "POST",
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      {
+        login: currentUser.user.username,
+        public: true
+      },
+      "http://localhost:3000/parties/create"
+    );
+    this.hidden()
+    window.location.href = "http://localhost:8080/game/#" + currentUser.user.username
   }
 
   render() {
@@ -23,7 +44,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           </form>
           <footer>
             <button className='mx-1' onClick={this.hidden}>Cancel</button>
-            <button className='mx-1'>Create</button>
+            <button className='mx-1' onClick={this.createParties}>Create</button>
           </footer>
         </div>
       </div>
