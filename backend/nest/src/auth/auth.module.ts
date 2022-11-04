@@ -22,7 +22,7 @@ import { PassportModule } from '@nestjs/passport';
       property: 'user',
     }),
     JwtModule.register({
-      secret: `${process.env.SECRET_KEY}`,
+      secret: `${process.env.JWT_SECRET_KEY}`,
       signOptions: {
         expiresIn: `${process.env.JWT_EXPIRATION}`,
       },

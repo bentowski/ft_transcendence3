@@ -16,6 +16,8 @@ import {
   UpdateFriendsDto,
 } from './dto/update-user.dto';
 import { UpdateUsernameDto } from './dto/update-user.dto';
+import {of} from "rxjs";
+import {join} from "path";
 
 @Injectable()
 export class UserService {
@@ -25,46 +27,44 @@ export class UserService {
   ) {}
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
-    //const { username } = user42;
-    let user: UserEntity = undefined;
-    //console.log('user42 = ', user42);
-    user = await this.findOneByAuthId(user42.auth_id);
+    let user = await this.findOneByAuthId(user42.auth_id);
     if (!user) {
-      //console.log('checking if username exists');
       let x = 0;
       while (await this.findOnebyUsername(user42.username)) {
         user42.username = user42.username + x.toString();
-        //console.log('x = ', x);
         x++;
       }
-      user = await this.createUser42(user42);
+      try {
+        user = await this.createUser42(user42);
+        return user;
+      } catch (error) {
+        throw new Error(error);
+      }
     }
     return user;
   }
 
   async currentUser(auth_id: string): Promise<UserEntity> {
-    //let foundUser: UserEntity = undefined;
     const foundUser: UserEntity = await this.findOneByAuthId(auth_id);
-    if (!foundUser) throw new NotFoundException('cant find user');
+    if (!foundUser) {
+      throw new NotFoundException('cant find user');
+    }
     return foundUser;
   }
 
   async createUser42(user42: User42Dto): Promise<UserEntity> {
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
-    return this.userRepository.save(user);
+    try {
+      return this.userRepository.save(user);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { auth_id, username, email } = createUserDto;
-    let user: UserEntity = undefined;
-    /*
-    user = await this.findOnebyUsername(username);
-    if (user) {
-      return;
-    }
-    */
-    user = this.userRepository.create(createUserDto);
+    const user: UserEntity = this.userRepository.create(createUserDto);
     user.auth_id = auth_id;
     user.username = username;
     user.email = email;
@@ -78,14 +78,12 @@ export class UserService {
   }
 
   async findAll(): Promise<UserEntity[]> {
-    let users: UserEntity[] = undefined;
-    users = await this.userRepository.find();
+    const users: UserEntity[] = await this.userRepository.find();
     return users;
   }
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
-    let findUsername: UserEntity = undefined;
-    findUsername = await this.userRepository.findOne({
+    const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
       relations: { friends: true, channelJoined: true },
     });
@@ -129,42 +127,40 @@ export class UserService {
     authId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    let user: UserEntity = undefined;
-    user = await this.findOneByAuthId(authId);
+    const user: UserEntity = await this.findOneByAuthId(authId);
+    if (!user) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-    //console.log(user);
-    //console.log('isTwoFA = ', isTwoFA);
-    //console.log('before editing = ' + user.isTwoFA);
     if (username) user.username = username;
     if (avatar) user.avatar = avatar;
     if (twoFASecret) user.twoFASecret = twoFASecret;
     if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
-    //console.log('after edit = ' + user.isTwoFA);
-    //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);
+      return user;
     } catch (err) {
       throw new InternalServerErrorException('error while modifying user');
     }
-    return user;
   }
 
   async updateFriends(
     authId: string,
     updateFriendsDto: UpdateFriendsDto,
   ): Promise<UserEntity> {
-    let user: UserEntity = undefined;
-    user = await this.findOneByAuthId(authId);
+    const user: UserEntity = await this.findOneByAuthId(authId);
+    if (!user) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
     const { username, friends } = updateFriendsDto;
     if (username) user.username = username;
     if (friends) user.friends = friends;
-    //check if username is unique, ne pas renvoyer d'exceptions dans ce cas //
     try {
       await this.userRepository.save(user);
+      return user;
     } catch (err) {
       throw new InternalServerErrorException('error while modifying user');
     }
-    return user;
   }
 
   async remove(id: string): Promise<void> {
@@ -172,19 +168,18 @@ export class UserService {
   }
 
   async findOneByAuthId(auth_id: string): Promise<UserEntity> {
-    let findAuthId: UserEntity = undefined;
-    findAuthId = await this.userRepository.findOneBy({ auth_id });
+    const findAuthId: UserEntity = await this.userRepository.findOneBy({
+      auth_id,
+    });
     return findAuthId;
   }
 
   async findOnebyID(user_id?: string): Promise<UserEntity> {
-    let findId: UserEntity = undefined;
-    findId = await this.userRepository.findOneBy({ user_id });
+    const findId: UserEntity = await this.userRepository.findOneBy({ user_id });
     return findId;
   }
 
   async setTwoFASecret(secret: string, user: UserEntity) {
-    //console.log('setting twofasecret = ' + secret);
     return this.updateUser(user.auth_id, {
       username: user.username,
       avatar: user.avatar,
@@ -194,7 +189,6 @@ export class UserService {
   }
 
   async turnOnTwoFA(auth_id: string, user: UserEntity) {
-    //console.log('turn on two fa user service');
     return this.updateUser(auth_id, {
       username: user.username,
       avatar: user.avatar,
@@ -204,18 +198,25 @@ export class UserService {
   }
 
   async turnOffTwoFA(auth_id: string, user: UserEntity) {
-    console.log('turn off two fa user service');
     return this.updateUser(auth_id, {
       username: user.username,
       avatar: user.avatar,
-      twoFASecret: user.twoFASecret,
+      twoFASecret: '',
       isTwoFA: 0,
     });
   }
 
+  async getAvatar(id: string) {
+    const user: UserEntity = await this.findOneByAuthId(id);
+    if (!user.avatar) {
+      user.avatar = 'default.jpg';
+    }
+    const imagename: any = user.avatar;
+    return imagename;
+  }
+
   async setStatus(auth_id: string, status: number) {
-    let user: UserEntity = undefined;
-    user = await this.findOneByAuthId(auth_id);
+    const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }

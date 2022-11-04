@@ -18,29 +18,38 @@ export class AuthService {
   ) {}
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
-    console.log('lets create/check your profile');
-    return this.userService.validateUser42(user42);
+    try {
+      return this.userService.validateUser42(user42);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   findUser(authId: string): Promise<UserEntity> {
-    return this.userService.findOneByAuthId(authId);
+    try {
+      return this.userService.findOneByAuthId(authId);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async generateTwoFASecret(auth_id: string) {
-    //console.log('calling generate 2fa');
-    const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
-    const secret = authenticator.generateSecret();
-    const otpauthUrl = authenticator.keyuri(
-      user.auth_id,
-      process.env.TWO_FA_APP_NAME,
-      secret,
-    );
-    await this.userService.setTwoFASecret(secret, user);
-    //console.log('secret = ' + secret + ' , optauthurl = ' + otpauthUrl);
-    return {
-      secret,
-      otpauthUrl,
-    };
+    try {
+      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      const secret = authenticator.generateSecret();
+      const otpauthUrl = authenticator.keyuri(
+        user.auth_id,
+        process.env.TWO_FA_APP_NAME,
+        secret,
+      );
+      await this.userService.setTwoFASecret(secret, user);
+      return {
+        secret,
+        otpauthUrl,
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
@@ -48,27 +57,33 @@ export class AuthService {
   }
 
   async isTwoFAValid(twoFACode: string, auth_id: string) {
-    const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
-    console.log('twofa secret = ', user.twoFASecret);
-    console.log('twofa username = ', user.username);
-    return authenticator.verify({
-      token: twoFACode,
-      secret: user.twoFASecret,
-    });
+    try {
+      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      return authenticator.verify({
+        token: twoFACode,
+        secret: user.twoFASecret,
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async turnOnTwoFAAuth(auth_id: string) {
-    let user: UserEntity = undefined;
-    user = await this.userService.findOneByAuthId(auth_id);
-    console.log('found user twofa');
-    return await this.userService.turnOnTwoFA(auth_id, user);
+    try {
+      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      return await this.userService.turnOnTwoFA(auth_id, user);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async turnOffTwoFAAuth(auth_id: string) {
-    console.log('turnofftwofaauth service');
-    let user: UserEntity = undefined;
-    user = await this.userService.findOneByAuthId(auth_id);
-    await this.userService.turnOffTwoFA(auth_id, user);
+    try {
+      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      await this.userService.turnOffTwoFA(auth_id, user);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async changeStatusUser(auth_id: string, status: number) {

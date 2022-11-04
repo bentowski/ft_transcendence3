@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               .then((resp: any) => resp.json())
               .then((user: any) => {
                 //console.log("user = ", user);
-                if (user.statusCode === 404) {
+                if (user.statusCode === 404 || user.statusCode === 401) {
                   setLoading(false);
                   return;
                 }

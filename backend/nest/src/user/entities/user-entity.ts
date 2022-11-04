@@ -17,7 +17,10 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Column({ nullable: false, unique: true })
+  @Column({
+    nullable: false,
+    unique: true
+  })
   auth_id: string;
 
   @Column({
@@ -41,26 +44,31 @@ export class UserEntity {
   parties: HistoryEntity[];
 
   @Column({
+    type: 'int',
     default: 0,
   })
   game_won: number;
 
   @Column({
     default: 0,
+    type: 'int',
   })
   game_lost: number;
 
   @Column({
+    type: 'int',
     default: 0,
   })
   total_games: number;
 
   @Column({
+    type: 'int',
     default: 0,
   })
   total_score: number;
 
   @Column({
+    type: 'int',
     default: 0,
   })
   status: number;

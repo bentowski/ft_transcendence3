@@ -12,5 +12,15 @@ export class PartiesEntity {
     nullable: false,
   })
   public login: string;
+
+  @Column({
+    nullable: true,
+  })
+  public p1: string;
+
+  @Column({
+    nullable: true,
+  })
+  public p2: string;
 }
 export default PartiesEntity;
