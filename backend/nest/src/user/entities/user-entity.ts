@@ -92,8 +92,7 @@ export class UserEntity {
   @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
   channelJoined: ChanEntity[]
 
-
-  @OneToMany(() => ChanEntity, (chan) => chan.chanUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.banUser)
   channelBanned: ChanEntity[]
 
   constructor(partial: Partial<UserEntity>) {

@@ -21,7 +21,9 @@ export class ChanController {
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
-        return this.chanService.createChan(createUserDto);
+        let ret = this.chanService.createChan(createUserDto);
+        console.log(ret)
+        return ret
     }
 
     @Delete(':id')

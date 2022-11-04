@@ -29,17 +29,8 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-        //const chan: Chan = new Chan();
-        let { name, type, password, admin, topic, chanUser } = createChanDto;
-        // console.log(password)
-        // let save = password
+        let { name, type, password, admin, topic} = createChanDto;
         password = await argon2.hash(password)
-        // let test = await argon2.verify(password, save)
-        // let test2 = await argon2.verify("$argon2id$v=19$m=4096,t=3,p=1$/2pEtE21mtUAE111ksKy5Q$RGed2Dsv9Pcoknp3LAgGnnt3VmUL6BYes7c+cPfIZU0", save)
-        // console.log(test)
-        // console.log(test2)
-        // console.log("$argon2id$v=19$m=4096,t=3,p=1$/2pEtE21mtUAE111ksKy5Q$RGed2Dsv9Pcoknp3LAgGnnt3VmUL6BYes7c+cPfIZU0")
-        // console.log(password)
 
         //checks if the chan exists in db
         const chanInDb = await this.chanRepository.findOne({
@@ -49,11 +40,9 @@ export class ChanService {
             throw new HttpException('Chan already exists', HttpStatus.BAD_REQUEST);
         }
 
-        const chan: ChanEntity = await this.chanRepository.create({
-            name, type, password, admin, topic, chanUser
+        const chan: ChanEntity = this.chanRepository.create({
+            name, type, password, admin, topic
         })
-        // chan.chanUser = undefined;
-		// chan.chanUser = [];
 
         await this.chanRepository.save(chan);
         return chan;
@@ -97,6 +86,7 @@ export class ChanService {
 		const chan = await this.chanRepository.findOneBy({ id: room });
 		if (!chan)
 			return ;
+    console.log(chan);
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
 		else
@@ -110,6 +100,7 @@ export class ChanService {
 		const chan = await this.chanRepository.findOneBy({ id: room });
 		if (!chan)
 			return ;
+    chan.chanUser.splice(chan.chanUser.indexOf(user), 1)
 		if (chan.banUser && chan.banUser.length)
 			chan.banUser = [...chan.banUser, user];
 		else
