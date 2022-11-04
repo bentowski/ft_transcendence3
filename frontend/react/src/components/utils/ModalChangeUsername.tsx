@@ -2,6 +2,7 @@ import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 
 const ModalChangeUsername = ({
   show,
@@ -13,6 +14,7 @@ const ModalChangeUsername = ({
   const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [field, setField] = useState("");
+  const navigate = useNavigate()
 
   const requestChangeUsername = () => {
     //const login = document.getElementById("changeLogin") as HTMLInputElement;
@@ -27,6 +29,7 @@ const ModalChangeUsername = ({
       if (res.ok) {
         setField("");
         handleClose();
+        navigate(field)
       } else {
         console.log("wrong request");
       }
