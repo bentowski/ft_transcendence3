@@ -27,15 +27,18 @@ export class UserService {
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
     //const { username } = user42;
     let user: UserEntity = undefined;
-    user = await this.findOnebyUsername(user42.username);
-    /*
-    if (user) {
-      user.username = username;
-    } else {
+    //console.log('user42 = ', user42);
+    user = await this.findOneByAuthId(user42.auth_id);
+    if (!user) {
+      //console.log('checking if username exists');
+      let x = 0;
+      while (await this.findOnebyUsername(user42.username)) {
+        user42.username = user42.username + x.toString();
+        //console.log('x = ', x);
+        x++;
+      }
       user = await this.createUser42(user42);
     }
-    */
-    if (!user) user = await this.createUser42(user42);
     return user;
   }
 
@@ -172,11 +175,6 @@ export class UserService {
     let findAuthId: UserEntity = undefined;
     findAuthId = await this.userRepository.findOneBy({ auth_id });
     return findAuthId;
-  }
-
-  async getAvatar(auth_id: string) {
-    //const user: UserEntity = await this.userRepository.findOneBy({ auth_id });
-    return /*user.avatar */;
   }
 
   async findOnebyID(user_id?: string): Promise<UserEntity> {

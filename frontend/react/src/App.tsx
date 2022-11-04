@@ -10,6 +10,7 @@ import { useAuthData } from "./contexts/AuthProviderContext";
 import Request from "./components/utils/Requests";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
+import PageNotFound from "./pages/PageNotFound";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
@@ -58,18 +59,18 @@ const ContextLoader = () => {
             <Route path="/history" element={<History />} />
             <Route path="/game" element={<Game />} />
             <Route path="/game/*" element={<Game />} />
-            <Route path="/*" element={<Profil />} />
           </Route>
         </Route>
       </Route>
 
       {/* catch all */}
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   ); //
 }; //
 
 class App extends Component {
-  /*
+
   getCurrentUser = async () => {
     let user = await Request(
       "GET",
@@ -93,7 +94,7 @@ class App extends Component {
   componentDidMount = async () => {
     await this.getCurrentUser();
   };
-  */
+
 
   render() {
     return <ContextLoader />; // fin de return
