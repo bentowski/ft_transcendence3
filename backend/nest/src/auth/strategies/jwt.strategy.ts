@@ -17,6 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         (request: Request) => {
           let access_token = undefined;
           access_token = request?.cookies['jwt'];
+          console.log('access toktok = ', access_token);
           return access_token;
         },
       ]),
@@ -26,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(payload: PayloadInterface): Promise<UserEntity> {
     const { auth_id } = payload;
     const user: UserEntity = await this.authService.findUser(auth_id);
-    //console.log(user);
+    console.log('user from strategy = ', user);
     if (!user) {
       throw new UnauthorizedException('Invalid Token');
     }

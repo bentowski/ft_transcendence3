@@ -25,6 +25,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
     };
     let newUser = undefined;
     newUser = await this.authService.validateUser(user);
+    console.log('welcome buddy');
     return newUser;
   }
 }

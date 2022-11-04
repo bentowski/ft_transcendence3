@@ -18,11 +18,8 @@ export class AuthService {
   ) {}
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
+    console.log('lets create/check your profile');
     return this.userService.validateUser42(user42);
-  }
-
-  getAvatar(authId: string) {
-    return this.userService.getAvatar(authId);
   }
 
   findUser(authId: string): Promise<UserEntity> {
