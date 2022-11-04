@@ -31,7 +31,7 @@ class History extends Component<
     let user: Array<any> = [];
     let y = 0;
     while (y < this.state.users.length) {
-      console.log("avatar est un bon film = ", this.state.users[y]);
+      // console.log("avatar est un bon film = ", this.state.users[y]);
       user.push(
         <div className="d-flex flex-row d-flex align-items-center">
           <div className="nb col-1 mr-2 d-flex flex-row justify-content-start">

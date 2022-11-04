@@ -8,15 +8,16 @@ export type MessagePayload = {
 };
 
 export type ChanType = {
-  id: string;
-  type: string;
-  name: string;
-  admin: string[];
-  topic: string;
-  password: string;
-  isActive: boolean;
-  messages: MessagePayload[];
-  chanUser: UserType[];
+  id: string,
+  type: string,
+  name: string,
+  owner: string,
+  admin: string[],
+  topic: string,
+  password: string,
+  isActive: boolean,
+  messages: MessagePayload[],
+  chanUser: UserType[],
 };
 
 export type UserType = {

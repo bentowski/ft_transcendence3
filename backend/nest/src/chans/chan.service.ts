@@ -29,7 +29,7 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-        let { name, type, password, admin, topic, chanUser } = createChanDto;
+        let { name, type, password, owner, chanUser } = createChanDto;
         password = await argon2.hash(password)
         const chanInDb = await this.chanRepository.findOne({
             where: { name }
@@ -39,7 +39,7 @@ export class ChanService {
         }
 
         const chan: ChanEntity = await this.chanRepository.create({
-            name, type, password, admin, topic, chanUser
+            name, type, password, owner, chanUser
         })
         await this.chanRepository.save(chan);
         return chan;

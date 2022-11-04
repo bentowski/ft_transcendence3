@@ -24,6 +24,7 @@ import { TwoFACodeDto } from './dto/twofacode.dto';
 import { AuthGuard } from '@nestjs/passport';
 import UserEntity from '../user/entities/user-entity';
 import jwt_decode from 'jwt-decode';
+import {UserAuthGuard} from "./guards/user-auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -94,6 +95,7 @@ export class AuthController {
       }
     }
   }
+  /*
 
   //@UseGuards(AuthGuard('jwt'))
   @Get('status')
@@ -101,7 +103,10 @@ export class AuthController {
     return req.user;
   }
 
+   */
+
   //@UseGuards(AuthenticatedGuard)
+  @UseGuards(UserAuthGuard)
   @Delete('logout')
   logout(@Req() req, @Res({ passthrough: true }) res) {
     //res.clearCookie('jwt');
@@ -115,6 +120,7 @@ export class AuthController {
     res.status(200).cookie('jwt', '', { expires: new Date() });
   }
 
+  @UseGuards(UserAuthGuard)
   @Post('2fa/generate')
   async register(@Res() response, @Req() req) {
     //console.log('calling 2fa generate');
@@ -131,6 +137,7 @@ export class AuthController {
     return this.authService.pipeQrCodeStream(response, otpauthUrl);
   }
 
+  @UseGuards(UserAuthGuard)
   @Post('2fa/activate')
   async turnOnTwoFAAuth(
     @Req() req,
@@ -162,6 +169,7 @@ export class AuthController {
     res.status(200).cookie('jwt', access_token, { httpOnly: true });
   }
 
+  @UseGuards(UserAuthGuard)
   @Post('2fa/deactivate')
   async turnOffTwoFAAuth(
     @Req() request: PayloadInterface,
@@ -172,6 +180,7 @@ export class AuthController {
     res.status(200);
   }
 
+  @UseGuards(IntraAuthGuard)
   @Post('2fa/authenticate')
   async authenticate(
     @Req() req,

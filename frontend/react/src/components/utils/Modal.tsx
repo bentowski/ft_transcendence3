@@ -11,9 +11,9 @@ class Modal extends Component<
   {
     title: string;
     calledBy: string;
-    userChan?: Array<UserType>;
+    userChan?: any;
     parentCallBack?: any;
-    chans: Array<ChanType>;
+    chans?: any;
   },
   { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType>; fieldName: string; errName: string;
   fieldPass: string;  errPass: string }
@@ -212,8 +212,6 @@ class Modal extends Component<
 
   chans = () => {
     let ret: any[] = [];
-    //let currentUser: any = sessionStorage.getItem("data");
-    //currentUser = JSON.parse(currentUser);
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
@@ -422,14 +420,14 @@ class Modal extends Component<
           </div>
         );
       case "addUser":
+      // <form className="mb-3">
+      // </form>
         return (
           <div className="p-4 pb-1">
             <header className="mb-3">
               <h2>{this.props.title}</h2>
             </header>
-            <form className="mb-3">
               <div>{this.users()}</div>
-            </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
                 Close

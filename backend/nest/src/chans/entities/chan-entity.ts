@@ -31,26 +31,26 @@ export class ChanEntity {
     })
     public name: string;
 
-    @Column({
-        name: 'admin',
-        type: 'varchar',
-        nullable: false,
-    })
-    public admin: Array<string>;
-
-    @Column({
-        name: 'topic',
-        type: 'varchar',
-        // nullable: false,
-    })
-    public topic: string;
+		@Column({
+				name: 'owner',
+				type: 'varchar',
+				nullable: false,
+		})
+		public owner: string;
 
     @Column({
         name: 'password',
         type: 'varchar',
-        // nullable: false,
     })
     password: string;
+
+  @Column({
+      name: 'admin',
+      type: 'varchar',
+			array: true,
+			nullable: true,
+  })
+  public admin: Array<string>;
 
 	@Column({
 		name: 'messages',
@@ -61,8 +61,12 @@ export class ChanEntity {
 	})
 	messages: Msg[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {cascade: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
 	@JoinTable()
 	chanUser: UserEntity[];
+
+	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {eager: true})
+	@JoinTable()
+	banUser: UserEntity[];
 }
 export default ChanEntity;
