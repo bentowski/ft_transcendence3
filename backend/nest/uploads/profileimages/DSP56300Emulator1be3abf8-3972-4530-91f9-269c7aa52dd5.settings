@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PROPERTIES>
+  <VALUE name="skinDisplayName" val="Hoverland"/>
+  <VALUE name="skinFile" val="VirusC_Hoverland.json"/>
+  <VALUE name="skinFolder" val=""/>
+  <VALUE name="scale" val="100"/>
+  <VALUE name="virus_bank_dir" val="/usr/lib/vst3/DSP56300Emu.vst3/Contents"/>
+  <VALUE name="latencyBlocks" val="1"/>
+</PROPERTIES>
