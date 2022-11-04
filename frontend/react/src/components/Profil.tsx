@@ -56,7 +56,7 @@ class Profil extends Component<
           "http://localhost:3000/user/name/" + username
         );
     };
-    console.log(newUser)
+    // console.log(newUser)
     this.setState({ user: newUser });
   };
 

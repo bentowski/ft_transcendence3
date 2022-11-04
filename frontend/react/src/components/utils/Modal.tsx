@@ -11,9 +11,9 @@ class Modal extends Component<
   {
     title: string;
     calledBy: string;
-    userChan?: Array<UserType>;
+    userChan?: any;
     parentCallBack?: any;
-    chans: Array<ChanType>;
+    chans?: any;
   },
   { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType> }
 > {

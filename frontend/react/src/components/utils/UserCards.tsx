@@ -11,7 +11,7 @@ import { UserType } from "../../types"
 const socket = io("http://localhost:3000/chat");
 
 class UserCards extends Component<
-  { user: UserType; avatar: boolean; stat: boolean },
+  { user: any; avatar: any; stat: any },
   {
     login: string;
     id: number;
