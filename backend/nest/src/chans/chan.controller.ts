@@ -20,10 +20,8 @@ export class ChanController {
     }
 
     @Post('create')
-    async createChan(@Body() createUserDto: CreateChanDto) {
-        let ret = await this.chanService.createChan(createUserDto);
-        console.log("DONe : ", ret)
-        return ret
+    createChan(@Body() createUserDto: CreateChanDto) {
+        return this.chanService.createChan(createUserDto);
     }
 
     @Delete(':id')

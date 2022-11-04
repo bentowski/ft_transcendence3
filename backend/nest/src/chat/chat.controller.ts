@@ -15,6 +15,6 @@ export class ChatController {
  @Get('/api/chat')
  async Chat(@Res() res : any) {
    const messages = await this.chatService.getMessages();
-   res.json(messages)
+   res.json(messages);
  }
 }

@@ -59,6 +59,7 @@ const ContextLoader = () => {
             <Route path="/game" element={<Game />} />
             <Route path="/game/*" element={<Game />} />
             <Route path="/*" element={<Profil />} />
+            <Route path="/" element={<Profil />} />
           </Route>
         </Route>
       </Route>
