@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import * as express from 'express';
+
 //import { DocumentBuilder } from '@nestjs/swagger';
 //import { DataSource } from 'typeorm';
 //import bodyParser from 'body-parser';
@@ -11,7 +14,7 @@ import * as cookieParser from 'cookie-parser';
 //import { SessionEntity } from './auth/entities/session-entity';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
       credentials: true,
       origin: true,

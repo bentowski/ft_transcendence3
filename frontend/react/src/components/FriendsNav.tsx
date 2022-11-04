@@ -31,7 +31,7 @@ class FriendsNav extends Component<{}, { friends: Array<any> }> {
     let currentUser:any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    if (input.value === "")
+    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: any) => u.username === input.value))
       return ;
     let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
     if (!userToAdd)

@@ -13,6 +13,7 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  NotFoundException,
   /*Request,
   UsePipes,
   ValidationPipe,
@@ -26,13 +27,20 @@ import { Observable, of } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateUserDto, UpdateFriendsDto } from './dto/update-user.dto';
+import {
+  UpdateUserDto,
+  UpdateFriendsDto,
+  UpdateAvatarDto,
+} from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
 import jwt_decode from 'jwt-decode';
+import { Express } from 'express';
+import path, { join } from 'path';
 import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -56,12 +64,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
-  //@UseGuards(AuthGuard('jwt'))
   getUsers() {
     return this.userService.findAll();
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('current')
   async currentUser(@Req() req: Request): Promise<UserEntity> {
     //console.log('request = ' + req);
@@ -83,16 +92,19 @@ export class UserController {
   }
   */
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   findOnebyUsername(@Param('username') username: string) {
     return this.userService.findOnebyUsername(username);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOneByAuthId(id);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
@@ -109,21 +121,14 @@ export class UserController {
   }
   */
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete('logout')
   logout(@Res() res): any {
     res.clearCookie('jwt');
     return 'User logged out';
   }
 
-  @Patch('settings/:id')
-  updateUser(
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    // console.log(updateUserDto);
-    return this.userService.updateUser(userId, updateUserDto);
-  }
-
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('addFriends/:id')
   updateFriends(
     @Param('id') userId: string,
@@ -133,15 +138,70 @@ export class UserController {
     return this.userService.updateFriends(userId, updateFriendsDto);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete(':id')
   remove(@Param('id') username: string) {
     return this.userService.remove(username);
   }
 
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', storage))
-  uploadFile(@UploadedFile() file: any): Observable<Object> {
-    console.log(file);
-    return of({ imagePath: file.filename });
+  @UseInterceptors(FileInterceptor('picture', storage))
+  async uploadFile(
+    @Res({ passthrough: true }) res,
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    //console.log('salut les amis');
+    //console.log(file);
+    const token = req.cookies['jwt'];
+    const decoded: PayloadInterface = jwt_decode(token);
+    const user: UserEntity = await this.userService.findOneByAuthId(
+      decoded.auth_id,
+    );
+    if (!user) throw new NotFoundException('user not found');
+    //of({ imagePath: file.filename });
+    const newNameAvatar: UpdateAvatarDto = {
+      avatar: file.filename,
+    };
+    //console.log('newUrlAvatar ; ', newNameAvatar);
+    await this.userService.updateAvatar(decoded.auth_id, newNameAvatar);
+    res.status(200);
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/avatar')
+  async getAvatar(@Req() req, @Param('id') id: string, @Res() res) {
+    //console.log('requesting image');
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    const imagename: any = user.avatar;
+    //console.log('===== ', join('/uploads/profileimages/' + imagename));
+    return of(
+      res.sendFile(join(process.cwd(), './uploads/profileimages/' + imagename)),
+    );
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('update/username')
+  updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      const token = req.cookies['jwt'];
+      const decoded: PayloadInterface = jwt_decode(token);
+      return this.userService.updateUsername(decoded.auth_id, updateUserDto);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('update/avatar')
+  updateAvatar(@Req() req, @Body() updateAvatarDto: UpdateAvatarDto) {
+    try {
+      const token = req.cookies['jwt'];
+      const decoded: PayloadInterface = jwt_decode(token);
+      return this.userService.updateAvatar(decoded.auth_id, updateAvatarDto);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

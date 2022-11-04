@@ -49,7 +49,7 @@ export class ChanService {
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find();
+        return this.chanRepository.find({relations: { chanUser: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
@@ -68,7 +68,7 @@ export class ChanService {
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
 		try {
-		const chan = await this.chanRepository.findOneBy({ id: message.room });
+		const chan = await this.chanRepository.findOneBy({ id: message.room, });
 		if (chan) {
 			if (chan.messages)
 				chan.messages = [...chan.messages, message];
@@ -93,8 +93,22 @@ export class ChanService {
 			chan.chanUser = [...chan.chanUser, user];
 		else
 			chan.chanUser = [user];
-		console.log(chan);
-		console.log(user);
+		return await this.chanRepository.save(chan);
+	}
+
+	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOne({
+			where: {id: room},
+			relations: { chanUser: true },
+		});
+		if (!chan)
+			return ;
+		if (chan.chanUser && chan.chanUser.length) {
+			let index = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
+			if (index >= 0) {
+				chan.chanUser = chan.chanUser.filter((u) => u.auth_id !== user.auth_id);
+			}
+		}
 		return await this.chanRepository.save(chan);
 	}
 

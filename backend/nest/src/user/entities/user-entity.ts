@@ -5,7 +5,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  JoinTable
+  JoinTable,
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
 import { Exclude } from 'class-transformer';
@@ -33,7 +33,7 @@ export class UserEntity {
   email: string;
 
   @Column({
-    default: '',
+    default: 'default.jpg',
   })
   avatar: string;
 
@@ -65,12 +65,11 @@ export class UserEntity {
   })
   status: number;
 
-  @ManyToMany(() => UserEntity, (friend) => friend.friends,
-	{
-		onDelete: "CASCADE"
-	})
-	@JoinTable({name: "Friends"})
-	friends: UserEntity[]
+  @ManyToMany(() => UserEntity, (friend) => friend.friends, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable({ name: 'Friends' })
+  friends: UserEntity[];
 
   @Column({
     default: '',
@@ -90,7 +89,7 @@ export class UserEntity {
   createdAt: Date;
 
   @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
-  channelJoined: ChanEntity[]
+  channelJoined: ChanEntity[];
 
   @ManyToMany(() => ChanEntity, (chan) => chan.banUser)
   channelBanned: ChanEntity[]

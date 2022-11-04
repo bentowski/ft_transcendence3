@@ -25,16 +25,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: PayloadInterface): Promise<UserEntity> {
     const { auth_id } = payload;
-    const newUser = await this.authService.findUser(auth_id);
-    console.log(newUser);
-    if (!newUser) {
+    const user: UserEntity = await this.authService.findUser(auth_id);
+    //console.log(user);
+    if (!user) {
       throw new UnauthorizedException('Invalid Token');
     }
-    if (!newUser.isTwoFA) {
+    return user;
+    /*if (!newUser.isTwoFA) {
       return newUser;
     }
     if (payload.isAuth) {
       return newUser;
-    }
+    }*/
   }
 }

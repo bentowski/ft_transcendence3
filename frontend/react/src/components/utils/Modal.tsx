@@ -14,9 +14,19 @@ type chanType = {
   chanUser: any[];
 };
 
-class Modal extends Component<{ title: string, calledBy: string, userChan?: any[], parentCallBack?: any, chans?: any}, {user: any, friends: any[], input: string, allChans: Array<chanType> }> {
-  constructor(props: any){
-    super(props)
+class Modal extends Component<
+  {
+    title: string;
+    calledBy: string;
+    userChan?: any[];
+    parentCallBack?: any;
+    chans?: any;
+  },
+  { user: any; friends: any[]; input: string; allChans: Array<chanType> }
+> {
+  static context = AuthContext;
+  constructor(props: any) {
+    super(props);
     this.state = {
       user: {
         auth_id: 0,
@@ -26,7 +36,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       },
       friends: [],
       input: "",
-      allChans: []
+      allChans: [],
     };
   }
 
@@ -38,19 +48,32 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
     modal.classList.add("hidden");
   };
 
+  getCurrentUser = () => {
+    const ctx: any = this.context;
+    return ctx.user;
+  };
+
   componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
     if (newUser) {
-    	newUser = JSON.parse(newUser);
-    	this.setState({ user: newUser.user });
-	}
-	let friends:any = await Request('GET', {}, {}, "http://localhost:3000/user/")
-  if (!friends)
-		return ;
-  let allChans: Array<chanType> = await Request('GET', {}, {}, "http://localhost:3000/chan")
-  if (!allChans)
-    return ;
-  this.setState({ friends: friends, allChans: allChans })
+      newUser = JSON.parse(newUser);
+      this.setState({ user: newUser.user });
+    }
+    let friends: any = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/"
+    );
+    if (!friends) return;
+    let allChans: Array<chanType> = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/chan"
+    );
+    if (!allChans) return;
+    this.setState({ friends: friends, allChans: allChans });
   };
 
   displayUser = (id:number, user:any) => {
@@ -132,83 +155,122 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
   }
 
   users = () => {
-  	let friends: Array<any> = [];
-    let isUsers:boolean = false;
-    let x:number = 0;
-    if (this.state.friends.length > 0)
-    {
-  	  let chanUser:any[]|undefined = this.props.userChan;
-      while (chanUser?.length && chanUser?.length > 0 && x < this.state.friends.length) {
-  		  let friend:any = this.state.friends[x];
-  		  if (!chanUser.find(user => user.auth_id === friend.auth_id))
-        {
+    let friends: Array<any> = [];
+    let isUsers: boolean = false;
+    let x: number = 0;
+    if (this.state.friends.length > 0) {
+      let chanUser: any[] | undefined = this.props.userChan;
+      while (
+        chanUser?.length &&
+        chanUser?.length > 0 &&
+        x < this.state.friends.length
+      ) {
+        let friend: any = this.state.friends[x];
+        if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
-          if (this.state.input.length === 0 || friend.username.includes(this.state.input))
-          	friends.push(this.displayUser(x, this.state.friends[x]));
+          if (
+            this.state.input.length === 0 ||
+            friend.username.includes(this.state.input)
+          )
+            friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
       }
     }
     if (isUsers)
-      friends.unshift(<input key={x++} id="searchUserToAdd" className='w-100' type="text" placeholder='Search user here' value={this.state.input} onChange={(e) => this.setState({input: e.target.value})}/>)
-  	if ((isUsers && friends.length === 1) || !isUsers) {
-  		friends.push(<p key={x}>No available users to add</p>)
-  	}
-  	return friends
-  }
+      friends.unshift(
+        <input
+          key={x++}
+          id="searchUserToAdd"
+          className="w-100"
+          type="text"
+          placeholder="Search user here"
+          value={this.state.input}
+          onChange={(e) => this.setState({ input: e.target.value })}
+        />
+      );
+    if ((isUsers && friends.length === 1) || !isUsers) {
+      friends.push(<p key={x}>No available users to add</p>);
+    }
+    return friends;
+  };
 
   chans = () => {
-    let ret: any[] = []
-    let currentUser: any = sessionStorage.getItem("data");
-    currentUser = JSON.parse(currentUser);
-    for (let x = 0; x < this.state.allChans.length; x++)
-    {
-      if (this.state.allChans[x].type !== "private" && this.state.allChans[x].type !== "direct")
-      {
-        for (let y = 0; y < this.props.chans.length; y++)
-        {
+    let ret: any[] = [];
+    //let currentUser: any = sessionStorage.getItem("data");
+    //currentUser = JSON.parse(currentUser);
+    for (let x = 0; x < this.state.allChans.length; x++) {
+      if (
+        this.state.allChans[x].type !== "private" &&
+        this.state.allChans[x].type !== "direct"
+      ) {
+        for (let y = 0; y < this.props.chans.length; y++) {
           if (this.state.allChans[x].name === this.props.chans[y].name)
             continue;
           ret.push(
             <div className="row" key={x}>
-              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <button
+                className="col-6"
+                onClick={() =>
+                  this.props.parentCallBack.joinRoom(
+                    this.state.allChans[x],
+                    true
+                  )
+                }
+              >
+                JOIN
+              </button>
               <p className="col-6">{this.state.allChans[x].name}</p>
             </div>
-          )
+          );
           break;
         }
-        if (!this.props.chans.length)
-        {
+        if (!this.props.chans.length) {
           ret.push(
             <div className="row" key={x}>
-              <button className="col-6" onClick={()=>this.props.parentCallBack.joinRoom(this.state.allChans[x], true)}>JOIN</button>
+              <button
+                className="col-6"
+                onClick={() =>
+                  this.props.parentCallBack.joinRoom(
+                    this.state.allChans[x],
+                    true
+                  )
+                }
+              >
+                JOIN
+              </button>
               <p className="col-6">{this.state.allChans[x].name}</p>
             </div>
-          )
+          );
         }
       }
     }
-    return ret
-  }
+    return ret;
+  };
 
   joinPrivateChan = async () => {
-    let input = document.getElementById('InputJoinPrivateChan') as HTMLInputElement
-    let chan = await Request('GET', {}, {}, "http://localhost:3000/chan/" + input.value)
-    if (!chan)
-      return ;
-    this.props.parentCallBack.joinRoom(chan, true)
-  }
+    let input = document.getElementById(
+      "InputJoinPrivateChan"
+    ) as HTMLInputElement;
+    let chan = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/chan/" + input.value
+    );
+    if (!chan) return;
+    this.props.parentCallBack.joinRoom(chan, true);
+  };
 
   pressEnter = (e: any) => {
-    if (e.key === 'Enter')
-    {
-      this.joinPrivateChan()
+    if (e.key === "Enter") {
+      this.joinPrivateChan();
     }
   }
 
   sendRequest = async () => {
-    let newUser: any = sessionStorage.getItem("data");
-    newUser = JSON.parse(newUser);
+    //let newUser: any = sessionStorage.getItem("data");
+    //newUser = JSON.parse(newUser);
     const login = document.getElementById("changeLogin") as HTMLInputElement;
     let ret = await Request(
       "PATCH",
@@ -218,9 +280,9 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       },
       {
         username: login.value,
-        avatar: newUser.user.avatar,
+        avatar: this.getCurrentUser().avatar,
       },
-      "http://localhost:3000/user/settings/" + newUser.user.auth_id
+      "http://localhost:3000/user/settings/" + this.getCurrentUser().auth_id
     );
 
     if (!ret.ok) {
@@ -341,9 +403,7 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
         return (
           <div>
             <form className="mb-3">
-              <div>
-                {this.users()}
-              </div>
+              <div>{this.users()}</div>
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
@@ -355,20 +415,24 @@ class Modal extends Component<{ title: string, calledBy: string, userChan?: any[
       case "joinChan":
       return (
         <div>
-          <div>
             <div>
-              <input id="InputJoinPrivateChan" className="col-8" type="text" placeholder="Enter Private Channel" onKeyDown={this.pressEnter}></input>
-              <button onClick={this.joinPrivateChan}>JOIN</button>
+              <div>
+                <input
+                  id="InputJoinPrivateChan"
+                  className="col-8"
+                  type="text"
+                  placeholder="Enter Private Channel"
+                  onKeyDown={this.pressEnter}
+                ></input>
+                <button onClick={this.joinPrivateChan}>JOIN</button>
+              </div>
+              <div>{this.chans()}</div>
             </div>
-            <div>
-              {this.chans()}
-            </div>
-          </div>
-          <footer>
-            <button className="mx-1" onClick={this.hidden}>
-              Close
-            </button>
-          </footer>
+            <footer>
+              <button className="mx-1" onClick={this.hidden}>
+                Close
+              </button>
+            </footer>
         </div>
       );
       case "banUser":

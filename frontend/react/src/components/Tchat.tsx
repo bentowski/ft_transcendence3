@@ -1,10 +1,11 @@
-import { Component, useContext, useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom'
+import { Component, useContext, useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import Modal from "./utils/Modal";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
 import { MessagePayload, ChanType } from "../types"
+import { useAuthData } from "../contexts/AuthProviderContext";
 
 export const WebSocket = () => {
   const [value, setValue] = useState('');
@@ -14,10 +15,11 @@ export const WebSocket = () => {
   const [room, setRoom] = useState('');
   const [chans, setChans] = useState<ChanType[]>([]);
   const [messages, setMessage] = useState<MessagePayload[]>([]);
-  const [modalType, setModalType] = useState('');
-  const [modalTitle, setModalTitle] = useState('');
-  const [loaded, setLoaded] = useState('');
-  const [chanUser, setChanUser] = useState<any[]>([])
+  const [modalType, setModalType] = useState("");
+  const [modalTitle, setModalTitle] = useState("");
+  const [loaded, setLoaded] = useState("");
+  const [chanUser, setChanUser] = useState<any[]>([]);
+  const { user } = useAuthData();
 
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -43,16 +45,16 @@ export const WebSocket = () => {
   		}
     });
 
-    socket.on('newChan', () => {
+    socket.on("userJoinChannel", () => {
       getChan();
     });
 
-    socket.on('userJoinChannel', () => {
+    socket.on("userLeaveChannel", () => {
       getChan();
-    })
+      window.location.replace("http://localhost:8080/tchat");
+    });
 
-    if (msgInput.current)
-      msgInput.current.focus();
+    if (msgInput.current) msgInput.current.focus();
 
     return () => {
       socket.off('connect');
@@ -201,22 +203,32 @@ export const WebSocket = () => {
   }
 
   const onSubmit = () => {
-    if (value !== '' && value.replace(/\s/g, '') !== '' && room !== undefined) {// check if array is empty or contain only whitespace
-      socket.emit('newMessage', { "chat": value, "sender_socket_id": auth_id, "username": username, "avatar": avatar, "room": room });
+    if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
+      // check if array is empty or contain only whitespace
+      if (value === "/leave") {
+        socket.emit("leaveRoom", { room: room, auth_id: auth_id });
+        changeActiveRoom("");
+        setMessage([]);
+      } else
+        socket.emit("newMessage", {
+          chat: value,
+          sender_socket_id: auth_id,
+          username: username,
+          avatar: avatar,
+          room: room,
+        });
     }
-    setValue('');
-  }
+    setValue("");
+  };
 
   const changeActiveRoom = (id: string) => {
     let tmp: ChanType[] = chans;
     tmp.map((chan) => {
-      if (chan.id === id)
-        chan.isActive = true;
-      else
-        chan.isActive = false
-    })
+      if (chan.id === id) chan.isActive = true;
+      else chan.isActive = false;
+    });
     setChans(tmp);
-  }
+  };
 
   const joinRoom = async (newRoom: ChanType, askForJoin: boolean) => {
 
@@ -224,52 +236,50 @@ export const WebSocket = () => {
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u) => u.auth_id === auth_id)) {
         setRoom(chanToJoin.id);
-        changeActiveRoom(newRoom.id)
-        setChanUser(newRoom.chanUser)
-        if (newRoom.messages)
-          setMessage(newRoom.messages)
-        else
-          setMessage([]);
-      }
-      else {
-        if (askForJoin === false || (askForJoin === true && window.confirm("You will join this channel: " + newRoom.name))) {
-          socket.emit('joinRoom', newRoom.id, auth_id);
+        changeActiveRoom(newRoom.id);
+        setChanUser(newRoom.chanUser);
+        if (newRoom.messages) setMessage(newRoom.messages);
+        else setMessage([]);
+      } else {
+        if (
+          askForJoin === false ||
+          (askForJoin === true &&
+            window.confirm("You will join this channel: " + newRoom.name))
+        ) {
+          socket.emit("joinRoom", newRoom.id, auth_id);
           setRoom(chanToJoin.id);
-          changeActiveRoom(chanToJoin.id)
-          if (newRoom.messages)
-            setMessage(newRoom.messages)
-          else
-            setMessage([]);
+          changeActiveRoom(chanToJoin.id);
+          if (newRoom.messages) setMessage(newRoom.messages);
+          else setMessage([]);
         }
       }
     }
-  }
+  };
 
   const pressEnter = (e: any) => {
-    if (e.key === 'Enter')
-      onSubmit();
-  }
+    if (e.key === "Enter") onSubmit();
+  };
 
   const promptAddUser = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     setModalType("addUser");
     setModalTitle("Add a user");
-  }
+  };
 
   const createChan = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     setModalTitle("Create a new channel");
     setModalType("newChan");
-  }
+  };
 
   const joinChan = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     setModalTitle("Join a channel");
     setModalType("joinChan");
-  }
+  };
 
   const banUser = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
@@ -286,12 +296,11 @@ export const WebSocket = () => {
   }
 
   const arrayUserInActualchannel = () => {
-	let users: Array<any> = [];
-	const actualChan = chans.find(c => c.isActive === true);
-	if (actualChan?.chanUser)
-		users = actualChan.chanUser
-	return users;
-  }
+    let users: Array<any> = [];
+    const actualChan = chans.find((c) => c.isActive === true);
+    if (actualChan?.chanUser) users = actualChan.chanUser;
+    return users;
+  };
 
   const chanColor = (channel: ChanType) => {
 
@@ -303,16 +312,13 @@ export const WebSocket = () => {
 
   const printName = (chan: ChanType) => {
     if (chan.type === "direct") {
-      let currentUser: any = sessionStorage.getItem("data");
-      currentUser = JSON.parse(currentUser);
-      if (currentUser.user.username === chan.chanUser[0].username)
-        return (chan.chanUser[1].username);
-      else
-        return (chan.chanUser[0].username);
-    }
-    else
-      return (chan.name);
-  }
+      // let currentUser: any = sessionStorage.getItem("data");
+      // currentUser = JSON.parse(currentUser);
+      if (user.username === chan.chanUser[0].username)
+        return chan.chanUser[1].username;
+      else return chan.chanUser[0].username;
+    } else return chan.name;
+  };
 
   const inChan = (chan: ChanType) => {
     if (chan.chanUser.find((u: any) => u.auth_id === auth_id))
@@ -326,7 +332,7 @@ export const WebSocket = () => {
       if (chan[x].chanUser.find((u: any) => u.auth_id === auth_id))
         ret.push(chan[x]);
     return ret;
-  }
+  };
 
 
     const chansJoined = (chan: ChanType[]) => {
@@ -522,7 +528,7 @@ export const WebSocket = () => {
       </div>
     </div>
   ); // fin de return
-}
+};
 
 class Tchat extends Component<{}, {}> {
   render() {

@@ -1,10 +1,9 @@
 import "../styles/pages/login.css";
-import { useAuthData} from "../contexts/AuthProviderContext";
+import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
 
 const Login = () => {
-
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
   // const navigate = useNavigate();
   const location = useLocation();
@@ -35,7 +34,7 @@ const Login = () => {
   return (
     <div className="Login">
       <a
-        href="https://api.intra.42.fr/oauth/authorize?client_id=0ca73eb0dd76ab61dabb62b46c3a31885e924d813db06a480056b2080f9b0126&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fredirect&response_type=code"
+        href="http://localhost:3000/auth/login"
         className="pt-5 pb-3 d-flex flex-row justify-content-center align-items-center"
       >
         <svg
@@ -77,7 +76,6 @@ const Login = () => {
       </a>
     </div>
   ); //
-
 }; //
-
+//
 export default Login;
