@@ -1,7 +1,10 @@
-import { Component } from 'react';
-import Request from "./Requests"
-import { AuthContext } from "../../contexts/AuthProviderContext"
+import { Component } from "react";
+import io from "socket.io-client";
+import Request from "./Requests";
 import "../../styles/components/utils/modal.css";
+import { AuthContext } from "../../contexts/AuthProviderContext";
+
+const socket = io("http://localhost:3000/chat");
 
 type chanType = {
   id: string;
@@ -40,12 +43,10 @@ class Modal extends Component<
     };
   }
 
-  static contextType = AuthContext
-
-
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
+    // login.value = "";
   };
 
   getCurrentUser = () => {
@@ -55,6 +56,7 @@ class Modal extends Component<
 
   componentDidMount = async () => {
     let newUser: any = sessionStorage.getItem("data");
+    // console.log(newUser);
     if (newUser) {
       newUser = JSON.parse(newUser);
       this.setState({ user: newUser.user });
@@ -76,83 +78,98 @@ class Modal extends Component<
     this.setState({ friends: friends, allChans: allChans });
   };
 
-  displayUser = (id:number, user:any) => {
-  	return (
-  		<div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-  			<div className="col-5 h-100 overflow-hidden buttons">
-  				<button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
-  			</div>
-  			<div className="col-2 d-flex flex-row d-flex justify-content-center">
-  				<input className={user.isOnline ? "online" : "offline"} type="radio"></input>
-  			</div>
-  			<div className="col-5 d-flex flex-row justify-content-end align-items-center">
-  				<a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
-  				<img src={user.avatar} className="miniAvatar" width={150} height={150}/>
-  			</div>
-  		</div>
-  	)
-  }
-  //
-  // usersChanBan = () => {
-  //   let test: any = this.props.userChan
-  //   let ret: any[] = []
-  //   const context: any = this.context
-  //   const user: any = context.user
-  //
-  //   // for(let x = 0; x < test.length; x++)
-  //   // {
-  //   //   if (this.state.friends[x].username !== user.username)
-  //   //     ret.push(
-  //   //       <div key={id} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-  //   //         <div className="col-5 h-100 overflow-hidden buttons">
-  //   //           <button onClick={()=>this.props.parentCallBack.socket.emit("addToChannel", {"room": this.props.parentCallBack.room,"auth_id": user.auth_id})}>ADD</button>
-  //   //         </div>
-  //   //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
-  //   //           <input className={user.isOnline ? "online" : "offline"} type="radio"></input>
-  //   //         </div>
-  //   //         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-  //   //           <a href={"/profil/#" + user.username} className="mx-2">{user.username}</a>
-  //   //           <img src={user.avatar} className="miniAvatar" width={150} height={150}/>
-  //   //         </div>
-  //   //       </div>
-  //   //     );
-  //   // }
-  //   return ret
-  // }
-
-  test = (user: any) => {
-    this.props.parentCallBack.banningUser(user)
-    this.hidden()
-  }
-
-  usersChan = () => {
-    let test: any = this.props.userChan
-    let ret: any[] = []
-    const context: any = this.context
-    const user: any = context.user
-
-    for(let x = 0; x < test.length; x++)
-    {
-      if (this.state.friends[x].username !== user.username)
-      {
-        ret.push(
-          <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-            <div className="col-5 h-100 overflow-hidden buttons">
-              <button onClick={() => this.test(this.state.friends[x])}>BAN</button>
-            </div>
-            <div className="col-2 d-flex flex-row d-flex justify-content-center">
-              <input className={this.state.friends[x].isOnline ? "online" : "offline"} type="radio"></input>
-            </div>
-            <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-              <a href={"/profil/#" + this.state.friends[x].username} className="mx-2">{this.state.friends[x].username}</a>
-              <img src={this.state.friends[x].avatar} className="miniAvatar" width={150} height={150}/>
-            </div>
-          </div>
-        );
-      }
+  createChan = async () => {
+    const name = document.querySelector("#chanName") as HTMLInputElement;
+    const topic = document.querySelector("#chanTopic") as HTMLInputElement;
+    const password = document.querySelector(
+      "#chanPassword"
+    ) as HTMLInputElement;
+    const radioPub = document.querySelector("#public") as HTMLInputElement;
+    const radioPri = document.querySelector("#private") as HTMLInputElement;
+    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    let radioCheck = "";
+    let pswd = "";
+    if (radioPub.checked === true) radioCheck = "public";
+    else if (radioPri.checked === true) radioCheck = "private";
+    else if (radioPro.checked === true) radioCheck = "protected";
+    let chans = await Request("GET", {}, {}, "http://localhost:3000/chan/");
+    chans = chans.find((c: any) => c.name === name.value);
+    if (radioCheck !== "" && name.value && topic.value && chans === undefined) {
+      if (password.value) pswd = password.value;
+      await Request(
+        "POST",
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        {
+          name: name.value,
+          type: radioCheck,
+          topic: topic.value,
+          admin: [this.state.user.username],
+          password: pswd,
+        },
+        "http://localhost:3000/chan/create"
+      );
+      let chan = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan/" + name.value
+      );
+      name.value = "";
+      topic.value = "";
+      password.value = "";
+      radioPub.checked = false;
+      radioPri.checked = false;
+      radioPro.checked = false;
+      this.hidden();
+      socket.emit("chanCreated");
+      window.location.replace("http://localhost:8080/tchat#" + chan.id);
+      window.location.reload();
+    } else {
+      alert("You have to fill each informations");
     }
-    return ret
-  }
+  };
+
+  displayUser = (id: number, user: any) => {
+    return (
+      <div
+        key={id}
+        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+      >
+        <div className="col-5 h-100 overflow-hidden buttons">
+          <button
+            onClick={() =>
+              this.props.parentCallBack.socket.emit("addToChannel", {
+                room: this.props.parentCallBack.room,
+                auth_id: user.auth_id,
+              })
+            }
+          >
+            ADD
+          </button>
+        </div>
+        <div className="col-2 d-flex flex-row d-flex justify-content-center">
+          <input
+            className={user.isOnline ? "online" : "offline"}
+            type="radio"
+          ></input>
+        </div>
+        <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+          <a href={"/profil/#" + user.username} className="mx-2">
+            {user.username}
+          </a>
+          <img
+            src={user.avatar}
+            className="miniAvatar"
+            width={150}
+            height={150}
+          />
+        </div>
+      </div>
+    );
+  };
 
   users = () => {
     let friends: Array<any> = [];
@@ -266,7 +283,7 @@ class Modal extends Component<
     if (e.key === "Enter") {
       this.joinPrivateChan();
     }
-  }
+  };
 
   sendRequest = async () => {
     //let newUser: any = sessionStorage.getItem("data");
@@ -304,16 +321,14 @@ class Modal extends Component<
     input.click();
   };
 
-  createChan = () => {
-    this.props.parentCallBack.createChannel()
-    this.hidden()
-  }
-
   printer = () => {
     switch (this.props.calledBy) {
       case "Avatar":
         return (
-          <div>
+          <div className="p-4 pb-1">
+            <header className="p-1 mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <form>
               <input type="text" placeholder="new user name"></input>
             </form>
@@ -327,7 +342,10 @@ class Modal extends Component<
         );
       case "Login":
         return (
-          <div>
+          <div className="p-4 pb-1">
+            <header className="mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <form className="mb-3">
               <input
                 type="text"
@@ -350,7 +368,10 @@ class Modal extends Component<
         );
       case "newChan":
         return (
-          <div>
+          <div className="p-4 pb-1">
+            <header className="mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <form className="mb-3">
               <p>
                 <input
@@ -401,7 +422,10 @@ class Modal extends Component<
         );
       case "addUser":
         return (
-          <div>
+          <div className="p-4 pb-1">
+            <header className="mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <form className="mb-3">
               <div>{this.users()}</div>
             </form>
@@ -413,8 +437,11 @@ class Modal extends Component<
           </div>
         );
       case "joinChan":
-      return (
-        <div>
+        return (
+          <div className="p-4 pb-1">
+            <header className="mb-3">
+              <h2>{this.props.title}</h2>
+            </header>
             <div>
               <div>
                 <input
@@ -433,49 +460,15 @@ class Modal extends Component<
                 Close
               </button>
             </footer>
-        </div>
-      );
-      case "banUser":
-      return (
-        <div>
-            <div>
-              {this.usersChan()}
-            </div>
-          <footer>
-            <button className="mx-1" onClick={this.hidden}>
-              Close
-            </button>
-          </footer>
-        </div>
-      );
-      case "muteUser":
-      return (
-        <div>
-          <form className="mb-3">
-            <div>
-              {this.usersChan()}
-            </div>
-          </form>
-          <footer>
-            <button className="mx-1" onClick={this.hidden}>
-              Close
-            </button>
-          </footer>
-        </div>
-      );
+          </div>
+        );
     }
   };
 
   render() {
     return (
       <div className="Modal hidden" id="Modal">
-      <div className="p-4 pb-1">
-        <header className="mb-3">
-          <h2>{this.props.title}</h2>
-        </header>
         {this.printer()}
-        </div>
-
       </div>
     );
   }
