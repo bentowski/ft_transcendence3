@@ -55,7 +55,7 @@ export class AuthController {
       res
         .status(202)
         .cookie('jwt', access_token, { sameSite: 'none', httpOnly: true })
-        .redirect('http://localhost:8080');
+        .redirect('http://localhost:8080/profil/' + req.user['username']);
     } catch (error) {
       throw new Error(error);
     }

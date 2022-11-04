@@ -52,6 +52,7 @@ const ContextLoader = () => {
 
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
+            <Route path="/" element={<Profil />} />
             <Route path="/tchat" element={<Tchat />} />
             <Route path="/tchat/*" element={<Tchat />} />
             <Route path="/profil" element={<Profil />} />

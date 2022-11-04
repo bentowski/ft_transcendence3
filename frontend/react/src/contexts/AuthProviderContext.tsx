@@ -23,13 +23,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isToken, setIsToken] = useState<boolean>(false);
   const [user, setUser] = useState<any>(undefined);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setIsToken(false);
     setUser(undefined);
     setLoading(true);
     //console.log("here we go");
     try {
-      fetch("http://localhost:3000/auth/istoken", {
+      await fetch("http://localhost:3000/auth/istoken", {
         method: "GET",
         credentials: "include",
       })

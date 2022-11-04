@@ -1,6 +1,7 @@
 import { useState } from "react";
 // import { useAuthData } from "../contexts/AuthProviderContext";
 import { useNavigate } from "react-router-dom";
+// import Request from "../"
 
 const AskTwoFa = () => {
   // const { isAuth, isTwoFa, isToken, loading } = useAuthData();
@@ -10,12 +11,12 @@ const AskTwoFa = () => {
   const navigate = useNavigate();
   // const from = location.state?.from?.pathname || "/";
 
-  const validateTwoFa = () => {
+  const validateTwoFa = async () => {
     //console.log("code = ", code);
     try {
       //if (isTwoFa) {
       //console.log("before fetch");
-      fetch("http://localhost:3000/auth/2fa/authenticate", {
+    await fetch("http://localhost:3000/auth/2fa/authenticate", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -30,7 +31,7 @@ const AskTwoFa = () => {
         })
         .then((data) => {
           //console.log("data = ", data);
-          navigate("/");
+          navigate("/profil/");
           setValidate(true);
         })
         .catch((error) => {

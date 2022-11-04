@@ -28,7 +28,6 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {});
     socket.on('onMessage', (newMessage: MessagePayload) => {
-      // console.log("RECEIVE ////////////////")
   		let channels: Array<ChanType> = chans;
   		let index:number = chans.findIndex((c:ChanType) => c.id === newMessage.room);
   		if (channels[index] !== undefined) {
@@ -54,6 +53,10 @@ export const WebSocket = () => {
       getChan();
       window.location.replace("http://localhost:8080/tchat");
     });
+
+    socket.on("banned", () => {
+
+    })
 
     if (msgInput.current) msgInput.current.focus();
 
@@ -111,7 +114,7 @@ export const WebSocket = () => {
 
   const banningUser = async (userToBan: UserType) => {
     socket.emit('banToChannel', { "room": room, "auth_id": userToBan.auth_id })
-    window.location.reload();
+    // window.location.reload();
   }
 
   const createChannel = async () => {

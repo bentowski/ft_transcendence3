@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import GetAvatar from "./utils/GetAvatar";
@@ -7,6 +7,12 @@ import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
 import { MessagePayload, ChanType, UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
+
+const Navigator = ({username} : {username: any}) => {
+
+  const navig = useNavigate()
+  navig("profil/" + username)
+}
 
 class Profil extends Component<
   {},
@@ -48,13 +54,14 @@ class Profil extends Component<
     );
     if (!newUser)
     {
-        username = currentUser.user.username;
-        newUser = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/name/" + username
-        );
+      return
+        // username = currentUser.user.username;
+        // newUser = await Request(
+        //   "GET",
+        //   {},
+        //   {},
+        //   "http://localhost:3000/user/name/" + username
+        // );
     };
     this.setState({ user: newUser });
   };
@@ -89,8 +96,6 @@ class Profil extends Component<
     this.setState({ user: JSON.stringify(cxt.user) });
     let test = setInterval(() => {
       let url = document.URL;
-      if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")
-        window.location.href = "http://localhost:8080/profil/" + this.state.user.username
       if (!document.URL.includes("localhost:8080/profil"))
         clearInterval(test);
       url = url.substring(url.lastIndexOf("/") + 1);
@@ -172,6 +177,7 @@ class Profil extends Component<
   };
 
   render() {
+      // Navigator(this.state.user.username)
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {
