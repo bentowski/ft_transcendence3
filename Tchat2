@@ -83,7 +83,7 @@ class Channels extends Component<{ id: number }, { name: string }> {
     return (
       <div key={this.props.id} className="d-flex flex-row d-flex justify-content-between align-items-center m-2">
         <div className="">
-          <a href="/tchat">{this.state.name}</a>
+          <a href="/chat">{this.state.name}</a>
         </div>
       </div>
     ) // fin de return
@@ -374,7 +374,7 @@ export const WebSocket = () => {
 
   return (
     <div>
-      <div className="tchat row">
+      <div className="chat row">
         <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room}}/>
         <div className="channels col-2">
           <button onClick={createChan}>Create Channel</button>
@@ -384,7 +384,7 @@ export const WebSocket = () => {
             {/* DEBUT AFFICHAGE CHAN */}
             <ul className="list-group">
               {chans.map((chan) =>
-                <Link key={chan.id} to={"/tchat/" + chan.id}>
+                <Link key={chan.id} to={"/chat/" + chan.id}>
                   <li onClick={() => joinRoom(chan, true)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                     <div className="">
                       {printName(chan)}
@@ -396,12 +396,12 @@ export const WebSocket = () => {
             {/* FIN AFFICHAGE CHAN */}
           </div> {/*fin channelsList*/}
         </div> {/*fin channels*/}
-        <div className="tchatMain col-8">
-          <div className="tchatMainTitle row">
+        <div className="chatMain col-8">
+          <div className="chatMainTitle row">
             <h1 className="col-10">Channel Name</h1>
             {fuckingPrint(chans)}
             {/* <button id="addPeople" className="col-2" onClick={promptAddUser}>Add Peoples</button> */}
-          </div>{/*fin tchatMainTitle*/}
+          </div>{/*fin chatMainTitle*/}
           <div id="messages" className="messages row">
           </div>{/*fin messages*/}
           <div className="row">
@@ -434,8 +434,8 @@ export const WebSocket = () => {
               </div>
             </div>
           </div>
-        </div> {/*fin tchatMain*/}
-        <div className="tchatMembers col-2">
+        </div> {/*fin chatMain*/}
+        <div className="chatMembers col-2">
           <p> Channnnnel's members ({chanUser.length}) </p>
           {userInActualchannel()}
         </div>

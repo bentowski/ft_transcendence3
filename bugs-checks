@@ -13,6 +13,6 @@ bug bouton Add User (fonctionnement random parfois)
 redirect quand logout
 redirect quand expire
 redirect vers Profil quand connection
-Check longueur max messages tchat
+Check longueur max messages chat
 limites channels direct 2 Users
 changer les any par des types

@@ -19,10 +19,7 @@ export class CreateChanDto {
 
     @IsEmail()
     @IsNotEmpty()
-    public topic: string;
-
-    @IsNotEmpty()
-    public admin: Array<string>;
+    public owner: string;
 
     @IsString()
     @IsNotEmpty()
