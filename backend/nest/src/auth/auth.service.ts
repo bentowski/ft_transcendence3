@@ -9,6 +9,9 @@ import { PayloadInterface } from './interfaces/payload.interface';
 //import { qrcode } from 'qrcode';
 //import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
+import * as io from 'socket.io-client';
+
+const socket = io.connect("http://localhost:3000/chat");
 
 @Injectable()
 export class AuthService {
@@ -89,6 +92,7 @@ export class AuthService {
   async changeStatusUser(auth_id: string, status: number) {
     try {
       await this.userService.setStatus(auth_id, status);
+      socket.emit('updateUser', {auth_id: auth_id, status: status})
     } catch (error) {
       throw new Error(error);
     }

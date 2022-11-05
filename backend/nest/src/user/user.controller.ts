@@ -34,6 +34,7 @@ import {
   UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
+  BlockedUserDto,
 } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
@@ -90,7 +91,7 @@ export class UserController {
     return this.userService.findOnebyUsername(username);
   }
 
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOneByAuthId(id);
@@ -108,7 +109,38 @@ export class UserController {
     @Param('id') userId: string,
     @Body() updateFriendsDto: UpdateFriendsDto,
   ) {
-    return this.userService.updateFriends(userId, updateFriendsDto);
+    try {
+      return this.userService.updateFriends(userId, updateFriendsDto);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @Get(':id/getfriends')
+  async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
+    return this.userService.getFriends(id);
+  }
+
+  @Get(':id/getblocked')
+  async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
+    return this.userService.getBlocked(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('updateblocked')
+  async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
+    //console.log('usraction = ', usr.action);
+    //console.log('usrauthid = ', usr.auth_id);
+    //console.log('reqauthid = ', req.user.auth_id);
+    try {
+      return this.userService.updateBlocked(
+        usr.action,
+        usr.auth_id,
+        req.user.auth_id,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   //@UseGuards(UserAuthGuard)
@@ -133,7 +165,7 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    console.log('saloute');
+    //console.log('saloute');
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {

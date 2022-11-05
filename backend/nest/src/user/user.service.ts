@@ -14,10 +14,12 @@ import {
   UpdateUserDto,
   UpdateAvatarDto,
   UpdateFriendsDto,
+  BlockedUserDto,
 } from './dto/update-user.dto';
 import { UpdateUsernameDto } from './dto/update-user.dto';
-import {of} from "rxjs";
-import {join} from "path";
+import { of } from 'rxjs';
+import { join } from 'path';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -52,9 +54,45 @@ export class UserService {
     return foundUser;
   }
 
+  /*
+  async findOnebyID(
+    user_id?: string,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
+    const findId: UserEntity = await this.userRepository.findOne({
+      where: { user_id: user_id },
+      relations: relations,
+    });
+    return findId;
+  }
+   */
+
+  async findOnebyUsername(username?: string): Promise<UserEntity> {
+    const findUsername: UserEntity = await this.userRepository.findOne({
+      where: { username: username },
+      relations: { friends: true, channelJoined: true },
+    });
+    return findUsername;
+  }
+
+  async findOneByAuthId(
+    auth_id: string,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
+    const findAuthId: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id },
+      relations: relations,
+    });
+    if (!findAuthId) {
+      throw new NotFoundException('user not found');
+    }
+    return findAuthId;
+  }
+
   async createUser42(user42: User42Dto): Promise<UserEntity> {
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
+    user.blocked = [];
     try {
       return this.userRepository.save(user);
     } catch (error) {
@@ -68,6 +106,8 @@ export class UserService {
     user.auth_id = auth_id;
     user.username = username;
     user.email = email;
+    user.friends = [];
+    user.blocked = [];
     user.createdAt = new Date();
     try {
       await this.userRepository.save(user);
@@ -80,14 +120,6 @@ export class UserService {
   async findAll(): Promise<UserEntity[]> {
     const users: UserEntity[] = await this.userRepository.find();
     return users;
-  }
-
-  async findOnebyUsername(username?: string): Promise<UserEntity> {
-    const findUsername: UserEntity = await this.userRepository.findOne({
-      where: { username: username },
-      relations: { friends: true, channelJoined: true },
-    });
-    return findUsername;
   }
 
   async updateUsername(auth_id: string, updateUsernameDto: UpdateUsernameDto) {
@@ -132,10 +164,24 @@ export class UserService {
       throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
     }
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-    if (username) user.username = username;
-    if (avatar) user.avatar = avatar;
-    if (twoFASecret) user.twoFASecret = twoFASecret;
-    if (isTwoFA != user.isTwoFA) user.isTwoFA = isTwoFA;
+    if (username) {
+      user.username = username;
+    } else {
+      throw new Error('username field empty');
+    }
+    if (avatar) {
+      user.avatar = avatar;
+    } else {
+      throw new Error('avatar field empty');
+    }
+    if (twoFASecret) {
+      user.twoFASecret = twoFASecret;
+    } else {
+      throw new Error('twofasecret field empty');
+    }
+    if (isTwoFA != user.isTwoFA) {
+      user.isTwoFA = isTwoFA;
+    }
     try {
       await this.userRepository.save(user);
       return user;
@@ -145,38 +191,113 @@ export class UserService {
   }
 
   async updateFriends(
-    authId: string,
+    userId: string,
     updateFriendsDto: UpdateFriendsDto,
   ): Promise<UserEntity> {
-    const user: UserEntity = await this.findOneByAuthId(authId);
+    const user: UserEntity = await this.findOneByAuthId(userId);
     if (!user) {
       throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
     }
     const { username, friends } = updateFriendsDto;
-    if (username) user.username = username;
-    if (friends) user.friends = friends;
+    if (username) {
+      user.username = username;
+    }
+    if (friends) {
+      user.friends = friends;
+    }
     try {
       await this.userRepository.save(user);
       return user;
     } catch (err) {
-      throw new InternalServerErrorException('error while modifying user');
+      throw new HttpException(
+        'error while modifying user',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
+  async getFriends(id: string): Promise<UserEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: id },
+      relations: ['friends'],
+    });
+    if (!user) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
+    return user.friends.map((users) => users);
+  }
+
+  async getBlocked(id: string): Promise<UserEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: id },
+      relations: ['blocked'],
+    });
+    if (!user) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
+    return user.blocked.map((users) => users);
+  }
+
+  async updateBlocked(
+    action: boolean,
+    blocked_id: string,
+    current_id: string,
+  ): Promise<UserEntity> {
+    const curuser: UserEntity = await this.findOneByAuthId(current_id, [
+      'blocked',
+    ]);
+    if (!curuser) {
+      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+    }
+    const blouser: UserEntity = await this.findOneByAuthId(blocked_id);
+    if (!blouser) {
+      throw new HttpException('cant find user to block', HttpStatus.NOT_FOUND);
+    }
+    if (curuser.auth_id === blouser.auth_id) {
+      throw new HttpException(
+        'cant block/unblock yourself',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (action === true) {
+      curuser.blocked.push(blouser);
+      /*
+      const users: UserEntity[] = await this.getFriends(curuser.auth_id);
+      for (let index = 0; index < users.length; index++) {
+        if (users[index].auth_id === blouser.auth_id) {
+          const idx = curuser.friends.indexOf(blouser);
+          curuser.friends.splice(idx, 1);
+        }
+      }
+       */
+      try {
+        await this.userRepository.save(curuser);
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+    if (action === false) {
+      const index = curuser.blocked.indexOf(blouser);
+      curuser.blocked.splice(index, 1);
+      try {
+        await this.userRepository.save(curuser);
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+    try {
+      await this.userRepository.save(curuser);
+      return curuser;
+    } catch (err) {
+      throw new HttpException(
+        'error while modifying user',
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
-  }
-
-  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
-    const findAuthId: UserEntity = await this.userRepository.findOneBy({
-      auth_id,
-    });
-    return findAuthId;
-  }
-
-  async findOnebyID(user_id?: string): Promise<UserEntity> {
-    const findId: UserEntity = await this.userRepository.findOneBy({ user_id });
-    return findId;
   }
 
   async setTwoFASecret(secret: string, user: UserEntity) {
