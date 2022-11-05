@@ -20,6 +20,7 @@ class UserCards extends Component<
     ssname: string;
     ssid: string;
     chanId: string;
+    loaded: string;
   }
 > {
   static contextType = AuthContext;
@@ -32,7 +33,23 @@ class UserCards extends Component<
       ssname: "",
       ssid: "",
       chanId: "",
+      loaded: '',
     };
+  }
+
+  updateUser = (user : {auth_id: number, status: number}) => {
+    if (user.auth_id === this.state.id) {
+      this.setState({online: user.status ? "online" : "offline"})
+    }
+  }
+
+  setSocket = () => {
+    if (this.state.loaded !== 'ok') {
+      socket.on(('onUpdateUser'), (user : {auth_id: number, status: number}) => {
+        this.updateUser(user);
+      })
+      this.setState({loaded: 'ok'})
+    }
   }
 
   getCurrentUser = () => {
@@ -214,6 +231,7 @@ class UserCards extends Component<
     }
     this.setState({ ssid: this.getCurrentUser().auth_id });
     this.setState({ ssname: this.getCurrentUser().username });
+    this.setSocket();
   };
 
   render() {
