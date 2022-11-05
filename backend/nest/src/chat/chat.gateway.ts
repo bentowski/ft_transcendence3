@@ -76,4 +76,9 @@ export class ChatGateway implements OnModuleInit
     onChanCreated() {
   	this.server.emit('newChan');
   }
+
+  @SubscribeMessage('newParty')
+  onNewParty(client: Socket) {
+	this.server.emit('onNewParty');
+  }
 }
