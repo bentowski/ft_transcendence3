@@ -16,7 +16,8 @@ class Modal extends Component<
     chans?: any;
   },
   { user: any; friends: Array<UserType>; input: string; allChans: Array<ChanType>; fieldName: string; errName: string;
-  fieldPass: string;  errPass: string }
+  fieldPass: string;  errPass: string ;
+  protected: boolean}
 > {
   static context = AuthContext;
   constructor(props: any) {
@@ -35,6 +36,7 @@ class Modal extends Component<
       errName: "",
       fieldPass: "",
       errPass: "",
+      protected: false,
     };
   }
 
@@ -51,6 +53,20 @@ class Modal extends Component<
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
+    this.setState({ protected: false })
+    // login.value = "";
+  };
+
+  show = () => {
+    let intput = document.getElementById("chanPassword") as HTMLDivElement;
+    intput.classList.remove("hidden");
+    this.setState({ protected: true })
+    // login.value = "";
+  };
+
+  hiddenInput = () => {
+    let intput = document.getElementById("chanPassword") as HTMLDivElement;
+    intput.classList.add("hidden");
     // login.value = "";
   };
 
@@ -108,6 +124,9 @@ class Modal extends Component<
     // var max = /^.{1,10}$/
     if (!regex.test(this.state.fieldPass)) {
       this.setState({ errPass: "alphanum 6 min" })
+      setTimeout(() => {
+        this.setState({ errPass: "" })
+      }, 1800)
       return false;
     }
     return true;
@@ -116,8 +135,12 @@ class Modal extends Component<
   verifField = () => {
     let r1 = this.verifName();
     let r2 = this.verifPass();
+
+    if (!this.state.protected)
+      r2 = true;
   
-    if (!r1 || !r2)
+    if (((!r1 || !r2) && this.state.protected)
+        || (!r1 && !this.state.protected))
       return false;
     return true;
   }
@@ -368,22 +391,18 @@ class Modal extends Component<
             <header className="mb-3">
               <h2>{this.props.title}</h2>
             </header>
-            <form className="mb-3">
+            <form className="mb-3" >
               <p>
                 <input
                   type="radio"
                   name="ChanType"
                   value="public"
                   id="public"
+                  onChange={this.hiddenInput}
                 />
                 Public
                 <br />
-                <input
-                  type="radio"
-                  name="ChanType"
-                  value="private"
-                  id="private"
-                />
+                <input type="radio" name="ChanType" value="private" id="private" onChange={this.hiddenInput} />
                 Private
                 <br />
                 <input
@@ -391,6 +410,7 @@ class Modal extends Component<
                   name="ChanType"
                   value="protected"
                   id="protected"
+                  onChange={this.show}
                 />
                 Protected
                 <br />
@@ -399,10 +419,9 @@ class Modal extends Component<
                 <div className="messError">{this.state.errName}</div>
                 <input type="text" id="chanTopic" placeholder="topic"></input>
                 <br />
-                <input
+                <input className="hidden"
                   type="password"
                   id="chanPassword"
-                  placeholder="password"
                   onChange={this.handlePass}
                 ></input>
                 <br />
