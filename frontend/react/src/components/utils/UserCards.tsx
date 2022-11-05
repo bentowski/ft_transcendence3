@@ -4,9 +4,10 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
+import BlockUnBlock from './BlockUnBlock';
 // import IUser from "../../interfaces/user-interface";
 // import IAuthContextType from "../../interfaces/authcontexttype-interface";
-import { UserType } from "../../types"
+//import { UserType } from "../../types"
 
 const socket = io("http://localhost:3000/chat");
 
@@ -151,6 +152,7 @@ class UserCards extends Component<
                 }
                 className="miniAvatar"
               />
+              <BlockUnBlock auth_id={this.props.user.auth_id}/>
             </div>
           </div>
         );
