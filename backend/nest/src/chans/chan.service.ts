@@ -46,7 +46,7 @@ export class ChanService {
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find({relations: { chanUser: true }});
+        return this.chanRepository.find({ relations: { chanUser: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {

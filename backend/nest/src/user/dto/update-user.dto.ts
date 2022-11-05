@@ -34,6 +34,14 @@ export class UpdateFriendsDto {
   friends: Array<UserEntity>;
 }
 
+export class BlockedUserDto {
+  @IsNotEmpty()
+  auth_id: string;
+
+  @IsNotEmpty()
+  action: boolean;
+}
+
 export class UpdateUserScoreDto {
   @IsNotEmpty()
   @IsString()
