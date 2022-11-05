@@ -1,11 +1,14 @@
 import { Component } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
 import FriendsNav from "../components/FriendsNav";
 
-class Page extends Component {
-  render() {
+
+
+const Page = ({}:{}) => {
+const navigate = useNavigate()
+
     return (
       <div className="Page p-4">
         <Menu />
@@ -17,12 +20,11 @@ class Page extends Component {
             <Outlet />
           </div>
           <div className="mt-4 col-sm-12 col-lg-3 order-3">
-            <FriendsNav />
+            <FriendsNav navigation={navigate}/>
           </div>
         </div>
       </div>
     ); // fin de return
-  } // fin de render
 } // fin de App
 
 export default Page;

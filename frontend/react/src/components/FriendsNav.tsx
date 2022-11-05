@@ -3,7 +3,7 @@ import UserCards from "./utils/UserCards";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
 
-class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
+class FriendsNav extends Component<{navigation: any}, { friends: Array<UserType> }> {
   constructor(props: any) {
     super(props)
     this.state = {
