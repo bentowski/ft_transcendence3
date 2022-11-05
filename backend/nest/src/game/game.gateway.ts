@@ -40,12 +40,16 @@ export class GameGateway implements OnModuleInit
 }
 
   @SubscribeMessage('joinRoom')
-  async onJoinRoom(client: Socket, body: string[]/* room: string, auth_id: string */) {
-	client.join(body[0]);
+  async onJoinRoom(client: Socket, body: any) {
+	client.join(body.game.id);
   // console.log(this.server.rooms)
-  this.partiesService.addToGame(body[0], body[1]);
-	client.emit('joinedRoom', body[0]);
-	this.server.to(body[0]).emit("userJoinChannel");
+  this.partiesService.addToGame(body.game.id, body.auth_id);
+	// client.emit('joinedRoom', body.game);
+  if (body.game.p1 === null)
+    body.game.p1 = body.auth_id;
+  else if (body.game.p1 !== null && body.game.p1 !== body.auth_id && body.game.p2 === null)
+    body.game.p2 = body.auth_id
+	this.server.to(body.game.id).emit("userJoinChannel", body.game);
   }
 
   @SubscribeMessage('moveBall')

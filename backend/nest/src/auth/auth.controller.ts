@@ -54,7 +54,7 @@ export class AuthController {
       this.authService.changeStatusUser(auth_id, 1);
       res
         .status(202)
-        .cookie('jwt', access_token, { sameSite: 'none', httpOnly: true })
+        .cookie('jwt', access_token, { httpOnly: true })
         .redirect('http://localhost:8080');
     } catch (error) {
       throw new Error(error);
