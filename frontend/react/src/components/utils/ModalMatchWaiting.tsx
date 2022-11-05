@@ -2,7 +2,7 @@ import { Component } from 'react';
 import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 
-class ModalMatchWaiting extends Component<{ title: string, calledBy: string }, {}> {
+class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hidden?: boolean}, {}> {
 
   hidden = () => {
     let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
@@ -11,7 +11,7 @@ class ModalMatchWaiting extends Component<{ title: string, calledBy: string }, {
 
   render() {
     return (
-      <div className='Modal' id='ModalMatchWaiting'>
+      <div className={this.props.hidden ? "Modal hidden" : "Modal"} id='ModalMatchWaiting'>
         <div className='p-4 pb-1'>
           <header className='mb-3'>
             <h2>
@@ -19,6 +19,7 @@ class ModalMatchWaiting extends Component<{ title: string, calledBy: string }, {
             </h2>
           </header>
           <footer>
+            <button onClick={this.hidden}>cancel</button>
           </footer>
         </div>
       </div>

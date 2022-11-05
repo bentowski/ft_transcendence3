@@ -81,4 +81,14 @@ export class ChatGateway implements OnModuleInit
   onNewParty(client: Socket) {
 	this.server.emit('onNewParty');
   }
+
+  @SubscribeMessage('askForGameUp')
+  onAskForGameUp(client: Socket, auth_id: number) {
+	this.server.emit('onAskForGameUp', auth_id);
+  }
+
+  @SubscribeMessage('askForGamedown')
+  onAskForGameDown(client: Socket, auth_id: number) {
+	this.server.emit('onAskForGameDown', auth_id);
+  }
 }
