@@ -2,10 +2,12 @@ import "../styles/pages/login.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
+import {useEffect, useState} from "react";
 
 const Login = () => {
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
   // const navigate = useNavigate();
+  //const [isLogged, setIsLogged] = useState(false);
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
@@ -15,7 +17,6 @@ const Login = () => {
     return <h1>Loading...</h1>;
   }
   console.log("is token?", isToken);
-
   if (isToken) {
     console.log("toktok");
     if (isTwoFa && !isAuth) {
@@ -31,7 +32,7 @@ const Login = () => {
       );
     }
   }
-  console.log('here is login page');
+  //console.log('here is login page');
   return (
     <div className="Login">
       <a

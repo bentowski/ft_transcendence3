@@ -5,41 +5,41 @@ import {useLocation, useNavigate} from "react-router-dom";
 
 const BlockUnBlock = ({auth_id}:{auth_id:string}) => {
     const [status, setStatus] = useState(false);
+    const [butt, setButt] = useState(false);
     const { user } = useAuthData();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const getStatus = async () => {
+    const updateStatus = async () => {
         try {
             let res = await Request(
                 "GET",
                 {},
                 {},
-                "http://localhost:3000/user/" + user.auth_id + "/getblocked",
+                "http://localhost:3000/user/" + auth_id + "/isblocked",
             )
-            if (res) {
+            //if (res) {
                 //console.log('data = ', res);
-                for (let index = 0; index < res.length; index++) {
-                    if (res[index].auth_id === auth_id) {
-                        setStatus(true);
-                        navigate(location);
-                        return ;
-                    }
-                }
-                setStatus(false);
-                navigate(location);
+                setStatus(res);
+                //navigate(location);
+                //return ;
+            //} else {
+                //setStatus(false);
                 return ;
-            } else {
-                setStatus(false);
-                return ;
-            }
+            //}
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(() => {
-        getStatus();
+        updateStatus();
+        //console.log('status = ', status);
+        if (status) {
+            setButt(true);
+        } else {
+            setButt(false);
+        }
     }, [])
 
     const blockunblockUser = async () => {
@@ -57,8 +57,11 @@ const BlockUnBlock = ({auth_id}:{auth_id:string}) => {
                 body: JSON.stringify({ auth_id: auth_id, action: action }),
             })
             if (res.ok) {
+                setButt(action);
+                setStatus(action);
                 //console.log('request succeed!');
             }
+
         } catch (error) {
             console.log(error);
         }
@@ -66,7 +69,7 @@ const BlockUnBlock = ({auth_id}:{auth_id:string}) => {
 
     return (
         <button onClick={blockunblockUser} >
-            { status ?
+            { butt ?
             <p>UNBLOCK</p>
             :
             <p>BLOCK</p> }
