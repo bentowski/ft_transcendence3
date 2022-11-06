@@ -50,8 +50,10 @@ export class AuthController {
     const isAuth = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
+    //console.log('before change status');
     try {
       this.authService.changeStatusUser(auth_id, 1);
+      //console.log('after change status');
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
