@@ -70,22 +70,24 @@ export class UserService {
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
-      relations: { friends: true, channelJoined: true },
+      relations: { friends: true, channelJoined: true, blocked: true },
     });
     return findUsername;
   }
 
   async findOneByAuthId(
     auth_id: string,
-    relations: string[] = [],
+    /*relations: string[] = [], */
   ): Promise<UserEntity> {
     const findAuthId: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
-      relations: relations,
+      relations: { friends: true, channelJoined: true, blocked: true },
     });
+    /*
     if (!findAuthId) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('usera not found');
     }
+     */
     return findAuthId;
   }
 
@@ -243,9 +245,7 @@ export class UserService {
     blocked_id: string,
     current_id: string,
   ): Promise<UserEntity> {
-    const curuser: UserEntity = await this.findOneByAuthId(current_id, [
-      'blocked',
-    ]);
+    const curuser: UserEntity = await this.findOneByAuthId(current_id);
     if (!curuser) {
       throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
     }
@@ -261,7 +261,7 @@ export class UserService {
     }
     if (action === true) {
       curuser.blocked.push(blouser);
-      /*
+
       const users: UserEntity[] = await this.getFriends(curuser.auth_id);
       for (let index = 0; index < users.length; index++) {
         if (users[index].auth_id === blouser.auth_id) {
@@ -269,7 +269,7 @@ export class UserService {
           curuser.friends.splice(idx, 1);
         }
       }
-       */
+
       try {
         await this.userRepository.save(curuser);
       } catch (error) {
@@ -339,7 +339,7 @@ export class UserService {
   async setStatus(auth_id: string, status: number) {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
-      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('useri not found', HttpStatus.NOT_FOUND);
     }
     if (status == 1 || status == 0) {
       user.status = status;

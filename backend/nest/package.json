@@ -57,6 +57,7 @@
     "rxjs": "^7.2.0",
     "set-tz": "^0.2.0",
     "socket.io": "^4.5.2",
+    "socket.io-client": "^4.5.3",
     "typeorm": "^0.3.10"
   },
   "devDependencies": {
