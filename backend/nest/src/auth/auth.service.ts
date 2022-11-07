@@ -22,7 +22,9 @@ export class AuthService {
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
     try {
+      //console.log('validate user auth service');
       return this.userService.validateUser42(user42);
+      //console.log('after validate user');
     } catch (error) {
       throw new Error(error);
     }

@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, UseGuards} from "@nestjs/common";
 import { ChanService } from "./chan.service";
 import { CreateChanDto } from "./dto/create-chan.dto";
+import {AuthGuard} from "@nestjs/passport";
+import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 
 @Controller('chan')
+@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class ChanController {
     constructor(private readonly chanService: ChanService) {}
 

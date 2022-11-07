@@ -3,6 +3,8 @@
 // }
 
 async function Request(type: string, headers: any, body: any, url: string) {
+  console.log('body = ', body);
+  console.log('json body = ', JSON.stringify(body));
   console.log(url);
   if (type === "GET") {
     const response: any = await fetch(url, {

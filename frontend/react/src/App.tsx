@@ -20,16 +20,17 @@ const RequireAuth = () => {
     return <h1>Loading...</h1>;
   }
   if (isToken) {
-    // console.log("user is logged in");
+     console.log("user is logged in");
     if (isTwoFa && !isAuth) {
-      // console.log("but needs to do two fa");
+       console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-      // console.log("welcome buddy");
+       console.log("welcome buddy");
       return <Outlet />;
     }
   }
+  console.log('go to login');
   return <Navigate to="/login" state={{ from: location }} replace />;
 };
 

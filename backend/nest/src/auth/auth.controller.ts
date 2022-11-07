@@ -50,8 +50,10 @@ export class AuthController {
     const isAuth = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
+    //console.log('before change status');
     try {
       this.authService.changeStatusUser(auth_id, 1);
+      //console.log('after change status');
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
@@ -145,13 +147,15 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'), IntraAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('2fa/authenticate')
   async authenticate(
     @Req() req,
     @Res({ passthrough: true }) res: Response,
     @Body() obj: TwoFACodeDto,
   ) {
+    console.log('twofacode = ', obj.twoFACode);
+    console.log('obj = ', obj);
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {

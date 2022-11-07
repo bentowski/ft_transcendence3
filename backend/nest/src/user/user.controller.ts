@@ -116,11 +116,25 @@ export class UserController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getfriends')
   async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
     return this.userService.getFriends(id);
   }
 
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isblocked')
+  async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
+    const users: UserEntity[] = await this.userService.getFriends(req.user.auth_id);
+    for (let index = 0; index < users.length; index++) {
+      if (users[index].auth_id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getblocked')
   async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
     return this.userService.getBlocked(id);
@@ -129,9 +143,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('updateblocked')
   async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
-    //console.log('usraction = ', usr.action);
-    //console.log('usrauthid = ', usr.auth_id);
-    //console.log('reqauthid = ', req.user.auth_id);
     try {
       return this.userService.updateBlocked(
         usr.action,
@@ -186,11 +197,11 @@ export class UserController {
   ): Promise<Observable<object>> {
     const imagename: string = await this.userService.getAvatar(id);
     const fs = require('fs');
-    console.log('image name = ', imagename);
+    //console.log('image name = ', imagename);
     const files = fs.readdirSync('./uploads/profileimages/');
-    console.log('files = ', files);
+    //console.log('files = ', files);
     if (Object.values(files).indexOf(imagename) === -1) {
-      console.log('no file in folder');
+      //console.log('no file in folder');
       return of(
         res.sendFile(
           join(process.cwd(), './uploads/profileimages/default.jpg'),

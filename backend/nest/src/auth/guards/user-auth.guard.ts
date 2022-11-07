@@ -57,7 +57,7 @@ export class UserAuthGuard implements CanActivate {
           //console.log('token said u need 2fa');
           if (!token.isAuth) {
             //console.log('no 2');
-            return false;
+            return true;
           } else {
             //console.log('yes 3');
             return true;

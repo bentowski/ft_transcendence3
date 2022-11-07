@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Delete, Post, Body } from '@nestjs/common';
+import {Controller, Get, Param, Delete, Post, Body, UseGuards} from '@nestjs/common';
 import { PartiesService } from './parties.service';
 import { CreatePartiesDto } from './dto/create-parties.dto';
 import { HistorySavePartiesDto } from "./dto/history-save-parties.dto";
 import { HistoryEntity } from './entities/history-entity';
+import {AuthGuard} from "@nestjs/passport";
+import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 
 @Controller('parties')
+@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class PartiesController {
     constructor(private readonly partiesService: PartiesService) { }
 

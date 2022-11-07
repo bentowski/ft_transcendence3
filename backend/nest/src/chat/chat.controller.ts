@@ -1,8 +1,11 @@
-import { Controller, Render, Get, Res } from '@nestjs/common';
+import {Controller, Render, Get, Res, UseGuards} from '@nestjs/common';
 import { ChatService } from './chat.service';
+import {AuthGuard} from "@nestjs/passport";
+import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 // import { Chat } from './entities/chat.entity';
 
 @Controller('chat')
+@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
