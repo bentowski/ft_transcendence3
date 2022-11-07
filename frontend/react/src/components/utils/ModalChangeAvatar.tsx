@@ -33,12 +33,13 @@ const ModalChangeAvatar = ({
     fetch("http://localhost:3000/user/upload", params)
       .then((res) => {
         if (res.ok) {
-          console.log("upload success!");
+          //console.log("upload success!");
           setSelectedImage(null);
           handleClose();
+          window.location.reload();
         } else {
           setSelectedImage(null);
-          console.log("upload failed!");
+          //console.log("upload failed!");
         }
       })
       .catch((error) => {
@@ -53,7 +54,7 @@ const ModalChangeAvatar = ({
 
   const handleImage = (evt: any) => {
     if (evt.target) {
-      console.log(evt.target.files[0]);
+      //console.log(evt.target.files[0]);
       setSelectedImage(evt.target.files[0]);
     }
   };
