@@ -15,6 +15,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  BadRequestException,
   /*Request,
   UsePipes,
   HttpException,
@@ -46,6 +47,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import { JwtStrategy } from '../auth/strategies/jwt.strategy';
+import fs from 'fs';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -119,25 +121,39 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getfriends')
   async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
-    return this.userService.getFriends(id);
+    try {
+      return this.userService.getFriends(id);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/isblocked')
   async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
-    const users: UserEntity[] = await this.userService.getFriends(req.user.auth_id);
-    for (let index = 0; index < users.length; index++) {
-      if (users[index].auth_id === id) {
-        return true;
+    try {
+      const users: UserEntity[] = await this.userService.getBlocked(
+        req.user.auth_id,
+      );
+      for (let index = 0; index < users.length; index++) {
+        if (users[index].auth_id === id) {
+          return true;
+        }
       }
+      return false;
+    } catch (error) {
+      throw new Error(error);
     }
-    return false;
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getblocked')
   async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
-    return this.userService.getBlocked(id);
+    try {
+      return this.userService.getBlocked(id);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -180,13 +196,19 @@ export class UserController {
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new BadRequestException(
+        'Error while uploading an image: Failed requesting user in database',
+      );
     }
     const newNameAvatar: UpdateAvatarDto = {
       avatar: file.filename,
     };
-    await this.userService.updateAvatar(auid, newNameAvatar);
-    res.status(200);
+    try {
+      await this.userService.updateAvatar(auid, newNameAvatar);
+      //res.status(200)
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -195,22 +217,17 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
-    const imagename: string = await this.userService.getAvatar(id);
-    const fs = require('fs');
-    //console.log('image name = ', imagename);
-    const files = fs.readdirSync('./uploads/profileimages/');
-    //console.log('files = ', files);
-    if (Object.values(files).indexOf(imagename) === -1) {
-      //console.log('no file in folder');
+    try {
+      let imagename: string = await this.userService.getAvatar(id);
+      imagename = this.userService.checkFolder(imagename);
       return of(
         res.sendFile(
-          join(process.cwd(), './uploads/profileimages/default.jpg'),
+          join(process.cwd(), './uploads/profileimages/' + imagename),
         ),
       );
+    } catch (error) {
+      throw new Error(error);
     }
-    return of(
-      res.sendFile(join(process.cwd(), './uploads/profileimages/' + imagename)),
-    );
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)

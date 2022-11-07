@@ -3,8 +3,8 @@
 // }
 
 async function Request(type: string, headers: any, body: any, url: string) {
-  console.log('body = ', body);
-  console.log('json body = ', JSON.stringify(body));
+  //console.log('body = ', body);
+  //console.log('json body = ', JSON.stringify(body));
   console.log(url);
   if (type === "GET") {
     const response: any = await fetch(url, {
@@ -17,6 +17,7 @@ async function Request(type: string, headers: any, body: any, url: string) {
       return json;
     } else {
       return null;
+      //throw new Error(response);
     }
   } else {
     const response: any = await fetch(url, {
@@ -25,11 +26,12 @@ async function Request(type: string, headers: any, body: any, url: string) {
       headers: headers,
       body: JSON.stringify(body),
     });
-    console.log("response = ", response);
+    //console.log("response = ", response);
     if (response.ok) {
       return await response.json();
     } else {
       return null;
+      //throw new Error(response);
     }
   }
 }

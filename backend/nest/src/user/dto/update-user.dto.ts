@@ -27,10 +27,6 @@ export class UpdateAvatarDto {
 
 export class UpdateFriendsDto {
   @IsNotEmpty()
-  @IsString()
-  username: string;
-
-  @IsNotEmpty()
   friends: Array<UserEntity>;
 }
 

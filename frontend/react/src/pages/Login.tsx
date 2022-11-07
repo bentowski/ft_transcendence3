@@ -14,17 +14,17 @@ const Login = () => {
   // const [user, setUser] = useState(null);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h1>A Few Moment Later...</h1>;
   }
-  console.log("is token?", isToken);
+  //console.log("is token?", isToken);
   if (isToken) {
-    console.log("toktok");
+    //console.log("toktok");
     if (isTwoFa && !isAuth) {
-      console.log("but needs to do two fa");
+      //console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-      console.log("super your authenticated!");
+      //console.log("super your authenticated!");
       return (
         <div>
           <Navigate to={from} state={{ from: location }} replace />
