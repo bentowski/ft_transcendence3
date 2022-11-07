@@ -233,40 +233,37 @@ export class UserService {
       );
     }
     const { friends } = updateFriendsDto;
-    //const users: UserEntity[] = await this.getFriends(userId);
-    for (let index = 0; index < friends.length; index++) {
-      if (
-        (await this.userRepository.findOne({
-          where: {
-            user_id: friends[index].user_id,
-            auth_id: friends[index].auth_id,
-            username: friends[index].username,
-            email: friends[index].email,
-          },
-        })) === null
-      ) {
-        throw new BadRequestException(
-          'Error while updating friends list: User dont exists (Stop having imaginary friends)',
-        );
-      }
-      //console.log('user === ', friends[index]);
-      for (let idx = 0; index < friends.length; idx++) {
-        //console.log('>>> user === ', friends[idx]);
-        if (idx != index && friends[idx].auth_id === friends[index].auth_id) {
+    if (friends) {
+      for (let index = 0; index < friends.length; index++) {
+        if (
+          (await this.userRepository.findOne({
+            where: {
+              user_id: friends[index].user_id,
+              auth_id: friends[index].auth_id,
+              username: friends[index].username,
+              email: friends[index].email,
+            },
+          })) === null
+        ) {
           throw new BadRequestException(
-            'Error while updating friends list: Duplicated value (Friends are unique)',
+            'Error while updating friends list: User dont exists (Stop having imaginary friends)',
+          );
+        }
+        for (let idx = 0; idx < friends.length; idx++) {
+          if (idx != index && friends[idx].auth_id === friends[index].auth_id) {
+            throw new BadRequestException(
+              'Error while updating friends list: Duplicated value (Friends are unique)',
+            );
+          }
+        }
+        if (friends[index].auth_id === userId) {
+          throw new BadRequestException(
+            'Error while updating friends list: You cant be friend with yourself (Go out and play with the other kids)',
           );
         }
       }
-      if (friends[index].auth_id === userId) {
-        throw new BadRequestException(
-          'Error while updating friends list: You cant be friend with yourself (Go out and play with the other kids)',
-        );
-      }
     }
-    if (friends) {
-      user.friends = friends;
-    }
+    user.friends = friends;
     try {
       await this.userRepository.save(user);
       return user;
