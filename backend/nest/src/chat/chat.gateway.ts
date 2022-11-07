@@ -73,7 +73,7 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('chanCreated')
-    onChanCreated() {
+  onChanCreated() {
   	this.server.emit('newChan');
   }
 
@@ -83,12 +83,23 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('askForGameUp')
-  onAskForGameUp(client: Socket, auth_id: number) {
-	this.server.emit('onAskForGameUp', auth_id);
+  onAskForGameUp(client: Socket, body: {"to": string, "from": string}) {
+	  this.server.emit('onAskForGameUp', body);
   }
 
   @SubscribeMessage('askForGamedown')
-  onAskForGameDown(client: Socket, auth_id: number) {
-	this.server.emit('onAskForGameDown', auth_id);
+  onAskForGameDown(client: Socket, body: {"to": string, "from": string}) {
+    this.server.emit('onAskForGameDown', body);
+  }
+
+  @SubscribeMessage('inviteAccepted')
+  onInviteAccepted(client: Socket, body: {"to": string, "from": string, "partyID": string}) {
+    console.log(body)
+	  this.server.emit('onInviteAccepted', body);
+  }
+
+  @SubscribeMessage('inviteDeclined')
+  onInviteDeclined(client: Socket, body: {"to": string, "from": string}) {
+	  this.server.emit('onInviteDeclined', body);
   }
 }

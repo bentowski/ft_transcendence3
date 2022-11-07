@@ -8,11 +8,13 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 // import IAuthContextType from "../../interfaces/authcontexttype-interface";
 import { UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
+import { format } from "path";
+import ModalMatchInvite from "./ModalMatchInvite";
 
 const socket = io("http://localhost:3000/chat");
 
 class UserCards extends Component<
-  { user: any; avatar: any; stat: any },
+  { user: any, avatar: any, stat: any },
   {
     login: string;
     id: number;
@@ -20,6 +22,7 @@ class UserCards extends Component<
     ssname: string;
     ssid: string;
     chanId: string;
+    socket: string;
   }
 > {
   static contextType = AuthContext;
@@ -32,6 +35,7 @@ class UserCards extends Component<
       ssname: "",
       ssid: "",
       chanId: "",
+      socket: ''
     };
   }
 
@@ -99,25 +103,28 @@ class UserCards extends Component<
   };
 
   startNewGame = async () => {
-    await Request(
-      "POST",
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      {
-        login: this.state.login,
-        public: true
-      },
-      "http://localhost:3000/parties/create"
-    );
+    // await Request(
+    //   "POST",
+    //   {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   {
+    //     login: this.state.login,
+    //     public: true
+    //   },
+    //   "http://localhost:3000/parties/create"
+    // );
 
-    socket.emit("askForGameUp", this.state.id)
-    let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-    let ids = parties.map((p:any) => {
-      return p.id;
-    })
-    window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
+    socket.emit("askForGameUp", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
+    console.log("emit : ", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
+    let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+    modal.classList.remove('hidden');
+    // let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
+    // let ids = parties.map((p:any) => {
+    //   return p.id;
+    // })
+    // window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number) => {
@@ -221,6 +228,56 @@ class UserCards extends Component<
     );
   };
 
+  openInvite = (body: {"to": string, "from": string}) => {
+      if (body.to === this.getCurrentUser().auth_id) {
+        let modal = document.getElementById("ModalMatchInvite" + this.state.login)as HTMLDivElement;
+        modal.classList.remove('hidden')
+    }
+  }
+
+  closeInvite = (body: {"to": string, "from": string}) => {
+    console.log("close !")
+    if (body.to === this.getCurrentUser().auth_id) {
+      let modal = document.getElementById('ModalMatchInvite' + this.state.login)as HTMLDivElement;
+      modal.classList.add('hidden')
+    }
+  }
+
+  initSocket = () => {
+    if (this.state.socket !== "on") {
+      this.setState({socket: 'on'});
+      socket.on("onAskForGameUp", (body: {"to": string, "from": string}) => {
+        this.openInvite(body);
+      });
+      socket.on("onAskForGameDown", (body: {"to": string, "from": string}) => {
+        this.closeInvite(body);
+      });
+      socket.on("onInviteAccepted", (body: {"to": string, "from": string, "partyID": string}) => {
+        if (body.to === this.getCurrentUser().auth_id)
+        // console.log("http://localhost:8080/game/" + body.partyID);
+          window.location.href = "http://localhost:8080/game/" + body.partyID;
+          // console.log("redirect to http://localhost:8080/game/" + body.partyID)
+        // console.log("LETS CONNECT !") ///////////////
+      });
+      socket.on("onInviteDeclined", (body: {"to": string, "from": string}) => {
+        if (body.to === this.getCurrentUser().auth_id) {
+          let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+          modal.classList.add('hidden');
+        }
+          // console.log("LETS NOT CONNECT !") ///////////////
+      });
+    }
+  }
+
+  callback = (status: string) => {
+    if (status === "accepted") {
+      // socket.emit
+    }
+    else if (status === "declined") {
+
+    }
+  }
+
   componentDidMount = async () => {
     let user = await Request(
       "GET",
@@ -235,6 +292,8 @@ class UserCards extends Component<
     }
     this.setState({ ssid: this.getCurrentUser().auth_id });
     this.setState({ ssname: this.getCurrentUser().username });
+    this.initSocket();
+    // console.log(this.getCurrentUser())
   };
 
   render() {
@@ -245,7 +304,8 @@ class UserCards extends Component<
         key={(this.state.id * 5) / 3}
         className="col-12 my-2 d-flex flex-row justify-content-between"
       >
-        <ModalMatchWaiting title="Create new game" calledBy="newGame" hidden/>
+        <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user}/>
+        <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user}/>
         {items}
       </div>
     );
