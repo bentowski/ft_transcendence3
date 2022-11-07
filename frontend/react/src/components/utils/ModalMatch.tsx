@@ -1,6 +1,9 @@
 import { Component } from 'react';
 import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
+import io from 'socket.io-client';
+
+const socket = io("http://localhost:3000/chat");
 
 class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
 
@@ -25,8 +28,14 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
       },
       "http://localhost:3000/parties/create"
     );
+
+	socket.emit('newParty');
+    let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
+    let ids = parties.map((p:any) => {
+      return p.id;
+    })
     this.hidden()
-    window.location.href = "http://localhost:8080/game/#" + currentUser.user.username
+    window.location.href = "http://localhost:8080/game/" + Math.max(...ids)//currentUser.user.username
   }
 
   render() {

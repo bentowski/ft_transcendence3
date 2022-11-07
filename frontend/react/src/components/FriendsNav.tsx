@@ -80,7 +80,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines}/{this.state.friends.length} friends online</p>
+          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online": 'You are friendless'} </p>
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>

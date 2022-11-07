@@ -11,11 +11,14 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  HttpException,
-  HttpStatus,
   NotFoundException,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
   /*Request,
   UsePipes,
+  HttpException,
+  HttpStatus,
   ValidationPipe,
   Response,
   */
@@ -31,6 +34,7 @@ import {
   UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
+  BlockedUserDto,
 } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
@@ -41,6 +45,7 @@ import JwtService from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -69,35 +74,24 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('current')
-  async currentUser(@Req() req: Request): Promise<UserEntity> {
-    //console.log('request = ' + req);
-    const token = req.cookies['jwt'];
+  async currentUser(@Req() req): Promise<UserEntity> {
+    const auid: string = req.user.auth_id;
     try {
-      const decoded: PayloadInterface = jwt_decode(token);
-      return this.userService.currentUser(decoded.auth_id);
+      return this.userService.currentUser(auid);
     } catch (error) {
-      throw new HttpException('error decoding token', HttpStatus.BAD_REQUEST);
+      throw new Error(error);
     }
   }
 
-  /*
-  @Get('isauth')
-  isAuth(@Req() req: Request): boolean {
-    const token = req.cookies['jwt'];
-    console.log('token ', token);
-    return !!token;
-  }
-  */
-
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   findOnebyUsername(@Param('username') username: string) {
     return this.userService.findOnebyUsername(username);
   }
 
-  @UseGuards(UserAuthGuard)
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   findOnebyID(@Param('id') id: string) {
     return this.userService.findOneByAuthId(id);
@@ -109,21 +103,55 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
-  @UseGuards(UserAuthGuard)
-  @Delete('logout')
-  logout(@Res() res): any {
-    res.clearCookie('jwt');
-    return 'User logged out';
-  }
-
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('addFriends/:id')
   updateFriends(
     @Param('id') userId: string,
     @Body() updateFriendsDto: UpdateFriendsDto,
   ) {
-    console.log(updateFriendsDto);
-    return this.userService.updateFriends(userId, updateFriendsDto);
+    try {
+      return this.userService.updateFriends(userId, updateFriendsDto);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/getfriends')
+  async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
+    return this.userService.getFriends(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isblocked')
+  async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
+    const users: UserEntity[] = await this.userService.getFriends(req.user.auth_id);
+    for (let index = 0; index < users.length; index++) {
+      if (users[index].auth_id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/getblocked')
+  async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
+    return this.userService.getBlocked(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('updateblocked')
+  async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
+    try {
+      return this.userService.updateBlocked(
+        usr.action,
+        usr.auth_id,
+        req.user.auth_id,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   //@UseGuards(UserAuthGuard)
@@ -132,67 +160,76 @@ export class UserController {
     return this.userService.remove(username);
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('picture', storage))
   async uploadFile(
     @Res({ passthrough: true }) res,
     @Req() req,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
-    //console.log('salut les amis');
-    //console.log(file);
-    const token = req.cookies['jwt'];
-    const decoded: PayloadInterface = jwt_decode(token);
-    const user: UserEntity = await this.userService.findOneByAuthId(
-      decoded.auth_id,
-    );
-    if (!user) throw new NotFoundException('user not found');
-    //of({ imagePath: file.filename });
+    //console.log('saloute');
+    const auid: string = req.user.auth_id;
+    const user: UserEntity = await this.userService.findOneByAuthId(auid);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
     const newNameAvatar: UpdateAvatarDto = {
       avatar: file.filename,
     };
-    //console.log('newUrlAvatar ; ', newNameAvatar);
-    await this.userService.updateAvatar(decoded.auth_id, newNameAvatar);
+    await this.userService.updateAvatar(auid, newNameAvatar);
     res.status(200);
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/avatar')
-  async getAvatar(@Req() req, @Param('id') id: string, @Res() res) {
-    //console.log('requesting image');
-    //console.log('reqqqqq = ', req);
-    const user: UserEntity = await this.userService.findOneByAuthId(id);
-    if (!user.avatar) {
-      throw new NotFoundException('avatar null');
+  async getAvatar(
+    @Param('id') id: string,
+    @Res() res,
+  ): Promise<Observable<object>> {
+    const imagename: string = await this.userService.getAvatar(id);
+    const fs = require('fs');
+    //console.log('image name = ', imagename);
+    const files = fs.readdirSync('./uploads/profileimages/');
+    //console.log('files = ', files);
+    if (Object.values(files).indexOf(imagename) === -1) {
+      //console.log('no file in folder');
+      return of(
+        res.sendFile(
+          join(process.cwd(), './uploads/profileimages/default.jpg'),
+        ),
+      );
     }
-    console.log('[ass pass');
-    const imagename: any = user.avatar;
-    //console.log('===== ', join('/uploads/profileimages/' + imagename));
     return of(
       res.sendFile(join(process.cwd(), './uploads/profileimages/' + imagename)),
     );
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const auid: string = req.user.auth_id;
     try {
-      const token = req.cookies['jwt'];
-      const decoded: PayloadInterface = jwt_decode(token);
-      return this.userService.updateUsername(decoded.auth_id, updateUserDto);
+      return this.userService.updateUsername(auid, updateUserDto);
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/avatar')
   updateAvatar(@Req() req, @Body() updateAvatarDto: UpdateAvatarDto) {
+    const auid: string = req.user.auth_id;
     try {
-      const token = req.cookies['jwt'];
-      const decoded: PayloadInterface = jwt_decode(token);
-      return this.userService.updateAvatar(decoded.auth_id, updateAvatarDto);
+      return this.userService.updateAvatar(auid, updateAvatarDto);
     } catch (error) {
       throw new Error(error);
     }

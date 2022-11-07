@@ -2,6 +2,7 @@ import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 
 const ModalChangeUsername = ({
   show,
@@ -29,7 +30,7 @@ const ModalChangeUsername = ({
     let users = await getUsers();
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
-    
+
     if (!regex.test(field)) {
       setErr("Non valid character")
       setTimeout(() => {
@@ -56,28 +57,27 @@ const ModalChangeUsername = ({
     return true;
   };
 
-  const requestChangeUsername = async () => {
-    // verifField();
-    // var regex = /^[\w-]+$/
-    if (await verifField()) {
-      const login = document.getElementById("changeLogin") as HTMLInputElement;
-      fetch("http://localhost:3000/user/update/username", {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: field }),
-      }).then((res) => {
-        if (res.ok) {
-          setField("");
-          handleClose();
-        } else {
-          console.log("wrong request");
-        }
-      });
-    }
-  };
+  const navigate = useNavigate()
+
+  const requestChangeUsername = () => {
+    //const login = document.getElementById("changeLogin") as HTMLInputElement;
+    fetch("http://localhost:3000/user/update/username", {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: field }),
+    }).then((res) => {
+      if (res.ok) {
+        setField("");
+        handleClose();
+        navigate(field)
+      } else {
+        console.log("wrong request");
+      }
+    });
+  }
 
   const handleChange = (evt: any) => {
     evt.preventDefault();
@@ -99,7 +99,7 @@ const ModalChangeUsername = ({
 
   return (
     <div className="changeusername">
-      <Modal show={show} id="" onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
             <h2>Change Username</h2>
@@ -131,4 +131,5 @@ const ModalChangeUsername = ({
     </div>
   );
 };
+
 export default ModalChangeUsername;

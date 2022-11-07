@@ -6,6 +6,10 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import {PartiesModule} from "../parties/parties.module";
+import {AvailableChanModule} from "../available-chan/available-chan.module";
+import {ChanModule} from "../chans/chan.module";
+import {ChatModule} from "../chat/chat.module";
 //import { UserService } from '../user/user.service';
 //import { TypeOrmModule } from '@nestjs/typeorm';
 //import UserEntity from '../user/entities/user-entity';
@@ -16,13 +20,17 @@ import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     UserModule,
+    PartiesModule,
+    AvailableChanModule,
+    ChanModule,
+    ChatModule,
     PassportModule.register({
       defaultStrategy: 'jwt',
       session: false,
       property: 'user',
     }),
     JwtModule.register({
-      secret: `${process.env.SECRET_KEY}`,
+      secret: `${process.env.JWT_SECRET_KEY}`,
       signOptions: {
         expiresIn: `${process.env.JWT_EXPIRATION}`,
       },

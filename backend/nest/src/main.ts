@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
+//import * as csurf from 'csurf';
 import * as express from 'express';
 
 //import { DocumentBuilder } from '@nestjs/swagger';
@@ -21,7 +22,7 @@ async function bootstrap() {
     },
   });
   app.use(cookieParser());
-
+  //app.use(csurf());
   /*
  const sessionRepo = app
    .get(AppModule)

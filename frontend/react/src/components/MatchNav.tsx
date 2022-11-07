@@ -1,16 +1,42 @@
 //import React from 'react';
-import { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
+import { socket } from '../contexts/WebSocketContext';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
-// import Request from "./utils/Requests"
+import Request from "./utils/Requests"
 
 
-class OpenGames extends Component<{ allGames: any }, {}> {
-	renderGames(login: string, key: number) {
+function OpenGames() {
+	const [games, setGames] = useState<any[]>([]);
+	const [items, setItems] = useState<any[]>([]);
+	
+	useEffect(() => {
+		socket.on('onNewParty', () => {
+			getGames()
+		})
+		return () => {
+			socket.off('newParty');
+		}
+	});
+
+	useEffect(() => {
+		getGames()
+	}, [])
+
+	useEffect(() => {
+		render()
+	}, [games])
+
+	const getGames = async () => {
+		let parties = await Request('GET', {}, {}, "http://localhost:3000/parties")
+		setGames(parties)
+	}
+
+	const renderGames = (login: string, key: number, id: number) => {
 		return (
 			<div key={key} className="gamesDiv row justify-content-start">
 				<div className="col-4">
-					<button>Join</button>
+					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>Join</button>
 				</div>
 				<div className="col w-100">
 					<p className="text-start">game {login}</p>
@@ -18,19 +44,20 @@ class OpenGames extends Component<{ allGames: any }, {}> {
 			</div>
 		)
 	}
-	render() {
+	const render = () => {
 		let x = 0; //variable a changer selon le back
-		const items: any = []
-		while (x < this.props.allGames.length) {
-			items.push(this.renderGames(this.props.allGames[x].login, x))
+		const item: any = []
+		while (x < games.length) {
+			item.push(renderGames(games[x].login, x, games[x].id))
 			x++;
 		}
-		return (
-			<div>
-				{items}
-			</div>
-		);
+		setItems(item)
 	}
+	return (
+		<div>
+			{items}
+		</div>
+	)
 }
 
 class MatchNav extends Component {
@@ -82,7 +109,7 @@ class MatchNav extends Component {
 
 	render() {
 		return (
-			<div className="MatchNav" id="MatchNav">
+			<div className="MatchNav h-100" id="MatchNav">
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
@@ -95,7 +122,7 @@ class MatchNav extends Component {
 					</div>
 				</div>
 				<div className="List">
-					<OpenGames allGames={this.state.allGames} />
+					<OpenGames/>
 				</div> {/* List */}
 			</div>
 		); // fin de return

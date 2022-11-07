@@ -66,4 +66,17 @@ export class PartiesService {
         return histories;
 
     }
+
+    async addToGame(id: string, auth_id: string) {
+        let game = await this.partiesRepository.findOne({
+            where : { id: Number(id)}
+        })
+        if (game.p1 === null)
+            game.p1 = auth_id;
+        else if (game.p1 === auth_id)
+            return ;
+        else if (game.p2 === null)
+            game.p2 = auth_id;
+        await this.partiesRepository.save(game);
+    }
 }
