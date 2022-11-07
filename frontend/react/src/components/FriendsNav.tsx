@@ -2,21 +2,24 @@ import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
+import IError from "../interfaces/error-interface";
 
-class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
+class FriendsNav extends Component<{}, { friends: Array<UserType>, alert: boolean, alertMsg: string }> {
   constructor(props: any) {
     super(props)
     this.state = {
       friends: [],
+      alert: false,
+      alertMsg: "",
     };
   }
 
   componentDidMount = async () => {
-    let currentUser:any = sessionStorage.getItem('data');
+    let currentUser: any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.user.username)
     if (!user.friends.length)
-      return ;
+      return;
     this.setState({ friends: user.friends })
   }
 
@@ -29,44 +32,44 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
   }
 
   addFriends = async () => {
-    let currentUser:any = sessionStorage.getItem('data');
+    let currentUser: any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value))
-      return ;
+      return;
     let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-    if (!userToAdd)
-    {
+    if (!userToAdd) {
       this.promptError()
-      return ;
+      return;
     }
     let newFriendsArray = this.state.friends
-    newFriendsArray  = [...newFriendsArray , userToAdd];
+    newFriendsArray = [...newFriendsArray, userToAdd];
     let test = await Request('PATCH',
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        {
-          username: currentUser.user.username,
-          friends: newFriendsArray
-        },
-        "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+      {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      {
+        username: currentUser.user.username,
+        friends: newFriendsArray
+      },
+      "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+
     if (!test)
-      return ;
-    this.setState({friends: newFriendsArray})
+      return;
+
+    this.setState({ friends: newFriendsArray })
   }
 
   pressEnter = (e: any) => {
     if (e.key === 'Enter')
-    this.addFriends();
+      this.addFriends();
   }
 
   render() {
     let friends: Array<any> = [];
     let onlines;
-    if (this.state.friends.length > 0)
-    {
+    if (this.state.friends.length > 0) {
       onlines = 0;
       let x = 0;
       while (x < this.state.friends.length) {
@@ -80,7 +83,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online": 'You are friendless'} </p>
+          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online" : 'You are friendless'} </p>
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>

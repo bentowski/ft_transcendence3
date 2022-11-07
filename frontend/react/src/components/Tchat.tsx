@@ -133,20 +133,25 @@ export const WebSocket = () => {
     if (radioCheck !== "" && name.value && chans === undefined) {
       if (password.value)
         pswd = password.value;
-      await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: name.value,
-          type: radioCheck,
-          password: pswd,
-          owner: username
-        },
-        "http://localhost:3000/chan/create"
-      );
+        try {
+          await Request(
+            "POST",
+            {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            {
+              name: name.value,
+              type: radioCheck,
+              password: pswd,
+              owner: username
+            },
+            "http://localhost:3000/chan/create"
+          );
+        } catch (error) {
+          //console.log
+        }
+      
     let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
       name.value = "";
       password.value = "";

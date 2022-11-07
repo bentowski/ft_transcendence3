@@ -5,5 +5,7 @@ type ResponseData = {
 }
 
 export default interface IError {
-    json: () => Promise<ResponseData>;
+    //json: () => Promise<ResponseData>;
+    statusCode: string;
+    message: string;
 }

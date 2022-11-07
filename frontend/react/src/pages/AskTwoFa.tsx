@@ -52,15 +52,15 @@ const AskTwoFa = () => {
     setCode(evt.target.value);
   };
 
-  console.log('before is loading');
+  //console.log('before is loading');
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>A Few Moment Later...</p>;
   }
-  console.log('checking if token');
+  //console.log('checking if token');
   if (isToken) {
-    console.log('token ok, checking if needs twofa');
+    //console.log('token ok, checking if needs twofa');
     if (isTwoFa && !isAuth) {
-      console.log('needs 2 fa before connect');
+      //console.log('needs 2 fa before connect');
       return (
           <div>
             <form className="mb-3">
@@ -81,13 +81,13 @@ const AskTwoFa = () => {
           </div>
       );
     }
-    console.log('doesing need two fa, checking if auth')
+    //console.log('doesing need two fa, checking if auth')
     if (isAuth) {
-      console.log('logging ok');
+      //console.log('logging ok');
       return (<Navigate to="/" />);
     }
   }
-  console.log('doesnt need two fa and isnt auth')
+  //console.log('doesnt need two fa and isnt auth')
   return (<Navigate to="/login" />);
 };
 

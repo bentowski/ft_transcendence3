@@ -3,6 +3,8 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
+import { Alert } from 'react-bootstrap';
+import IError from "../../interfaces/error-interface";
 
 const ModalChangeUsername = ({
   show,
@@ -15,6 +17,8 @@ const ModalChangeUsername = ({
   //const [show, setShow] = useState(false);
   const [field, setField] = useState("");
   const [err, setErr] = useState("");
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
 
   const getUsers = async () => {
     let users = await Request(
@@ -59,32 +63,38 @@ const ModalChangeUsername = ({
 
   const navigate = useNavigate()
 
-  const requestChangeUsername = () => {
+  const requestChangeUsername = async () => {
     //const login = document.getElementById("changeLogin") as HTMLInputElement;
-    fetch("http://localhost:3000/user/update/username", {
+    let res = await fetch("http://localhost:3000/user/update/username", {
       method: "PATCH",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username: field }),
-    }).then((res) => {
-      if (res.ok) {
-        setField("");
-        handleClose();
-        navigate(field)
-      } else {
-        console.log("wrong request");
-      }
-    });
+    })
+    if (res.ok) {
+      setField("");
+      handleClose();
+      closeAlert();
+      navigate(field)
+    } else {
+      const error: IError = await res.json();
+      console.log(res);
+      setAlert(true);
+      setAlertMsg(error.message);
+      console.log("wrong request");
+    }
   }
 
   const handleChange = (evt: any) => {
     evt.preventDefault();
     setField(evt.target.value);
+    closeAlert();
   };
 
   const cancelling = () => {
+    closeAlert();
     setField("");
     handleClose();
   };
@@ -96,6 +106,12 @@ const ModalChangeUsername = ({
 
   // console.log(form.username)
   // form.username;
+
+  const closeAlert = () => {
+    console.log('closing alert');
+    setAlert(false);
+    setAlertMsg("");
+  }
 
   return (
     <div className="changeusername">
@@ -117,6 +133,12 @@ const ModalChangeUsername = ({
               />
               <div className="messError">{err}</div>
             </Form>
+            <div>
+              {alert ?
+                <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                <div />
+              }
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button className="mx-1" onClick={cancelling}>

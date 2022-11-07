@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "http://localhost:3000/auth/istoken"
       )
       if (res) {
-        console.log('REs = ', res.isTok);
+        //console.log('REs = ', res.isTok);
         if (res.isTok === 0) {
           setLoading(false);
           return ;

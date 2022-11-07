@@ -28,7 +28,9 @@ const BlockUnBlock = ({auth_id}:{auth_id:string}) => {
                 return ;
             //}
         } catch (error) {
-            console.log(error);
+            //afficher un modal ici
+            //res.statusCode
+            //res.message
         }
     }
 

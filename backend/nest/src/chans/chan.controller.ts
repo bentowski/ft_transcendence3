@@ -24,7 +24,12 @@ export class ChanController {
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
-        return this.chanService.createChan(createUserDto);
+        try {
+            return this.chanService.createChan(createUserDto);
+        } catch (err) {
+            throw new Error(err);
+        }
+        
     }
 
     @Delete(':id')

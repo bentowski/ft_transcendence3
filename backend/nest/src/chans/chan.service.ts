@@ -37,7 +37,6 @@ export class ChanService {
         if (chanInDb) {
             throw new HttpException('Chan already exists', HttpStatus.BAD_REQUEST);
         }
-
         const chan: ChanEntity = await this.chanRepository.create({
             name, type, password, owner, chanUser
         })
