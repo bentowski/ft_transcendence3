@@ -14,14 +14,12 @@ import { ChanEntity } from '../../chans/entities/chan-entity';
 
 @Entity('user')
 export class UserEntity {
-  @Expose()
   @PrimaryGeneratedColumn()
   user_id: string;
 
-  @Expose()
   @Column({
+    unique: true,
     nullable: false,
-    unique: true
   })
   auth_id: string;
 
@@ -34,6 +32,7 @@ export class UserEntity {
   @Column({
     unique: true,
     nullable: false,
+    update: false,
   })
   email: string;
 
@@ -100,6 +99,7 @@ export class UserEntity {
 
   @Column({
     default: () => '((CURRENT_DATE))',
+    update: false,
   })
   createdAt: Date;
 

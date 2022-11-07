@@ -94,7 +94,7 @@ export class AuthService {
   async changeStatusUser(auth_id: string, status: number) {
     try {
       await this.userService.setStatus(auth_id, status);
-      socket.emit('updateUser', {auth_id: auth_id, status: status})
+      socket.emit('updateUser', { auth_id: auth_id, status: status })
     } catch (error) {
       throw new Error(error);
     }

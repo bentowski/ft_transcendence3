@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
   Delete,
   HttpException,
-  HttpStatus,
+  HttpStatus, BadRequestException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { IntraAuthGuard } from './guards/intra-auth.guard';
@@ -106,7 +106,9 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const user = this.authService.findUser(auid);
     if (!user) {
-      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+      throw new BadRequestException(
+        'Error while generating 2FA QR Code: Cant find user in database',
+      );
     }
     const { otpauthUrl } = await this.authService.generateTwoFASecret(auid);
     return this.authService.pipeQrCodeStream(response, otpauthUrl);
@@ -122,7 +124,9 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {
-      throw new UnauthorizedException('wrong 2fa code');
+      throw new BadRequestException(
+        'Error while activating 2FA: Wrong 2fa code',
+      );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
     const isAuth = true;
@@ -154,12 +158,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Body() obj: TwoFACodeDto,
   ) {
-    console.log('twofacode = ', obj.twoFACode);
-    console.log('obj = ', obj);
+    //console.log('twofacode = ', obj.twoFACode);
+    //console.log('obj = ', obj);
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {
-      throw new UnauthorizedException('wrong 2fa code');
+      throw new BadRequestException(
+        'Error while authenticating 2FA: Wrong 2FA Code',
+      );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
     const isAuth = true;

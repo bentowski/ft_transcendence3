@@ -17,7 +17,7 @@ const GetAvatar = ({
   const [show, setShow] = useState(false);
 
   const handleShow = (value: boolean) => setShow(value);
-  console.log("user avatar url = ", user.avatar);
+  //console.log("user avatar url = ", user.avatar);
 
   if (user) {
     return (
