@@ -79,8 +79,10 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
     }
   }
   // =========== Players moves ==========
+  console.log("1")
   if (settings.spec === false) {
-    let move = 0;
+  console.log("2")
+  let move = 0;
     if (settings.up == 1)  {
       movePlayer(ctx, -1, globale, settings)
       move += 1;
@@ -89,8 +91,9 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
       movePlayer(ctx, 1, globale, settings)
       move += 1;
     }
-    if (move === 1)
+    if (move === 1) {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
+    }
   }
   // console.log('spec', settings.spec, 'admin', settings.admin)
 	// if ()
@@ -122,7 +125,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   if (settings.admin) {
     socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]}/* {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]} */)
   }
-  if (!settings.end && settings.admin) {
+  if (!settings.end) {
     window.requestAnimationFrame(() => {
       moveBall(ctx, globale, settings)
     })
@@ -301,7 +304,7 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
   socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
   if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
     settings.admin = true;
-    // console.log('IM THE ADMIN')
+    console.log('IM THE ADMIN')
   }
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
     settings.spec = false

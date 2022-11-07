@@ -254,10 +254,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteAccepted", (body: {"to": string, "from": string, "partyID": string}) => {
         if (body.to === this.getCurrentUser().auth_id)
-        // console.log("http://localhost:8080/game/" + body.partyID);
           window.location.href = "http://localhost:8080/game/" + body.partyID;
-          // console.log("redirect to http://localhost:8080/game/" + body.partyID)
-        // console.log("LETS CONNECT !") ///////////////
       });
       socket.on("onInviteDeclined", (body: {"to": string, "from": string}) => {
         if (body.to === this.getCurrentUser().auth_id) {
