@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, UseGuards} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
 import { ChanService } from "./chan.service";
 import { CreateChanDto } from "./dto/create-chan.dto";
 import {AuthGuard} from "@nestjs/passport";
@@ -25,6 +25,11 @@ export class ChanController {
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
         return this.chanService.createChan(createUserDto);
+    }
+
+    @Patch(':idroom/ban/:iduser')
+    banUser(@Param('idroom') idroom: string, @Param('iduser') iduser: string) {
+
     }
 
     @Delete(':id')

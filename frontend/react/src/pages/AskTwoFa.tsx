@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react";
-// import { useAuthData } from "../contexts/AuthProviderContext";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useAuthData} from "../contexts/AuthProviderContext";
+import {Alert} from "react-bootstrap";
+import IError from "../interfaces/error-interface";
 //import Request from '../components/utils/Requests';
+// import { useAuthData } from "../contexts/AuthProviderContext";
 
 const AskTwoFa = () => {
   // const { isAuth, isTwoFa, isToken, loading } = useAuthData();
@@ -11,11 +13,13 @@ const AskTwoFa = () => {
   const [validate, setValidate] = useState(false);
   // const location = useLocation();
   const navigate = useNavigate();
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
   // const from = location.state?.from?.pathname || "/";
 
   const validateTwoFa = async () => {
-    console.log("code = ", code);
-    try {
+    //console.log("code = ", code);
+    //try {
       let res = await fetch("http://localhost:3000/auth/2fa/authenticate",
           {
             method: "POST",
@@ -28,15 +32,18 @@ const AskTwoFa = () => {
       if (res.ok) {
         window.location.reload();
       } else {
-        console.log('request failed');
+        const errmsg: IError = await res.json();
+        setAlert(true);
+        setAlertMsg(errmsg.message);
+        //console.log('request failed');
       }
-    } catch (error) {
-      if (typeof error === "object" && error !== null) {
-        console.log("oulala -", error);
-      } else {
-        console.log("unexpected error ", error);
-      }
-    }
+    //} catch (error) {
+      //if (typeof error === "object" && error !== null) {
+        //console.log("oulala -", error);
+      //} else {
+        //console.log("unexpected error ", error);
+      //}
+    //}
   };
 
   /*
@@ -47,10 +54,19 @@ const AskTwoFa = () => {
   });
    */
 
+    const closeAlert = () => {
+        setAlert(false);
+        setAlertMsg("");
+    }
+
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     evt.preventDefault();
     setCode(evt.target.value);
   };
+
+  if (alert) {
+      return (<Alert onClose={closeAlert} variant='warning' dismissible>{alertMsg}</Alert>);
+  }
 
   //console.log('before is loading');
   if (loading) {

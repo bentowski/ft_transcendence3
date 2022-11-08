@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
+import IError from "../../interfaces/error-interface";
+import {Alert} from "react-bootstrap";
 
 const Switch = () => {
   const [label, setLabel] = useState("2fa");
@@ -10,6 +12,8 @@ const Switch = () => {
   const [show, setShow] = useState(false);
   const [tick, setTick] = useState(false);
   const { isTwoFa, isAuth, isToken, loading } = useAuthData();
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
 
   useEffect(() => {
     if (isTwoFa) {
@@ -17,30 +21,35 @@ const Switch = () => {
     }
   }, []);
 
-  const generateTwoFA = () => {
-    fetch("http://localhost:3000/auth/2fa/generate", {
+  const generateTwoFA = async () => {
+    console.log('calling generating avatar');
+    let res = await fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
-      .then((res) => res.blob())
-      .then((blob) => {
-        //console.log("sendsendsend");
-        const blobURL = URL.createObjectURL(blob);
-        setSrc(blobURL);
-        const image = document.getElementById("myImg");
-        if (!image) {
-          return;
-        }
-        image.onload = function () {
-          URL.revokeObjectURL(src);
-        };
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    if (res.ok) {
+      const myblobi = await res.blob();
+      console.log(myblobi);
+      const blobURL = URL.createObjectURL(myblobi);
+      setSrc(blobURL);
+      const image = document.getElementById("myImg");
+      if (!image) {
+        return;
+      }
+      image.onload = function () {
+        URL.revokeObjectURL(src);
+      };
+    } else {
+      const errmsg: IError = await res.json();
+      if (errmsg.statusCode === 401) {
+
+      }
+      setAlert(true);
+      setAlertMsg(errmsg.message);
+    }
 
     /*
     const reader = await response.body.getReader();
@@ -89,7 +98,7 @@ const Switch = () => {
       return;
     }
     //console.log("before fetch request");
-    fetch("http://localhost:3000/auth/2fa/activate", {
+    let res = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -99,24 +108,21 @@ const Switch = () => {
         twoFACode: code,
       }),
     })
-      .then((res) => {
-        if (res.ok) {
-          handleClose();
-          handleTick();
-          //console.log("yey");
-          return;
-        } else {
-          //console.log("nnoooo ");
-          setCode("");
-          return;
-        }
-      })
-      .catch((error) => {
-        //console.log("nnoooo ", error);
-        handleClose();
-        handleUnTick();
-        return;
-      });
+    if (res.ok) {
+       handleClose();
+       handleTick();
+       closeAlert();
+       //console.log("yey");
+       return;
+    } else {
+       //console.log("nnoooo ");
+       const errmsg: IError = await res.json();
+       setCode("");
+       setAlertMsg(errmsg.message);
+       setAlert(true);
+
+       return;
+    }
   };
 
   const deactivateTwoFA = async () => {
@@ -173,6 +179,11 @@ const Switch = () => {
 
    */
 
+  const closeAlert = () => {
+    setAlert(false);
+    setAlertMsg('');
+  }
+
   const handleChange = (evt: any) => {
     evt.preventDefault();
     setCode(evt.target.value);
@@ -181,6 +192,7 @@ const Switch = () => {
   const cancelling = () => {
     setCode("");
     handleClose();
+    closeAlert();
   };
 
   const handleClose = () => setShow(false);
@@ -206,6 +218,14 @@ const Switch = () => {
                 value={code}
               />
             </Form>
+            <div>
+            {
+              alert ?
+                  <Alert onClose={closeAlert} variant='warning' dismissible>
+                    {alertMsg}
+                  </Alert> : <div></div>
+            }
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button className="mx-1" onClick={cancelling}>
