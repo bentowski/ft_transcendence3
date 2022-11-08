@@ -12,7 +12,7 @@ const Menu = () => {
 
 
   const logoutSession = async () => {
-    //console.log("loging out");
+    console.log("loging out");
     await fetch("http://localhost:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",

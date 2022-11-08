@@ -31,6 +31,8 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
             setErrorShow(true);
             setErrorMsg(value.message);
             setErrorCode(value.statusCode);
+        } else {
+            setErrorShow(false);
         }
     }
 

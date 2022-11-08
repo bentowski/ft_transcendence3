@@ -13,6 +13,7 @@ import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
 import {Alert} from "react-bootstrap";
 import {ErrorContext, ErrorProvider, useErrorContext} from "./contexts/ErrorProviderContext";
+import {HandleError} from "./components/utils/HandleError";
 //import {Alert} from 'react-bootstrap';
 //import {useError} from "./contexts/ErrorProviderContext";
 //import {HandleError} from "./components/utils/HandleError";
@@ -41,7 +42,7 @@ const RequireAuth = () => {
 };
 
 const Layout = () => {
-  const { errorMsg, errorShow} = useErrorContext();
+  //const { errorMsg, errorShow} = useErrorContext();
   //const [show, setShow] = useState(false);
 
   //useEffect(() => {
@@ -49,10 +50,11 @@ const Layout = () => {
       //setShow(true);
     //}
   //})
+  //<Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
 
   return (
     <main className="App">
-      <Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
+      <HandleError />
       <Outlet />
     </main>
   );

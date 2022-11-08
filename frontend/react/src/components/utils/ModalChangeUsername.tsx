@@ -73,7 +73,6 @@ const ModalChangeUsername = ({
   const handleClose = () => parentCallBack(false);
   //const handleShow = () => changeShowing(true);
 
-  try {
     return (
         <div className="changeusername">
           <Modal show={show} onHide={handleClose}>
@@ -106,10 +105,5 @@ const ModalChangeUsername = ({
           </Modal>
         </div>
     );
-  } catch (error: any) {
-    //console.log('error catched ? ', error);
-    return (<HandleError err={error} />)
-  }
-
 };
 export default ModalChangeUsername;

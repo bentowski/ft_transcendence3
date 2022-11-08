@@ -4,18 +4,24 @@ import {useEffect} from "react";
 import {Alert} from "react-bootstrap";
 import {useErrorContext} from "../../contexts/ErrorProviderContext";
 
-const HandleError = ({err}:{err: any}) => {
-    const { error, setError } = useErrorContext();
-
-    console.log('error catched : ', err);
+const HandleError = () => {
+    const { errorShow, errorMsg, errorCode, setError } = useErrorContext();
 
     const handleClose = () => {
-        setError(false);
+        setError(null);
     }
+
+    useEffect(() => {
+        if (errorShow) {
+            setTimeout(() => {
+                handleClose();
+            }, 2000)
+        }
+    }, [])
 
     return (
         <div>
-            <Alert onClose={handleClose} variant="warning" dismissible>{err}</Alert>
+            <Alert show={errorShow} onClose={handleClose} variant="warning" dismissible>{errorCode}: {errorMsg}</Alert>
         </div>
     )
 }

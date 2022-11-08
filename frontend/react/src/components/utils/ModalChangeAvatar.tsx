@@ -5,6 +5,7 @@ import { useState } from "react";
 import ImageUploading from "react-images-uploading";
 import IError from "../../interfaces/error-interface";
 import {HandleError} from "./HandleError";
+import {useErrorContext} from "../../contexts/ErrorProviderContext";
 
 const ModalChangeAvatar = ({
   show,
@@ -13,7 +14,8 @@ const ModalChangeAvatar = ({
   show: boolean;
   parentCallBack: (newState: boolean) => void;
 }) => {
-  const { user, setError } = useAuthData();
+  const { user } = useAuthData();
+  const { setError } = useErrorContext();
   //const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -41,7 +43,8 @@ const ModalChangeAvatar = ({
     } else {
       setSelectedImage(null);
       const err: any = await res.json();
-      HandleError(err);
+      setError(err);
+      //HandleError(err);
       //console.log("upload failed!");
     }
   };

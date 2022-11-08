@@ -42,7 +42,7 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
           logout();
         }
         //setError(err);
-        throw new Error(err);
+        throw err;
       }
     } else {
       const response: any = await fetch(url, {
@@ -61,7 +61,7 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
           logout();
         }
         //setError(err);
-        throw new Error(err);
+        throw err;
       }
     }
   //useEffect(() => {
