@@ -35,6 +35,7 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
       });
       if (response.ok) {
         const res = await response.json();
+        console.log('res = ', res);
         return res;
       } else {
         const err: any = await response.json();

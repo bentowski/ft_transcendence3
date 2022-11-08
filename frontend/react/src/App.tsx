@@ -112,8 +112,9 @@ class App extends Component {
       sessionStorage.setItem("data", JSON.stringify(data));
     } catch (error) {
       //console.log('error catchouillle');
-      const ctx: any = this.context;
-      ctx.setError(error);
+      //const ctx: any = this.context;
+      //ctx.setError(error);
+      console.log(error);
     }
   };
 
