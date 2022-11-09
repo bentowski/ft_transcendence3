@@ -19,8 +19,8 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
+  //const [userBan, setBanUser] = useState<Array<UserType>>([]);
   const { user } = useAuthData();
-
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   let location = ""
@@ -29,7 +29,7 @@ export const WebSocket = () => {
     socket.on('connect', () => {});
     socket.on('onMessage', (newMessage: MessagePayload) => {
       // console.log("RECEIVE ////////////////")
-  		let channels: Array<ChanType> = chans;
+      let channels: Array<ChanType> = chans;
   		let index:number = chans.findIndex((c:ChanType) => c.id === newMessage.room);
   		if (channels[index] !== undefined) {
   			if (channels[index].messages)
@@ -105,8 +105,9 @@ export const WebSocket = () => {
 
 	useEffect(() => {
 		let chanUserFind:Array<UserType>|undefined = chans.find((c:ChanType) => c.id === room)?.chanUser
-		if (chanUserFind !== undefined)
-			setChanUser(chanUserFind)
+        if (chanUserFind !== undefined) {
+          setChanUser(chanUserFind)
+        }
 	}, [room, chans])
 
   const banningUser = async (userToBan: UserType) => {
@@ -278,7 +279,7 @@ export const WebSocket = () => {
     setModalType("joinChan");
   };
 
-  const banUser = async () => {
+  const toBanUser = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
     setModalTitle("Ban Users");
@@ -298,6 +299,23 @@ export const WebSocket = () => {
     if (actualChan?.chanUser) users = actualChan.chanUser;
     return users;
   };
+
+  /*
+  const fetchBanned = async () => {
+    const actualChan: ChanType | undefined = chans.find((c) => c.isActive);
+    if (!actualChan) {
+      return ;
+    }
+    let res = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan/" + actualChan.id + "/banned",
+    )
+    setBanUser(res);
+    console.log('res banned users = ', res);
+  }
+   */
 
   const chanColor = (channel: ChanType) => {
 
@@ -414,7 +432,7 @@ export const WebSocket = () => {
       {
         return (
           <div className="row">
-          <button className="col-6" onClick={banUser}>BAN</button>
+          <button className="col-6" onClick={toBanUser}>BAN</button>
           <button className="col-6" onClick={muteUser}>MUTE</button>
           </div>
         )
@@ -536,7 +554,7 @@ export const WebSocket = () => {
     <div>
       <div className="tchat row">
         <h4>CHAT</h4>
-        <Modal title={modalTitle} calledBy={modalType} userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel, banningUser}} chans={listChansJoined(chans)}/>
+        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel, banningUser}} chans={listChansJoined(chans)}/>
         <ChannelList />
         <PrintChannel />
       </div>

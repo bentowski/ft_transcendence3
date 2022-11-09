@@ -40,23 +40,28 @@ class Profil extends Component<
     if (!username) {
       username = currentUser.user.username;
     }
-    let newUser = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/name/" + username
-    );
-    if (!newUser)
-    {
-        username = currentUser.user.username;
-        newUser = await Request(
+    try {
+      let newUser = await Request(
           "GET",
           {},
           {},
           "http://localhost:3000/user/name/" + username
+      );
+      if (!newUser)
+      {
+        username = currentUser.user.username;
+        newUser = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/user/name/" + username
         );
-    };
-    this.setState({ user: newUser });
+      };
+      this.setState({ user: newUser });
+    } catch (error) {
+      const ctx: any = this.context;
+      ctx.setError(error);
+    }
   };
 
   getHistory = async () => {

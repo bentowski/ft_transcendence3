@@ -18,6 +18,7 @@ export type ChanType = {
   isActive: boolean,
   messages: MessagePayload[],
   chanUser: UserType[],
+  banUser: UserType[];
 };
 
 export type UserType = {
