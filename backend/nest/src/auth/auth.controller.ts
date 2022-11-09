@@ -26,6 +26,7 @@ import UserEntity from '../user/entities/user-entity';
 import jwt_decode from 'jwt-decode';
 import { UserAuthGuard } from './guards/user-auth.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import {CreateUserDto} from "../user/dto/create-user.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,30 @@ export class AuthController {
   @UseGuards(IntraAuthGuard)
   login() {
     return;
+  }
+
+  @Get('dummyconnect')
+  async dummyConnect(@Res() res) {
+    const fakeUser: CreateUserDto = {
+      auth_id: '1234',
+      username: 'dummy',
+      email: 'dummy@1234.com',
+    };
+    const newUser: UserEntity = await this.authService.createUser(fakeUser);
+    const auth_id: string = newUser.auth_id;
+    const isAuth = false;
+    const payload: PayloadInterface = { auth_id, isAuth };
+    const access_token: string = this.jwtService.sign(payload);
+    try {
+      this.authService.changeStatusUser(auth_id, 1);
+      //console.log('after change status');
+      res
+        .status(202)
+        .cookie('jwt', access_token, { httpOnly: true })
+        .redirect('http://localhost:8080');
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Get('redirect')
