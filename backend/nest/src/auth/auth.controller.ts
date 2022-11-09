@@ -43,10 +43,14 @@ export class AuthController {
 
   @Get('dummyconnect')
   async dummyConnect(@Res() res) {
+    let n_id = 0;
+    while (await this.authService.findUser(n_id.toString())) {
+      n_id++;
+    }
     const fakeUser: CreateUserDto = {
-      auth_id: '1234',
-      username: 'dummy',
-      email: 'dummy@1234.com',
+      auth_id: n_id.toString(),
+      username: 'dummy' + n_id.toString(),
+      email: 'dummy@' + n_id.toString() + '.com',
     };
     const newUser: UserEntity = await this.authService.createUser(fakeUser);
     const auth_id: string = newUser.auth_id;
