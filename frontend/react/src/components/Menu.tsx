@@ -1,15 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import Switch from "./utils/Switch";
 import { useAuthData } from "../contexts/AuthProviderContext";
+//import useLogoutSession from '../hooks/useLogoutSession';
 // import Request from "./utils/Requests"
 // import "./Menu.css"
 
 const Menu = () => {
   const { user, setIsAuth, setUser, setIsToken, setIsTwoFa } = useAuthData();
   const navigate = useNavigate();
+  //const loggedOut = useLogoutSession();
+
 
   const logoutSession = async () => {
-    //console.log("loging out");
+    console.log("loging out");
     await fetch("http://localhost:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
@@ -33,6 +36,7 @@ const Menu = () => {
       });
       window.location.reload()
   };
+
   return (
     <div className="Menu d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">

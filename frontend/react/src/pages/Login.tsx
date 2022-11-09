@@ -76,6 +76,9 @@ const Login = () => {
       <a href="http://localhost:3000/auth/login">
         <button className="mb-2 mx-2">Sign in</button>
       </a>
+      <a href="http://localhost:3000/auth/dummyconnect">
+        <button className="mb-2 mx-2">Letssss go</button>
+      </a>
     </div>
   ); //
 }; //

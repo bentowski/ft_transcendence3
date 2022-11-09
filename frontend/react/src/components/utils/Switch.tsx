@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
+import IError from "../../interfaces/error-interface";
+import {Alert} from "react-bootstrap";
 
 const Switch = () => {
   const [label, setLabel] = useState("2fa");
@@ -17,60 +19,31 @@ const Switch = () => {
     }
   }, []);
 
-  const generateTwoFA = () => {
-    fetch("http://localhost:3000/auth/2fa/generate", {
+  const generateTwoFA = async () => {
+    console.log('calling generating avatar');
+    let res = await fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
-      .then((res) => res.blob())
-      .then((blob) => {
-        //console.log("sendsendsend");
-        const blobURL = URL.createObjectURL(blob);
-        setSrc(blobURL);
-        const image = document.getElementById("myImg");
-        if (!image) {
-          return;
-        }
-        image.onload = function () {
-          URL.revokeObjectURL(src);
-        };
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    /*
-    const reader = await response.body.getReader();
-    //var parentComponentInReadClientModal = this;
-    let chunks: any = [];
-    reader
-      .read()
-      .then(function processText({ done, value }: { done: any; value: any }) {
-        //console.log(parentComponentInReadClientModal);
-        if (done) {
-          //console.log("stream finished, content received:");
-          //console.log(chunks);
-          const blob = new Blob([chunks as unknown as ArrayBuffer], {
-            type: "image/png",
-          });
-          //console.log(blob);
-          setSrc(URL.createObjectURL(blob));
-          //parentComponentInReadClientModal.;
-          return;
-        }
-        //console.log(`received ${chunks.length} chars so far!`);
-        const tempArray = new Uint8Array(chunks.length + value.length);
-        tempArray.set(chunks);
-        tempArray.set(value, chunks.length);
-        chunks = tempArray;
-        return reader.read().then(processText);
-      });
-
-     */
-    handleShow();
+    if (res.ok) {
+      const myblobi = await res.blob();
+      //console.log(myblobi);
+      const blobURL = URL.createObjectURL(myblobi);
+      setSrc(blobURL);
+      /*
+      const image = document.getElementById("myImg");
+      if (!image) {
+        return;
+      }
+      image.onload = function () {
+        URL.revokeObjectURL(src);
+      };
+       */
+      handleShow();
+    }
   };
 
   const checkVal = (value: string) => {
@@ -89,7 +62,7 @@ const Switch = () => {
       return;
     }
     //console.log("before fetch request");
-    fetch("http://localhost:3000/auth/2fa/activate", {
+    let res = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -99,24 +72,17 @@ const Switch = () => {
         twoFACode: code,
       }),
     })
-      .then((res) => {
-        if (res.ok) {
-          handleClose();
-          handleTick();
-          //console.log("yey");
-          return;
-        } else {
-          //console.log("nnoooo ");
-          setCode("");
-          return;
-        }
-      })
-      .catch((error) => {
-        //console.log("nnoooo ", error);
-        handleClose();
-        handleUnTick();
-        return;
-      });
+    if (res.ok) {
+       handleClose();
+       handleTick();
+       //console.log("yey");
+       return;
+    } else {
+       //console.log("nnoooo ");
+       const errmsg: IError = await res.json();
+       setCode("");
+       return;
+    }
   };
 
   const deactivateTwoFA = async () => {

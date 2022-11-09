@@ -3,6 +3,9 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useState } from "react";
 import ImageUploading from "react-images-uploading";
+import IError from "../../interfaces/error-interface";
+import {HandleError} from "./HandleError";
+import {useErrorContext} from "../../contexts/ErrorProviderContext";
 
 const ModalChangeAvatar = ({
   show,
@@ -12,10 +15,11 @@ const ModalChangeAvatar = ({
   parentCallBack: (newState: boolean) => void;
 }) => {
   const { user } = useAuthData();
+  const { setError } = useErrorContext();
   //const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const requestChangeAvatar = () => {
+  const requestChangeAvatar = async () => {
     const formData = new FormData();
     if (!selectedImage) {
       return;
@@ -30,21 +34,19 @@ const ModalChangeAvatar = ({
       body: formData,
     };
     delete params.headers["Content-Type"];
-    fetch("http://localhost:3000/user/upload", params)
-      .then((res) => {
-        if (res.ok) {
-          //console.log("upload success!");
-          setSelectedImage(null);
-          handleClose();
-          window.location.reload();
-        } else {
-          setSelectedImage(null);
-          //console.log("upload failed!");
-        }
-      })
-      .catch((error) => {
-        console.log("error uploading image :( ", error);
-      });
+    let res = await fetch("http://localhost:3000/user/upload", params)
+    if (res.ok) {
+      //console.log("upload success!");
+      setSelectedImage(null);
+      handleClose();
+      window.location.reload();
+    } else {
+      setSelectedImage(null);
+      const err: any = await res.json();
+      setError(err);
+      //HandleError(err);
+      //console.log("upload failed!");
+    }
   };
 
   const cancelling = () => {
