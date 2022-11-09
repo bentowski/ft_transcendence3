@@ -49,13 +49,13 @@ export class ChanService {
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find({ relations: { banUser: true, chanUser: true, messages: true }});
+        return this.chanRepository.find({ relations: { banUser: true, chanUser: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
         const chan = await this.chanRepository.findOne({
 			where: { name: name },
-			relations: { banUser: true, chanUser: true, messages: true },
+			relations: { banUser: true, chanUser: true },
 		});
         return chan;
     }
@@ -63,7 +63,7 @@ export class ChanService {
 	async findOnebyID(id?: string): Promise<ChanEntity> {
         const chan = await this.chanRepository.findOne({
 			where: { id: id },
-			relations: { banUser: true, chanUser: true, messages: true }
+			relations: { banUser: true, chanUser: true }
 		},);
         return chan;
     }
@@ -74,17 +74,18 @@ export class ChanService {
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
 		try {
-			const chan = await this.chanRepository.findOne({ where: { id: message.room }, relations: ['messages']});
-		/*
-		if (chan) {
-			if (chan.messages)
-				chan.messages = [...chan.messages, message];
-			else
-				chan.messages = [message];
-			return this.chanRepository.save(chan);
-		}
-		 */
-			chan.messages.push(message);
+			const chan = await this.chanRepository.findOne({ where: { id: message.room }});
+
+			if (chan) {
+				if (chan.messages)
+					chan.messages = [...chan.messages, message];
+				else
+					chan.messages = [message];
+				return this.chanRepository.save(chan);
+			}
+
+			//chan.messages.push(message);
+			//return chan;
 		}
 		catch (error) {
 			console.log(error);
@@ -121,17 +122,16 @@ export class ChanService {
 		where: { id: room },
 		relations: ['chanUser', 'banUser'],
 	});
-
 		if (!chan)
 			return ;
+		/*
 		if (chan.banUser.find({
 			relations: ['banUser'],
-			where: {
-				auth_id: user.auth_id,
-			}
+			where: { user: user }
 		})) {
 			throw new ForbiddenException('Error: User is not allowed it get in this channel')
 		}
+		 */
 		/*
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
@@ -169,8 +169,7 @@ export class ChanService {
 			relations: { banUser: true }
 		});
 		if (!chan)
-			throw new WsException('oulalala');
+			return ;
 		return chan.banUser.map((users) => users);
-
 	}
 }
