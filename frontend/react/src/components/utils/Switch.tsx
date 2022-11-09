@@ -12,8 +12,6 @@ const Switch = () => {
   const [show, setShow] = useState(false);
   const [tick, setTick] = useState(false);
   const { isTwoFa, isAuth, isToken, loading } = useAuthData();
-  const [alert, setAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState('');
 
   useEffect(() => {
     if (isTwoFa) {
@@ -32,9 +30,10 @@ const Switch = () => {
     })
     if (res.ok) {
       const myblobi = await res.blob();
-      console.log(myblobi);
+      //console.log(myblobi);
       const blobURL = URL.createObjectURL(myblobi);
       setSrc(blobURL);
+      /*
       const image = document.getElementById("myImg");
       if (!image) {
         return;
@@ -42,44 +41,9 @@ const Switch = () => {
       image.onload = function () {
         URL.revokeObjectURL(src);
       };
-    } else {
-      const errmsg: IError = await res.json();
-      if (errmsg.statusCode === 401) {
-
-      }
-      setAlert(true);
-      setAlertMsg(errmsg.message);
+       */
+      handleShow();
     }
-
-    /*
-    const reader = await response.body.getReader();
-    //var parentComponentInReadClientModal = this;
-    let chunks: any = [];
-    reader
-      .read()
-      .then(function processText({ done, value }: { done: any; value: any }) {
-        //console.log(parentComponentInReadClientModal);
-        if (done) {
-          //console.log("stream finished, content received:");
-          //console.log(chunks);
-          const blob = new Blob([chunks as unknown as ArrayBuffer], {
-            type: "image/png",
-          });
-          //console.log(blob);
-          setSrc(URL.createObjectURL(blob));
-          //parentComponentInReadClientModal.;
-          return;
-        }
-        //console.log(`received ${chunks.length} chars so far!`);
-        const tempArray = new Uint8Array(chunks.length + value.length);
-        tempArray.set(chunks);
-        tempArray.set(value, chunks.length);
-        chunks = tempArray;
-        return reader.read().then(processText);
-      });
-
-     */
-    handleShow();
   };
 
   const checkVal = (value: string) => {
@@ -111,16 +75,12 @@ const Switch = () => {
     if (res.ok) {
        handleClose();
        handleTick();
-       closeAlert();
        //console.log("yey");
        return;
     } else {
        //console.log("nnoooo ");
        const errmsg: IError = await res.json();
        setCode("");
-       setAlertMsg(errmsg.message);
-       setAlert(true);
-
        return;
     }
   };
@@ -179,11 +139,6 @@ const Switch = () => {
 
    */
 
-  const closeAlert = () => {
-    setAlert(false);
-    setAlertMsg('');
-  }
-
   const handleChange = (evt: any) => {
     evt.preventDefault();
     setCode(evt.target.value);
@@ -192,7 +147,6 @@ const Switch = () => {
   const cancelling = () => {
     setCode("");
     handleClose();
-    closeAlert();
   };
 
   const handleClose = () => setShow(false);
@@ -218,14 +172,6 @@ const Switch = () => {
                 value={code}
               />
             </Form>
-            <div>
-            {
-              alert ?
-                  <Alert onClose={closeAlert} variant='warning' dismissible>
-                    {alertMsg}
-                  </Alert> : <div></div>
-            }
-            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button className="mx-1" onClick={cancelling}>

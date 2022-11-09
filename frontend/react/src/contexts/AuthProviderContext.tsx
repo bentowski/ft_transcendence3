@@ -1,6 +1,6 @@
 import {
   createContext,
-  ReactNode,
+  ReactNode, useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -13,15 +13,17 @@ import IError from "../interfaces/error-interface";
 import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
 
-export const AuthContext = createContext<any>(null);
+export const AuthContext = createContext<any>({ error: null, setError: (value: any) => {}});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
   const [isToken, setIsToken] = useState<boolean>(false);
   const [user, setUser] = useState<any>(undefined);
+  const [errorShow, setErrorShow] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [errorCode, setErrorCode] = useState<number>(0);
 
   const fetchData = async () => {
     setIsToken(false);
@@ -94,6 +96,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const setError =  useCallback((value: any) => {
+    //console.log('error value = ', value);
+    if (value) {
+      setErrorShow(true);
+      setErrorMsg(value.message);
+      setErrorCode(value.statusCode);
+    } else {
+      setErrorShow(false);
+      setErrorMsg('');
+      setErrorCode(0);
+    }
+  },[])
+
   useEffect(() => {
     //console.log('starts');
     if (!isToken) {
@@ -109,10 +124,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuth,
       isToken,
       isTwoFa,
-      error,
+      errorShow,
+      errorMsg,
+      errorCode,
       loading,
+      setError: (value: any) => setError(value),
     }),
-    [error, user, isAuth, loading, isToken, isTwoFa]
+    [errorShow,errorMsg,errorCode, user, isAuth, loading, isToken, isTwoFa]
   );
 
   return (

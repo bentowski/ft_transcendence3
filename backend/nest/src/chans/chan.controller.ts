@@ -3,9 +3,10 @@ import { ChanService } from "./chan.service";
 import { CreateChanDto } from "./dto/create-chan.dto";
 import {AuthGuard} from "@nestjs/passport";
 import {UserAuthGuard} from "../auth/guards/user-auth.guard";
+import UserEntity from "../user/entities/user-entity";
 
 @Controller('chan')
-@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+//@UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class ChanController {
     constructor(private readonly chanService: ChanService) {}
 
@@ -27,9 +28,9 @@ export class ChanController {
         return this.chanService.createChan(createUserDto);
     }
 
-    @Patch(':idroom/ban/:iduser')
-    banUser(@Param('idroom') idroom: string, @Param('iduser') iduser: string) {
-
+    @Get(' :id/banned')
+    getBanned(@Param('id') idroom: string): Promise<UserEntity[]> {
+        return this.chanService.getBanned(idroom);
     }
 
     @Delete(':id')

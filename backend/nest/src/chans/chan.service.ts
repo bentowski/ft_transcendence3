@@ -1,13 +1,16 @@
 import {
-    HttpException,
-    HttpStatus,
-    Injectable } from '@nestjs/common';
+	ForbiddenException,
+	HttpException,
+	HttpStatus,
+	Injectable
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateChanDto } from "./dto/create-chan.dto";
 import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
+import {WsException} from "@nestjs/websockets";
 // import { ChanDto } from "./dto/chan.dto";
 // import { toChanDto } from "../shared/mapper";
 
@@ -46,16 +49,22 @@ export class ChanService {
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find({ relations: { chanUser: true }});
+        return this.chanRepository.find({ relations: { banUser: true, chanUser: true, messages: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
-        const chan = await this.chanRepository.findOneBy({ name });
+        const chan = await this.chanRepository.findOne({
+			where: { name: name },
+			relations: { banUser: true, chanUser: true, messages: true },
+		});
         return chan;
     }
 
 	async findOnebyID(id?: string): Promise<ChanEntity> {
-        const chan = await this.chanRepository.findOneBy({id: id});
+        const chan = await this.chanRepository.findOne({
+			where: { id: id },
+			relations: { banUser: true, chanUser: true, messages: true }
+		},);
         return chan;
     }
 
@@ -65,7 +74,8 @@ export class ChanService {
 
 	async addMessage(message: Msg): Promise<ChanEntity> {
 		try {
-		const chan = await this.chanRepository.findOneBy({ id: message.room, });
+			const chan = await this.chanRepository.findOne({ where: { id: message.room }, relations: ['messages']});
+		/*
 		if (chan) {
 			if (chan.messages)
 				chan.messages = [...chan.messages, message];
@@ -73,21 +83,68 @@ export class ChanService {
 				chan.messages = [message];
 			return this.chanRepository.save(chan);
 		}
+		 */
+			chan.messages.push(message);
 		}
 		catch (error) {
 			console.log(error);
 		}
 	}
 
+	async banUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOne({
+				where: { id: room },
+				relations: ['banUser', 'chanUser'],
+			});
+		if (!chan)
+			return undefined;
+		chan.chanUser.splice(chan.chanUser.indexOf(user) - 1, 1)
+		/*
+		if (chan.banUser && chan.banUser.length)
+			chan.banUser = [...chan.banUser, user];
+		else
+			chan.banUser = [user];
+		 */
+		chan.banUser.push(user);
+		//console.log(chan);
+		//console.log(user);
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error(error);
+		}
+
+	}
+
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOneBy({ id: room });
+		const chan = await this.chanRepository.findOne({
+		where: { id: room },
+		relations: ['chanUser', 'banUser'],
+	});
+
 		if (!chan)
 			return ;
+		if (chan.banUser.find({
+			relations: ['banUser'],
+			where: {
+				auth_id: user.auth_id,
+			}
+		})) {
+			throw new ForbiddenException('Error: User is not allowed it get in this channel')
+		}
+		/*
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];
 		else
 			chan.chanUser = [user];
-		return await this.chanRepository.save(chan);
+		 */
+		chan.chanUser.push(user);
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error(error);
+		}
+
 	}
 
 	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
@@ -104,5 +161,16 @@ export class ChanService {
 			}
 		}
 		return await this.chanRepository.save(chan);
+	}
+
+	async getBanned(idroom: string) {
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where:{id: idroom},
+			relations: { banUser: true }
+		});
+		if (!chan)
+			throw new WsException('oulalala');
+		return chan.banUser.map((users) => users);
+
 	}
 }
