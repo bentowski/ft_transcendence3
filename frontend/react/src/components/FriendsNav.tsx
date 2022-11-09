@@ -2,8 +2,10 @@ import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
+import {ErrorContext} from "../contexts/ErrorProviderContext";
 
 class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
+  static contextType = ErrorContext;
   constructor(props: any) {
     super(props)
     this.state = {
@@ -34,27 +36,32 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value))
       return ;
-    let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-    if (!userToAdd)
-    {
-      this.promptError()
-      return ;
+    try {
+      let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
+      if (!userToAdd)
+      {
+        this.promptError()
+        return ;
+      }
+      let newFriendsArray = this.state.friends
+      newFriendsArray  = [...newFriendsArray , userToAdd];
+      let test = await Request('PATCH',
+          {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          {
+            username: currentUser.user.username,
+            friends: newFriendsArray
+          },
+          "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+      if (!test)
+        return ;
+      this.setState({friends: newFriendsArray})
+    } catch (error) {
+      const ctx: any = this.context;
+      ctx.setError(error);
     }
-    let newFriendsArray = this.state.friends
-    newFriendsArray  = [...newFriendsArray , userToAdd];
-    let test = await Request('PATCH',
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        {
-          username: currentUser.user.username,
-          friends: newFriendsArray
-        },
-        "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
-    if (!test)
-      return ;
-    this.setState({friends: newFriendsArray})
   }
 
   pressEnter = (e: any) => {

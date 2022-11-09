@@ -1,4 +1,4 @@
-import { Component } from "react";
+import {Component, useEffect, useState} from "react";
 import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
@@ -11,6 +11,13 @@ import Request from "./components/utils/Requests";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
+import {Alert} from "react-bootstrap";
+import {ErrorContext, ErrorProvider, useErrorContext} from "./contexts/ErrorProviderContext";
+import {HandleError} from "./components/utils/HandleError";
+//import {Alert} from 'react-bootstrap';
+//import {useError} from "./contexts/ErrorProviderContext";
+//import {HandleError} from "./components/utils/HandleError";
+//import IError from "./interfaces/error-interface";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
@@ -35,8 +42,19 @@ const RequireAuth = () => {
 };
 
 const Layout = () => {
+  //const { errorMsg, errorShow} = useErrorContext();
+  //const [show, setShow] = useState(false);
+
+  //useEffect(() => {
+    //if (errorShow) {
+      //setShow(true);
+    //}
+  //})
+  //<Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
+
   return (
     <main className="App">
+      <HandleError />
       <Outlet />
     </main>
   );
@@ -71,33 +89,44 @@ const ContextLoader = () => {
 }; //
 
 class App extends Component {
+  static contextType = ErrorContext;
+
   getCurrentUser = async () => {
-    let user = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/current"
-    );
-    if (!user)
-      return null;
-    const data = {
-      user: {
-        auth_id: user.auth_id,
-        user_id: user.user_id,
-        avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
-        username: user.username,
-      },
-    };
-    sessionStorage.setItem("data", JSON.stringify(data));
+    try {
+      let user = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/current"
+      );
+      if (!user)
+        return null;
+      const data = {
+        user: {
+          auth_id: user.auth_id,
+          user_id: user.user_id,
+          avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
+          username: user.username,
+        },
+      };
+      sessionStorage.setItem("data", JSON.stringify(data));
+    } catch (error) {
+      //console.log('error catchouillle');
+      //const ctx: any = this.context;
+      //ctx.setError(error);
+      console.log(error);
+    }
   };
 
   componentDidMount = async () => {
     await this.getCurrentUser();
-  };
+  }
 
-  render() {
-    return <ContextLoader />; // fin de return
-  } // fin de render
-} // fin de App
+  render(){
+    return (
+        <ContextLoader />
+    );
+  }
+}
 
 export default App;

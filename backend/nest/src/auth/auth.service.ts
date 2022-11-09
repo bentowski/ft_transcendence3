@@ -10,6 +10,7 @@ import { PayloadInterface } from './interfaces/payload.interface';
 //import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
 import * as io from 'socket.io-client';
+import {CreateUserDto} from "../user/dto/create-user.dto";
 
 const socket = io.connect("http://localhost:3000/chat");
 
@@ -19,6 +20,10 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UserService,
   ) {}
+
+  async createUser(user42: CreateUserDto): Promise<UserEntity> {
+    return await this.userService.createUser(user42);
+  }
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
     try {
