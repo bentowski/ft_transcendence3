@@ -109,7 +109,7 @@ class MatchNav extends Component {
 
 	render() {
 		return (
-			<div className="MatchNav h-100" id="MatchNav">
+			<div className="MatchNav h-100" id="MatchNav" style={{backgroundImage: "url(http://localhost:8080/pictures/divBg.jpg)", backgroundSize: "cover", backgroundPosition: "center"}}>
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
