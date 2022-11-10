@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 
-const socket = io("http://localhost:3000/chat");
+const socket = io("http://localhost:3000/update");
 
 class ModalMatchInvite extends Component<{ title: string, calledBy: string, user: any}, {}> {
 
@@ -19,14 +19,14 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
         "Content-Type": "application/json",
       },
       {
-        login: this.getCurrentUser().auth_id + "-" + this.props.user.auth_id,
+        login: this.getCurrentUser().username + "-" + this.props.user.username,
         public: true
       },
       "http://localhost:3000/parties/create"
     );
     this.hidden();
     let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-    let party = parties.find((p:any) => p.login === this.getCurrentUser().auth_id + "-" + this.props.user.auth_id)
+    let party = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
     // console.log(party)
     socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party.id})
     // console.log("http://localhost:8080/game/" + party.id)

@@ -32,8 +32,10 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     let currentUser:any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value))
-      return ;
+    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
+		input.value = '';
+		return ;
+	}
     let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
     if (!userToAdd)
     {
@@ -52,9 +54,12 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
           friends: newFriendsArray
         },
         "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
-    if (!test)
-      return ;
+    if (!test) {
+		input.value = '';
+		return ;
+	}
     this.setState({friends: newFriendsArray})
+
   }
 
   pressEnter = (e: any) => {

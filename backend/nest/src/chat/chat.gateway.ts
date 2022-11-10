@@ -76,30 +76,4 @@ export class ChatGateway implements OnModuleInit
   onChanCreated() {
   	this.server.emit('newChan');
   }
-
-  @SubscribeMessage('newParty')
-  onNewParty(client: Socket) {
-	this.server.emit('onNewParty');
-  }
-
-  @SubscribeMessage('askForGameUp')
-  onAskForGameUp(client: Socket, body: {"to": string, "from": string}) {
-	  this.server.emit('onAskForGameUp', body);
-  }
-
-  @SubscribeMessage('askForGamedown')
-  onAskForGameDown(client: Socket, body: {"to": string, "from": string}) {
-    this.server.emit('onAskForGameDown', body);
-  }
-
-  @SubscribeMessage('inviteAccepted')
-  onInviteAccepted(client: Socket, body: {"to": string, "from": string, "partyID": string}) {
-    console.log(body)
-	  this.server.emit('onInviteAccepted', body);
-  }
-
-  @SubscribeMessage('inviteDeclined')
-  onInviteDeclined(client: Socket, body: {"to": string, "from": string}) {
-	  this.server.emit('onInviteDeclined', body);
-  }
 }

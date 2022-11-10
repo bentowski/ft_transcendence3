@@ -11,7 +11,7 @@ import ModalMatchWaiting from "./ModalMatchWaiting";
 import { format } from "path";
 import ModalMatchInvite from "./ModalMatchInvite";
 
-const socket = io("http://localhost:3000/chat");
+const socket = io("http://localhost:3000/update");
 
 class UserCards extends Component<
   { user: any, avatar: any, stat: any },
