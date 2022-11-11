@@ -34,52 +34,38 @@ const Login = () => {
   }
   //console.log('here is login page');
   return (
-    <div className="Login">
-      <a
-        href="http://localhost:3000/auth/login"
-        className="pt-5 pb-3 d-flex flex-row justify-content-center align-items-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="50"
-          height="50"
-          fill="currentColor"
-          className="bi bi-lock"
-          viewBox="0 0 16 16"
-        >
-          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-unlock-fill"
-            viewBox="0 0 16 16"
-          >
-            <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z" />
-          </svg>
-        </svg>
-      </a>
-      <div className="Inf px-5 pb-3">
-        <h2 className="d-flex flex-row justify-content-center align-items-center">
-          Sign up with your{" "}
-        </h2>
-        <h2 className="d-flex flex-row justify-content-center align-items-center">
-          <img
-            className="Logo mx-2 pt-1"
-            src="./logos/42-logo.svg"
-            alt=""
-          ></img>{" "}
-          account
-        </h2>
-      </div>
-      <a href="http://localhost:3000/auth/login">
-        <button className="mb-2 mx-2">Sign in</button>
-      </a>
-      <a href="http://localhost:3000/auth/dummyconnect">
-        <button className="mb-2 mx-2">Letssss go</button>
-      </a>
-    </div>
+	<div>
+		<map name="spongebobbg">
+			<area
+				shape="poly"
+				coords="187,231,139,266,115,319,114,339,109,354,108,385,108,434,117,478,149,492,160,493,170,494,193,498,215,498,271,499,303,490,316,482,327,461,336,413,336,374,332,341,320,300,352,298,357,287,355,277,352,267,357,243,362,231,357,225,335,229,336,245,337,280,324,284,322,287,315,288,307,266,298,254,286,239,277,237,267,230,235,223,208,225"
+				href="http://localhost:3000/auth/login"/>
+		</map>
+		<div id="background-wrap">
+			<div>
+				<img useMap="#spongebobbg" src="http://localhost:8080/pictures/bobhouse.png" width="auto" style={{position: "absolute", top: 0, bottom: 0, right: 0, left: 0, margin: "auto"}}/>
+			</div>
+			<div className="d-flex justify-content-center h-25 ">
+				<div className="bubble align-self-center d-flex align-items-center justify-content-center"><p className="text-center">Knock Bob's<br/>house to login</p></div>
+			</div>
+			{/* div below for animation */}
+			<div className="bubble x1"></div>
+    		<div className="bubble x2"></div>
+    		<div className="bubble x3"></div>
+    		<div className="bubble x4"></div>
+    		<div className="bubble x5"></div>
+    		<div className="bubble x6"></div>
+    		<div className="bubble x7"></div>
+    		<div className="bubble x8"></div>
+    		<div className="bubble x9"></div>
+    		<div className="bubble x10"></div>
+		</div>
+		{/* delete below before push */}
+		<a href="http://localhost:3000/auth/dummyconnect">
+        	<button className="mb-2 mx-2">Letssss go</button>
+      	</a>
+		{/* delete above before push */}
+	</div>
   ); //
 }; //
 //

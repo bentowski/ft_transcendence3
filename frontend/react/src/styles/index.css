@@ -1,12 +1,12 @@
 body {
 	margin: 0;
 	padding: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+	font-family: 'SpongeBobFont', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
 		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: white;
+	color: black;
 	/* letter-spacing: 0.42px; */
   background-color: #3b3c3a;
 }
@@ -16,19 +16,24 @@ code {
 		monospace;
 }
 
+@font-face {
+	font-family: "SpongeBobFont";
+	src: url("http://localhost:8080/font/spongebobfont.woff");
+}
+
 p {
 	margin: 0;
 }
 
 a {
 	text-decoration: none;
-	color: orange;
+	color: black;
 }
 
 a:hover {
 	/* font-weight: 600;
 	letter-spacing: 0px; */
-	color: orange;
+	color: gray;
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 }
@@ -52,30 +57,24 @@ a:active {
 }
 
 button {
-  border: 2px solid orange;
+  border: 2px solid black;
   border-radius: 10px;
   background: none;
-  color: orange;
-}
-
-button:hover {
-  position: relative;
-  outline: none;
   color: black;
-  mix-blend-mode: screen;
 }
 
-button:hover::before {
+
+/* button:hover::before {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: orange;
+  background: gray;
   border-radius: 4px;
   content: '';
   mix-blend-mode: color;
-}
+} */
 
 button:active {
   position: relative;
@@ -283,6 +282,7 @@ img {
 	word-wrap: break-word;
   }
 
+  
 	/* background-image: linear-gradient(purple 10%, transparent); */
 
 /* .Menu {

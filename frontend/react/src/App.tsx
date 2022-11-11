@@ -53,7 +53,7 @@ const Layout = () => {
   //<Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
 
   return (
-    <main className="App">
+    <main className="App" style={{backgroundImage: "url(http://localhost:8080/pictures/bglogin.jpeg)", backgroundSize: "cover", backgroundPosition: "center"}}>
       <HandleError />
       <Outlet />
     </main>
