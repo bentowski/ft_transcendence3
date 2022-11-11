@@ -154,16 +154,38 @@ img {
 	height: 62px;
 	padding: 20px;
 	padding-right: 10px;
+	background-image: url(http://localhost:8080/pictures/banner.jpg);
+	background-size: auto 500%!important;
+	background-position: center;
+}
+
+.BobLePong {
+	position: absolute;
+	text-align: center;
+	transform: translate(-50%, -50%);
+	height: 150px;
+	width: auto;
 }
 
 .FriendsNav, .MatchNav , .Menu {
 	background-color:rgba(125, 0, 125, 0.2);
 	border-radius: 20px;
+	background-size: cover;
+	background-position: center;
 }
 
 .FriendsNav, .MatchNav {
 	height: 100%;
 	padding: 10px;
+}
+
+.FriendsNav {
+	background-image: url(http://localhost:8080/pictures/divBg2.jpg);
+
+}
+
+.MatchNav {
+	background-image: url(http://localhost:8080/pictures/divBg.jpg);
 }
 
 .Ratio {

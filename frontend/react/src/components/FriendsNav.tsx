@@ -85,7 +85,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     }
 
     return (
-      <div className="FriendsNav" style={{backgroundImage: "url(http://localhost:8080/pictures/divBg2.jpg)", backgroundSize: "cover", backgroundPosition: "center"}}>
+      <div className="FriendsNav">
         <div className="numberFriendsOnline">
           <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online": 'You are friendless'} </p>
         </div>
