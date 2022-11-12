@@ -89,14 +89,29 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
-  findOnebyUsername(@Param('username') username: string) {
-    return this.userService.findOnebyUsername(username);
+  async findOnebyUsername(
+    //@Res({ passthrough: true }) res,
+    @Param('username') username: string,
+  ) {
+    const user: UserEntity = await this.userService.findOnebyUsername(username);
+    if (!user) {
+      throw new BadRequestException(
+        'Error while fetching database: User with that username dont exists',
+      );
+    }
+    return user;
   }
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
-  findOnebyID(@Param('id') id: string) {
-    return this.userService.findOneByAuthId(id);
+  async findOnebyID(@Param('id') id: string) {
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    if (!user) {
+      throw new BadRequestException(
+        'Error while fetching database: User with that id dont exists',
+      );
+    }
+    return user;
   }
 
   //@UseGuards(UserAuthGuard)
@@ -106,13 +121,17 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Patch('addFriends/:id')
-  updateFriends(
-    @Param('id') userId: string,
-    @Body() updateFriendsDto: UpdateFriendsDto,
-  ) {
+  @Patch('updatefriend')
+  updateFriends(@Req() req, @Body() updateFriendsDto: UpdateFriendsDto) {
+    console.log('updtfrienddto = ', updateFriendsDto.action,
+        ' req.user.auth_id = ', req.user.auth_id,
+        ' updateFriendsDto.auth_id = ', updateFriendsDto.auth_id)
     try {
-      return this.userService.updateFriends(userId, updateFriendsDto);
+      return this.userService.updateFriends(
+        updateFriendsDto.action,
+        req.user.auth_id,
+        updateFriendsDto.auth_id,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -120,7 +139,7 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getfriends')
-  async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
+  async getFriends(@Param('id') id: string): Promise<UserEntity[]> {
     try {
       return this.userService.getFriends(id);
     } catch (error) {
@@ -129,14 +148,18 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get(':id/isblocked')
-  async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
+  @Get(':id/isfriend')
+  async isFriend(@Req() req, @Param('id') id: string): Promise<boolean> {
     try {
-      const users: UserEntity[] = await this.userService.getBlocked(
+      //console.log('auth_id = ', id);
+      const users: UserEntity[] = await this.userService.getFriends(
         req.user.auth_id,
       );
+      console.log('fruends = ', users);
       for (let index = 0; index < users.length; index++) {
+        console.log(users[index].auth_id, 'xxxxxx', id);
         if (users[index].auth_id === id) {
+          console.log('yeyeyeyey');
           return true;
         }
       }
@@ -147,8 +170,31 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isblocked')
+  async isBlocked(@Req() req, @Param('id') id: string): Promise<boolean> {
+    console.log('iddddd = ', id);
+    try {
+      const users: UserEntity[] = await this.userService.getBlocked(
+        req.user.auth_id,
+      );
+      console.log('users = ', users);
+      for (let index = 0; index < users.length; index++) {
+        console.log(users[index].auth_id, '===', id);
+        if (users[index].auth_id === id) {
+          console.log('return true');
+          return true;
+        }
+      }
+      console.log('return false');
+      return false;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getblocked')
-  async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
+  async getBlocked(@Param('id') id: string): Promise<UserEntity[]> {
     try {
       return this.userService.getBlocked(id);
     } catch (error) {

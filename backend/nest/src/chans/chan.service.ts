@@ -5,7 +5,7 @@ import {
 	Injectable
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateChanDto } from "./dto/create-chan.dto";
 import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
@@ -49,13 +49,13 @@ export class ChanService {
     }
 
     findAll(): Promise<ChanEntity[]> {
-        return this.chanRepository.find({ relations: { banUser: true, chanUser: true }});
+        return this.chanRepository.find({ relations: { banUser: true, chanUser: true, muteUser: true }});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
         const chan = await this.chanRepository.findOne({
 			where: { name: name },
-			relations: { banUser: true, chanUser: true },
+			relations: { banUser: true, chanUser: true, muteUser: true },
 		});
         return chan;
     }
@@ -63,7 +63,7 @@ export class ChanService {
 	async findOnebyID(id?: string): Promise<ChanEntity> {
         const chan = await this.chanRepository.findOne({
 			where: { id: id },
-			relations: { banUser: true, chanUser: true }
+			relations: { banUser: true, chanUser: true, muteUser: true }
 		},);
         return chan;
     }
@@ -75,7 +75,6 @@ export class ChanService {
 	async addMessage(message: Msg): Promise<ChanEntity> {
 		try {
 			const chan = await this.chanRepository.findOne({ where: { id: message.room }});
-
 			if (chan) {
 				if (chan.messages)
 					chan.messages = [...chan.messages, message];
@@ -114,7 +113,21 @@ export class ChanService {
 		} catch (error) {
 			throw new Error(error);
 		}
+	}
 
+	async muteUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOne({
+			where: { id: room },
+			relations: ['muteUser'],
+		});
+		if (!chan)
+			return undefined;
+		chan.muteUser.push(user);
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error(error);
+		}
 	}
 
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
@@ -124,14 +137,12 @@ export class ChanService {
 	});
 		if (!chan)
 			return ;
-		/*
-		if (chan.banUser.find({
-			relations: ['banUser'],
-			where: { user: user }
-		})) {
+
+		if (chan.banUser.find(s => s.user_id === user.user_id))
+		{
 			throw new ForbiddenException('Error: User is not allowed it get in this channel')
 		}
-		 */
+
 		/*
 		if (chan.chanUser && chan.chanUser.length)
 			chan.chanUser = [...chan.chanUser, user];

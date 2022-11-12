@@ -21,11 +21,6 @@ const logout = async () => {
 }
 
 const Request = async (type: string, headers: any, body: any, url: string) => {
-  //const { setError } = useErrorContext()
-  //const [response, setResponse] = useState<any>(null);
-  //const [error, setError] = useState<any>(null);
-
-  //const fetchRequest = async () => {
     console.log(url);
     if (type === "GET") {
       const response: any = await fetch(url, {
@@ -35,14 +30,12 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
       });
       if (response.ok) {
         const res = await response.json();
-        //console.log('res = ', res);
         return res;
       } else {
         const err: any = await response.json();
         if (err.statusCode === 401) {
           logout();
         }
-        //setError(err);
         throw err;
       }
     } else {
@@ -52,7 +45,6 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
         headers: headers,
         body: JSON.stringify(body),
       });
-      //console.log("response = ", response);
       if (response.ok) {
         const res = await response.json();
         return res;
@@ -61,18 +53,8 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
         if (err.statusCode === 401) {
           logout();
         }
-        //setError(err);
         throw err;
       }
     }
-  //useEffect(() => {
-    //fetchRequest();
-  //}, [response, error])
-
-  //if (response) {
-    //return response;
-  //} else if (error) {
-    //throw error;
-  //}
 }
 export default Request;

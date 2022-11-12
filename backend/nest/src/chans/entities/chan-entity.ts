@@ -68,5 +68,9 @@ export class ChanEntity {
 	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {eager: true})
 	@JoinTable()
 	banUser: UserEntity[];
+
+    @ManyToMany(() => UserEntity, (user) => user.channelMuted, {eager: true})
+    @JoinTable()
+    muteUser: UserEntity[];
 }
 export default ChanEntity;

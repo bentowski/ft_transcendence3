@@ -73,10 +73,12 @@ export class UserService {
    */
 
   async findOnebyUsername(username?: string): Promise<UserEntity> {
+    //let findUsername: UserEntity = undefined;
     const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
       relations: { friends: true, channelJoined: true, blocked: true },
     });
+    //console.log('findUsername = ', findUsername);
     return findUsername;
   }
 
@@ -223,16 +225,39 @@ export class UserService {
   }
 
   async updateFriends(
-    userId: string,
-    updateFriendsDto: UpdateFriendsDto,
+    action: boolean,
+    current_id: string,
+    friend_id: string,
   ): Promise<UserEntity> {
-    const user: UserEntity = await this.findOneByAuthId(userId);
-    if (!user) {
+    const curuser: UserEntity = await this.findOneByAuthId(current_id);
+    if (!curuser) {
       throw new BadRequestException(
         'Error while updating friends list: Failed requesting user in database',
       );
     }
-    const { friends } = updateFriendsDto;
+    const adduser: UserEntity = await this.findOneByAuthId(friend_id);
+    if (!adduser) {
+      throw new BadRequestException(
+        'Error while updating friends list: Failed requesting user in database',
+      );
+    }
+    if (action === true) {
+      curuser.friends.push(adduser);
+      //checks here
+    }
+    if (action === false) {
+      const index = curuser.friends.indexOf(adduser);
+      curuser.friends.splice(index, 1);
+    }
+    try {
+      await this.userRepository.save(curuser);
+      return curuser;
+    } catch (error) {
+      const err: string = 'Error while updating (un)blocked users: ' + error;
+      throw new NotAcceptableException(err);
+    }
+
+    /*
     if (friends) {
       for (let index = 0; index < friends.length; index++) {
         if (
@@ -263,6 +288,7 @@ export class UserService {
         }
       }
     }
+
     user.friends = friends;
     try {
       await this.userRepository.save(user);
@@ -271,6 +297,8 @@ export class UserService {
       const err: string = 'Error while updating friends list: ' + error;
       throw new NotAcceptableException(err);
     }
+
+     */
   }
 
   async getFriends(id: string): Promise<UserEntity[]> {
@@ -299,6 +327,30 @@ export class UserService {
     return user.blocked.map((users) => users);
   }
 
+  async updateMuted(
+    action: boolean,
+    muted_id: string,
+    current_id: string,
+  ): Promise<UserEntity> {
+    const curuser: UserEntity = await this.findOneByAuthId(current_id);
+    if (!curuser) {
+      throw new BadRequestException(
+        'Error while updating blocked users: Failed requesting (un)mutted user in database',
+      );
+    }
+    const muuser: UserEntity = await this.findOneByAuthId(muted_id);
+    if (!muuser) {
+      throw new BadRequestException(
+        'Error while updating muted users: Failed requesting (un)muted user in database.',
+      );
+    }
+    if (action === true) {
+    }
+    if (action === false) {
+    }
+    return curuser;
+  }
+
   async updateBlocked(
     action: boolean,
     blocked_id: string,
@@ -323,6 +375,7 @@ export class UserService {
     }
     if (action === true) {
       curuser.blocked.push(blouser);
+      /*
       const users: UserEntity[] = await this.getFriends(curuser.auth_id);
       for (let index = 0; index < users.length; index++) {
         if (users[index].auth_id === blouser.auth_id) {
@@ -330,22 +383,11 @@ export class UserService {
           curuser.friends.splice(idx, 1);
         }
       }
-      try {
-        await this.userRepository.save(curuser);
-      } catch (error) {
-        const err: string = 'Error while updating blocked users: ' + error;
-        throw new NotAcceptableException(err);
-      }
+       */
     }
     if (action === false) {
       const index = curuser.blocked.indexOf(blouser);
       curuser.blocked.splice(index, 1);
-      try {
-        await this.userRepository.save(curuser);
-      } catch (error) {
-        const err: string = 'Error while updating unblocked users: ' + error;
-        throw new NotAcceptableException(err);
-      }
     }
     try {
       await this.userRepository.save(curuser);
@@ -385,7 +427,7 @@ export class UserService {
         twoFASecret: user.twoFASecret,
         isTwoFA: 1,
       });
-    } catch(error) {
+    } catch (error) {
       throw new Error(error);
     }
   }

@@ -2,21 +2,25 @@ import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
-import {ErrorContext} from "../contexts/ErrorProviderContext";
+import {AuthContext} from "../contexts/AuthProviderContext";
+import '../styles/components/friendsnav.css';
+import DisplayFriendsList from "./utils/DisplayFriendsList";
 
-class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
-  static contextType = ErrorContext;
+class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Array<string>, friends: Array<UserType> }> {
+  static contextType = AuthContext;
   constructor(props: any) {
     super(props)
     this.state = {
       friends: [],
+      filteredList: [],
+      uslist: [],
     };
   }
 
   componentDidMount = async () => {
-    let currentUser:any = sessionStorage.getItem('data');
-    currentUser = JSON.parse(currentUser);
-    let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.user.username)
+    let ctx: any = this.context;
+    let currentUser = ctx.user;
+    let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.username)
     if (!user.friends.length)
       return ;
     this.setState({ friends: user.friends })
@@ -31,46 +35,69 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
   }
 
   addFriends = async () => {
-    let currentUser:any = sessionStorage.getItem('data');
-    currentUser = JSON.parse(currentUser);
+    const ctx: any = this.context;
+    let currentUser: any = ctx.user;
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value))
+    if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value))
       return ;
     try {
       let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-      if (!userToAdd)
-      {
-        this.promptError()
-        return ;
-      }
-      let newFriendsArray = this.state.friends
-      newFriendsArray  = [...newFriendsArray , userToAdd];
+      //let newFriendsArray = this.state.friends
+      //newFriendsArray  = [...newFriendsArray , userToAdd];
       let test = await Request('PATCH',
           {
             Accept: 'application/json',
             'Content-Type': 'application/json'
           },
           {
-            username: currentUser.user.username,
-            friends: newFriendsArray
+            action: true,
+            auth_id: userToAdd.auth_id
           },
-          "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+          "http://localhost:3000/user/updatefriend/")
       if (!test)
         return ;
+      let newFriendsArray = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/" + currentUser.auth_id + "/getfriends",
+      )
       this.setState({friends: newFriendsArray})
     } catch (error) {
-      const ctx: any = this.context;
+      //const ctx: any = this.context;
+      //console.log('error - ', error);
       ctx.setError(error);
     }
   }
 
   pressEnter = (e: any) => {
+    const ctx: any = this.context;
+    const uslist = ctx.userList;
+    const query: any = e.target.value;
+    let updatedList = [...uslist];
+    updatedList = updatedList.filter((item: any) => {
+      //console.log('item = ', item.toLowerCase().indexOf());
+      if (e.target.value.length === 0) {
+        return null;
+      }
+      for (let index = 0; index < this.state.friends.length; index++) {
+        if (item === this.state.friends[index].username) {
+          return null;
+        }
+      }
+      if (item === ctx.user.username) {
+        return null;
+      }
+      //console.log('output = ', item.toLowerCase().indexOf(query.toLowerCase()))
+      return item.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
+    this.setState({ filteredList: updatedList })
     if (e.key === 'Enter')
     this.addFriends();
   }
 
   render() {
-    let friends: Array<any> = [];
+    let friends = [];
     let onlines;
     if (this.state.friends.length > 0)
     {
@@ -91,14 +118,23 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
+          <div className="item-list">
+            <ol>
+              {this.state.filteredList.map((item: any, key: any) => (
+                  <li key={key}>{item}</li>
+              ))}
+            </ol>
+          </div>
           <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
           <div>
             {friends}
+            <DisplayFriendsList />
           </div>
         </div>
       </div>
     ); // fin de return
   } // fin de render
 } // fin de App
+//
 
 export default FriendsNav;

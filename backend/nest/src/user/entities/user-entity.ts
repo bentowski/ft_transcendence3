@@ -109,6 +109,9 @@ export class UserEntity {
   @ManyToMany(() => ChanEntity, (chan) => chan.banUser)
   channelBanned: ChanEntity[];
 
+  @ManyToMany(() => ChanEntity, (chan) => chan.muteUser)
+  channelMuted: ChanEntity[];
+
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }

@@ -169,7 +169,7 @@ class UserCards extends Component<
                 }
                 className="miniAvatar"
               />
-              <BlockUnBlock auth_id={this.props.user.auth_id}/>
+
             </div>
           </div>
         );
