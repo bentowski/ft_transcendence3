@@ -40,6 +40,7 @@ export class UserAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const cookie = req.cookies['jwt'];
+    //console.log(cookie);
     //console.log('requesting cookies');
     if (!cookie) {
       //console.log('no cookie for the pookie 0');
@@ -57,7 +58,7 @@ export class UserAuthGuard implements CanActivate {
           //console.log('token said u need 2fa');
           if (!token.isAuth) {
             //console.log('no 2');
-            return false;
+            return true;
           } else {
             //console.log('yes 3');
             return true;

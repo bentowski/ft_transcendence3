@@ -9,6 +9,10 @@ import { PayloadInterface } from './interfaces/payload.interface';
 //import { qrcode } from 'qrcode';
 //import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
+import * as io from 'socket.io-client';
+import {CreateUserDto} from "../user/dto/create-user.dto";
+
+const socket = io.connect("http://localhost:3000/chat");
 
 @Injectable()
 export class AuthService {
@@ -17,9 +21,15 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
+  async createUser(user42: CreateUserDto): Promise<UserEntity> {
+    return await this.userService.createUser(user42);
+  }
+
   async validateUser(user42: User42Dto): Promise<UserEntity> {
     try {
+      //console.log('validate user auth service');
       return this.userService.validateUser42(user42);
+      //console.log('after validate user');
     } catch (error) {
       throw new Error(error);
     }
@@ -89,6 +99,7 @@ export class AuthService {
   async changeStatusUser(auth_id: string, status: number) {
     try {
       await this.userService.setStatus(auth_id, status);
+      socket.emit('updateUser', { auth_id: auth_id, status: status })
     } catch (error) {
       throw new Error(error);
     }

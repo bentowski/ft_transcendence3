@@ -2,8 +2,10 @@ import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
+import {ErrorContext} from "../contexts/ErrorProviderContext";
 
 class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
+  static contextType = ErrorContext;
   constructor(props: any) {
     super(props)
     this.state = {
@@ -36,6 +38,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
 		input.value = '';
 		return ;
 	}
+  try {
     let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
     if (!userToAdd)
     {
@@ -59,6 +62,10 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
 		return ;
 	}
     this.setState({friends: newFriendsArray})
+  } catch (error) {
+    const ctx: any = this.context;
+    ctx.setError(error);
+  }
 
   }
 
@@ -85,7 +92,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines}/{this.state.friends.length} friends online</p>
+          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online": 'You are friendless'} </p>
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>

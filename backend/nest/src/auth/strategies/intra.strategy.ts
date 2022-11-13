@@ -24,6 +24,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
       username: username,
       email: profile['emails'][0]['value'],
     };
+    //console.log('lets go in this funciton');
     const newUser: UserEntity = await this.authService.validateUser(user);
     //console.log('welcome buddy');
     return newUser;

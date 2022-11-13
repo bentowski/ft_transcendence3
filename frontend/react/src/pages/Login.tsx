@@ -2,20 +2,21 @@ import "../styles/pages/login.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
+import {useEffect, useState} from "react";
 
 const Login = () => {
   const { isAuth, loading, isTwoFa, isToken } = useAuthData();
   // const navigate = useNavigate();
+  //const [isLogged, setIsLogged] = useState(false);
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
   // const [user, setUser] = useState(null);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h1>A Few Moment Later...</h1>;
   }
   //console.log("is token?", isToken);
-
   if (isToken) {
     //console.log("toktok");
     if (isTwoFa && !isAuth) {
@@ -31,6 +32,7 @@ const Login = () => {
       );
     }
   }
+  //console.log('here is login page');
   return (
     <div className="Login">
       <a
@@ -73,6 +75,9 @@ const Login = () => {
       </div>
       <a href="http://localhost:3000/auth/login">
         <button className="mb-2 mx-2">Sign in</button>
+      </a>
+      <a href="http://localhost:3000/auth/dummyconnect">
+        <button className="mb-2 mx-2">Letssss go</button>
       </a>
     </div>
   ); //

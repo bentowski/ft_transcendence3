@@ -6,6 +6,7 @@ frontend/react/dist
 backend/nest/node_modules
 backend/nest/dist
 backend/nest/.env
+backend/nest/uploads/profileimages
 data
 examples
 frontend/volume

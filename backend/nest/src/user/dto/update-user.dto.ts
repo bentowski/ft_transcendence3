@@ -27,11 +27,15 @@ export class UpdateAvatarDto {
 
 export class UpdateFriendsDto {
   @IsNotEmpty()
-  @IsString()
-  username: string;
+  friends: Array<UserEntity>;
+}
+
+export class BlockedUserDto {
+  @IsNotEmpty()
+  auth_id: string;
 
   @IsNotEmpty()
-  friends: Array<UserEntity>;
+  action: boolean;
 }
 
 export class UpdateUserScoreDto {

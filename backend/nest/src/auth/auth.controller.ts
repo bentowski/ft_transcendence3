@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
   Delete,
   HttpException,
-  HttpStatus,
+  HttpStatus, BadRequestException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { IntraAuthGuard } from './guards/intra-auth.guard';
@@ -26,6 +26,7 @@ import UserEntity from '../user/entities/user-entity';
 import jwt_decode from 'jwt-decode';
 import { UserAuthGuard } from './guards/user-auth.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import {CreateUserDto} from "../user/dto/create-user.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +41,34 @@ export class AuthController {
     return;
   }
 
+  @Get('dummyconnect')
+  async dummyConnect(@Res() res) {
+    let n_id = 0;
+    while (await this.authService.findUser(n_id.toString())) {
+      n_id++;
+    }
+    const fakeUser: CreateUserDto = {
+      auth_id: n_id.toString(),
+      username: 'dummy' + n_id.toString(),
+      email: 'dummy@' + n_id.toString() + '.com',
+    };
+    const newUser: UserEntity = await this.authService.createUser(fakeUser);
+    const auth_id: string = newUser.auth_id;
+    const isAuth = false;
+    const payload: PayloadInterface = { auth_id, isAuth };
+    const access_token: string = this.jwtService.sign(payload);
+    try {
+      this.authService.changeStatusUser(auth_id, 1);
+      //console.log('after change status');
+      res
+        .status(202)
+        .cookie('jwt', access_token, { httpOnly: true })
+        .redirect('http://localhost:8080');
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   @Get('redirect')
   @UseGuards(IntraAuthGuard)
   async redirect(
@@ -50,8 +79,10 @@ export class AuthController {
     const isAuth = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
+    //console.log('before change status');
     try {
       this.authService.changeStatusUser(auth_id, 1);
+      //console.log('after change status');
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
@@ -104,7 +135,9 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const user = this.authService.findUser(auid);
     if (!user) {
-      throw new HttpException('cant find user', HttpStatus.NOT_FOUND);
+      throw new BadRequestException(
+        'Error while generating 2FA QR Code: Cant find user in database',
+      );
     }
     const { otpauthUrl } = await this.authService.generateTwoFASecret(auid);
     return this.authService.pipeQrCodeStream(response, otpauthUrl);
@@ -120,7 +153,9 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {
-      throw new UnauthorizedException('wrong 2fa code');
+      throw new BadRequestException(
+        'Error while activating 2FA: Wrong 2fa code',
+      );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
     const isAuth = true;
@@ -145,17 +180,21 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'), IntraAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('2fa/authenticate')
   async authenticate(
     @Req() req,
     @Res({ passthrough: true }) res: Response,
     @Body() obj: TwoFACodeDto,
   ) {
+    //console.log('twofacode = ', obj.twoFACode);
+    //console.log('obj = ', obj);
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {
-      throw new UnauthorizedException('wrong 2fa code');
+      throw new BadRequestException(
+        'Error while authenticating 2FA: Wrong 2FA Code',
+      );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
     const isAuth = true;

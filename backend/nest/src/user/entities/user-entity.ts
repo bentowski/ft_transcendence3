@@ -5,12 +5,12 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  JoinTable,
+  JoinTable, JoinColumn,
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-import { Exclude } from 'class-transformer';
-// import { ProfileEntity } from './profile-entity';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { ChanEntity } from '../../chans/entities/chan-entity';
+// import { ProfileEntity } from './profile-entity';
 
 @Entity('user')
 export class UserEntity {
@@ -18,8 +18,8 @@ export class UserEntity {
   user_id: string;
 
   @Column({
+    unique: true,
     nullable: false,
-    unique: true
   })
   auth_id: string;
 
@@ -32,6 +32,7 @@ export class UserEntity {
   @Column({
     unique: true,
     nullable: false,
+    update: false,
   })
   email: string;
 
@@ -79,11 +80,16 @@ export class UserEntity {
   @JoinTable({ name: 'Friends' })
   friends: UserEntity[];
 
+  @Type(() => UserEntity)
+  @JoinTable({ joinColumn: { name: 'UserEntity_id_1' } })
+  @ManyToMany(() => UserEntity, { cascade: true })
+  blocked: UserEntity[];
+
+  @Exclude()
   @Column({
     default: '',
     nullable: true,
   })
-  @Exclude()
   twoFASecret: string;
 
   @Column({
@@ -93,6 +99,7 @@ export class UserEntity {
 
   @Column({
     default: () => '((CURRENT_DATE))',
+    update: false,
   })
   createdAt: Date;
 

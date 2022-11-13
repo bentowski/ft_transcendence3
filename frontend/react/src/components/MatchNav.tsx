@@ -105,7 +105,7 @@ class MatchNav extends Component {
 
 	render() {
 		return (
-			<div className="MatchNav" id="MatchNav">
+			<div className="MatchNav h-100" id="MatchNav">
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}

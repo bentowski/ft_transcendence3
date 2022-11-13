@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
+import BlockUnBlock from './BlockUnBlock';
 // import IUser from "../../interfaces/user-interface";
 // import IAuthContextType from "../../interfaces/authcontexttype-interface";
 import { UserType } from "../../types"
@@ -23,6 +24,7 @@ class UserCards extends Component<
     ssid: string;
     chanId: string;
     socket: string;
+    loaded: string;
   }
 > {
   static contextType = AuthContext;
@@ -35,8 +37,24 @@ class UserCards extends Component<
       ssname: "",
       ssid: "",
       chanId: "",
+      loaded: '',
       socket: ''
     };
+  }
+
+  updateUser = (user : {auth_id: number, status: number}) => {
+    if (user.auth_id === this.state.id) {
+      this.setState({online: user.status ? "online" : "offline"})
+    }
+  }
+
+  setSocket = () => {
+    if (this.state.loaded !== 'ok') {
+      socket.on(('onUpdateUser'), (user : {auth_id: number, status: number}) => {
+        this.updateUser(user);
+      })
+      this.setState({loaded: 'ok'})
+    }
   }
 
   getCurrentUser = () => {
@@ -181,6 +199,7 @@ class UserCards extends Component<
                 }
                 className="miniAvatar"
               />
+              <BlockUnBlock auth_id={this.props.user.auth_id}/>
             </div>
           </div>
         );
@@ -291,6 +310,7 @@ class UserCards extends Component<
     this.setState({ ssname: this.getCurrentUser().username });
     this.initSocket();
     // console.log(this.getCurrentUser())
+    // this.setSocket();
   };
 
   render() {

@@ -1,6 +1,6 @@
 import {
   createContext,
-  ReactNode,
+  ReactNode, useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -13,92 +13,78 @@ import IError from "../interfaces/error-interface";
 import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
 
-export const AuthContext = createContext<any>(null);
+export const AuthContext = createContext<any>({ error: null, setError: (value: any) => {}});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
   const [isToken, setIsToken] = useState<boolean>(false);
   const [user, setUser] = useState<any>(undefined);
+  const [errorShow, setErrorShow] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [errorCode, setErrorCode] = useState<number>(0);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setIsToken(false);
     setUser(undefined);
     setLoading(true);
     //console.log("here we go");
     try {
-      fetch("http://localhost:3000/auth/istoken", {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((res: any) => res.json())
-        .then((data: any) => {
-          //console.log("data tok = ", data.isTok);
-          if (data.isTok === 0) {
-            //console.log("403 baby");
+      let res = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/auth/istoken"
+      )
+      if (res) {
+        //console.log('REs = ', res.isTok);
+        if (res.isTok === 0) {
+          setLoading(false);
+          return ;
+        } else if (res.isTok > 0) {
+          setIsToken(true);
+          if (res.isTok === 1) {
             setLoading(false);
-            return;
-          } else if (data.isTok > 0) {
-            //console.log("before fetching");
-            setIsToken(true);
-            if (data.isTok === 1) {
-              setLoading(false);
-              return;
-            }
-            //console.log("fetching user");
-            fetch("http://localhost:3000/user/current", {
-              method: "GET",
-              credentials: "include",
-            })
-              .then((resp: any) => resp.json())
-              .then((user: any) => {
-                //console.log("user = ", user);
-                if (user.statusCode === 404 || user.statusCode === 401) {
-                  setLoading(false);
-                  return;
-                }
-                setUser(user);
-                if (data.isTok === 2) {
-                  setIsTwoFa(true);
-                  setLoading(false);
-                  //console.log("istok = 2");
-                  return;
-                }
-                if (data.isTok === 3) {
-                  //console.log("istok = 3");
-                  setIsAuth(true);
-                  setIsTwoFa(true);
-                  setLoading(false);
-                  return;
-                }
-                if (data.isTok === 4) {
-                  setLoading(false);
-                  //console.log("istok = 4");
-                  setIsAuth(true);
-                  return;
-                }
-                //console.log("ENDED NOWHERE!");
-                return;
-              })
-              .catch((error: any) => {
-                //console.log("oulala - ", error);
-              })
-              .finally(() => {
+            return ;
+          } else if (res.isTok > 1) {
+            let user = await Request(
+                "GET",
+                {},
+                {},
+                "http://localhost:3000/user/current"
+            )
+            if (user) {
+              setUser(user);
+              if (res.isTok === 2) {
+                setIsTwoFa(true);
                 setLoading(false);
-              });
+                return ;
+              } else if (res.isTok === 3) {
+                setIsTwoFa(true);
+                setIsAuth(true);
+                setLoading(false);
+                return ;
+              } else if (res.isTok === 4) {
+                setIsAuth(true);
+                setLoading(false);
+                return ;
+              }
+            } else {
+              setLoading(false);
+              return ;
+            }
+          } else {
             setLoading(false);
-            return;
+            return ;
           }
-        })
-        .catch((error: any) => {
-          //console.log("1error = ", error);
+        } else {
           setLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+          return ;
+        }
+      } else {
+        setLoading(false);
+      }
     } catch (error) {
       if (typeof error === "object" && error !== null) {
         //console.log("oulala -", error);
@@ -109,6 +95,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
+
+  const setError =  useCallback((value: any) => {
+    //console.log('error value = ', value);
+    if (value) {
+      setErrorShow(true);
+      setErrorMsg(value.message);
+      setErrorCode(value.statusCode);
+    } else {
+      setErrorShow(false);
+      setErrorMsg('');
+      setErrorCode(0);
+    }
+  },[])
 
   useEffect(() => {
     //console.log('starts');
@@ -125,10 +124,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuth,
       isToken,
       isTwoFa,
-      error,
+      errorShow,
+      errorMsg,
+      errorCode,
       loading,
+      setError: (value: any) => setError(value),
     }),
-    [error, user, isAuth, loading, isToken, isTwoFa]
+    [errorShow,errorMsg,errorCode, user, isAuth, loading, isToken, isTwoFa]
   );
 
   return (

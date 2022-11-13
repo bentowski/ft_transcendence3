@@ -66,7 +66,16 @@ export class ChatGateway implements OnModuleInit
   	this.server.to(body.room).emit("userJoinChannel");
   }
 
-  @SubscribeMessage('leaveRoom')
+    @SubscribeMessage('banToChannel')
+    async banUserToChannel(client: Socket, body: {room: string, auth_id: string}) {
+        const usr = await this.userService.findOneByAuthId(body.auth_id)
+        await this.chanService.banUserToChannel(usr, body.room)
+        client.emit('leaveRoom', body.room);
+        this.server.to(body.room).emit("bannedChannel");
+    }
+
+
+    @SubscribeMessage('leaveRoom')
   onLeaveRoom(client: Socket, room: string) {
   	client.join(room);
   	client.emit('leftRoom', room);
@@ -75,5 +84,15 @@ export class ChatGateway implements OnModuleInit
   @SubscribeMessage('chanCreated')
   onChanCreated() {
   	this.server.emit('newChan');
+  }
+
+  @SubscribeMessage('newParty')
+  onNewParty(client: Socket) {
+	this.server.emit('onNewParty');
+  }
+
+  @SubscribeMessage('updateUser')
+  onUpdateUser(client: Socket, user : {auth_id: number, status: number}) {
+	this.server.emit('onUpdateUser', user);
   }
 }
