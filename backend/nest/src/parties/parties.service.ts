@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { CreatePartiesDto } from "./dto/create-parties.dto";
 import { HistoryEntity } from './entities/history-entity';
 import { HistorySavePartiesDto } from './dto/history-save-parties.dto';
+import * as io from "socket.io-client";
+
+const update = io.connect("http://localhost:3000/update");
 
 @Injectable()
 export class PartiesService {
@@ -71,12 +74,16 @@ export class PartiesService {
         let game = await this.partiesRepository.findOne({
             where : { id: Number(id)}
         })
-        if (game.p1 === null)
+        if (game.p1 === null) {
             game.p1 = auth_id;
+			update.emit('newParty');
+		}
         else if (game.p1 === auth_id)
             return ;
-        else if (game.p2 === null)
+        else if (game.p2 === null) {
             game.p2 = auth_id;
+			update.emit('newParty');
+		}
         await this.partiesRepository.save(game);
     }
 }
