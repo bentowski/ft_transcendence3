@@ -34,34 +34,39 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
     let currentUser:any = sessionStorage.getItem('data');
     currentUser = JSON.parse(currentUser);
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value))
+    if (input.value === "" || input.value === currentUser.user.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
+		input.value = '';
+		return ;
+	}
+  try {
+    let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
+    if (!userToAdd)
+    {
+      this.promptError()
       return ;
-    try {
-      let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-      if (!userToAdd)
-      {
-        this.promptError()
-        return ;
-      }
-      let newFriendsArray = this.state.friends
-      newFriendsArray  = [...newFriendsArray , userToAdd];
-      let test = await Request('PATCH',
-          {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          {
-            username: currentUser.user.username,
-            friends: newFriendsArray
-          },
-          "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
-      if (!test)
-        return ;
-      this.setState({friends: newFriendsArray})
-    } catch (error) {
-      const ctx: any = this.context;
-      ctx.setError(error);
     }
+    let newFriendsArray = this.state.friends
+    newFriendsArray  = [...newFriendsArray , userToAdd];
+    let test = await Request('PATCH',
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        {
+          username: currentUser.user.username,
+          friends: newFriendsArray
+        },
+        "http://localhost:3000/user/addFriends/" + currentUser.user.auth_id)
+    if (!test) {
+		input.value = '';
+		return ;
+	}
+    this.setState({friends: newFriendsArray})
+  } catch (error) {
+    const ctx: any = this.context;
+    ctx.setError(error);
+  }
+
   }
 
   pressEnter = (e: any) => {
@@ -79,7 +84,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
       while (x < this.state.friends.length) {
         if (this.state.friends[x].status)
           onlines++;
-        friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} stat={false} />)
+        friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} stat={false}/>)
         x++;
       }
     }
