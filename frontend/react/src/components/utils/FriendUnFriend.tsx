@@ -2,60 +2,42 @@ import {useEffect, useState} from "react";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import {useLocation, useNavigate} from "react-router-dom";
+import {UserType} from "../../types";
 
 const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
     const [status, setStatus] = useState(false);
     const [loading, setLoading ] = useState(false);
-    const { user, friendsList } = useAuthData();
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const updateStatus = async () => {
-        setLoading(true);
-        try {
-
-            let res = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/user/" + auth_id + "/isfriend",
-            )
-
-
-            /*
-            for (let index = 0; index < friendsList.length; index++) {
-                if (friendsList[index] === auth_id) {
-                    setStatus(true);
-                    setLoading(false)
-                    return ;
-                }
-            }
-
-             */
-            //console.log('res = ', res);
-            setStatus(res);
-            setLoading(false);
-            return ;
-            //}
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    }
+    const { friendsList, updateFriendsList } = useAuthData();
 
     useEffect(() => {
-        if (auth_id !== undefined) {
-            updateStatus();
-            //console.log('status = ', status);
+        setLoading(true);
+        const updateStatus = async () => {
+            if (auth_id !== undefined) {
+                setLoading(true);
+                try {
+                    let res = await Request(
+                        "GET",
+                        {},
+                        {},
+                        "http://localhost:3000/user/" + auth_id + "/isfriend",
+                    )
+                    //console.log('res = ', res);
+                    setStatus(res);
+                    return ;
+                } catch (error) {
+                    //console.log(error);
+                }
+            }
         }
-    }, [auth_id])
+        updateStatus();
+        setLoading(false);
+    }, [auth_id, friendsList])
 
     const friendunfriendUser = async () => {
-        //console.log('STATUS  - ', status);
-        let action: boolean = true;
-        if (status) {
-            action = false;
-        }
+        //let action: boolean = true;
+        //if (status) {
+        //    action = false;
+        //}
         try {
             let res = await fetch("http://localhost:3000/user/updatefriend", {
                 method: "PATCH",
@@ -63,21 +45,24 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ action: action, auth_id: auth_id }),
+                body: JSON.stringify({ action: !status, auth_id: auth_id }),
             })
             if (res.ok) {
-                setStatus(action);
-                //console.log('request succeed!');
+                console.log('status - ', !status)
+                setStatus(!status);
+                const obj: UserType = await res.json();
+                console.log('lets go ---------- ', res);
+                updateFriendsList(obj, !status);
             }
-
         } catch (error) {
             console.log(error);
         }
     }
-
+    if (loading) {
+        <p>LOADING</p>
+    }
     return (
-        <button onClick={friendunfriendUser} >
-            { loading && <p></p>}
+        <button onClick={() => friendunfriendUser()} >
             { status ?
                 <p>UNFRIEND</p>
                 :

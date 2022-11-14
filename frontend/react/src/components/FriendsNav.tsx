@@ -54,8 +54,8 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
             auth_id: userToAdd.auth_id
           },
           "http://localhost:3000/user/updatefriend/")
-      if (!test)
-        return ;
+      console.log('updatefriendslist = ', userToAdd.auth_id);
+      ctx.updateFriendsList(userToAdd, true);
       let newFriendsArray = await Request(
           "GET",
           {},
@@ -110,6 +110,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
         x++;
       }
     }
+    console.log('friends      ',  this.state.friends);
 
     return (
       <div className="FriendsNav">
@@ -127,12 +128,11 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           </div>
           <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
           <div>
-            {friends}
             <DisplayFriendsList />
           </div>
         </div>
       </div>
-    ); // fin de return
+    ); // fin de return    {friends}
   } // fin de render
 } // fin de App
 //

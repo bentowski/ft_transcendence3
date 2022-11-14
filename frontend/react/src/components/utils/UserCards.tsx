@@ -87,6 +87,8 @@ class UserCards extends Component<
 
       x++;
     }
+
+
     if (x === chans.length) {
       let newChan = await Request(
         "POST",
@@ -218,6 +220,7 @@ class UserCards extends Component<
   };
 
   componentDidMount = async () => {
+    //console.log('this.state.id = ', this.state.id);
     let user = await Request(
       "GET",
       {},
@@ -226,7 +229,7 @@ class UserCards extends Component<
     );
     let status = "offline";
     if (user) {
-      if (user.status == 1) status = "online";
+      if (user.status === 1) status = "online";
       this.setState({ login: user.username, online: status });
     }
     this.setState({ ssid: this.getCurrentUser().auth_id });

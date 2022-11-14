@@ -12,8 +12,13 @@ import ResponseData from "../interfaces/error-interface";
 import IError from "../interfaces/error-interface";
 import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
+import {UserType} from "../types";
 
-export const AuthContext = createContext<any>({ error: null, /* changeFriendsList: () => {}, */ setError: (value: any) => {}});
+export const AuthContext = createContext<any>({
+  //error: null,
+  //friendsList: [],
+  updateFriendsList: (usr: UserType, action: boolean) => {},
+  setError: (value: any) => {}});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -26,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorCode, setErrorCode] = useState<number>(0);
   const [userList, setUserList] = useState<string[]>([]);
   const [friendsList, setFriendsList] = useState<string[]>([]);
-  const [blockedList, setBlockedList] = useState<string[]>([]);
+  //const [blockedList, setBlockedList] = useState<string[]>([]);
 
   /*
   const fetchBlockedList = async () => {
@@ -126,10 +131,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 for (let index = 0; index < flist.length; index++) {
                   array_friends[index] = flist[index].auth_id;
                 }
+                console.log('array friends = ', array_friends);
                 setFriendsList(array_friends);
+                //console.log('FriENDS LIst = ', friendsList);
 
                 //-----------------
 
+                /*
                 let blist = await Request(
                     "GET",
                     {},
@@ -141,6 +149,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   array_usernames[index] = blist[index].auth_id;
                 }
                 setBlockedList(array_usernames);
+                 */
 
                 //------------------
 
@@ -174,24 +183,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /*
-  const changeFriendsList = useCallback(async () => {
-    let flist = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/" + user.auth_id + "/getfriends",
-    )
-    let array_friends: string[] = [];
-    for (let index = 0; index < flist.length; index++) {
-      array_friends[index] = flist[index].auth_id;
+  const updateFriendsList = useCallback(async (usr: UserType, action: boolean) => {
+    //console.log('updatefriends list launched ', action, ' + ', usr);
+    const auth_id: string = usr.auth_id;
+    if (action) {
+      //console.log('adding user ', auth_id);
+      setFriendsList((prevState => [...prevState, auth_id]));
+    } else if (!action) {
+      //console.log('removing user');
+      const idx: number = friendsList.indexOf(auth_id, 0);
+      //console.log('IDX = ', idx);
+      if (idx !== -1 && friendsList.length > 0) {
+        setFriendsList((prevState) => prevState.splice(idx, 1));
+      }
     }
-    setFriendsList(array_friends);
-  }, [])
-   */
+    //console.log('exit updatefriends list');
+  }, [friendsList])
 
   const setError =  useCallback((value: any) => {
-    console.log('error value = ', value);
+    //console.log('error value = ', value);
     if (value) {
       setErrorShow(true);
       setErrorMsg(value.message);
@@ -213,7 +223,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [isToken]);
 
   const memoedValue = useMemo(
     () => ({
@@ -227,8 +237,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       userList,
       friendsList,
-      blockedList,
-      //changeFriendsList: () => {},
+      //blockedList,
+      //returnFriendRelation: (usr: UserType) => {},
+      updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       //changeBlockedList: () => {},
       setError: (value: any) => setError(value),
     }),
@@ -241,9 +252,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       isToken,
       isTwoFa,
+      updateFriendsList,
+      setError,
+      userList,
       friendsList,
-      blockedList,
-      userList
+      //blockedList,
+      //userList
     ]
   );
 

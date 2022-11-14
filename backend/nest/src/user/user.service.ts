@@ -90,6 +90,7 @@ export class UserService {
       where: { auth_id: auth_id },
       relations: { friends: true, channelJoined: true, blocked: true },
     });
+    //console.log('user = ', findAuthId);
     return findAuthId;
   }
 
@@ -251,7 +252,7 @@ export class UserService {
     }
     try {
       await this.userRepository.save(curuser);
-      return curuser;
+      return adduser;
     } catch (error) {
       const err: string = 'Error while updating (un)blocked users: ' + error;
       throw new NotAcceptableException(err);

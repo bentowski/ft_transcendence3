@@ -96,7 +96,7 @@ export class UserController {
     const user: UserEntity = await this.userService.findOnebyUsername(username);
     if (!user) {
       throw new BadRequestException(
-        'Error while fetching database: User with that username dont exists',
+        'Error while fetching database: User with that username doesnt exists',
       );
     }
     return user;
@@ -105,12 +105,14 @@ export class UserController {
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   async findOnebyID(@Param('id') id: string) {
+    //console.log('ID - ', id);
     const user: UserEntity = await this.userService.findOneByAuthId(id);
     if (!user) {
       throw new BadRequestException(
-        'Error while fetching database: User with that id dont exists',
+        'Error while fetching database: User with that id doesnt exists',
       );
     }
+    //console.log('uuuuuuSER - ', user);
     return user;
   }
 
@@ -122,10 +124,10 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('updatefriend')
-  updateFriends(@Req() req, @Body() updateFriendsDto: UpdateFriendsDto) {
-    console.log('updtfrienddto = ', updateFriendsDto.action,
-        ' req.user.auth_id = ', req.user.auth_id,
-        ' updateFriendsDto.auth_id = ', updateFriendsDto.auth_id)
+  updateFriends(
+    @Req() req,
+    @Body() updateFriendsDto: UpdateFriendsDto,
+  ): Promise<UserEntity> {
     try {
       return this.userService.updateFriends(
         updateFriendsDto.action,
@@ -155,11 +157,8 @@ export class UserController {
       const users: UserEntity[] = await this.userService.getFriends(
         req.user.auth_id,
       );
-      console.log('fruends = ', users);
       for (let index = 0; index < users.length; index++) {
-        console.log(users[index].auth_id, 'xxxxxx', id);
         if (users[index].auth_id === id) {
-          console.log('yeyeyeyey');
           return true;
         }
       }
@@ -172,20 +171,15 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/isblocked')
   async isBlocked(@Req() req, @Param('id') id: string): Promise<boolean> {
-    console.log('iddddd = ', id);
     try {
       const users: UserEntity[] = await this.userService.getBlocked(
         req.user.auth_id,
       );
-      console.log('users = ', users);
       for (let index = 0; index < users.length; index++) {
-        console.log(users[index].auth_id, '===', id);
         if (users[index].auth_id === id) {
-          console.log('return true');
           return true;
         }
       }
-      console.log('return false');
       return false;
     } catch (error) {
       throw new Error(error);

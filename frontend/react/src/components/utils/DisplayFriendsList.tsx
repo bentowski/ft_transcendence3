@@ -5,53 +5,45 @@ import UserCards from "./UserCards";
 import {UserType} from "../../types";
 
 const DisplayFriendsList = () => {
-    const [friendsList, setFriendsList] = useState<UserType[]>([]);
-    const { user } = useAuthData();
+    const { friendsList } = useAuthData();
+    const [result, setResult] = useState<JSX.Element[]>([]);
+    //const [loading, setLoading] = useState<boolean>(false);
 
-
-    const updateFriendsList = async () => {
-        try {
-            let res = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/user/" + user.auth_id + "/getfriends/",
-            )
-            setFriendsList(res);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
-    useEffect(() => {
-        //updateFriendsList();
-    }, [])
-
-    const fetchUser = async (x: number) => {
-        console.log('xxx = ', x)
-        return (await Request(
+    const fetchUser = async (auth_id: string) => {
+        return await Request(
             "GET",
             {},
             {},
-            "http://localhost:3000/user/id/" + friendsList[x],
-        ));
+            "http://localhost:3000/user/id/" + auth_id,
+        );
     }
 
-    const displayList = () => {
-        let cards: JSX.Element[] = [];
-        if (friendsList.length < 0) {
-            return cards;
+    useEffect(() => {
+        console.log('useffect hook engaged result    :=:  ', friendsList);
+        //setLoading(true);
+        const getresults = async () => {
+            let cards: JSX.Element[] = [];
+            if (friendsList.length < 0) {
+                setResult(cards);
+                return ;
+            }
+            for (let x = 0; x < friendsList.length; x++) {
+                console.log('xxxx = ', x, 'friendslist = ', friendsList[x]);
+                const usr: any = await fetchUser(friendsList[x]);
+                cards.push(<UserCards key={x} user={usr} avatar={true} stat={false} />)
+                x++;
+            }
+            setResult(cards);
+            return ;
+            //console.log('useffect hook disengaged', cards);
         }
-        for (let x = 0; x < friendsList.length; x++) {
-            cards.push(<UserCards key={x} user={fetchUser(x)} avatar={true} stat={false} />)
-            x++;
-        }
-        return cards;
-    }
+        getresults();
+    }, [friendsList])
 
     return <div>
-                {displayList()}
+                {
+                    result
+                }
             </div>
 }
 export default DisplayFriendsList;
