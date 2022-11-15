@@ -89,14 +89,31 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
-  findOnebyUsername(@Param('username') username: string) {
-    return this.userService.findOnebyUsername(username);
+  async findOnebyUsername(
+    //@Res({ passthrough: true }) res,
+    @Param('username') username: string,
+  ) {
+    const user: UserEntity = await this.userService.findOnebyUsername(username);
+    if (!user) {
+      throw new BadRequestException(
+        'Error while fetching database: User with that username doesnt exists',
+      );
+    }
+    return user;
   }
 
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
-  findOnebyID(@Param('id') id: string) {
-    return this.userService.findOneByAuthId(id);
+  async findOnebyID(@Param('id') id: string) {
+    //console.log('ID - ', id);
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    if (!user) {
+      throw new BadRequestException(
+        'Error while fetching database: User with that id doesnt exists',
+      );
+    }
+    //console.log('uuuuuuSER - ', user);
+    return user;
   }
 
   //@UseGuards(UserAuthGuard)
@@ -106,13 +123,17 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Patch('addFriends/:id')
+  @Patch('updatefriend')
   updateFriends(
-    @Param('id') userId: string,
+    @Req() req,
     @Body() updateFriendsDto: UpdateFriendsDto,
-  ) {
+  ): Promise<UserEntity> {
     try {
-      return this.userService.updateFriends(userId, updateFriendsDto);
+      return this.userService.updateFriends(
+        updateFriendsDto.action,
+        req.user.auth_id,
+        updateFriendsDto.auth_id,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -120,7 +141,7 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getfriends')
-  async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
+  async getFriends(@Param('id') id: string): Promise<UserEntity[]> {
     try {
       return this.userService.getFriends(id);
     } catch (error) {
@@ -129,8 +150,27 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isfriend')
+  async isFriend(@Req() req, @Param('id') id: string): Promise<boolean> {
+    try {
+      //console.log('auth_id = ', id);
+      const users: UserEntity[] = await this.userService.getFriends(
+        req.user.auth_id,
+      );
+      for (let index = 0; index < users.length; index++) {
+        if (users[index].auth_id === id) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/isblocked')
-  async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
+  async isBlocked(@Req() req, @Param('id') id: string): Promise<boolean> {
     try {
       const users: UserEntity[] = await this.userService.getBlocked(
         req.user.auth_id,
@@ -148,7 +188,7 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get(':id/getblocked')
-  async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
+  async getBlocked(@Param('id') id: string): Promise<UserEntity[]> {
     try {
       return this.userService.getBlocked(id);
     } catch (error) {

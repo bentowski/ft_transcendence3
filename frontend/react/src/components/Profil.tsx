@@ -7,6 +7,8 @@ import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
 import { MessagePayload, ChanType, UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
+import BlockUnBlock from "./utils/BlockUnBlock";
+import FriendUnFriend from "./utils/FriendUnFriend";
 
 class Profil extends Component<
   {},
@@ -35,10 +37,13 @@ class Profil extends Component<
   };
 
   getUser = async (username: string) => {
-    let currentUser: any = sessionStorage.getItem("data");
-    currentUser = JSON.parse(currentUser);
+    //console.log('arg username = ', username);
+    //let currentUser: any = sessionStorage.getItem("data");
+    //currentUser = JSON.parse(currentUser);
+    const ctx: any = this.context;
+    const currentUser = ctx.user;
     if (!username) {
-      username = currentUser.user.username;
+      username = currentUser.username;
     }
     try {
       let newUser = await Request(
@@ -47,6 +52,7 @@ class Profil extends Component<
           {},
           "http://localhost:3000/user/name/" + username
       );
+      /*
       if (!newUser)
       {
         username = currentUser.user.username;
@@ -57,6 +63,8 @@ class Profil extends Component<
             "http://localhost:3000/user/name/" + username
         );
       };
+       */
+      //console.log('newUser ===== ', newUser);
       this.setState({ user: newUser });
     } catch (error) {
       const ctx: any = this.context;
@@ -168,15 +176,20 @@ class Profil extends Component<
         </div>
       );
     } else {
+      //console.log('ALALALALALAL = ', this.state.user.auth_id);
       return (
         <div className="ProfilHeader">
           <h3>{this.state.user.username}</h3>
+          <BlockUnBlock auth_id={this.state.user.auth_id}/>
+          <FriendUnFriend auth_id={this.state.user.auth_id}/>
         </div>
       );
     }
   };
 
   render() {
+    const ctx: any = this.context;
+    const user: any = ctx.user;
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {

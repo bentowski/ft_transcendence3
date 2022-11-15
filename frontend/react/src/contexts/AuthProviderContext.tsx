@@ -12,8 +12,11 @@ import ResponseData from "../interfaces/error-interface";
 import IError from "../interfaces/error-interface";
 import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
+import {UserType} from "../types";
 
-export const AuthContext = createContext<any>({ error: null, setError: (value: any) => {}});
+export const AuthContext = createContext<any>({
+  updateFriendsList: (usr: UserType, action: boolean) => {},
+  setError: (value: any) => {}});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,12 +27,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorShow, setErrorShow] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [errorCode, setErrorCode] = useState<number>(0);
+  const [userList, setUserList] = useState<string[]>([]);
+  const [friendsList, setFriendsList] = useState<string[]>([]);
+  //const [blockedList, setBlockedList] = useState<string[]>([]);
+
+  const fetchUserList = async () => {
+    let list = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user"
+    )
+    let array_usernames: string[] = [];
+    for (let index = 0; index < list.length; index++) {
+      array_usernames[index] = list[index].username;
+    }
+    setUserList(array_usernames);
+  }
 
   const fetchData = async () => {
     setIsToken(false);
     setUser(undefined);
     setLoading(true);
-    //console.log("here we go");
     try {
       let res = await Request(
           "GET",
@@ -38,7 +57,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "http://localhost:3000/auth/istoken"
       )
       if (res) {
-        //console.log('REs = ', res.isTok);
         if (res.isTok === 0) {
           setLoading(false);
           return ;
@@ -66,6 +84,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setLoading(false);
                 return ;
               } else if (res.isTok === 4) {
+
+                //------------------
+
+                let flist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/" + user.auth_id + "/getfriends",
+                )
+                let array_friends: string[] = [];
+                for (let index = 0; index < flist.length; index++) {
+                  array_friends[index] = flist[index].auth_id;
+                }
+                setFriendsList(array_friends);
+
+                //-----------------
+
+                /*
+                let blist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/" + user.auth_id + "/getblocked"
+                )
+                let array_usernames: string[] = [];
+                for (let index = 0; index < blist.length; index++) {
+                  array_usernames[index] = blist[index].auth_id;
+                }
+                setBlockedList(array_usernames);
+                 */
+
+                //------------------
+
                 setIsAuth(true);
                 setLoading(false);
                 return ;
@@ -87,17 +138,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       if (typeof error === "object" && error !== null) {
-        //console.log("oulala -", error);
+        console.log("oulala -", error);
         setLoading(false);
       } else {
-        //console.log("unexpected error ", error);
+        console.log("unexpected error ", error);
         setLoading(false);
       }
     }
   };
 
+  const updateFriendsList = useCallback(async (usr: UserType, action: boolean) => {
+    const auth_id: string = usr.auth_id;
+    if (action) {
+      setFriendsList(prevState => [...prevState, auth_id]);
+      return ;
+    } else if (!action) {
+      const idx: number = friendsList.findIndex(obj => {
+        return obj === auth_id;
+      });
+      let array = [ ...friendsList ];
+      if (idx !== -1) {
+        array.splice(idx, 1);
+        setFriendsList(array);
+        return ;
+      }
+    }
+  }, [friendsList])
+
   const setError =  useCallback((value: any) => {
-    //console.log('error value = ', value);
     if (value) {
       setErrorShow(true);
       setErrorMsg(value.message);
@@ -110,13 +178,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   },[])
 
   useEffect(() => {
-    //console.log('starts');
     if (!isToken) {
       fetchData();
+      fetchUserList();
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [isToken]);
 
   const memoedValue = useMemo(
     () => ({
@@ -128,9 +196,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       errorMsg,
       errorCode,
       loading,
+      userList,
+      friendsList,
+      updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       setError: (value: any) => setError(value),
     }),
-    [errorShow,errorMsg,errorCode, user, isAuth, loading, isToken, isTwoFa]
+    [
+      errorShow,
+      errorMsg,
+      errorCode,
+      user,
+      isAuth,
+      loading,
+      isToken,
+      isTwoFa,
+      updateFriendsList,
+      setError,
+      userList,
+      friendsList,
+    ]
   );
 
   return (
