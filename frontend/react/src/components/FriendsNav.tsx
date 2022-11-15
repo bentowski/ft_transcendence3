@@ -17,15 +17,27 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     };
   }
 
-  componentDidMount = async () => {
-    let ctx: any = this.context;
-    let currentUser = ctx.user;
-    let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + currentUser.username)
-    if (!user.friends.length)
-      return ;
-    this.setState({ friends: user.friends })
+  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{ ctx: any; uslist: Array<string>; filteredList: Array<string>; friends: Array<UserType> }>, snapshot?: any) {
+    const ctx: any = this.context;
+    const frnds = ctx.friendsList;
+    if (prevState.friends !== frnds) {
+      this.setState({friends: frnds })
+    }
   }
 
+  componentDidMount = async () => {
+    const ctx: any = this.context;
+    const frnds = ctx.friendsList;
+    this.setState({friends: frnds})
+    //let ctx: any = this.context;
+    //let currentUser = this.state.ctx.user;
+    //let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + this.state.user.username)
+    //if (!user.friends.length)
+      //return ;
+    //this.setState({ friends: user.friends })
+  }
+
+  /*
   promptError = () => {
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
     input.value = "This user not exist"
@@ -33,6 +45,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       input.value = ""
     }, 1000);
   }
+   */
 
   addFriends = async () => {
     const ctx: any = this.context;
@@ -42,8 +55,6 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       return ;
     try {
       let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-      //let newFriendsArray = this.state.friends
-      //newFriendsArray  = [...newFriendsArray , userToAdd];
       let test = await Request('PATCH',
           {
             Accept: 'application/json',
@@ -54,7 +65,6 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
             auth_id: userToAdd.auth_id
           },
           "http://localhost:3000/user/updatefriend/")
-      console.log('updatefriendslist = ', userToAdd.auth_id);
       ctx.updateFriendsList(userToAdd, true);
       let newFriendsArray = await Request(
           "GET",
@@ -63,9 +73,8 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           "http://localhost:3000/user/" + currentUser.auth_id + "/getfriends",
       )
       this.setState({friends: newFriendsArray})
+      input.value = '';
     } catch (error) {
-      //const ctx: any = this.context;
-      //console.log('error - ', error);
       ctx.setError(error);
     }
   }
@@ -76,7 +85,6 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     const query: any = e.target.value;
     let updatedList = [...uslist];
     updatedList = updatedList.filter((item: any) => {
-      //console.log('item = ', item.toLowerCase().indexOf());
       if (e.target.value.length === 0) {
         return null;
       }
@@ -88,16 +96,16 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       if (item === ctx.user.username) {
         return null;
       }
-      //console.log('output = ', item.toLowerCase().indexOf(query.toLowerCase()))
       return item.toLowerCase().indexOf(query.toLowerCase()) !== -1;
     });
     this.setState({ filteredList: updatedList })
-    if (e.key === 'Enter')
-    this.addFriends();
+    if (e.key === 'Enter') {
+      this.addFriends();
+    }
   }
 
   render() {
-    let friends = [];
+
     let onlines;
     if (this.state.friends.length > 0)
     {
@@ -106,11 +114,9 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       while (x < this.state.friends.length) {
         if (this.state.friends[x].status)
           onlines++;
-        friends.push(<UserCards key={x} user={this.state.friends[x]} avatar={true} stat={false} />)
         x++;
       }
     }
-    console.log('friends      ',  this.state.friends);
 
     return (
       <div className="FriendsNav">
@@ -132,7 +138,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           </div>
         </div>
       </div>
-    ); // fin de return    {friends}
+    ); // fin de return
   } // fin de render
 } // fin de App
 //
