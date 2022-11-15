@@ -82,7 +82,7 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('chanCreated')
-    onChanCreated() {
+  onChanCreated() {
   	this.server.emit('newChan');
   }
 

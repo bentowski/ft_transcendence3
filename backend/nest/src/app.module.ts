@@ -11,6 +11,7 @@ import { ChanModule } from './chans/chan.module';
 import { AuthModule } from './auth/auth.module';
 import { UserAuthGuard } from './auth/guards/user-auth.guard';
 import { GameModule } from './game/game.module';
+import { UpdateModule } from './update/update.module';
 //import { PassportModule } from '@nestjs/passport';
 //import { JwtModule } from '@nestjs/jwt';
 //import { User } from './user/entities/user-entity';
@@ -27,7 +28,8 @@ import { GameModule } from './game/game.module';
     PartiesModule,
     ChanModule,
     AuthModule,
-    GameModule
+    GameModule,
+	UpdateModule
   ],
   controllers: [AppController],
   providers: [AppService, UserAuthGuard],
