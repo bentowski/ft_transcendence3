@@ -42,11 +42,14 @@ const ModalChangeUsername = ({
       }
 
        */
+    console.log('field - ', field);
     try {
       let res = await Request(
           "PATCH",
-          {"Content-Type":"include"},
-          {username:field},
+          {
+            "Content-Type": "application/json",
+          },
+          { username: field },
           "http://localhost:3000/user/update/username"
       )
       if (res) {
@@ -57,6 +60,7 @@ const ModalChangeUsername = ({
     } catch (error) {
       //console.log('error catched!');
       setError(error);
+      setField("");
     }
   };
 

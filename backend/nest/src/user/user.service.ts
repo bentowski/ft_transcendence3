@@ -34,12 +34,12 @@ export class UserService {
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
     let user = await this.findOneByAuthId(user42.auth_id);
     if (!user) {
-      let x = 0;
-      while (await this.findOnebyUsername(user42.username)) {
-        user42.username = user42.username + x.toString();
-        x++;
-      }
       try {
+        let x = 0;
+        while (await this.findOnebyUsername(user42.username)) {
+          user42.username = user42.username + x.toString();
+          x++;
+        }
         user = await this.createUser42(user42);
         return user;
       } catch (error) {
@@ -111,22 +111,23 @@ export class UserService {
     return users;
   }
 
-  async updateUsername(auth_id: string, updateUsernameDto: UpdateUsernameDto) {
+  async updateUsername(auth_id: string, newUsername: string) {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new BadRequestException(
         'Error while updating username: Failed requesting user in database',
       );
     }
+    console.log('new username = ', newUsername);
     const findUser: UserEntity = await this.findOnebyUsername(
-      updateUsernameDto.username,
+      newUsername,
     );
     if (findUser) {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',
       );
     } else {
-      user.username = updateUsernameDto.username;
+      user.username = newUsername;
       try {
         await this.userRepository.save(user);
       } catch (error) {

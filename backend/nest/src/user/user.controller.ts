@@ -35,7 +35,7 @@ import {
   UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
-  BlockedUserDto,
+  BlockedUserDto, UpdateUsernameDto,
 } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
@@ -272,10 +272,11 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
-  updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+  updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
+    console.log('update dto = ', obj);
     const auid: string = req.user.auth_id;
     try {
-      return this.userService.updateUsername(auid, updateUserDto);
+      return this.userService.updateUsername(auid, obj.username);
     } catch (error) {
       throw new Error(error);
     }
