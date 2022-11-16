@@ -1,18 +1,33 @@
 import { Link, useNavigate } from "react-router-dom";
 import Switch from "./utils/Switch";
 import { useAuthData } from "../contexts/AuthProviderContext";
+import {useEffect, useState} from "react";
 //import useLogoutSession from '../hooks/useLogoutSession';
 // import Request from "./utils/Requests"
 // import "./Menu.css"
 
 const Menu = () => {
-  const { user, setIsAuth, setUser, setIsToken, setIsTwoFa } = useAuthData();
-  const navigate = useNavigate();
+  const { user, /* setIsAuth, setUser, setIsToken, setIsTwoFa */ } = useAuthData();
+  const [username, setUsername] = useState<string>(user.username);
+  const [avatarUrl, setAvatarUrl] = useState({url:'',hash:0});
+  //const navigate = useNavigate();
   //const loggedOut = useLogoutSession();
 
+  useEffect(() => {
+    console.log('effect hook called ', user.avatar);
+    if (user.username) {
+      setUsername(user.username);
+    }
+    if (user.avatar) {
+      //setAvatarUrl('');
+      //const hash = Date.now();
+      setAvatarUrl({url: 'http://localhost:3000/user/' + user.auth_id + '/avatar', hash: Date.now()});
+    }
+    //window.location.reload();
+    //setAvatar(user.avatar);
+  }, [user])
 
   const logoutSession = async () => {
-    console.log("loging out");
     await fetch("http://localhost:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
@@ -22,13 +37,7 @@ const Menu = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        //console.log("response logout = ", data);
         if (data.status === 200) {
-          //console.log("yey");
-          setUser(undefined);
-          setIsAuth(false);
-          setIsToken(false);
-          setIsTwoFa(false);
         }
       })
       .catch((error) => {
@@ -37,6 +46,7 @@ const Menu = () => {
       window.location.reload()
   };
 
+  console.log('avatar url = ', avatarUrl);
   return (
     <div className="Menu d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">
@@ -57,18 +67,18 @@ const Menu = () => {
           <Switch />
         </div>
         <div className="loginMenu px-2">
-          <Link to={"/profil/" + user.username}>
-            <p className="m-0">{user.username}</p>
+          <Link to={"/profil/" + username}>
+            <p className="m-0">{username}</p>
           </Link>
         </div>
         <div className="avatarMenu">
-          <Link to={"/profil/" + user.username}>
+          <Link to={"/profil/" + username}>
             <img
-              className="miniAvatar"
-              width="150"
-              height="150"
-              src={"http://localhost:3000/user/" + user.auth_id + "/avatar"}
-              alt=""
+                className="miniAvatar"
+                width="150"
+                height="150"
+                src={`${avatarUrl.url}?${avatarUrl.hash}`}
+                alt=""
             />
           </Link>
         </div>

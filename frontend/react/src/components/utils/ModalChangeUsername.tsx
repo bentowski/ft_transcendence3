@@ -17,7 +17,7 @@ const ModalChangeUsername = ({
   //const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [field, setField] = useState("");
-  const { setError } = useErrorContext();
+  const { updateUser, setError } = useErrorContext();
   //const navigate = useNavigate()
 
   const requestChangeUsername = async () => {
@@ -53,9 +53,11 @@ const ModalChangeUsername = ({
           "http://localhost:3000/user/update/username"
       )
       if (res) {
+        updateUser(null, field);
         setField("");
+        console.log('handle close letsgo');
         handleClose();
-        window.location.reload();
+        //window.location.reload();
       }
     } catch (error) {
       //console.log('error catched!');
@@ -74,7 +76,10 @@ const ModalChangeUsername = ({
     handleClose();
   };
 
-  const handleClose = () => parentCallBack(false);
+  const handleClose = () => {
+    console.log('callging parentcall back');
+    parentCallBack(false);
+  }
   //const handleShow = () => changeShowing(true);
 
     return (

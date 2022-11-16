@@ -245,6 +245,7 @@ export class UserController {
     };
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
+      return newNameAvatar;
       //res.status(200)
     } catch (error) {
       throw new Error(error);
@@ -257,6 +258,7 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
+    //console.log('DATETETETE: ', date);
     try {
       let imagename: string = await this.userService.getAvatar(id);
       imagename = this.userService.checkFolder(imagename);
