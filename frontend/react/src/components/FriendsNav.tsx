@@ -66,7 +66,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
             action: true,
             auth_id: userToAdd.auth_id
           },
-          "http://localhost:3000/user/updatefriend/"
+          "http://localhost:3000/user/update/friends"
       )
       ctx.updateFriendsList(userToAdd, true);
       let newFriendsArray = await Request(

@@ -74,16 +74,18 @@ export class UserEntity {
   })
   status: number;
 
-  @ManyToMany(() => UserEntity, (friend) => friend.friends, {
-    onDelete: 'CASCADE',
+  @Type(() => UserEntity)
+  @JoinTable({ name: 'UserEntity_friends_id_1' })
+  @ManyToMany(() => UserEntity, {
+    cascade: true,
   })
-  @JoinTable({ name: 'Friends' })
   friends: UserEntity[];
 
   @Type(() => UserEntity)
-  @JoinTable({ joinColumn: { name: 'UserEntity_id_1' } })
+  @JoinTable({ joinColumn: { name: 'UserEntity_blocked_id_1' } })
   @ManyToMany(() => UserEntity, { cascade: true })
   blocked: UserEntity[];
+  //should be juste a simple entity no relation (array)
 
   @Exclude()
   @Column({

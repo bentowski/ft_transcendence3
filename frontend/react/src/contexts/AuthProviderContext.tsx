@@ -198,23 +198,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       array_users[index] = list[index].username;
     }
     setUserList(array_users);
-    /*
-    const auth_id: string = usr.auth_id;
-    if (action) {
-      setUserList(prevState => [...prevState, auth_id]);
-      return ;
-    } else if (!action) {
-      const idx: number = userList.findIndex(obj => {
-        return obj === auth_id;
-      });
-      let array = [...userList];
-      if (idx !== -1) {
-        array.splice(idx, 1);
-        setUserList(array);
-        return ;
-      }
-    }
-   */
   }, [])
 
   const updateUser = useCallback((avatar: string, username: string) => {
@@ -257,13 +240,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   },[])
 
   useEffect(() => {
-    //if (!isToken) {
       fetchData();
       fetchUserList();
-    //} else {
-    //  setLoading(false);
-    //}
-  }, [/*isToken*/]);
+  }, []);
 
   const memoedValue = useMemo(
     () => ({

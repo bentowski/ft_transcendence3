@@ -2,36 +2,20 @@ import "../styles/pages/login.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
-import {useEffect, useState} from "react";
 
 const Login = () => {
-  const { user, isAuth, userList, loading, isTwoFa, isToken } = useAuthData();
-  //const navigate = useNavigate();
-  //const [isLogged, setIsLogged] = useState(false);
+  const { isAuth, loading, isTwoFa, isToken } = useAuthData();
   const location = useLocation();
-  //const [validate, setValidate] = useState(false);
   const from = location.state?.from?.pathname || "/";
-
-    /*
-  useEffect(() => {
-      if (isAuth) {
-          setValidate(true);
-      }
-  }, [isAuth])
-     */
 
   if (loading) {
     return <h1>A Few Moment Later...</h1>;
   }
-  //console.log("is token?", isToken);
   if (isToken) {
-    //console.log("toktok");
     if (isTwoFa && !isAuth) {
-      //console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-        //console.log("super your authenticated!");
         return (
             <div>
                 <Navigate to={from} state={{ from: location }} replace />

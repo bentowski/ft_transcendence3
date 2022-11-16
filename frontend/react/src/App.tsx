@@ -12,54 +12,26 @@ import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
 import {HandleError} from "./components/utils/HandleError";
-//import {Alert} from "react-bootstrap";
-//import {Alert} from 'react-bootstrap';
-//import {useError} from "./contexts/ErrorProviderContext";
-//import {HandleError} from "./components/utils/HandleError";
-//import IError from "./interfaces/error-interface";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
-  //const [validate, setValidate] = useState(false);
   const location = useLocation();
-
-  /*
-  useEffect(() => {
-    if (isAuth) {
-      setValidate(true);
-    }
-  }, [isAuth]);
-   */
 
   if (loading) {
     return <h1>A Few Moment Later...</h1>;
   }
   if (isToken) {
-     //console.log("user is logged in");
     if (isTwoFa && !isAuth) {
-       //console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-       //console.log("welcome buddy");
       return <Outlet />;
     }
   }
-  //console.log('go to login');
   return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 const Layout = () => {
-  //const { errorMsg, errorShow} = useErrorContext();
-  //const [show, setShow] = useState(false);
-
-  //useEffect(() => {
-    //if (errorShow) {
-      //setShow(true);
-    //}
-  //})
-  //<Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
-
   return (
     <main className="App">
       <HandleError />
@@ -76,7 +48,6 @@ const ContextLoader = () => {
         <Route path="/login" element={<Login />} />
 
         {/* private route */}
-
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
             <Route path="/tchat" element={<Tchat />} />
@@ -118,9 +89,6 @@ class App extends Component {
       };
       sessionStorage.setItem("data", JSON.stringify(data));
     } catch (error) {
-      //console.log('error catchouillle');
-      //const ctx: any = this.context;
-      //ctx.setError(error);
       console.log(error);
     }
   };

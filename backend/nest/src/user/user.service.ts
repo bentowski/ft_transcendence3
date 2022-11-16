@@ -67,9 +67,7 @@ export class UserService {
     return findUsername;
   }
 
-  async findOneByAuthId(
-    auth_id: string,
-  ): Promise<UserEntity> {
+  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
     const findAuthId: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
       relations: { friends: true, channelJoined: true, blocked: true },
@@ -175,6 +173,58 @@ export class UserService {
     }
   }
 
+  async getFriends(id: string): Promise<UserEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: id },
+      relations: ['friends'],
+    });
+    if (!user) {
+      throw new BadRequestException(
+        'Error while getting friends list: Failed requesting user in database',
+      );
+    }
+    return user.friends.map((users) => users);
+  }
+
+  async getBlocked(id: string): Promise<UserEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: id },
+      relations: ['blocked'],
+    });
+    if (!user) {
+      throw new BadRequestException(
+        'Error while getting blocked users list: Failed requesting user in database',
+      );
+    }
+    return user.blocked.map((users) => users);
+  }
+
+  /*
+  async updateMuted(
+    action: boolean,
+    muted_id: string,
+    current_id: string,
+  ): Promise<UserEntity> {
+    const curuser: UserEntity = await this.findOneByAuthId(current_id);
+    if (!curuser) {
+      throw new BadRequestException(
+        'Error while updating blocked users: Failed requesting (un)mutted user in database',
+      );
+    }
+    const muuser: UserEntity = await this.findOneByAuthId(muted_id);
+    if (!muuser) {
+      throw new BadRequestException(
+        'Error while updating muted users: Failed requesting (un)muted user in database.',
+      );
+    }
+    if (action === true) {
+    }
+    if (action === false) {
+    }
+    return curuser;
+  }
+   */
+
   async updateFriends(
     action: boolean,
     current_id: string,
@@ -212,56 +262,6 @@ export class UserService {
     }
   }
 
-  async getFriends(id: string): Promise<UserEntity[]> {
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { auth_id: id },
-      relations: ['friends'],
-    });
-    if (!user) {
-      throw new BadRequestException(
-        'Error while getting friends list: Failed requesting user in database',
-      );
-    }
-    return user.friends.map((users) => users);
-  }
-
-  async getBlocked(id: string): Promise<UserEntity[]> {
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { auth_id: id },
-      relations: ['blocked'],
-    });
-    if (!user) {
-      throw new BadRequestException(
-        'Error while getting blocked users list: Failed requesting user in database',
-      );
-    }
-    return user.blocked.map((users) => users);
-  }
-
-  async updateMuted(
-    action: boolean,
-    muted_id: string,
-    current_id: string,
-  ): Promise<UserEntity> {
-    const curuser: UserEntity = await this.findOneByAuthId(current_id);
-    if (!curuser) {
-      throw new BadRequestException(
-        'Error while updating blocked users: Failed requesting (un)mutted user in database',
-      );
-    }
-    const muuser: UserEntity = await this.findOneByAuthId(muted_id);
-    if (!muuser) {
-      throw new BadRequestException(
-        'Error while updating muted users: Failed requesting (un)muted user in database.',
-      );
-    }
-    if (action === true) {
-    }
-    if (action === false) {
-    }
-    return curuser;
-  }
-
   async updateBlocked(
     action: boolean,
     blocked_id: string,
@@ -297,12 +297,16 @@ export class UserService {
        */
     }
     if (action === false) {
-      const index = curuser.blocked.indexOf(blouser);
-      curuser.blocked.splice(index, 1);
+      const index: number = curuser.blocked.findIndex((obj) => {
+        return obj.auth_id === blouser.auth_id;
+      });
+      if (index !== -1) {
+        curuser.blocked.splice(index, 1);
+      }
     }
     try {
       await this.userRepository.save(curuser);
-      return curuser;
+      return blouser;
     } catch (error) {
       const err: string = 'Error while updating (un)blocked users: ' + error;
       throw new NotAcceptableException(err);

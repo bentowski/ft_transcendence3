@@ -30,7 +30,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
 
     const friendunfriendUser = async () => {
         try {
-            let res = await fetch("http://localhost:3000/user/updatefriend", {
+            let res = await fetch("http://localhost:3000/user/update/friends", {
                 method: "PATCH",
                 credentials: 'include',
                 headers: {

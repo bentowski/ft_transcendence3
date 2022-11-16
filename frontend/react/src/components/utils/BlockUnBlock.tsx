@@ -1,17 +1,13 @@
 import {useEffect, useState} from "react";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-//import {useLocation, useNavigate} from "react-router-dom";
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
     const [status, setStatus] = useState(false);
     const [loading, setLoading] = useState(false);
     const { user, updateBlockedList } = useAuthData();
-    //const navigate = useNavigate();
-    //const location = useLocation();
 
     const updateStatus = async () => {
-        //console.log('auth_id requestttt - ', auth_id);
         setLoading(true)
         try {
             let res = await Request(
@@ -20,31 +16,24 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
                 {},
                 "http://localhost:3000/user/" + auth_id + "/isblocked",
             )
-            //console.log('res = ', res);
             setStatus(res);
             setLoading(false);
             return ;
         } catch (error) {
             console.log(error);
             setLoading(false);
-            //setLoading(true);
         }
     }
 
     useEffect(() => {
         if (auth_id !== undefined) {
             updateStatus();
-            //console.log('status = ', status);
         }
     }, [auth_id])
 
     const blockunblockUser = async () => {
-        //let action: boolean = true;
-        //if (status) {
-        //    action = false;
-        //}
         try {
-            let res = await fetch("http://localhost:3000/user/updateblocked", {
+            let res = await fetch("http://localhost:3000/user/update/blocked", {
                 method: "PATCH",
                 credentials: 'include',
                 headers: {
