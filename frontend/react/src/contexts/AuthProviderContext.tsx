@@ -12,11 +12,14 @@ import ResponseData from "../interfaces/error-interface";
 import IError from "../interfaces/error-interface";
 import { IResponseData } from "../interfaces/responsedata-interface";
 import IUser from "../interfaces/user-interface";
-import {UserType} from "../types";
+import {ChanType, UserType} from "../types";
 
 export const AuthContext = createContext<any>({
+  updateUser: (avatar: string, username: string) => {},
+  userAuthentication: (auth: boolean) => {},
   updateFriendsList: (usr: UserType, action: boolean) => {},
-  setError: (value: any) => {}});
+  setError: (value: any) => {}
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorCode, setErrorCode] = useState<number>(0);
   const [userList, setUserList] = useState<string[]>([]);
   const [friendsList, setFriendsList] = useState<string[]>([]);
+  //const [avatarUrl, setAvatarUrl] = useState<string>('');
   //const [blockedList, setBlockedList] = useState<string[]>([]);
 
   const fetchUserList = async () => {
@@ -165,6 +169,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [friendsList])
 
+  const updateUser = useCallback((avatar: string, username: string) => {
+    console.log('callback called');
+    if (avatar || username) {
+      const usr: UserType = {
+        user_id: user.user_id,
+        auth_id: user.auth_id,
+        username: username ? username : user.username,
+        avatar: avatar ? avatar : user.avatar,
+        game_won: user.game_won,
+        game_lost: user.game_lost,
+        total_games: user.total_games,
+        total_score: user.total_score,
+        status: user.status,
+        twoFASecret: user.twoFASecret,
+        isTwoFA: user.isTwoFa,
+        channelJoind: user.channelJoind,
+      }
+      setUser(usr);
+    }
+  }, [user])
+
+  const userAuthentication = useCallback((auth: boolean) => {
+    if (user) {
+      setIsAuth(auth);
+    }
+  }, [user])
+
   const setError =  useCallback((value: any) => {
     if (value) {
       setErrorShow(true);
@@ -198,6 +229,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       userList,
       friendsList,
+      updateUser: (avatar: string, username: string) => updateUser(avatar, username),
+      userAuthentication: (auth: boolean) => userAuthentication(auth),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       setError: (value: any) => setError(value),
     }),
@@ -210,8 +243,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       isToken,
       isTwoFa,
-      updateFriendsList,
-      setError,
+      //updateFriendsList,
+      //setError,
       userList,
       friendsList,
     ]

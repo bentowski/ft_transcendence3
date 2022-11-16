@@ -11,8 +11,6 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  // const [user, setUser] = useState(null);
-
   if (loading) {
     return <h1>A Few Moment Later...</h1>;
   }

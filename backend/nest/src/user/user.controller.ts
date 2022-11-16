@@ -245,6 +245,7 @@ export class UserController {
     };
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
+      return newNameAvatar;
       //res.status(200)
     } catch (error) {
       throw new Error(error);
@@ -257,6 +258,7 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
+    //console.log('DATETETETE: ', date);
     try {
       let imagename: string = await this.userService.getAvatar(id);
       imagename = this.userService.checkFolder(imagename);
@@ -273,7 +275,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
-    console.log('update dto = ', obj);
+    //console.log('update dto = ', obj);
     const auid: string = req.user.auth_id;
     try {
       return this.userService.updateUsername(auid, obj.username);

@@ -1,4 +1,4 @@
-import { Component } from "react";
+import {Component, useCallback} from "react";
 import { Link } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
@@ -14,6 +14,7 @@ class Profil extends Component<
   {},
   {
     user: any;
+    current_username: string;
     histories: Array<any>;
     rank: number;
     location: string;
@@ -25,6 +26,7 @@ class Profil extends Component<
     super(props);
     this.state = {
       user: {},
+      current_username: "",
       histories: [],
       rank: 0,
       location: "",
@@ -32,7 +34,25 @@ class Profil extends Component<
     };
   }
 
+  componentDidUpdate(
+      prevProps: Readonly<{}>,
+      prevState: Readonly<{
+        user: any;
+        current_username: string;
+        histories: Array<any>;
+        rank: number;
+        location: string;
+        show: boolean }>,
+      snapshot?: any) {
+    const ctx: any = this.context;
+    const usr = ctx.user;
+    if (prevState.current_username !== usr.username) {
+      this.setState({current_username: usr.username})
+    }
+  }
+
   changeShowing = (newState: boolean) => {
+    //console.log('calling changeshowing with ', newState);
     this.setState({ show: newState });
   };
 
@@ -40,10 +60,10 @@ class Profil extends Component<
     //console.log('arg username = ', username);
     //let currentUser: any = sessionStorage.getItem("data");
     //currentUser = JSON.parse(currentUser);
-    const ctx: any = this.context;
-    const currentUser = ctx.user;
+    //const ctx: any = this.context;
+    //const currentUser = ctx.user;
     if (!username) {
-      username = currentUser.username;
+      username = this.state.current_username;
     }
     try {
       let newUser = await Request(
@@ -93,17 +113,19 @@ class Profil extends Component<
       return b.game_won - a.game_won;
     });
     let x = 0;
-    while (x < users.length && users[x].auth_id != this.state.user.auth_id) x++;
+    while (x < users.length && users[x].auth_id !== this.state.user.auth_id) x++;
     this.setState({ rank: x + 1 });
   };
 
   componentDidMount = () => {
     const cxt: any = this.context;
-    this.setState({ user: JSON.stringify(cxt.user) });
+    const usr = cxt.user;
+    this.setState({ user: JSON.stringify(usr) });
+    this.setState({ current_username: usr.username });
     let test = setInterval(() => {
       let url = document.URL;
       if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")
-        window.location.href = "http://localhost:8080/profil/" + this.state.user.username
+        window.location.href = "http://localhost:8080/profil/" + cxt.user.username
       if (!document.URL.includes("localhost:8080/profil"))
         clearInterval(test);
       url = url.substring(url.lastIndexOf("/") + 1);
@@ -188,8 +210,8 @@ class Profil extends Component<
   };
 
   render() {
-    const ctx: any = this.context;
-    const user: any = ctx.user;
+    //const ctx: any = this.context;
+    //const user: any = ctx.user;
     let histories: Array<any> = [];
     let i = this.state.histories.length - 1;
     while (i >= 0) {

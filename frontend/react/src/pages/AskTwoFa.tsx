@@ -8,7 +8,7 @@ import IError from "../interfaces/error-interface";
 
 const AskTwoFa = () => {
   // const { isAuth, isTwoFa, isToken, loading } = useAuthData();
-  const { setIsAuth, isAuth, loading, isToken, isTwoFa} = useAuthData();
+  const { userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
   const [code, setCode] = useState("");
   const [validate, setValidate] = useState(false);
   // const location = useLocation();
@@ -18,8 +18,6 @@ const AskTwoFa = () => {
   // const from = location.state?.from?.pathname || "/";
 
   const validateTwoFa = async () => {
-    //console.log("code = ", code);
-    //try {
       let res = await fetch("http://localhost:3000/auth/2fa/authenticate",
           {
             method: "POST",
@@ -30,29 +28,19 @@ const AskTwoFa = () => {
             body: JSON.stringify({twoFACode: code})
           })
       if (res.ok) {
-        window.location.reload();
+        userAuthentication(true);
       } else {
         const errmsg: IError = await res.json();
         setAlert(true);
         setAlertMsg(errmsg.message);
-        //console.log('request failed');
       }
-    //} catch (error) {
-      //if (typeof error === "object" && error !== null) {
-        //console.log("oulala -", error);
-      //} else {
-        //console.log("unexpected error ", error);
-      //}
-    //}
   };
 
-  /*
   useEffect(() => {
     if (isAuth) {
       setValidate(true);
     }
-  });
-   */
+  }, [isAuth]);
 
     const closeAlert = () => {
         setAlert(false);
@@ -98,7 +86,7 @@ const AskTwoFa = () => {
       );
     }
     //console.log('doesing need two fa, checking if auth')
-    if (isAuth) {
+    if (validate) {
       //console.log('logging ok');
       return (<Navigate to="/" />);
     }

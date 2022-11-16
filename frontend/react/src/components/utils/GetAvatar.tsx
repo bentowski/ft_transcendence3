@@ -1,6 +1,6 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import ModalChangeAvatar from "./ModalChangeAvatar";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
 const GetAvatar = ({
   className,
@@ -15,9 +15,28 @@ const GetAvatar = ({
 }) => {
   const { user } = useAuthData();
   const [show, setShow] = useState(false);
+  //const [fallback, setFallback] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState({url:"", hash: 0});
 
   const handleShow = (value: boolean) => setShow(value);
   //console.log("user avatar url = ", user.avatar);
+
+  useEffect(() => {
+    if (user.avatar) {
+      setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
+    }
+  }, [user])
+
+  /*
+  const reloadSrc = (evt: any) => {
+    if (fallback) {
+      evt.target.src = '/img/blank'
+    } else {
+      evt.target.src = avatarUrl;
+      setFallback(true);
+    }
+  }
+   */
 
   if (user) {
     return (
@@ -27,7 +46,7 @@ const GetAvatar = ({
             className={className}
             width={width}
             height={height}
-            src={"http://localhost:3000/user/" + user.auth_id + "/avatar/"}
+            src={`${avatarUrl.url}?${avatarUrl.hash}`}
             alt={alt}
             data-bs-toggle="modal"
             data-bs-target="#changeAvatar"
