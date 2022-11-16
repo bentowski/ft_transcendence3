@@ -119,9 +119,7 @@ export class UserService {
       );
     }
     //console.log('new username = ', newUsername);
-    const findUser: UserEntity = await this.findOnebyUsername(
-      newUsername,
-    );
+    const findUser: UserEntity = await this.findOnebyUsername(newUsername);
     if (findUser) {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',

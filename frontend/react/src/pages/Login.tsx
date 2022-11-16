@@ -5,11 +5,20 @@ import AskTwoFa from "./AskTwoFa";
 import {useEffect, useState} from "react";
 
 const Login = () => {
-  const { isAuth, loading, isTwoFa, isToken } = useAuthData();
-  // const navigate = useNavigate();
+  const { user, isAuth, userList, loading, isTwoFa, isToken } = useAuthData();
+  //const navigate = useNavigate();
   //const [isLogged, setIsLogged] = useState(false);
   const location = useLocation();
+  //const [validate, setValidate] = useState(false);
   const from = location.state?.from?.pathname || "/";
+
+    /*
+  useEffect(() => {
+      if (isAuth) {
+          setValidate(true);
+      }
+  }, [isAuth])
+     */
 
   if (loading) {
     return <h1>A Few Moment Later...</h1>;
@@ -22,15 +31,14 @@ const Login = () => {
       return <AskTwoFa />;
     }
     if (isAuth) {
-      //console.log("super your authenticated!");
-      return (
-        <div>
-          <Navigate to={from} state={{ from: location }} replace />
-        </div>
-      );
+        //console.log("super your authenticated!");
+        return (
+            <div>
+                <Navigate to={from} state={{ from: location }} replace />
+            </div>
+        );
     }
   }
-  //console.log('here is login page');
   return (
     <div className="Login">
       <a

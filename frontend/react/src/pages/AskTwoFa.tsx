@@ -8,11 +8,11 @@ import IError from "../interfaces/error-interface";
 
 const AskTwoFa = () => {
   // const { isAuth, isTwoFa, isToken, loading } = useAuthData();
-  const { userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
+  const { user, updateUserList, userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
   const [code, setCode] = useState("");
   const [validate, setValidate] = useState(false);
   // const location = useLocation();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   // const from = location.state?.from?.pathname || "/";
@@ -88,6 +88,7 @@ const AskTwoFa = () => {
     //console.log('doesing need two fa, checking if auth')
     if (validate) {
       //console.log('logging ok');
+        updateUserList(user, true);
       return (<Navigate to="/" />);
     }
   }

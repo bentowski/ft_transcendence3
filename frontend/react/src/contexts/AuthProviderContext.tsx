@@ -18,6 +18,8 @@ export const AuthContext = createContext<any>({
   updateUser: (avatar: string, username: string) => {},
   userAuthentication: (auth: boolean) => {},
   updateFriendsList: (usr: UserType, action: boolean) => {},
+  updateUserList: () => {},
+  updateBlockedList: (usr: UserType, action: boolean) => {},
   setError: (value: any) => {}
 });
 
@@ -32,8 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorCode, setErrorCode] = useState<number>(0);
   const [userList, setUserList] = useState<string[]>([]);
   const [friendsList, setFriendsList] = useState<string[]>([]);
-  //const [avatarUrl, setAvatarUrl] = useState<string>('');
-  //const [blockedList, setBlockedList] = useState<string[]>([]);
+  const [blockedList, setBlockedList] = useState<string[]>([]);
 
   const fetchUserList = async () => {
     let list = await Request(
@@ -42,11 +43,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         {},
         "http://localhost:3000/user"
     )
-    let array_usernames: string[] = [];
+    let array_users: string[] = [];
     for (let index = 0; index < list.length; index++) {
-      array_usernames[index] = list[index].username;
+      array_users[index] = list[index].username;
     }
-    setUserList(array_usernames);
+    setUserList(array_users);
   }
 
   const fetchData = async () => {
@@ -105,19 +106,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //-----------------
 
-                /*
                 let blist = await Request(
                     "GET",
                     {},
                     {},
                     "http://localhost:3000/user/" + user.auth_id + "/getblocked"
                 )
-                let array_usernames: string[] = [];
+                let array_blocked: string[] = [];
                 for (let index = 0; index < blist.length; index++) {
-                  array_usernames[index] = blist[index].auth_id;
+                  array_blocked[index] = blist[index].auth_id;
                 }
-                setBlockedList(array_usernames);
-                 */
+                setBlockedList(array_blocked);
 
                 //------------------
 
@@ -169,6 +168,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [friendsList])
 
+  const updateBlockedList = useCallback((usr: UserType, action: boolean) => {
+    const auth_id: string = usr.auth_id;
+    if (action) {
+      setBlockedList(prevState => [...prevState, auth_id]);
+      return ;
+    } else if (!action) {
+      const idx: number = blockedList.findIndex(obj => {
+        return obj === auth_id;
+      });
+      let array = [...blockedList];
+      if (idx !== -1) {
+        array.splice(idx, 1);
+        setBlockedList(array);
+        return ;
+      }
+    }
+  }, [blockedList])
+
+  const updateUserList = useCallback(async () => {
+    let list = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user"
+    )
+    let array_users: string[] = [];
+    for (let index = 0; index < list.length; index++) {
+      array_users[index] = list[index].username;
+    }
+    setUserList(array_users);
+    /*
+    const auth_id: string = usr.auth_id;
+    if (action) {
+      setUserList(prevState => [...prevState, auth_id]);
+      return ;
+    } else if (!action) {
+      const idx: number = userList.findIndex(obj => {
+        return obj === auth_id;
+      });
+      let array = [...userList];
+      if (idx !== -1) {
+        array.splice(idx, 1);
+        setUserList(array);
+        return ;
+      }
+    }
+   */
+  }, [])
+
   const updateUser = useCallback((avatar: string, username: string) => {
     console.log('callback called');
     if (avatar || username) {
@@ -209,13 +257,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   },[])
 
   useEffect(() => {
-    if (!isToken) {
+    //if (!isToken) {
       fetchData();
       fetchUserList();
-    } else {
-      setLoading(false);
-    }
-  }, [isToken]);
+    //} else {
+    //  setLoading(false);
+    //}
+  }, [/*isToken*/]);
 
   const memoedValue = useMemo(
     () => ({
@@ -232,6 +280,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       updateUser: (avatar: string, username: string) => updateUser(avatar, username),
       userAuthentication: (auth: boolean) => userAuthentication(auth),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
+      updateUserList: () => updateUserList(),
+      updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
       setError: (value: any) => setError(value),
     }),
     [
@@ -243,8 +293,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       isToken,
       isTwoFa,
-      //updateFriendsList,
-      //setError,
+      updateFriendsList,
+      userAuthentication,
+      updateUserList,
+      updateUser,
+      updateBlockedList,
+      setError,
       userList,
       friendsList,
     ]

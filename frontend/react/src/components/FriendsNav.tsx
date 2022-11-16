@@ -51,9 +51,10 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     const ctx: any = this.context;
     let currentUser: any = ctx.user;
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value))
+    if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
       return ;
+    }
     try {
       let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
       let test = await Request('PATCH',
@@ -65,7 +66,8 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
             action: true,
             auth_id: userToAdd.auth_id
           },
-          "http://localhost:3000/user/updatefriend/")
+          "http://localhost:3000/user/updatefriend/"
+      )
       ctx.updateFriendsList(userToAdd, true);
       let newFriendsArray = await Request(
           "GET",
@@ -82,9 +84,11 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
 
   pressEnter = (e: any) => {
     const ctx: any = this.context;
+    ctx.updateUserList();
     const uslist = ctx.userList;
     const query: any = e.target.value;
     let updatedList = [...uslist];
+    console.log('updated list = ', updatedList);
     updatedList = updatedList.filter((item: any) => {
       if (e.target.value.length === 0) {
         return null;

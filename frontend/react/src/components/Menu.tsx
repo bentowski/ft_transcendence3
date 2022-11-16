@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 // import "./Menu.css"
 
 const Menu = () => {
-  const { user, /* setIsAuth, setUser, setIsToken, setIsTwoFa */ } = useAuthData();
+  const { user, userAuthentication, updateUserList } = useAuthData();
   const [username, setUsername] = useState<string>(user.username);
   const [avatarUrl, setAvatarUrl] = useState({url:'',hash:0});
   const navigate = useNavigate();
@@ -38,13 +38,19 @@ const Menu = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 200) {
+          userAuthentication(false);
+          //navigate("/login")
+          return ;
         }
       })
       .catch((error) => {
         console.log("some shit happened");
+        userAuthentication(false);
+        //navigate("/login")
+        return ;
       });
       //window.location.reload()
-      navigate("/login")
+
   };
 
   //console.log('avatar url = ', avatarUrl);

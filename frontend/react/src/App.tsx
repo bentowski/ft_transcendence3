@@ -11,9 +11,8 @@ import Request from "./components/utils/Requests";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
-import {Alert} from "react-bootstrap";
-import {ErrorContext, ErrorProvider, useErrorContext} from "./contexts/ErrorProviderContext";
 import {HandleError} from "./components/utils/HandleError";
+//import {Alert} from "react-bootstrap";
 //import {Alert} from 'react-bootstrap';
 //import {useError} from "./contexts/ErrorProviderContext";
 //import {HandleError} from "./components/utils/HandleError";
@@ -21,7 +20,16 @@ import {HandleError} from "./components/utils/HandleError";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
+  //const [validate, setValidate] = useState(false);
   const location = useLocation();
+
+  /*
+  useEffect(() => {
+    if (isAuth) {
+      setValidate(true);
+    }
+  }, [isAuth]);
+   */
 
   if (loading) {
     return <h1>A Few Moment Later...</h1>;
@@ -89,7 +97,6 @@ const ContextLoader = () => {
 }; //
 
 class App extends Component {
-  static contextType = ErrorContext;
 
   getCurrentUser = async () => {
     try {
