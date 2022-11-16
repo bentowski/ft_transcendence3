@@ -15,8 +15,6 @@ class Profil extends Component<
   {
     user: any;
     current_username: string;
-    //current_avatar: string,
-    //avatarUrl: string,
     histories: Array<any>;
     rank: number;
     location: string;
@@ -29,8 +27,6 @@ class Profil extends Component<
     this.state = {
       user: {},
       current_username: "",
-      //current_avatar: "",
-      //avatarUrl: '',
       histories: [],
       rank: 0,
       location: "",
@@ -43,8 +39,6 @@ class Profil extends Component<
       prevState: Readonly<{
         user: any;
         current_username: string;
-        //current_avatar: string;
-        //avatarUrl: string,
         histories: Array<any>;
         rank: number;
         location: string;
@@ -55,12 +49,6 @@ class Profil extends Component<
     if (prevState.current_username !== usr.username) {
       this.setState({current_username: usr.username})
     }
-    /*
-    if (prevState.current_avatar !== usr.avatar) {
-      this.setState({avatarUrl: ''})
-      this.setState({avatarUrl: "http://localhost:3000/user/" + usr.auth_id + "/avatar"})
-    }
-     */
   }
 
   changeShowing = (newState: boolean) => {
@@ -134,7 +122,6 @@ class Profil extends Component<
     const usr = cxt.user;
     this.setState({ user: JSON.stringify(usr) });
     this.setState({ current_username: usr.username });
-    //this.setState({current_avatar: usr.avatar})
     let test = setInterval(() => {
       let url = document.URL;
       if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")

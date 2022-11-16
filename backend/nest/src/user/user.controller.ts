@@ -275,7 +275,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
-    console.log('update dto = ', obj);
+    //console.log('update dto = ', obj);
     const auid: string = req.user.auth_id;
     try {
       return this.userService.updateUsername(auid, obj.username);

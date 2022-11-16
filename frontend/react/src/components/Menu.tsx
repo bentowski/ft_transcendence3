@@ -10,11 +10,11 @@ const Menu = () => {
   const { user, /* setIsAuth, setUser, setIsToken, setIsTwoFa */ } = useAuthData();
   const [username, setUsername] = useState<string>(user.username);
   const [avatarUrl, setAvatarUrl] = useState({url:'',hash:0});
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   //const loggedOut = useLogoutSession();
 
   useEffect(() => {
-    console.log('effect hook called ', user.avatar);
+    //console.log('effect hook called ', user.avatar);
     if (user.username) {
       setUsername(user.username);
     }
@@ -43,10 +43,11 @@ const Menu = () => {
       .catch((error) => {
         console.log("some shit happened");
       });
-      window.location.reload()
+      //window.location.reload()
+      navigate("/login")
   };
 
-  console.log('avatar url = ', avatarUrl);
+  //console.log('avatar url = ', avatarUrl);
   return (
     <div className="Menu d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">

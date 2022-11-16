@@ -118,7 +118,7 @@ export class UserService {
         'Error while updating username: Failed requesting user in database',
       );
     }
-    console.log('new username = ', newUsername);
+    //console.log('new username = ', newUsername);
     const findUser: UserEntity = await this.findOnebyUsername(
       newUsername,
     );
@@ -129,7 +129,7 @@ export class UserService {
     } else {
       user.username = newUsername;
       try {
-        await this.userRepository.save(user);
+        return await this.userRepository.save(user);
       } catch (error) {
         const err: string = 'Error while saving user in database: ' + error;
         throw new NotAcceptableException(err);
