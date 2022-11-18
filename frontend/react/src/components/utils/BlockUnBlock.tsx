@@ -5,31 +5,31 @@ import Request from './Requests';
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
     const [status, setStatus] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { user, updateBlockedList } = useAuthData();
-
-    const updateStatus = async () => {
-        setLoading(true)
-        try {
-            let res = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/user/" + auth_id + "/isblocked",
-            )
-            setStatus(res);
-            setLoading(false);
-            return ;
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    }
+    const { user, blockedList, updateBlockedList, updateFriendsList, setError } = useAuthData();
 
     useEffect(() => {
-        if (auth_id !== undefined) {
-            updateStatus();
+        const updateStatus = async () => {
+            if (auth_id !== undefined) {
+                setLoading(true)
+                try {
+                    let res = await Request(
+                        "GET",
+                        {},
+                        {},
+                        "http://localhost:3000/user/" + auth_id + "/isblocked",
+                    )
+                    setStatus(res);
+                    setLoading(false);
+                    return ;
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                    setError(error);
+                }
+            }
         }
-    }, [auth_id])
+        updateStatus();
+    }, [auth_id, blockedList])
 
     const blockunblockUser = async () => {
         try {
@@ -44,9 +44,11 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
             if (res.ok) {
                 setStatus((prevState: any) => !prevState);
                 updateBlockedList(user, !status);
+                updateFriendsList(user, status);
             }
         } catch (error) {
             console.log(error);
+            setError(error);
         }
     }
 

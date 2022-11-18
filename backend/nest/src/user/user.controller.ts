@@ -36,7 +36,8 @@ import {
   UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
-  BlockedUserDto, UpdateUsernameDto,
+  BlockedUserDto,
+  UpdateUsernameDto,
 } from './dto/update-user.dto';
 import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
@@ -139,13 +140,13 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   async findOnebyUsername(
-      //@Res({ passthrough: true }) res,
-      @Param('username') username: string,
+    //@Res({ passthrough: true }) res,
+    @Param('username') username: string,
   ) {
     const user: UserEntity = await this.userService.findOnebyUsername(username);
     if (!user) {
       throw new BadRequestException(
-          'Error while fetching database: User with that username doesnt exists',
+        'Error while fetching database: User with that username doesnt exists',
       );
     }
     return user;
@@ -158,7 +159,7 @@ export class UserController {
     const user: UserEntity = await this.userService.findOneByAuthId(id);
     if (!user) {
       throw new BadRequestException(
-          'Error while fetching database: User with that id doesnt exists',
+        'Error while fetching database: User with that id doesnt exists',
       );
     }
     //console.log('uuuuuuSER - ', user);
@@ -190,7 +191,7 @@ export class UserController {
   async isBlocked(@Req() req, @Param('id') id: string): Promise<boolean> {
     try {
       const users: UserEntity[] = await this.userService.getBlocked(
-          req.user.auth_id,
+        req.user.auth_id,
       );
       for (let index = 0; index < users.length; index++) {
         if (users[index].auth_id === id) {
@@ -229,7 +230,7 @@ export class UserController {
     try {
       //console.log('auth_id = ', id);
       const users: UserEntity[] = await this.userService.getFriends(
-          req.user.auth_id,
+        req.user.auth_id,
       );
       for (let index = 0; index < users.length; index++) {
         if (users[index].auth_id === id) {
@@ -245,14 +246,14 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/friends')
   updateFriends(
-      @Req() req,
-      @Body() updateFriendsDto: UpdateFriendsDto,
+    @Req() req,
+    @Body() updateFriendsDto: UpdateFriendsDto,
   ): Promise<UserEntity> {
     try {
       return this.userService.updateFriends(
-          updateFriendsDto.action,
-          req.user.auth_id,
-          updateFriendsDto.auth_id,
+        updateFriendsDto.action,
+        req.user.auth_id,
+        updateFriendsDto.auth_id,
       );
     } catch (error) {
       throw new Error(error);
@@ -264,9 +265,9 @@ export class UserController {
   async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
     try {
       return this.userService.updateBlocked(
-          usr.action,
-          usr.auth_id,
-          req.user.auth_id,
+        usr.action,
+        usr.auth_id,
+        req.user.auth_id,
       );
     } catch (error) {
       throw new Error(error);

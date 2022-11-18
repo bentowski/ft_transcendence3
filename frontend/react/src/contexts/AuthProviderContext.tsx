@@ -201,7 +201,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   const updateUser = useCallback((avatar: string, username: string) => {
-    console.log('callback called');
+    //console.log('callback called');
     if (avatar || username) {
       const usr: UserType = {
         user_id: user.user_id,
@@ -216,6 +216,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         twoFASecret: user.twoFASecret,
         isTwoFA: user.isTwoFa,
         channelJoind: user.channelJoind,
+        friends: user.friends,
+        blocked: user.blocked,
       }
       setUser(usr);
     }

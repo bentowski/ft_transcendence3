@@ -43,7 +43,7 @@ export class AuthController {
 
   @Get('dummyconnect')
   async dummyConnect(@Res() res) {
-    let n_id = 0;
+    let n_id = 1;
     while (await this.authService.findUser(n_id.toString())) {
       n_id++;
     }
