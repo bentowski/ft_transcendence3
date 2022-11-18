@@ -5,10 +5,15 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  JoinTable, JoinColumn,
+  JoinTable,
+  JoinColumn,
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-import { Exclude, Expose, Type } from 'class-transformer';
+import {
+  Exclude,
+  Expose,
+  Type
+} from 'class-transformer';
 import { ChanEntity } from '../../chans/entities/chan-entity';
 // import { ProfileEntity } from './profile-entity';
 
@@ -74,16 +79,23 @@ export class UserEntity {
   })
   status: number;
 
-  @ManyToMany(() => UserEntity, (friend) => friend.friends, {
-    onDelete: 'CASCADE',
-  })
-  @JoinTable({ name: 'Friends' })
-  friends: UserEntity[];
-
+  /*
   @Type(() => UserEntity)
-  @JoinTable({ joinColumn: { name: 'UserEntity_id_1' } })
+  @JoinTable({ name: 'users_id_1' })
+  @ManyToMany(() => UserEntity, {
+    cascade: true,
+  })
+  */
+  @Column('simple-array', { default: [] })
+  friends: string[];
+
+  /*
+  @Type(() => UserEntity)
+  @JoinTable({ joinColumn: { name: 'UserEntity_blocked_id_1' } })
   @ManyToMany(() => UserEntity, { cascade: true })
-  blocked: UserEntity[];
+  */
+  @Column('simple-array', { default: [] })
+  blocked: string[];
 
   @Exclude()
   @Column({

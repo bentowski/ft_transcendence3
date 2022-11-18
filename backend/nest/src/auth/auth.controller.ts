@@ -43,7 +43,7 @@ export class AuthController {
 
   @Get('dummyconnect')
   async dummyConnect(@Res() res) {
-    let n_id = 0;
+    let n_id = 1;
     while (await this.authService.findUser(n_id.toString())) {
       n_id++;
     }
@@ -75,7 +75,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Req() req: Request,
   ): Promise<any> {
-    console.log('req = ', req.user);
+    //console.log('req = ', req.user);
     const auth_id: string = req.user['auth_id'];
     const isAuth = false;
     const payload: PayloadInterface = { auth_id, isAuth };

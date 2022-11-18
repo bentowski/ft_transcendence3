@@ -62,17 +62,15 @@ export class UserService {
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
-      relations: { friends: true, channelJoined: true, blocked: true },
+      relations: { channelJoined: true },
     });
     return findUsername;
   }
 
-  async findOneByAuthId(
-    auth_id: string,
-  ): Promise<UserEntity> {
+  async findOneByAuthId(auth_id: string): Promise<UserEntity> {
     const findAuthId: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
-      relations: { friends: true, channelJoined: true, blocked: true },
+      relations: { channelJoined: true },
     });
     return findAuthId;
   }
@@ -119,9 +117,7 @@ export class UserService {
       );
     }
     //console.log('new username = ', newUsername);
-    const findUser: UserEntity = await this.findOnebyUsername(
-      newUsername,
-    );
+    const findUser: UserEntity = await this.findOnebyUsername(newUsername);
     if (findUser) {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',
@@ -177,69 +173,39 @@ export class UserService {
     }
   }
 
-  async updateFriends(
-    action: boolean,
-    current_id: string,
-    friend_id: string,
-  ): Promise<UserEntity> {
-    const curuser: UserEntity = await this.findOneByAuthId(current_id);
-    if (!curuser) {
-      throw new BadRequestException(
-        'Error while updating friends list: Failed requesting user in database',
-      );
-    }
-    const adduser: UserEntity = await this.findOneByAuthId(friend_id);
-    if (!adduser) {
-      throw new BadRequestException(
-        'Error while updating friends list: Failed requesting user in database',
-      );
-    }
-    try {
-      if (action === true) {
-        curuser.friends.push(adduser);
-      }
-      if (action === false) {
-        const index: number = curuser.friends.findIndex((obj) => {
-          return obj.auth_id === adduser.auth_id;
-        });
-        if (index !== -1) {
-          curuser.friends.splice(index, 1);
-        }
-      }
-      await this.userRepository.save(curuser);
-      return adduser;
-    } catch (error) {
-      const err: string = 'Error while updating (un)blocked users: ' + error;
-      throw new NotAcceptableException(err);
-    }
-  }
-
   async getFriends(id: string): Promise<UserEntity[]> {
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { auth_id: id },
-      relations: ['friends'],
-    });
+    const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
       throw new BadRequestException(
         'Error while getting friends list: Failed requesting user in database',
       );
     }
-    return user.friends.map((users) => users);
+    const list: UserEntity[] = [];
+    for (let index = 0; index < user.friends.length; index++) {
+      await this.findOneByAuthId(user.friends[index]).then(function (result) {
+        list.push(result);
+      });
+    }
+    return list;
   }
 
   async getBlocked(id: string): Promise<UserEntity[]> {
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { auth_id: id },
-      relations: ['blocked'],
-    });
+    const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
       throw new BadRequestException(
         'Error while getting blocked users list: Failed requesting user in database',
       );
     }
-    return user.blocked.map((users) => users);
+    const list: UserEntity[] = [];
+    for (let index = 0; index < user.blocked.length; index++) {
+      await this.findOneByAuthId(user.blocked[index]).then(function (result) {
+        list.push(result);
+      });
+    }
+    return list;
   }
 
+  /*
   async updateMuted(
     action: boolean,
     muted_id: string,
@@ -262,6 +228,83 @@ export class UserService {
     if (action === false) {
     }
     return curuser;
+  }
+   */
+
+  async updateFriends(
+    action: boolean,
+    current_id: string,
+    friend_id: string,
+  ): Promise<UserEntity> {
+    const curuser: UserEntity = await this.findOneByAuthId(current_id);
+    if (!curuser) {
+      throw new BadRequestException(
+        'Error while updating friends list: Failed requesting user in database',
+      );
+    }
+    const adduser: UserEntity = await this.findOneByAuthId(friend_id);
+    if (!adduser) {
+      throw new BadRequestException(
+        'Error while updating friends list: Failed requesting user in database',
+      );
+    }
+    if (curuser.auth_id === adduser.auth_id) {
+      throw new BadRequestException(
+        'Error while updating friends list: Users cant (un)friend themselves',
+      );
+    }
+    if (action === true) {
+      const found = curuser.friends.find((elem) => elem === adduser.auth_id);
+      if (found) {
+        throw new BadRequestException(
+          'Error while updating friends list: User is already in your friend list.',
+        );
+      }
+
+      const blocked = adduser.blocked.find((elem) => elem === curuser.auth_id);
+      if (blocked) {
+        throw new BadRequestException(
+          'Error while updating friends list: You have been blocked by this user.',
+        );
+      }
+
+      const blocking = curuser.blocked.find((elem) => elem === adduser.auth_id);
+      if (blocking) {
+        const index: number = curuser.blocked.indexOf(adduser.auth_id);
+        if (index !== -1) {
+          curuser.blocked.splice(index, 1);
+        }
+      }
+
+      curuser.friends.push(adduser.auth_id);
+      adduser.friends.push(curuser.auth_id);
+    }
+    if (action === false) {
+      const found = curuser.friends.find((elem) => elem === adduser.auth_id);
+      if (!found) {
+        throw new BadRequestException(
+          'Error while updating friends list: User is not in your friend list.',
+        );
+      }
+
+      const idx_1: number = curuser.friends.indexOf(adduser.auth_id);
+      if (idx_1 !== -1) {
+        curuser.friends.splice(idx_1, 1);
+      }
+
+      const idx_2: number = adduser.friends.indexOf(curuser.auth_id);
+      if (idx_2 !== -1) {
+        adduser.friends.splice(idx_2, 1);
+      }
+    }
+    try {
+      await this.userRepository.save(adduser);
+      await this.userRepository.save(curuser);
+      return adduser;
+    } catch (error) {
+      const err: string = 'Error while updating (un)blocked users: ' + error;
+      throw new NotAcceptableException(err);
+    }
   }
 
   async updateBlocked(
@@ -287,24 +330,44 @@ export class UserService {
       );
     }
     if (action === true) {
-      curuser.blocked.push(blouser);
-      /*
-      const users: UserEntity[] = await this.getFriends(curuser.auth_id);
-      for (let index = 0; index < users.length; index++) {
-        if (users[index].auth_id === blouser.auth_id) {
-          const idx = curuser.friends.indexOf(blouser);
-          curuser.friends.splice(idx, 1);
+      const found = curuser.blocked.find((elem) => elem === blouser.auth_id);
+      if (found) {
+        throw new BadRequestException(
+          'Error while updating blocked users: User is already in your blocked list.',
+        );
+      }
+
+      const blocking = curuser.friends.find((elem) => elem === blouser.auth_id);
+      if (blocking) {
+        const idx_1: number = curuser.friends.indexOf(blouser.auth_id);
+        if (idx_1 !== -1) {
+          curuser.friends.splice(idx_1, 1);
+        }
+
+        const idx_2: number = blouser.friends.indexOf(curuser.auth_id);
+        if (idx_2 !== -1) {
+          blouser.friends.splice(idx_2, 1);
         }
       }
-       */
+
+      curuser.blocked.push(blouser.auth_id);
     }
     if (action === false) {
-      const index = curuser.blocked.indexOf(blouser);
-      curuser.blocked.splice(index, 1);
+      const found = curuser.blocked.find((elem) => elem === blouser.auth_id);
+      if (!found) {
+        throw new BadRequestException(
+          'Error while updating blocked users: User is not in your blocked list.',
+        );
+      }
+      const index: number = curuser.blocked.indexOf(blouser.auth_id);
+      if (index !== -1) {
+        curuser.blocked.splice(index, 1);
+      }
     }
     try {
+      await this.userRepository.save(blouser);
       await this.userRepository.save(curuser);
-      return curuser;
+      return blouser;
     } catch (error) {
       const err: string = 'Error while updating (un)blocked users: ' + error;
       throw new NotAcceptableException(err);

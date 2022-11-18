@@ -34,4 +34,6 @@ export type UserType = {
   twoFASecret: string,
   isTwoFA: number,
   channelJoind: Array<ChanType>
+  friends: string[],
+  blocked: string[],
 }

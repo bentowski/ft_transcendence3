@@ -32,6 +32,7 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
+		//console.log('createchandto = ', createChanDto);
         let { name, type, password, owner, chanUser } = createChanDto;
         password = await argon2.hash(password)
         const chanInDb = await this.chanRepository.findOne({
@@ -40,12 +41,16 @@ export class ChanService {
         if (chanInDb) {
             throw new HttpException('Chan already exists', HttpStatus.BAD_REQUEST);
         }
-
         const chan: ChanEntity = await this.chanRepository.create({
             name, type, password, owner, chanUser
         })
-        await this.chanRepository.save(chan);
-        return chan;
+		//console.log('new chan = ', chan);
+		try {
+			await this.chanRepository.save(chan);
+			return chan;
+		} catch (error) {
+			throw new Error(error);
+		}
     }
 
     findAll(): Promise<ChanEntity[]> {

@@ -6,7 +6,7 @@ import {UserType} from "../../types";
 
 const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
     const [status, setStatus] = useState(false);
-    const { friendsList, updateFriendsList } = useAuthData();
+    const { friendsList, updateFriendsList, setError } = useAuthData();
 
     useEffect(() => {
         const updateStatus = async () => {
@@ -22,6 +22,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
                     return ;
                 } catch (error) {
                     console.log(error);
+                    setError(error);
                 }
             }
         }
@@ -30,7 +31,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
 
     const friendunfriendUser = async () => {
         try {
-            let res = await fetch("http://localhost:3000/user/updatefriend", {
+            let res = await fetch("http://localhost:3000/user/update/friends", {
                 method: "PATCH",
                 credentials: 'include',
                 headers: {
@@ -45,6 +46,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
             }
         } catch (error) {
             console.log(error);
+            setError(error);
         }
     }
 
