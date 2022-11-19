@@ -1,6 +1,7 @@
 import {useAuthData} from "../contexts/AuthProviderContext";
 
 const useAvatar = ({className, width, height, alt}:{className: string, width: string, height: string, alt: string}) => {
+/*
     const { user } = useAuthData();
 
     if (user)
@@ -15,6 +16,8 @@ const useAvatar = ({className, width, height, alt}:{className: string, width: st
                 <div>Unknown</div>
         )
     }
+
+ */
 }
 
 export default useAvatar;
