@@ -27,7 +27,10 @@ export class UpdateAvatarDto {
 
 export class UpdateFriendsDto {
   @IsNotEmpty()
-  friends: Array<UserEntity>;
+  action: boolean;
+
+  @IsNotEmpty()
+  auth_id: string;
 }
 
 export class BlockedUserDto {

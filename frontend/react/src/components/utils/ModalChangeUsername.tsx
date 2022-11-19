@@ -1,11 +1,8 @@
 import Request from "./Requests";
-//import { useAuthData } from "../../contexts/AuthProviderContext";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useState } from "react";
-//import { useNavigate } from 'react-router-dom'
-import { HandleError } from "./HandleError";
-import {useErrorContext} from "../../contexts/ErrorProviderContext";
-//import IError from "../../interfaces/error-interface";
+import { useNavigate } from 'react-router-dom'
 
 const ModalChangeUsername = ({
   show,
@@ -14,49 +11,31 @@ const ModalChangeUsername = ({
   show: boolean;
   parentCallBack: (newState: boolean) => void;
 }) => {
-  //const { user } = useAuthData();
-  //const [show, setShow] = useState(false);
+  const { updateUser, setError } = useAuthData();
   const [field, setField] = useState("");
-  const { setError } = useErrorContext();
-  //const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const requestChangeUsername = async () => {
-    //const login = document.getElementById("changeLogin") as HTMLInputElement;
-      /* let res = await fetch("http://localhost:3000/user/update/username", {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: field }),
-      })
-       if (res.ok) {
-        setField("");
-        handleClose();
-        window.location.reload();
-      } else {
-        console.log("wrong request");
-        const err: any = await res.json();
-        console.log('err = ', err);
-        throw new Error(err);
-      }
-
-       */
     try {
       let res = await Request(
           "PATCH",
-          {"Content-Type":"include"},
-          {username:field},
+          {
+            "Content-Type": "application/json",
+          },
+          { username: field },
           "http://localhost:3000/user/update/username"
       )
+      //console.log('result = ', res);
       if (res) {
+        const newName = field;
+        updateUser(null, field);
         setField("");
         handleClose();
-        window.location.reload();
+        navigate("/profil/" + newName);
       }
     } catch (error) {
-      //console.log('error catched!');
       setError(error);
+      setField("");
     }
   };
 
@@ -70,8 +49,10 @@ const ModalChangeUsername = ({
     handleClose();
   };
 
-  const handleClose = () => parentCallBack(false);
-  //const handleShow = () => changeShowing(true);
+  const handleClose = () => {
+    //console.log('callging parentcall back');
+    parentCallBack(false);
+  }
 
     return (
         <div className="changeusername">

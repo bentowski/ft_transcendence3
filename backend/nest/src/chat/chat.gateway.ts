@@ -1,13 +1,14 @@
 import { OnModuleInit } from '@nestjs/common';
 import {
- SubscribeMessage,
- WebSocketGateway,
- WebSocketServer,
- MessageBody,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
+    MessageBody, WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ChanService } from '../chans/chan.service';
 import { UserService } from '../user/user.service';
+import UserEntity from "../user/entities/user-entity";
 
 @WebSocketGateway({
   cors: {
@@ -24,14 +25,27 @@ export class ChatGateway implements OnModuleInit
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      console.log(socket.id);
-      console.log("Connected");
+      //console.log(socket.id);
+      //console.log("Connected");
     });
   }
 
   @SubscribeMessage('newMessage')
-  onNewMessage(@MessageBody() body: any) {
-    console.log(body);
+  async onNewMessage(@MessageBody() body: any) {
+    //console.log(body);
+      /*
+      const sender: UserEntity = await this.userService.findOnebyUsername(body.username);
+      if (!sender) {
+          throw new WsException('Error while sending a new message: Cant find sender');
+      }
+      if (body.room.chanUser.find(elem => elem === sender)) {
+          throw new WsException('Error while sending a new message: User not in chat');
+      }
+      if (body.room.muteUser.find(elem => elem === sender)) {
+          body.message = 'Message not sent: User had been muted';
+      }
+       */
+
     this.server.to(body.room).emit('onMessage', {
       msg: 'New Message',
       content: body.chat,
@@ -60,20 +74,41 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('addToChannel')
   async onAddTochannel(client: Socket, body: {room: string, auth_id: string}) {
-  	const usr = await this.userService.findOneByAuthId(body.auth_id)
-  	await this.chanService.addUserToChannel(usr, body.room)
-  	client.emit('joinedRoom', body.room);
-  	this.server.to(body.room).emit("userJoinChannel");
+     try {
+         const usr = await this.userService.findOneByAuthId(body.auth_id)
+         await this.chanService.addUserToChannel(usr, body.room)
+         client.emit('joinedRoom', body.room);
+         this.server.to(body.room).emit("userJoinChannel");
+     } catch (error) {
+         throw new WsException(error);
+     }
   }
 
     @SubscribeMessage('banToChannel')
-    async banUserToChannel(client: Socket, body: {room: string, auth_id: string}) {
-        const usr = await this.userService.findOneByAuthId(body.auth_id)
-        await this.chanService.banUserToChannel(usr, body.room)
-        client.emit('leaveRoom', body.room);
-        this.server.to(body.room).emit("bannedChannel");
+    async banUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
+        console.log('banUserToChan');
+        try {
+            //const usr = await this.userService.findOneByAuthId(body.auth_id)
+            await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
+            client.emit('leaveRoom', body.room);
+            this.server.to(body.room).emit("bannedChannel");
+        } catch (error) {
+            throw new WsException(error);
+        }
     }
 
+
+    @SubscribeMessage('muteToChannel')
+    async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
+        try {
+            //const usr = await this.userService.findOneByAuthId(body.auth_id)
+            await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
+            client.emit('muteRoom', body.room);
+            this.server.to(body.room).emit("mutedChannel");
+        } catch (error) {
+            throw new WsException(error);
+        }
+    }
 
     @SubscribeMessage('leaveRoom')
   onLeaveRoom(client: Socket, room: string) {

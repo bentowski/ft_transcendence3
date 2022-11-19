@@ -31,12 +31,12 @@ export class ChanEntity {
     })
     public name: string;
 
-		@Column({
-				name: 'owner',
-				type: 'varchar',
-				nullable: false,
-		})
-		public owner: string;
+	@Column({
+		name: 'owner',
+		type: 'varchar',
+		nullable: true,
+	})
+	public owner: string;
 
     @Column({
         name: 'password',
@@ -47,8 +47,8 @@ export class ChanEntity {
   @Column({
       name: 'admin',
       type: 'varchar',
-			array: true,
-			nullable: true,
+      array: true,
+      nullable: true,
   })
   public admin: Array<string>;
 
@@ -61,12 +61,25 @@ export class ChanEntity {
 	})
 	messages: Msg[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
 	@JoinTable()
 	chanUser: UserEntity[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {eager: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
 	@JoinTable()
 	banUser: UserEntity[];
+
+    @ManyToMany(() => UserEntity, (user) => user.channelMuted, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
+    @JoinTable()
+    muteUser: UserEntity[];
 }
 export default ChanEntity;

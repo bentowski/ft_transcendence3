@@ -11,13 +11,7 @@ import Request from "./components/utils/Requests";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
-import {Alert} from "react-bootstrap";
-import {ErrorContext, ErrorProvider, useErrorContext} from "./contexts/ErrorProviderContext";
 import {HandleError} from "./components/utils/HandleError";
-//import {Alert} from 'react-bootstrap';
-//import {useError} from "./contexts/ErrorProviderContext";
-//import {HandleError} from "./components/utils/HandleError";
-//import IError from "./interfaces/error-interface";
 
 const RequireAuth = () => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
@@ -27,31 +21,17 @@ const RequireAuth = () => {
     return <h1>A Few Moment Later...</h1>;
   }
   if (isToken) {
-     //console.log("user is logged in");
     if (isTwoFa && !isAuth) {
-       //console.log("but needs to do two fa");
       return <AskTwoFa />;
     }
     if (isAuth) {
-       //console.log("welcome buddy");
       return <Outlet />;
     }
   }
-  //console.log('go to login');
   return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 const Layout = () => {
-  //const { errorMsg, errorShow} = useErrorContext();
-  //const [show, setShow] = useState(false);
-
-  //useEffect(() => {
-    //if (errorShow) {
-      //setShow(true);
-    //}
-  //})
-  //<Alert show={errorShow} variant="warning" dismissible>{errorMsg}</Alert>
-
   return (
     <main className="App">
       <HandleError />
@@ -68,7 +48,6 @@ const ContextLoader = () => {
         <Route path="/login" element={<Login />} />
 
         {/* private route */}
-
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
             <Route path="/tchat" element={<Tchat />} />
@@ -76,9 +55,9 @@ const ContextLoader = () => {
             <Route path="/profil" element={<Profil />} />
             <Route path="/profil/*" element={<Profil />} />
             <Route path="/history" element={<History />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/game/*" element={<Game />} />
           </Route>
-          <Route path="/game" element={<Game />} />
-          <Route path="/game/*" element={<Game />} />
         </Route>
       </Route>
 
@@ -89,7 +68,6 @@ const ContextLoader = () => {
 }; //
 
 class App extends Component {
-  static contextType = ErrorContext;
 
   getCurrentUser = async () => {
     try {
@@ -111,9 +89,6 @@ class App extends Component {
       };
       sessionStorage.setItem("data", JSON.stringify(data));
     } catch (error) {
-      //console.log('error catchouillle');
-      //const ctx: any = this.context;
-      //ctx.setError(error);
       console.log(error);
     }
   };

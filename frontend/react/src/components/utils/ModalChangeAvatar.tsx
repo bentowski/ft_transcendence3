@@ -1,7 +1,7 @@
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import ImageUploading from "react-images-uploading";
 import IError from "../../interfaces/error-interface";
 import {HandleError} from "./HandleError";
@@ -14,10 +14,16 @@ const ModalChangeAvatar = ({
   show: boolean;
   parentCallBack: (newState: boolean) => void;
 }) => {
-  const { user } = useAuthData();
-  const { setError } = useErrorContext();
+  const { updateUser, setError, user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  //const [avatar, setAvatar] = useState(null);
+
+  /*
+  useEffect(() => {
+    setAvatar(user.avatar);
+  }, [user])
+   */
 
   const requestChangeAvatar = async () => {
     const formData = new FormData();
@@ -37,9 +43,12 @@ const ModalChangeAvatar = ({
     let res = await fetch("http://localhost:3000/user/upload", params)
     if (res.ok) {
       //console.log("upload success!");
+      const str = await res.json();
+      //const avatar: string = "http://localhost:3000/user/" + user.auth_id + "/avatar/" + Date.now();
+      //console.log('str = ', avatar);
+      updateUser(str.avatar, null);
       setSelectedImage(null);
       handleClose();
-      window.location.reload();
     } else {
       setSelectedImage(null);
       const err: any = await res.json();

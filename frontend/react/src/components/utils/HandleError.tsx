@@ -5,18 +5,16 @@ import {Alert} from "react-bootstrap";
 import {useErrorContext} from "../../contexts/ErrorProviderContext";
 
 const HandleError = () => {
-    const { errorShow, errorMsg, errorCode, setError } = useErrorContext();
+    const { errorShow, errorMsg, errorCode, setError } = useAuthData();
+
+    //console.log('errorshow = ', errorShow, ', errorMsg = ', errorMsg, ', errorCode = ', errorCode);
 
     const handleClose = () => {
         setError(null);
     }
 
     useEffect(() => {
-        if (errorShow) {
-            setTimeout(() => {
-                handleClose();
-            }, 2000)
-        }
+            //
     }, [])
 
     return (
