@@ -6,6 +6,8 @@ import Request from "./utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
 import { MessagePayload, ChanType, UserType } from "../types"
 import { useAuthData } from "../contexts/AuthProviderContext";
+import ModalBanUser from './utils/ModalBanUser';
+import ModalMuteUser from './utils/ModalMuteUser';
 
 export const WebSocket = () => {
   const [value, setValue] = useState('');
@@ -110,10 +112,8 @@ export const WebSocket = () => {
         }
 	}, [room, chans])
 
-  const banningUser = async (userToBan: UserType) => {
-    socket.emit('banToChannel', { "room": room, "auth_id": userToBan.auth_id })
-    window.location.reload();
-  }
+
+
 
   const createChannel = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
@@ -279,6 +279,7 @@ export const WebSocket = () => {
     setModalType("joinChan");
   };
 
+  /*
   const toBanUser = async () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove('hidden');
@@ -286,12 +287,8 @@ export const WebSocket = () => {
     setModalType("banUser");
   }
 
-  const muteUser = async () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.remove('hidden');
-    setModalTitle("Mute Users");
-    setModalType("muteUser");
-  }
+
+  */
 
   const arrayUserInActualchannel = () => {
     let users: Array<UserType> = [];
@@ -432,13 +429,16 @@ export const WebSocket = () => {
       {
         return (
           <div className="row">
-          <button className="col-6" onClick={toBanUser}>BAN</button>
-          <button className="col-6" onClick={muteUser}>MUTE</button>
+            <ModalBanUser chan={room} socket={socket}/>
+            <ModalMuteUser chan={room} socket={socket} />
           </div>
         )
       }
     }
   }
+
+  //<button className="col-6" onClick={toBanUser}>BAN</button>
+  //<button className="col-6" onClick={muteUser}>MUTE</button>
 
   class PrintAddUserButton extends Component<{}, {}> {
     render() {
@@ -554,7 +554,7 @@ export const WebSocket = () => {
     <div>
       <div className="tchat row">
         <h4>CHAT</h4>
-        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel, banningUser}} chans={listChansJoined(chans)}/>
+        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
         <ChannelList />
         <PrintChannel />
       </div>

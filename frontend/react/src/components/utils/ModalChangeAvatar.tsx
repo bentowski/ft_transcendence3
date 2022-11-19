@@ -14,8 +14,7 @@ const ModalChangeAvatar = ({
   show: boolean;
   parentCallBack: (newState: boolean) => void;
 }) => {
-  const { updateUser, user } = useAuthData();
-  const { setError } = useErrorContext();
+  const { updateUser, setError, user } = useAuthData();
   //const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   //const [avatar, setAvatar] = useState(null);

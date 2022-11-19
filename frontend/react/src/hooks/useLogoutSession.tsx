@@ -1,6 +1,7 @@
 import {useAuthData} from "../contexts/AuthProviderContext";
 
 const useLogoutSession = async () => {
+    /*
     const { setUser, setIsToken, setIsAuth, setIsTwoFa } = useAuthData();
     //console.log("loging out");
     await fetch("http://localhost:3000/auth/logout", {
@@ -25,5 +26,6 @@ const useLogoutSession = async () => {
             console.log("some shit happened");
         });
     window.location.reload()
+     */
 };
-export default useLogoutSession();
+export default useLogoutSession;

@@ -61,15 +61,24 @@ export class ChanEntity {
 	})
 	messages: Msg[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {eager: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
 	@JoinTable()
 	chanUser: UserEntity[];
 
-	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {eager: true})
+	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
 	@JoinTable()
 	banUser: UserEntity[];
 
-    @ManyToMany(() => UserEntity, (user) => user.channelMuted, {eager: true})
+    @ManyToMany(() => UserEntity, (user) => user.channelMuted, {
+        //cascade: true,
+        onDelete: 'CASCADE',
+    })
     @JoinTable()
     muteUser: UserEntity[];
 }

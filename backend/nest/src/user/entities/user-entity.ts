@@ -115,13 +115,22 @@ export class UserEntity {
   })
   createdAt: Date;
 
-  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser, {
+    //onDelete: 'CASCADE',
+    //onUpdate: 'CASCADE',
+  })
   channelJoined: ChanEntity[];
 
-  @ManyToMany(() => ChanEntity, (chan) => chan.banUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.banUser, {
+    //onDelete: 'CASCADE',
+    //onUpdate: 'CASCADE',
+  })
   channelBanned: ChanEntity[];
 
-  @ManyToMany(() => ChanEntity, (chan) => chan.muteUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.muteUser, {
+    //onDelete: 'CASCADE',
+    //onUpdate: 'CASCADE',
+  })
   channelMuted: ChanEntity[];
 
   constructor(partial: Partial<UserEntity>) {

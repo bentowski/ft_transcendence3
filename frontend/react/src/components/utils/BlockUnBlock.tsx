@@ -44,7 +44,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
             if (res.ok) {
                 setStatus((prevState: any) => !prevState);
                 updateBlockedList(user, !status);
-                updateFriendsList(user, status);
+                //updateFriendsList(user, status);
             }
         } catch (error) {
             console.log(error);

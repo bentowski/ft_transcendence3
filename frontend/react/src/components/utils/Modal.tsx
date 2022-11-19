@@ -31,9 +31,6 @@ class Modal extends Component<
     };
   }
 
-  static contextType = AuthContext
-
-
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
@@ -111,7 +108,25 @@ class Modal extends Component<
     );
   };
 
-  users = () => {
+  /*
+  componentDidUpdate(prevProps: Readonly<{
+      title: string;
+      calledBy: string;
+      userChan?: any[];
+      userBan?: any[];
+      parentCallBack?: any;
+      chans?: any }>,
+                     prevState: Readonly<{
+      user: any;
+      friends: any[];
+      input: string;
+      allChans: Array<ChanType> }>, snapshot?: any
+  ) {
+
+  }
+   */
+
+    users = () => {
     let friends: Array<any> = [];
     let isUsers: boolean = false;
     let x: number = 0;
@@ -129,6 +144,7 @@ class Modal extends Component<
               this.state.input.length === 0 ||
               friend.username.includes(this.state.input)
           )
+              console.log('hello ', this.state.friends[x]);
             friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
@@ -202,92 +218,6 @@ class Modal extends Component<
     }
     return ret;
   };
-
-  byebye = (user: any) => {
-    this.props.parentCallBack.banningUser(user)
-    this.hidden()
-  }
-
-  usersChanBan = () => {
-    //let usersBan: any = this.props.userBan
-    let usersChan: any = this.props.userChan
-    //console.log('test = ', test);
-    let ret: any[] = []
-    const user: any = this.getCurrentUser();
-
-    /*
-    for (let y = 0; y < usersBan.length; y++)
-    {
-        if (usersBan[y].username !== user.username)
-        {
-            ret.push(
-                <div key={y} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-                    <div className="col-5 h-100 overflow-hidden buttons">
-                        <button onClick={() => this.byebye(usersBan[y])}>UNBAN</button>
-                    </div>
-                    <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                        <input className={usersBan[y].status ? "online" : "offline"} type="radio"></input>
-                    </div>
-                    <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                        <a href={"/profil/#" + usersBan[y].username} className="mx-2">{usersBan[y].username}</a>
-                        <img src={'http://localhost:3000/user/' + usersBan[y].auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
-                    </div>
-                </div>
-            );
-        }
-    }
-     */
-
-    for(let x = 0; x < usersChan.length; x++)
-    {
-      if (usersChan[x].username !== user.username)
-      {
-        ret.push(
-            <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-              <div className="col-5 h-100 overflow-hidden buttons">
-                <button onClick={() => this.byebye(usersChan[x])}>BAN</button>
-              </div>
-              <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                <input className={usersChan[x].status ? "online" : "offline"} type="radio"></input>
-              </div>
-              <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                <a href={"/profil/#" + usersChan[x].username} className="mx-2">{usersChan[x].username}</a>
-                <img src={'http://localhost:3000/user/' + usersChan[x].auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
-              </div>
-            </div>
-        );
-      }
-    }
-    return ret
-  }
-
-  usersChanMute = () => {
-    let test: any = this.props.userChan
-    let ret: any[] = []
-    const user: any = this.getCurrentUser()
-
-    for(let x = 0; x < test.length; x++)
-    {
-      if (this.state.friends[x].username !== user.username)
-      {
-        ret.push(
-            <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-              <div className="col-5 h-100 overflow-hidden buttons">
-                <button onClick={() => this.byebye(this.state.friends[x])}>MUTE</button>
-              </div>
-              <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                <input className={this.state.friends[x].status ? "online" : "offline"} type="radio"></input>
-              </div>
-              <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                <a href={"/profil/#" + this.state.friends[x].username} className="mx-2">{this.state.friends[x].username}</a>
-                <img src={this.state.friends[x].avatar} className="miniAvatar" width={150} height={150}/>
-              </div>
-            </div>
-        );
-      }
-    }
-    return ret
-  }
 
   joinPrivateChan = async () => {
     let input = document.getElementById(
@@ -479,47 +409,7 @@ class Modal extends Component<
                 </button>
               </footer>
             </div>
-        );
-      case "banUser":
-        return (
-            <div className="p-4 pb-1">
-              <header className="mb-3">
-                <h2>{this.props.title}</h2>
-              </header>
-              <div>
-                <form className="mb-3">
-                  <div>
-                    {this.usersChanBan()}
-                  </div>
-                </form>
-                <footer>
-                  <button className="mx-1" onClick={this.hidden}>
-                    Close
-                  </button>
-                </footer>
-              </div>
-            </div>
-        );
-      case "muteUser":
-        return (
-            <div className="p-4 pb-1">
-              <header className="mb-3">
-                <h2>{this.props.title}</h2>
-              </header>
-              <div>
-                <form className="mb-3">
-                  <div>
-                    {this.usersChanMute()}
-                  </div>
-                </form>
-                <footer>
-                  <button className="mx-1" onClick={this.hidden}>
-                    Close
-                  </button>
-                </footer>
-              </div>
-            </div>
-        );
+        )
     }
   };
 
