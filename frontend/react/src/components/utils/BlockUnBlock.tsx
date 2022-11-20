@@ -68,7 +68,7 @@ const BlockUnBlock = ({auth_id}:{auth_id:string}) => {
     }
 
     return (
-        <button onClick={blockunblockUser} >
+        <button className="btn btn-outline-dark shadow-none" onClick={blockunblockUser} >
             { butt ?
             <p>UNBLOCK</p>
             :

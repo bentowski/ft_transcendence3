@@ -115,8 +115,8 @@ class MatchNav extends Component {
 				</div> {/* Wait */}
 				<ModalMatch title="Create new game" calledBy="newGame" />
 				<div className="fastAccess">
-					<button className="btn btn-outline-dark" onClick={this.randomMatchmaking}>Random matching</button>
-					<button onClick={this.prompt}>Create</button>
+					<button className="btn btn-outline-dark shadow-none" onClick={this.randomMatchmaking}>Random matching</button>
+					<button className="mx-2 btn btn-outline-dark shadow-none" onClick={this.prompt}>Create</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction} />
 					</div>

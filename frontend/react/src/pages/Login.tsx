@@ -42,11 +42,16 @@ const Login = () => {
 				href="http://localhost:3000/auth/login"/>
 		</map>
 		<div id="background-wrap">
+			{/* delete below before push */}
+			<a href="http://localhost:3000/auth/dummyconnect">
+				<button className="mb-2 mx-2">Letssss go</button>
+			</a>
+			{/* delete above before push */}
 			<div>
 				<img useMap="#spongebobbg" src="http://localhost:8080/pictures/bobhouse.png" width="auto" style={{position: "absolute", top: 0, bottom: 0, right: 0, left: 0, margin: "auto"}}/>
 			</div>
 			<div className="d-flex justify-content-center h-25 ">
-				<div className="bubble align-self-center d-flex align-items-center justify-content-center"><p className="text-center">Knock Bob's<br/>house to login</p></div>
+				<div className="bubble x-static align-self-center d-flex align-items-center justify-content-center"><p className="text-center">Knock Bob's<br/>house to login</p></div>
 			</div>
 			{/* div below for animation */}
 			<div className="bubble x1"></div>
@@ -60,11 +65,6 @@ const Login = () => {
     		<div className="bubble x9"></div>
     		<div className="bubble x10"></div>
 		</div>
-		{/* delete below before push */}
-		<a href="http://localhost:3000/auth/dummyconnect">
-        	<button className="mb-2 mx-2">Letssss go</button>
-      	</a>
-		{/* delete above before push */}
 	</div>
   ); //
 }; //

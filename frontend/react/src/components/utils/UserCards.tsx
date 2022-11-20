@@ -124,7 +124,7 @@ class UserCards extends Component<
             className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
           >
             <div className="col-5 h-100 overflow-hidden buttons">
-              <button className=" p-1" onClick={this.createChan}>
+              <button className="p-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="30"
@@ -139,7 +139,7 @@ class UserCards extends Component<
               </button>
               {/* </Link> */}
               <Link to={"/game"}>
-                <button className="mx-2 p-1">
+                <button className="mx-2 p-1 btn btn-outline-dark shadow-none">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"

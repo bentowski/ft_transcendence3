@@ -6,7 +6,7 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: black;
+	color: rgb(0, 0, 0);
 	/* letter-spacing: 0.42px; */
   background-color: #3b3c3a;
 }
@@ -23,11 +23,12 @@ code {
 
 p {
 	margin: 0;
+	color: rgb(55, 55, 55);
 }
 
 a {
 	text-decoration: none;
-	color: black;
+	color: rgb(55, 55, 55);
 }
 
 a:hover {
@@ -36,6 +37,14 @@ a:hover {
 	color: gray;
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
+}
+
+.Page {
+	background-image: url(http://localhost:8080/pictures/bgSponge3-blur.jpg);
+	background-size: cover;
+	background-position: center;
+	/* -webkit-backdrop-filter: blur(15px); assure la compatibilité avec safari */
+    /* filter: blur(7px); */
 }
 
 a:active {
@@ -60,9 +69,17 @@ button {
   border: 2px solid black;
   border-radius: 10px;
   background: none;
-  color: black;
+  color: rgb(55, 55, 55);
 }
 
+/* .btn:focus,.btn:active {
+	outline: none !important;
+	box-shadow: none;
+ } */
+
+label {
+	color: rgb(55, 55, 55);
+}
 
 /* button:hover::before {
   position: absolute;
@@ -167,11 +184,16 @@ img {
 	width: auto;
 }
 
-.FriendsNav, .MatchNav , .Menu {
+.FriendsNav, #MatchNav , .Menu {
 	background-color:rgba(125, 0, 125, 0.2);
 	border-radius: 20px;
 	background-size: cover;
 	background-position: center;
+	z-index: 999!important;
+}
+
+.front {
+	z-index: 99;
 }
 
 .FriendsNav, .MatchNav {
@@ -181,11 +203,11 @@ img {
 
 .FriendsNav {
 	background-image: url(http://localhost:8080/pictures/divBg2.jpg);
-
 }
 
-.MatchNav {
+#MatchNav {
 	background-image: url(http://localhost:8080/pictures/divBg.jpg);
+	z-index: 999999!important;
 }
 
 .Ratio {

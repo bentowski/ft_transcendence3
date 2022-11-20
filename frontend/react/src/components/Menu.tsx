@@ -38,7 +38,7 @@ const Menu = () => {
   };
 
   return (
-    <div className="Menu d-flex justify-content-between align-items-center">
+    <div className="Menu shadow d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">
         <Link to={"/tchat"}>
           <p className="m-0">chat</p>
@@ -73,7 +73,7 @@ const Menu = () => {
           </Link>
         </div>
         <div className="logoutMenu">
-          <button onClick={logoutSession}>
+          <button className="mx-2 btn btn-outline-dark shadow-none" onClick={logoutSession}>
             <p className="m-0">logout</p>
           </button>
         </div>

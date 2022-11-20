@@ -91,7 +91,7 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
-          <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
+          <button className="col-2 mx-2 btn btn-outline-dark shadow-none" onClick={this.addFriends}>ADD</button>
           <div>
             {friends}
           </div>
