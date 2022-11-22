@@ -4,6 +4,7 @@ import { CreateChanDto } from "./dto/create-chan.dto";
 import {AuthGuard} from "@nestjs/passport";
 import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 import UserEntity from "../user/entities/user-entity";
+import ChanEntity from "./entities/chan-entity";
 
 @Controller('chan')
 @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -13,19 +14,31 @@ export class ChanController {
     @Get()
     getChans() { return this.chanService.findAll(); }
 
-    @Get(':id')
-    findOne(@Param('id') username: string) {
-        return this.chanService.findOne(username);
+    @Get(':name')
+    async findOne(@Param('name') name: string) {
+        const chan: ChanEntity = await this.chanService.findOne(name);
+        if (!chan) {
+            throw new BadRequestException('Error while fetching chan by name: Cant find chan');
+        }
+        return chan;
     }
 
     @Get('/id/:id')
-    findOnebyID(@Param('id') id: string) {
-        return this.chanService.findOnebyID(id);
+    async findOnebyID(@Param('id') id: string) {
+        const chan: ChanEntity = await this.chanService.findOnebyID(id);
+        if (!chan) {
+            throw new BadRequestException('Error while fetching chan by id: Cant find chan');
+        }
+        return (chan);
     }
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
-        return this.chanService.createChan(createUserDto);
+        try {
+            return this.chanService.createChan(createUserDto);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
     @Get(':id/banned')
@@ -102,11 +115,19 @@ export class ChanController {
 
     @Delete(':id')
     remove(@Param('id') username: string) {
-        return this.chanService.remove(username);
+        try {
+            return this.chanService.remove(username);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
 	@Post('chanchat')
 	tryChan(@Body() test: any) {
-		return this.chanService.addMessage(test);
+        try {
+            return this.chanService.addMessage(test);
+        } catch (error) {
+            throw new Error(error);
+        }
 	}
 }

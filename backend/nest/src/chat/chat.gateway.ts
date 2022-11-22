@@ -16,6 +16,7 @@ import ChanEntity from "../chans/entities/chan-entity";
     origin: ['http://localhost:8080'],
   },
   namespace: '/chat',
+  withCredentials: true,
 })
 export class ChatGateway implements OnModuleInit
 {
@@ -28,6 +29,7 @@ export class ChatGateway implements OnModuleInit
     this.server.on('connection', (socket) => {
       //console.log(socket.id);
       //console.log("Connected");
+
     });
   }
 
@@ -54,8 +56,6 @@ export class ChatGateway implements OnModuleInit
       }
        */
       console.log('user is not muted hihihihi');
-      this.checkIfBanned(body[1], body[0]);
-      this.checkIfMuted(body[1], body[0])
 
     this.server.to(body.room).emit('onMessage', {
       msg: 'New Message',
@@ -83,8 +83,6 @@ export class ChatGateway implements OnModuleInit
   	const usr = await this.userService.findOneByAuthId(body[1])
   	await this.chanService.addUserToChannel(usr, body[0])
   	client.emit('joinedRoom', body[0]);
-      this.checkIfBanned(body[1], body[0]);
-      this.checkIfMuted(body[1], body[0])
   	this.server.to(body[0]).emit("userJoinChannel");
   }
 
@@ -106,8 +104,8 @@ export class ChatGateway implements OnModuleInit
         try {
             //const usr = await this.userService.findOneByAuthId(body.auth_id)
             await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
-            client.emit('banRoom', body.room);
-            this.server.to(body.room).emit("bannedChannel");
+            client.emit('banRoom');
+            this.server.to(body.room).emit("bannedChannel", {auth_id: body.auth_id, status: body.action});
         } catch (error) {
             throw new WsException(error);
         }
@@ -118,8 +116,9 @@ export class ChatGateway implements OnModuleInit
         try {
             //const usr = await this.userService.findOneByAuthId(body.auth_id)
             await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
-            client.emit('muteRoom', 'prout');
-            this.server.to(body.room).emit("mutedChannel");
+            client.emit('muteRoom');
+            console.log('body room = ', body.room);
+            this.server.to(body.room).emit("mutedChannel", {auth_id: body.auth_id, status: body.action});
         } catch (error) {
             throw new WsException(error);
         }
@@ -147,7 +146,7 @@ export class ChatGateway implements OnModuleInit
   }
 
   //@SubscribeMessage('isMuted')
-    async checkIfMuted(iduser: string, idroom: string) {
+    async checkIfMuted(client: Socket, iduser: string, idroom: string) {
         console.log('booom checkos');
         const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
@@ -163,7 +162,9 @@ export class ChatGateway implements OnModuleInit
       const response = !!chan.muteUser.findIndex(obj => {
             return obj.auth_id === user.auth_id
         });
+      console.log('response = ', response);
       const event = 'isMuted';
+      client.emit(event, response);
       this.server.to(idroom).emit(event, response);
   }
 

@@ -1,5 +1,5 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import Modal from "./utils/Modal";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
@@ -24,9 +24,10 @@ export const WebSocket = () => {
   const [muted, setMuted] = useState(false);
   const [banned, setBanned] = useState(false);
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
-  const { user } = useAuthData();
+  const { user, setError } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate();
   let location = ""
 
   useEffect(() => {
@@ -56,7 +57,8 @@ export const WebSocket = () => {
 
     socket.on("userLeaveChannel", () => {
       getChan();
-      window.location.replace("http://localhost:8080/tchat");
+      //window.location.replace("http://localhost:8080/tchat");
+      navigate("/tchat/")
     });
 
 
@@ -81,21 +83,32 @@ export const WebSocket = () => {
 
   useEffect(() => {
     console.log("USEFFECTOOOOOOOOOOOOOOOOOOOOo")
-    const handleMute = ({status}:{status:any}) => {
-      socket.emit('isMuted');
-      setMuted(status);
-      console.log('status muted = ', status);
+    const handleMute = (obj: any) => {
+      //socket.emit('isMuted');
+      console.log('status muted = ', obj.auth_id, obj.status);
+      if (obj.auth_id === user.auth_id) {
+        setMuted(obj.status);
+      }
     }
-    const handleBan = (status: any) => {
-      setBanned(status);
-      console.log('status banned = ', status);
+    const handleBan = (obj: any) => {
+      if (obj.auth_id === user.auth_id) {
+        setBanned(obj.status);
+      }
+      //navigate("/tchat/");
+      const err = {
+        statusCode: 404,
+        message: 'Youve been banned',
+      }
+      setError(err);
     }
-    socket.on('isMuted', handleMute);
-    socket.on('isBanned', handleBan);
+    socket.on('mutedChannel', handleMute);
+    socket.on('bannedChannel', handleBan);
+    /*
     return () => {
-      socket.off('isMuted', handleMute);
-      socket.off('isBanned', handleBan);
+      socket.off('muteRoom', handleMute);
+      socket.off('banRoom', handleBan);
     }
+     */
   }, [muted, banned]);
 
   	useEffect(() => {
@@ -191,7 +204,8 @@ export const WebSocket = () => {
       radioPri.checked = false;
       radioPro.checked = false;
       socket.emit('chanCreated');
-    window.location.replace('http://localhost:8080/tchat/' + chan.id)
+    //window.location.replace('http://localhost:8080/tchat/' + chan.id)
+      navigate("/tchat/" + chan.id);
     // window.location.reload();
     }
   };
@@ -504,28 +518,34 @@ export const WebSocket = () => {
       if (room)
       {
         return (
-          <div className="inTchat row col-10">
-            <div className="tchatMain col-10">
-              <PrintHeaderChan />
-              <div className="row">
-                <PrintMessages />
-                <div className="row">
-                  {
-                    muted ?
-                        <p>You've been muted lol</p> :
-                        <div>
-                          <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-                          <button className="col-1" onClick={onSubmit}>send</button>
-                        </div>
-                  }
-                </div>
-              </div>
-            </div> {/*fin tchatMain*/}
-            <div className="tchatMembers col-2">
-              <p> Channnnnel's members ({chanUser.length}) </p>
-              <UsersInActualchannel />
-            </div>
-          </div>
+                  <div className="inTchat row col-10">
+                    <div className="tchatMain col-10">
+                      <PrintHeaderChan />
+                      <div className="row">
+                        {
+                          banned ?
+                              <div>Youve been banned</div> :
+                              <div>
+                              <PrintMessages/>
+                              <div className="row">
+                              {
+                                muted ?
+                                <p>You've been muted lol</p> :
+                                <div>
+                                  <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                                  <button className="col-1" onClick={onSubmit}>send</button>
+                                </div>
+                               }
+                              </div>
+                              </div>
+                        }
+                      </div>
+                    </div> {/*fin tchatMain*/}
+                    <div className="tchatMembers col-2">
+                      <p> Channnnnel's members ({chanUser.length}) </p>
+                      <UsersInActualchannel />
+                    </div>
+                  </div>
         )
       }
     }
