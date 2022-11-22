@@ -293,7 +293,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuthData = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useUserContext was used outside of its Provider");
+    throw new Error("Context was used outside of its Provider");
   }
   return context;
 };

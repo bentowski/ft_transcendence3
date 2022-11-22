@@ -21,6 +21,8 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
+  const [muted, setMuted] = useState(false);
+  const [banned, setBanned] = useState(false);
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
   const { user } = useAuthData();
   const socket = useContext(WebsocketContext);
@@ -57,6 +59,8 @@ export const WebSocket = () => {
       window.location.replace("http://localhost:8080/tchat");
     });
 
+
+
     if (msgInput.current) msgInput.current.focus();
 
     return () => {
@@ -74,6 +78,25 @@ export const WebSocket = () => {
   	  })
     }
   });
+
+  useEffect(() => {
+    console.log("USEFFECTOOOOOOOOOOOOOOOOOOOOo")
+    const handleMute = ({status}:{status:any}) => {
+      socket.emit('isMuted');
+      setMuted(status);
+      console.log('status muted = ', status);
+    }
+    const handleBan = (status: any) => {
+      setBanned(status);
+      console.log('status banned = ', status);
+    }
+    socket.on('isMuted', handleMute);
+    socket.on('isBanned', handleBan);
+    return () => {
+      socket.off('isMuted', handleMute);
+      socket.off('isBanned', handleBan);
+    }
+  }, [muted, banned]);
 
   	useEffect(() => {
 		let data:any = sessionStorage.getItem('data');
@@ -112,7 +135,20 @@ export const WebSocket = () => {
         }
 	}, [room, chans])
 
-
+  /*
+  useEffect(() => {
+    const fetchMute = async () => {
+      let res = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/" + room +"/ismuted/" + user.auth_id,
+      )
+      setMuted(res);
+    }
+    fetchMute();
+  }, [room, user])
+   */
 
 
   const createChannel = async () => {
@@ -474,8 +510,14 @@ export const WebSocket = () => {
               <div className="row">
                 <PrintMessages />
                 <div className="row">
-                  <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-                  <button className="col-1" onClick={onSubmit}>send</button>
+                  {
+                    muted ?
+                        <p>You've been muted lol</p> :
+                        <div>
+                          <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                          <button className="col-1" onClick={onSubmit}>send</button>
+                        </div>
+                  }
                 </div>
               </div>
             </div> {/*fin tchatMain*/}

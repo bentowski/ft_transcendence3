@@ -37,15 +37,16 @@ export class ChanController {
         }
     }
 
-    @Get(':id/isbanned')
-    async isBanned(@Param('id') idroom: string,
-             @Body() obj): Promise<boolean> {
+    @Get(':idroom/isbanned/:iduser')
+    async isBanned(@Param('idroom') idroom: string,
+                   @Param('iduser') iduser: string
+    ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new BadRequestException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.banUser.length; index++) {
-            if (obj.auth_id === chan.banUser[index].auth_id) {
+            if (iduser === chan.banUser[index].auth_id) {
                 return true;
             }
         }
@@ -64,15 +65,16 @@ export class ChanController {
     }
      */
 
-    @Get(':id/ismuted')
-    async isMuted(@Param('id') idroom: string,
-                  @Body() obj): Promise<boolean> {
+    @Get(':idroom/ismuted/:iduser')
+    async isMuted(@Param('idroom') idroom: string,
+                  @Param('iduser') iduser: string
+    ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new BadRequestException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.muteUser.length; index++) {
-            if (obj.auth_id === chan.muteUser[index].auth_id) {
+            if (iduser === chan.muteUser[index].auth_id) {
                 return true;
             }
         }
