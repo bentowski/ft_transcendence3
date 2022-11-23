@@ -12,7 +12,7 @@ export class ChanController {
     constructor(private readonly chanService: ChanService) {}
 
     @Get()
-    getChans() { return this.chanService.findAll(); }
+    getChans(): Promise<ChanEntity[]> { return this.chanService.findAll(); }
 
     @Get(':name')
     async findOne(@Param('name') name: string) {
@@ -88,6 +88,23 @@ export class ChanController {
         }
         for (let index = 0; index < chan.muteUser.length; index++) {
             if (iduser === chan.muteUser[index].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Get(':idroom/ispresent/:iduser')
+    async isPresent(@Param('idroom') idroom: string,
+                    @Param('iduser') iduser: string
+    ): Promise<boolean> {
+        const chan = await this.chanService.findOnebyID(idroom);
+        if (!chan) {
+            throw new BadRequestException('Error while checking if user is present in chan: Cant find chan');
+        }
+        for (let index = 0; index < chan.chanUser.length; index++) {
+            console.log('checking ', chan.chanUser[index].auth_id, ', and ', iduser)
+            if (iduser === chan.chanUser[index].auth_id) {
                 return true;
             }
         }

@@ -1,8 +1,9 @@
-import { Component } from 'react';
+import {Component, ReactNode} from 'react';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
 import { ChanType, UserType } from "../../types"
+import {Link} from "react-router-dom";
 
 class Modal extends Component<
     {
@@ -13,21 +14,17 @@ class Modal extends Component<
       parentCallBack?: any;
       chans?: any;
     },
-    { user: any; friends: any[]; input: string; allChans: Array<ChanType> }
+    { user: any; friends: any[]; input: string; allChans: ChanType[], printed: any }
     > {
-  static context = AuthContext;
+  static contextType = AuthContext;
   constructor(props: any) {
     super(props);
     this.state = {
-      user: {
-        auth_id: 0,
-        user_id: 0,
-        avatar: "",
-        username: "",
-      },
+      user: {},
       friends: [],
       input: "",
       allChans: [],
+      printed: [],
     };
   }
 
@@ -36,17 +33,12 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-  getCurrentUser = () => {
-    const ctx: any = this.context;
-    return ctx.user;
-  };
-
   componentDidMount = async () => {
-    let newUser: any = sessionStorage.getItem("data");
-    if (newUser) {
-      newUser = JSON.parse(newUser);
-      this.setState({ user: newUser.user });
-    }
+    //let newUser: any = sessionStorage.getItem("data");
+    const ctx: any = this.context;
+    console.log('INITIALIZING USER = ', ctx.user, ' / ', ctx.chans, ' / ', ctx.friendsList);
+    this.setState({user: ctx.user});
+    /*
     let friends: any = await Request(
         "GET",
         {},
@@ -54,14 +46,19 @@ class Modal extends Component<
         "http://localhost:3000/user/"
     );
     if (!friends) return;
-    let allChans: Array<ChanType> = await Request(
+
+     */
+
+    let allChans: ChanType[] = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/chan"
     );
     if (!allChans) return;
-    this.setState({ friends: friends, allChans: allChans });
+
+    this.setState({ friends: ctx.friendsList, allChans: ctx.chans });
+    this.chans();
   };
 
   createChan = async () => {
@@ -94,9 +91,9 @@ class Modal extends Component<
             ></input>
           </div>
           <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-            <a href={"/profil/#" + user.username} className="mx-2">
+            <Link to={"/profil/" + user.username} className="mx-2">
               {user.username}
-            </a>
+            </Link>
             <img
                 src={user.avatar}
                 className="miniAvatar"
@@ -107,24 +104,6 @@ class Modal extends Component<
         </div>
     );
   };
-
-  /*
-  componentDidUpdate(prevProps: Readonly<{
-      title: string;
-      calledBy: string;
-      userChan?: any[];
-      userBan?: any[];
-      parentCallBack?: any;
-      chans?: any }>,
-                     prevState: Readonly<{
-      user: any;
-      friends: any[];
-      input: string;
-      allChans: Array<ChanType> }>, snapshot?: any
-  ) {
-
-  }
-   */
 
     users = () => {
     let friends: Array<any> = [];
@@ -168,9 +147,42 @@ class Modal extends Component<
     return friends;
   };
 
+
   chans = () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
+
+        /*
+        let res = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + this.state.allChans[x].id + "/isbanned/" + this.state.user.auth_id,
+        )
+        if (res) {
+            console.log('not displaying ', this.state.allChans[x].id, ', banned from this chan')
+            continue ;
+        } else {
+            console.log('displaying ', this.state.allChans[x].id, ', not banned from this chan')
+        }
+
+         */
+
+        /*
+        let pres = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + this.state.allChans[x].id + "/ispresent/" + this.state.user.auth_id,
+        )
+        if (pres) {
+            console.log('not displaying ', this.state.allChans[x].id, ', already in this chan');
+            continue ;
+        } else {
+            console.log('displaying ', this.state.allChans[x].id, ', not in this chan');
+        }
+         */
+
       if (
           this.state.allChans[x].type !== "private" &&
           this.state.allChans[x].type !== "direct"
@@ -216,7 +228,7 @@ class Modal extends Component<
         }
       }
     }
-    return ret;
+    this.setState({ printed: ret })
   };
 
   joinPrivateChan = async () => {
@@ -239,6 +251,7 @@ class Modal extends Component<
     }
   };
 
+  /*
   sendRequest = async () => {
     const login = document.getElementById("changeLogin") as HTMLInputElement;
     let ret = await Request(
@@ -266,15 +279,19 @@ class Modal extends Component<
       loginError.classList.add("hidden");
     }, 1700);
   };
+  */
 
+    /*
   openWin = () => {
     var input = document.createElement("input");
     input.type = "file";
     input.click();
   };
+     */
 
   printer = () => {
     switch (this.props.calledBy) {
+        /*
       case "Avatar":
         return (
             <div className="p-4 pb-1">
@@ -292,6 +309,7 @@ class Modal extends Component<
               </footer>
             </div>
         );
+
       case "Login":
         return (
             <div className="p-4 pb-1">
@@ -318,6 +336,7 @@ class Modal extends Component<
               </footer>
             </div>
         );
+         */
       case "newChan":
         return (
             <div className="p-4 pb-1">
@@ -401,7 +420,7 @@ class Modal extends Component<
                   ></input>
                   <button onClick={this.joinPrivateChan}>JOIN</button>
                 </div>
-                <div>{this.chans()}</div>
+                <div>{this.state.printed}</div>
               </div>
               <footer>
                 <button className="mx-1" onClick={this.hidden}>

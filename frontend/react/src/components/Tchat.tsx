@@ -61,8 +61,6 @@ export const WebSocket = () => {
       navigate("/tchat/")
     });
 
-
-
     if (msgInput.current) msgInput.current.focus();
 
     return () => {
@@ -82,10 +80,10 @@ export const WebSocket = () => {
   });
 
   useEffect(() => {
-    console.log("USEFFECTOOOOOOOOOOOOOOOOOOOOo")
+    //console.log("USEFFECTOOOOOOOOOOOOOOOOOOOOo")
     const handleMute = (obj: any) => {
       //socket.emit('isMuted');
-      console.log('status muted = ', obj.auth_id, obj.status);
+      //console.log('status muted = ', obj.auth_id, obj.status);
       if (obj.auth_id === user.auth_id) {
         setMuted(obj.status);
       }
@@ -95,21 +93,25 @@ export const WebSocket = () => {
         setBanned(obj.status);
       }
       //navigate("/tchat/");
-      const err = {
-        statusCode: 404,
-        message: 'Youve been banned',
-      }
-      setError(err);
     }
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
-    /*
+
     return () => {
       socket.off('muteRoom', handleMute);
       socket.off('banRoom', handleBan);
     }
-     */
   }, [muted, banned]);
+
+  useEffect(() => {
+    const handleError = (error: any) => {
+      setError(error);
+    }
+    socket.on('error', handleError);
+    return () => {
+      socket.off('error', handleError);
+    }
+  }, [])
 
   	useEffect(() => {
 		let data:any = sessionStorage.getItem('data');

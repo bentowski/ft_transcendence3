@@ -35,6 +35,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userList, setUserList] = useState<string[]>([]);
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [blockedList, setBlockedList] = useState<string[]>([]);
+  const [allChans, setAllChans] = useState<ChanType[]>([]);
+  const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
+  const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
+  const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
 
   const fetchUserList = async () => {
     let list = await Request(
@@ -48,6 +52,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       array_users[index] = list[index].username;
     }
     setUserList(array_users);
+  }
+
+  const fetchChans = async () => {
+    let chans = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan"
+    )
+    console.log('contexxt fetch chans = ', chans);
+    setAllChans(chans);
   }
 
   const fetchData = async () => {
@@ -120,6 +135,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //------------------
 
+                let mlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/muted"
+                )
+                console.log('lalallala')
+                setMutedFrom(mlist);
+                console.log('lolollolo')
+
+
+                //------------------
+
+                let banlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/banned"
+                )
+                setBannedFrom(banlist);
+
+                //------------------
+
+                let jlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/joined"
+                )
+                setChanFrom(jlist);
+
+                //--------------------
+
                 setIsAuth(true);
                 setLoading(false);
                 return ;
@@ -141,9 +189,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       if (typeof error === "object" && error !== null) {
+        setError(error);
         console.log("oulala -", error);
         setLoading(false);
       } else {
+        setError(error);
         console.log("unexpected error ", error);
         setLoading(false);
       }
@@ -244,6 +294,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
       fetchData();
       fetchUserList();
+      fetchChans();
   }, []);
 
   const memoedValue = useMemo(
@@ -252,6 +303,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuth,
       isToken,
       isTwoFa,
+      allChans,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       errorShow,
       errorMsg,
       errorCode,
@@ -272,6 +327,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       isAuth,
       loading,
+      allChans,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       isToken,
       isTwoFa,
       updateFriendsList,
