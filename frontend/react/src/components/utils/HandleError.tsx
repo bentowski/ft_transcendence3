@@ -19,7 +19,7 @@ const HandleError = () => {
 
     return (
         <div>
-            <Alert show={errorShow} onClose={handleClose} variant="warning" dismissible>{errorCode}: {errorMsg}</Alert>
+            <Alert className="globalError" show={errorShow} onClose={handleClose} variant="warning" dismissible>{errorCode}: {errorMsg}</Alert>
         </div>
     )
 }
