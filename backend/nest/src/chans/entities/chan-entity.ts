@@ -1,4 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user-entity'
 
 type Msg = {
@@ -6,6 +12,7 @@ type Msg = {
 	sender_socket_id: string;
 	username: string;
 	avatar: string;
+    auth_id: string;
 	room: string;
 };
 

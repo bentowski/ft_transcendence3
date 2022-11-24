@@ -225,8 +225,9 @@ export class UserController {
         'Error while fetching banned chans: Cant find user',
       );
     }
-    //try {
-      return user.channelBanned;
+    console.log('channelBanned = ', user.channelBanned);
+    if (!user.channelBanned) return [];
+    return user.channelBanned;
     //} catch (error) {
     //  throw new Error(error);
     //}
@@ -244,7 +245,9 @@ export class UserController {
       );
     }
     //try {
-      return user.channelMuted;
+    console.log('channelMuted = ', user.channelMuted);
+    if (!user.channelMuted) return [];
+    return user.channelMuted;
     //} catch (error) {
     //  throw new Error(error);
     //}
@@ -262,7 +265,9 @@ export class UserController {
       );
     }
     //try {
-      return user.channelJoined;
+    console.log('channeljoined = ', user.channelJoined);
+    if (!user.channelJoined) return [];
+    return user.channelJoined;
     //} catch (error) {
     //  throw new Error(error);
     //}
