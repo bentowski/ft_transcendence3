@@ -56,9 +56,9 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
 
     } else {
       const response: any = await fetch(url, {
-        credentials: "include",
         method: type,
         headers: headers,
+        credentials: "include",
         body: JSON.stringify(body),
       });
       if (response.ok) {

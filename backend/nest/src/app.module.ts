@@ -34,9 +34,4 @@ import { UpdateModule } from './update/update.module';
   controllers: [AppController],
   providers: [AppService, UserAuthGuard],
 })
-export class AppModule {
-  //constructor(private dataSource: DataSource) {}
-  //getDataSource() {
-  //  return this.dataSource;
-  //}
-}
+export class AppModule {}

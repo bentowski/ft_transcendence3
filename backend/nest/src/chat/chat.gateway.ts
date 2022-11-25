@@ -16,8 +16,7 @@ import ChanEntity from "../chans/entities/chan-entity";
   cors: {
     origin: ['http://localhost:8080'],
   },
-  namespace: '/chat',
-  withCredentials: true,
+  namespace: '/chat'
 })
 export class ChatGateway implements OnModuleInit
 {
