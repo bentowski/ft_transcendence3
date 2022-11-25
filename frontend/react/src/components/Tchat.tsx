@@ -228,7 +228,7 @@ export const WebSocket = () => {
         chan = await Request(
             "POST",
             {
-              //Accept: "application/json",
+              Accept: "application/json",
               "Content-Type": "application/json",
             },
             {

@@ -1,18 +1,8 @@
-import { useAuthData } from "../../contexts/AuthProviderContext";
-import ModalChangeAvatar from "./ModalChangeAvatar";
-import {useEffect, useState} from "react";
+//import { useAuthData } from "../../contexts/AuthProviderContext";
+//import ModalChangeAvatar from "./ModalChangeAvatar";
+//import {useEffect, useState} from "react";
 
-const GetAvatar = ({
-  className,
-  width,
-  height,
-  alt,
-}: {
-  className: string;
-  width: string;
-  height: string;
-  alt: string;
-}) => {
+const GetAvatar = () => {
   //const { user } = useAuthData();
   //const [show, setShow] = useState(false);
   //const [fallback, setFallback] = useState(false);
@@ -41,5 +31,4 @@ const GetAvatar = ({
   }
    */
 };
-
 export default GetAvatar;
