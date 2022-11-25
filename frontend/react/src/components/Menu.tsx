@@ -59,9 +59,6 @@ const Menu = () => {
       </div>{" "}
       {/* titleDiv */}
       <div className="profilMenu d-flex justify-content-end align-items-center col-3">
-        <div className="twoFASwitch">
-          <Switch />
-        </div>
         <div className="loginMenu px-2">
           <Link to={"/profil/" + username}>
             <p className="m-0">{username}</p>

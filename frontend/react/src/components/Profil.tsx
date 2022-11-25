@@ -10,6 +10,7 @@ import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
 import ModalChangeAvatar from "./utils/ModalChangeAvatar";
+import Switch from "./utils/Switch";
 
 class Profil extends Component<
   {},
@@ -132,6 +133,9 @@ class Profil extends Component<
             </svg>
           </div>
           <ModalChangeUsername />
+          <div className="twoFASwitch d-flex flex-row justify-content-start">
+            <Switch />
+          </div>
 
           {/*
           <div className="form-check form-switch">

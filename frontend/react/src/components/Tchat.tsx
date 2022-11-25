@@ -145,7 +145,6 @@ export const WebSocket = () => {
       joinUrl()
   }, [loaded])
 
-
   useEffect(() => {
     let checkUrl = setInterval(() => {
       let url = document.URL
@@ -213,6 +212,13 @@ export const WebSocket = () => {
       return ;
     }
     const found = chans.find((c:ChanType) => c.name === name.value)
+    if (found) {
+      const error = {
+        statusCode: 400,
+        message: 'Error while creating new chan: Chan name is already taken',
+      }
+      setError(error);
+    }
     if (radioCheck !== "" && name.value && found === undefined) {
       if (password.value) {
         pswd = password.value;
@@ -248,6 +254,13 @@ export const WebSocket = () => {
       updateAllChans();
       updateChanFromList();
       window.location.replace('http://localhost:8080/tchat/' + chan.id)
+      //navigate('/tchat/' + chan.id);
+    } else {
+      const error = {
+        statusCode: 400,
+        message: 'Error while creating new chan: You should provide type/name value'
+      }
+      setError(error);
     }
   };
 
