@@ -5,12 +5,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: {
-      credentials: true,
-      origin: true,
-    },
-  });
+  const app = await NestFactory.create(AppModule, {
+      cors: {
+        credentials: true,
+        origin: true
+      },
+    });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
