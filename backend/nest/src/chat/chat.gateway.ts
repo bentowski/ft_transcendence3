@@ -4,24 +4,25 @@ import {
     WebSocketGateway,
     WebSocketServer,
     MessageBody,
-    WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ChanService } from '../chans/chan.service';
 import { UserService } from '../user/user.service';
-import UserEntity from "../user/entities/user-entity";
-import ChanEntity from "../chans/entities/chan-entity";
+import UserEntity from '../user/entities/user-entity';
+import ChanEntity from '../chans/entities/chan-entity';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:8080'],
   },
   namespace: '/chat',
-  withCredentials: true,
 })
 export class ChatGateway implements OnModuleInit
 {
-	constructor(private readonly chanService: ChanService, private readonly userService: UserService) {}
+  constructor(
+    private readonly chanService: ChanService,
+    private readonly userService: UserService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -35,8 +36,6 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('newMessage')
   async onNewMessage(client: Socket, @MessageBody() body: any) {
-    //console.log(body);
-      //console.log('sending new message from ', body.username);
       const sender: UserEntity = await this.userService.findOnebyUsername(body.username);
       if (!sender) {
           this.server
@@ -44,15 +43,13 @@ export class ChatGateway implements OnModuleInit
               .emit(
                   'error',
                   {
-                      statusCode: 400,
+                      statusCode: 404,
                       message: 'Error while sending a new message: Cant find sender'
                   },
                   body.auth_id
               );
           return ;
-          //throw new WsException('Error while sending a new message: Cant find sender');
       }
-        //console.log('user found hihih ');
       const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
       if (!chan) {
           this.server
@@ -60,13 +57,12 @@ export class ChatGateway implements OnModuleInit
               .emit(
                   'error',
                   {
-                      statusCode: 400,
+                      statusCode: 404,
                       message: 'Error while sending a new message: Cant find room'
                   },
                   body.auth_id
               );
             return ;
-          //throw new WsException('Error while sending a new message: Cant find room');
       }
       if (chan.chanUser.find(elem => elem === sender)) {
           this.server
@@ -80,12 +76,9 @@ export class ChatGateway implements OnModuleInit
                   body.auth_id
               );
             return ;
-          //throw new WsException('Error while sending a new message: User not in chat');
       }
-      //console.log('user is present in chat hiihih');
       const mfound = chan.muteUser.find(elem => elem.auth_id === sender.auth_id)
       if (mfound) {
-          //console.log('muted found, emiting');
           this.server
               .to(body.room)
               .emit(
@@ -146,13 +139,12 @@ export class ChatGateway implements OnModuleInit
               .emit(
                   'error',
                   {
-                      statusCode: 400,
+                      statusCode: 404,
                       message: 'Error while joining room: Cant find user'
                   },
                   body[1]
               );
             return ;
-          //throw new BadRequestException('Error while joining room: Cant find user');
       }
       try {
           await this.chanService.addUserToChannel(usr, body[0])
@@ -185,7 +177,7 @@ export class ChatGateway implements OnModuleInit
                  .emit(
                      'error',
                      {
-                         statusCode: 400,
+                         statusCode: 404,
                          message: 'Error while adding new channel: Cant find user'
                      },
                      body.auth_id
@@ -208,7 +200,6 @@ export class ChatGateway implements OnModuleInit
                  body.auth_id
              );
          return ;
-         //throw new WsException(error);
      }
   }
 
@@ -278,17 +269,14 @@ export class ChatGateway implements OnModuleInit
                     },
                     body.auth_id
                 );
-            //throw new WsException(error);
         }
     }
 
     @SubscribeMessage('muteToChannel')
     async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
         try {
-            //const usr = await this.userService.findOneByAuthId(body.auth_id)
             await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
             client.emit('muteRoom');
-            //console.log('body room = ', body.room);
             this.server
                 .to(body.room)
                 .emit("mutedChannel",
@@ -311,7 +299,6 @@ export class ChatGateway implements OnModuleInit
                     body.auth_id
                 );
             return ;
-           // throw new WsException(error);
         }
     }
 

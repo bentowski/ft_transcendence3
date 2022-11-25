@@ -1,4 +1,4 @@
-import {BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
+import {BadRequestException, NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
 import { ChanService } from "./chan.service";
 import { CreateChanDto } from "./dto/create-chan.dto";
 import {AuthGuard} from "@nestjs/passport";
@@ -18,7 +18,7 @@ export class ChanController {
     async findOne(@Param('name') name: string) {
         const chan: ChanEntity = await this.chanService.findOne(name);
         if (!chan) {
-            throw new BadRequestException('Error while fetching chan by name: Cant find chan');
+            throw new NotFoundException('Error while fetching chan by name: Cant find chan');
         }
         return chan;
     }
@@ -27,7 +27,7 @@ export class ChanController {
     async findOnebyID(@Param('id') id: string) {
         const chan: ChanEntity = await this.chanService.findOnebyID(id);
         if (!chan) {
-            throw new BadRequestException('Error while fetching chan by id: Cant find chan');
+            throw new NotFoundException('Error while fetching chan by id: Cant find chan');
         }
         return (chan);
     }
@@ -57,7 +57,7 @@ export class ChanController {
     ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
-            throw new BadRequestException('Error while checking user status: Cant find chan');
+            throw new NotFoundException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.banUser.length; index++) {
             if (iduser === chan.banUser[index].auth_id) {
@@ -85,7 +85,7 @@ export class ChanController {
     ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
-            throw new BadRequestException('Error while checking user status: Cant find chan');
+            throw new NotFoundException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.muteUser.length; index++) {
             if (iduser === chan.muteUser[index].auth_id) {
@@ -101,10 +101,9 @@ export class ChanController {
     ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
-            throw new BadRequestException('Error while checking if user is present in chan: Cant find chan');
+            throw new NotFoundException('Error while checking if user is present in chan: Cant find chan');
         }
         for (let index = 0; index < chan.chanUser.length; index++) {
-            //console.log('checking ', chan.chanUser[index].auth_id, ', and ', iduser)
             if (iduser === chan.chanUser[index].auth_id) {
                 return true;
             }

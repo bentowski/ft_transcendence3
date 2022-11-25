@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 
 const HandleError = () => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     //console.log('errorshow = ', errorShow, ', errorMsg = ', errorMsg, ', errorCode = ', errorCode);
 
@@ -15,9 +15,11 @@ const HandleError = () => {
         setError(null);
     }
 
+    /*
     if (errorCode === 404) {
         navigate("/pagenotfound");
     }
+     */
 
     return (
         <div>

@@ -4,16 +4,9 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  OneToOne,
-  JoinTable,
-  JoinColumn,
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-import {
-  Exclude,
-  Expose,
-  Type
-} from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { ChanEntity } from '../../chans/entities/chan-entity';
 // import { ProfileEntity } from './profile-entity';
 

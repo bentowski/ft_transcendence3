@@ -14,18 +14,10 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  BadRequestException, ParseIntPipe,
-  /*
+  BadRequestException,
+  ParseIntPipe,
   NotFoundException,
-  Request,
-  UsePipes,
-  HttpException,
-  HttpStatus,
-  ValidationPipe,
-  Response,
-  */
 } from '@nestjs/common';
-import { Request } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
@@ -33,29 +25,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
   BlockedUserDto,
   UpdateUsernameDto,
 } from './dto/update-user.dto';
-import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
-import jwt_decode from 'jwt-decode';
 import { Express } from 'express';
-import path, { join } from 'path';
-import JwtService from '@nestjs/jwt';
+import { join } from 'path';
 import { AuthGuard } from '@nestjs/passport';
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import { JwtStrategy } from '../auth/strategies/jwt.strategy';
-import fs from 'fs';
-import ChanEntity from "../chans/entities/chan-entity";
-import {DeleteUserDto} from "./dto/user.dto";
-//import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-//import { fileURLToPath } from 'url';
-//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
-//import { fileURLToPath } from 'url';
+import ChanEntity from '../chans/entities/chan-entity';
 
 export const storage = {
   storage: diskStorage({
@@ -123,11 +103,10 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    //console.log('saloute');
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while uploading an image: Failed requesting user in database',
       );
     }
@@ -137,7 +116,6 @@ export class UserController {
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
       return newNameAvatar;
-      //res.status(200)
     } catch (error) {
       throw new Error(error);
     }
@@ -146,12 +124,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   async findOnebyUsername(
-    //@Res({ passthrough: true }) res,
     @Param('username') username: string,
   ) {
     const user: UserEntity = await this.userService.findOnebyUsername(username);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching database: User with that username doesnt exists',
       );
     }
@@ -161,10 +138,9 @@ export class UserController {
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   async findOnebyID(@Param('id') id: string) {
-    //console.log('ID - ', id);
     const user: UserEntity = await this.userService.findOneByAuthId(id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching database: User with that id doesnt exists',
       );
     }
