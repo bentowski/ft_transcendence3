@@ -24,7 +24,7 @@ export class ChanEntity {
     @Column({
         name: 'type',
         type: 'varchar',
-        //nullable: false,
+        nullable: false,
     })
     type: string;
 

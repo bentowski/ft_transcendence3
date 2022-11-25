@@ -134,6 +134,11 @@ export class UserService {
         'Error while updating username: Please choose a username between 2 and 30 characters',
       );
     }
+    if (!newUsername.match(/^[a-z0-9]+$/)) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be alphanumeric',
+      );
+    }
     user.username = newUsername;
     try {
       return await this.userRepository.save(user);
@@ -170,6 +175,17 @@ export class UserService {
       );
     }
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
+    console.log('new username = ', username);
+    if (!username.match(/^[a-z0-9]+$/)) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be alphanumeric',
+      );
+    }
+    if (username.length < 2 || username.length > 30) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be between 2 and 30 characters',
+      );
+    }
     user.username = username;
     user.avatar = avatar;
     user.twoFASecret = twoFASecret;
