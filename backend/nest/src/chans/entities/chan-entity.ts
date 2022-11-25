@@ -1,4 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user-entity'
 
 type Msg = {
@@ -6,16 +12,14 @@ type Msg = {
 	sender_socket_id: string;
 	username: string;
 	avatar: string;
+    auth_id: string;
 	room: string;
 };
 
 @Entity('chan')
 export class ChanEntity {
-    @PrimaryGeneratedColumn({
-        type: 'bigint',
-        name: 'uuid',
-    })
-    public id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({
         name: 'type',
@@ -29,28 +33,29 @@ export class ChanEntity {
         type: 'varchar',
         nullable: false,
     })
-    public name: string;
+    name: string;
 
 	@Column({
 		name: 'owner',
 		type: 'varchar',
-		nullable: true,
+		nullable: false,
 	})
-	public owner: string;
+	owner: string;
 
     @Column({
         name: 'password',
         type: 'varchar',
+        nullable: true,
     })
-    password: string;
+    password?: string;
 
-  @Column({
-      name: 'admin',
-      type: 'varchar',
-      array: true,
-      nullable: true,
-  })
-  public admin: Array<string>;
+    @Column({
+        name: 'admin',
+        type: 'varchar',
+        array: true,
+        nullable: true,
+    })
+    admin: Array<string>;
 
 	@Column({
 		name: 'messages',

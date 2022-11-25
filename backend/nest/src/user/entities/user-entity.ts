@@ -3,8 +3,8 @@ import {
   Entity,
   ManyToMany,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  OneToOne,
   JoinTable,
   JoinColumn,
 } from 'typeorm';
@@ -19,7 +19,7 @@ import { ChanEntity } from '../../chans/entities/chan-entity';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   user_id: string;
 
   @Column({
@@ -116,20 +116,20 @@ export class UserEntity {
   createdAt: Date;
 
   @ManyToMany(() => ChanEntity, (chan) => chan.chanUser, {
-    //onDelete: 'CASCADE',
-    //onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   channelJoined: ChanEntity[];
 
   @ManyToMany(() => ChanEntity, (chan) => chan.banUser, {
-    //onDelete: 'CASCADE',
-    //onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   channelBanned: ChanEntity[];
 
   @ManyToMany(() => ChanEntity, (chan) => chan.muteUser, {
-    //onDelete: 'CASCADE',
-    //onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   channelMuted: ChanEntity[];
 
