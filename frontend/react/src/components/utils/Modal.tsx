@@ -48,9 +48,9 @@ class Modal extends Component<
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
-    this.setState({fieldName: ""});
-    this.setState({errName: ""});
-    this.setState({alertName: false});
+    this.setState({ fieldName: "" });
+    this.setState({ errName: "" });
+    this.setState({ alertName: false });
     this.setState({ protected: false })
   };
 
@@ -93,13 +93,13 @@ class Modal extends Component<
     var minmax = /^.{3,10}$/
 
     if (!regex.test(this.state.fieldName)) {
-      this.setState({errName: "Non valid character"});
-      this.setState({alertName: true});
+      this.setState({ errName: "Non valid character" });
+      this.setState({ alertName: true });
       return false;
     }
     else if (!minmax.test(this.state.fieldName)) {
-      this.setState({errName: "Name must contains between 3 and 10 characters"});
-      this.setState({alertName: true});
+      this.setState({ errName: "Name must contains between 3 and 10 characters" });
+      this.setState({ alertName: true });
       return false;
     }
     // else if (this.state.allChans.findIndex((c: any) => c.name === this.state.fieldName) > -1) {
@@ -342,8 +342,8 @@ class Modal extends Component<
 
   closeAlertName = () => {
     // console.log('closing alert');
-    this.setState({alertName: false});
-    this.setState({errName: ""})
+    this.setState({ alertName: false });
+    this.setState({ errName: "" })
     // setErr("");
     // setAlertMsg("");
   }
@@ -399,57 +399,62 @@ class Modal extends Component<
             <header className="mb-3">
               <h2>{this.props.title}</h2>
             </header>
-            <form className="mb-3">
-              <p>
+            <form className="mb-3 d-flex align-items-start flex-column">
+              <div className="d-flex align-items-center">
                 <input
                   type="radio"
                   name="ChanType"
                   value="public"
                   id="public"
                   onChange={this.hiddenPass}
+                  className='mx-2'
                 />
                 Public
-                <br />
+              </div>
+              <div className="d-flex align-items-center">
                 <input
                   type="radio"
                   name="ChanType"
                   value="private"
                   id="private"
                   onChange={this.hiddenPass}
+                  className='mx-2'
                 />
                 Private
-                <br />
+              </div>
+              <div className="d-flex align-items-center">
                 <input
                   type="radio"
                   name="ChanType"
                   value="protected"
                   id="protected"
                   onChange={this.showPass}
+                  className='mx-2'
                 />
                 Protected
-                <br />
-                <input
-                  type="text"
-                  id="chanName"
-                  placeholder="name"
-                  onChange={this.handleName}
+              </div>
+              <input
+                type="text"
+                id="chanName"
+                placeholder="name"
+                onChange={this.handleName}
+                className='mt-2'
                 />
-                <div>
-                  {this.state.alertName ?
-                    <Alert onClose={this.closeAlertName} variant="danger" dismissible>{this.state.errName}</Alert> :
-                    // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-                    <div />
-                  }
-                </div>
-                <br />
-                <input
-                  type="text"
-                  id="chanPassword"
-                  placeholder="password"
-                  className='hidden'
-                ></input>
-                <br />
-              </p>
+              <div>
+                {this.state.alertName ?
+                  <Alert onClose={this.closeAlertName} variant="danger" dismissible>{this.state.errName}</Alert> :
+                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                  <div />
+                }
+              </div>
+              {/* <br /> */}
+              <input
+                type="text"
+                id="chanPassword"
+                placeholder="password"
+                className='hidden'
+              ></input>
+              {/* <br /> */}
             </form>
             <footer>
               <button className="mx-1" onClick={this.hidden}>
