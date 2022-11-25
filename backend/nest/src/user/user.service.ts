@@ -128,14 +128,18 @@ export class UserService {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',
       );
-    } else {
-      user.username = newUsername;
-      try {
-        return await this.userRepository.save(user);
-      } catch (error) {
-        const err: string = 'Error while saving user in database: ' + error;
-        throw new NotAcceptableException(err);
-      }
+    }
+    if (newUsername.length > 30 || newUsername.length < 2) {
+      throw new BadRequestException(
+        'Error while updating username: Please choose a username between 2 and 30 characters',
+      );
+    }
+    user.username = newUsername;
+    try {
+      return await this.userRepository.save(user);
+    } catch (error) {
+      const err: string = 'Error while saving user in database: ' + error;
+      throw new NotAcceptableException(err);
     }
   }
 
@@ -381,6 +385,14 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { user_id: id },
+    });
+    if (!user) {
+      throw new BadRequestException(
+        'Error while removing user: Cant find this user in db',
+      );
+    }
     try {
       await this.userRepository.delete(id);
     } catch (error) {

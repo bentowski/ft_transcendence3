@@ -34,6 +34,7 @@ export class ChanController {
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
+        console.log('createuserdto ::: ', createUserDto)
         try {
             return this.chanService.createChan(createUserDto);
         } catch (error) {
@@ -103,7 +104,7 @@ export class ChanController {
             throw new BadRequestException('Error while checking if user is present in chan: Cant find chan');
         }
         for (let index = 0; index < chan.chanUser.length; index++) {
-            console.log('checking ', chan.chanUser[index].auth_id, ', and ', iduser)
+            //console.log('checking ', chan.chanUser[index].auth_id, ', and ', iduser)
             if (iduser === chan.chanUser[index].auth_id) {
                 return true;
             }

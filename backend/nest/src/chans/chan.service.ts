@@ -37,17 +37,47 @@ export class ChanService {
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
 		//console.log('createchandto = ', createChanDto);
-        let { name, type, password, owner, chanUser } = createChanDto;
-        password = await argon2.hash(password)
+        const { name, type, password, owner /*, chanUser */ } = createChanDto;
+		if (name.length < 3 || name.length > 30) {
+			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 30 characters')
+		}
+		if (!name.match(/^[a-z0-9]+$/)) {
+			throw new BadRequestException('Error while creating new chan: Name should be alphanum')
+		}
+		let hashed = undefined;
+		if ((type === 'public' || type === 'protected') && (password !== null && password !== '')) {
+			throw new BadRequestException('Error while creating new Chan: Public or Private chans cant have a password');
+		}
+		if (password && type === 'protected') {
+			if (password.length < 8 || password.length > 30) {
+				throw new BadRequestException('Error while creating new chan: Password should be between 8 and 30 characters')
+			}
+			hashed = await argon2.hash(password)
+		} else {
+			hashed = null;
+		}
         const chanInDb = await this.chanRepository.findOne({
-            where: { name }
+            where: { name: name },
         });
         if (chanInDb) {
-            throw new HttpException('Error while creating new Chan: Chan already exists', HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('Error while creating new Chan: Chan already exists');
         }
-        const chan: ChanEntity = await this.chanRepository.create({
-            name, type, password, owner, chanUser
+		console.log('owner = ', owner, ', password = ', password);
+		const user: UserEntity = await this.userService.findOnebyUsername(owner);
+		if (!user) {
+			throw new BadRequestException('Error while creating new Chan: Cant find user');
+		}
+        const chan: ChanEntity = this.chanRepository.create({
+            type: type,
+			name: name,
+			owner: owner,
+			password: hashed,
+			messages: [],
+			chanUser: [],
+			banUser: [],
+			muteUser: [],
         })
+		chan.chanUser.push(user);
 		//console.log('new chan = ', chan);
 		try {
 			await this.chanRepository.save(chan);

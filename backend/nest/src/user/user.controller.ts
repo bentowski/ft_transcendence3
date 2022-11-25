@@ -14,7 +14,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  BadRequestException,
+  BadRequestException, ParseIntPipe,
   /*
   NotFoundException,
   Request,
@@ -51,6 +51,7 @@ import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import fs from 'fs';
 import ChanEntity from "../chans/entities/chan-entity";
+import {DeleteUserDto} from "./dto/user.dto";
 //import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 //import { fileURLToPath } from 'url';
 //import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
@@ -98,8 +99,12 @@ export class UserController {
 
   //@UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Param('id') username: string) {
-    return this.userService.remove(username);
+  async remove(@Param('id', ParseIntPipe) id: string) {
+    try {
+      return this.userService.remove(id);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -218,14 +223,14 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/banned')
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
-    console.log('lets go banned');
+    //console.log('lets go banned');
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
       throw new BadRequestException(
         'Error while fetching banned chans: Cant find user',
       );
     }
-    console.log('channelBanned = ', user.channelBanned);
+    //console.log('channelBanned = ', user.channelBanned);
     if (!user.channelBanned) return [];
     return user.channelBanned;
     //} catch (error) {
@@ -236,7 +241,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/muted')
   async chanMuted(@Req() req): Promise<ChanEntity[]> {
-    console.log('lets go muted');
+    //console.log('lets go muted');
 
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
@@ -245,7 +250,7 @@ export class UserController {
       );
     }
     //try {
-    console.log('channelMuted = ', user.channelMuted);
+    //console.log('channelMuted = ', user.channelMuted);
     if (!user.channelMuted) return [];
     return user.channelMuted;
     //} catch (error) {
@@ -256,7 +261,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/joined')
   async chanPresent(@Req() req): Promise<ChanEntity[]> {
-    console.log('lets go joined');
+    //console.log('lets go joined');
 
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
@@ -265,7 +270,7 @@ export class UserController {
       );
     }
     //try {
-    console.log('channeljoined = ', user.channelJoined);
+    //console.log('channeljoined = ', user.channelJoined);
     if (!user.channelJoined) return [];
     return user.channelJoined;
     //} catch (error) {

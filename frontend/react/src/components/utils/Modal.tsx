@@ -358,11 +358,11 @@ class Modal extends Component<
                   <br />
                   <input type="text" id="chanName" placeholder="name"></input>
                   <br />
-                  <input
-                      type="text"
-                      id="chanPassword"
-                      placeholder="password"
-                  ></input>
+                     <input
+                         type="text"
+                         id="chanPassword"
+                         placeholder="password"
+                     ></input>
                   <br />
                 </p>
               </form>
