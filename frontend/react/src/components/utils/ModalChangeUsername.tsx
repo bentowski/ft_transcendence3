@@ -17,7 +17,7 @@ const ModalChangeUsername = ({
   const navigate = useNavigate();
   const [err, setErr] = useState("");
   const [alert, setAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
+  // const [alertMsg, setAlertMsg] = useState("");
 
   const getUsers = async () => {
     try {
@@ -119,7 +119,7 @@ const ModalChangeUsername = ({
 
   return (
     <div className="changeusername">
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} backdrop='static' keyboard={false}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
             <h2>Change Username</h2>
