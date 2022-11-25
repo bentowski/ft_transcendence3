@@ -57,11 +57,6 @@ class Profil extends Component<
   };
 
   getUser = async (username: string) => {
-    //console.log('arg username = ', username);
-    //let currentUser: any = sessionStorage.getItem("data");
-    //currentUser = JSON.parse(currentUser);
-    //const ctx: any = this.context;
-    //const currentUser = ctx.user;
     if (!username) {
       username = this.state.current_username;
     }

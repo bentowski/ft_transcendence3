@@ -1,8 +1,9 @@
-import { Component } from 'react';
+import {Component, ReactNode} from 'react';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
 import { ChanType, UserType } from "../../types"
+import {Link} from "react-router-dom";
 
 class Modal extends Component<
     {
@@ -13,21 +14,17 @@ class Modal extends Component<
       parentCallBack?: any;
       chans?: any;
     },
-    { user: any; friends: any[]; input: string; allChans: Array<ChanType> }
+    { user: any; users: any[]; input: string; allChans: ChanType[], printed: any }
     > {
-  static context = AuthContext;
+  static contextType = AuthContext;
   constructor(props: any) {
     super(props);
     this.state = {
-      user: {
-        auth_id: 0,
-        user_id: 0,
-        avatar: "",
-        username: "",
-      },
-      friends: [],
+      user: {},
+      users: [],
       input: "",
       allChans: [],
+      printed: [],
     };
   }
 
@@ -36,35 +33,43 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-  getCurrentUser = () => {
-    const ctx: any = this.context;
-    return ctx.user;
-  };
-
   componentDidMount = async () => {
-    let newUser: any = sessionStorage.getItem("data");
-    if (newUser) {
-      newUser = JSON.parse(newUser);
-      this.setState({ user: newUser.user });
-    }
-    let friends: any = await Request(
+    const ctx: any = this.context;
+    let users: any = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/user/"
     );
-    if (!friends) return;
-    let allChans: Array<ChanType> = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan"
-    );
-    if (!allChans) return;
-    this.setState({ friends: friends, allChans: allChans });
+    this.setState({ user: ctx.user, users: users, allChans: ctx.allChans });
+    this.chans();
   };
 
-  createChan = async () => {
+  componentDidUpdate = (
+      prevProps: Readonly<{
+          title: string;
+          calledBy: string;
+          userChan?: any[];
+          userBan?: any[];
+          parentCallBack?: any;
+          chans?: any }>,
+      prevState: Readonly<{
+          user: any;
+          users: any[];
+          input: string;
+          allChans: ChanType[];
+          printed: any }>,
+      snapshot?: any) => {
+      const ctx: any = this.context;
+      if (prevState.allChans !== ctx.allChans) {
+          this.setState({allChans: ctx.allChans})
+      }
+      if (prevState.user !== ctx.user) {
+          this.setState({user: ctx.user})
+      }
+  }
+
+    createChan = async () => {
     this.props.parentCallBack.createChannel()
     this.hidden()
   };
@@ -94,9 +99,9 @@ class Modal extends Component<
             ></input>
           </div>
           <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-            <a href={"/profil/#" + user.username} className="mx-2">
+            <Link to={"/profil/" + user.username} className="mx-2">
               {user.username}
-            </a>
+            </Link>
             <img
                 src={user.avatar}
                 className="miniAvatar"
@@ -108,44 +113,26 @@ class Modal extends Component<
     );
   };
 
-  /*
-  componentDidUpdate(prevProps: Readonly<{
-      title: string;
-      calledBy: string;
-      userChan?: any[];
-      userBan?: any[];
-      parentCallBack?: any;
-      chans?: any }>,
-                     prevState: Readonly<{
-      user: any;
-      friends: any[];
-      input: string;
-      allChans: Array<ChanType> }>, snapshot?: any
-  ) {
-
-  }
-   */
-
     users = () => {
     let friends: Array<any> = [];
     let isUsers: boolean = false;
     let x: number = 0;
-    if (this.state.friends.length > 0) {
+    if (this.state.users.length > 0) {
       let chanUser: Array<UserType> | undefined = this.props.userChan;
       while (
           chanUser?.length &&
           chanUser?.length > 0 &&
-          x < this.state.friends.length
+          x < this.state.users.length
           ) {
-        let friend: UserType = this.state.friends[x];
+        let friend: UserType = this.state.users[x];
         if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
           if (
               this.state.input.length === 0 ||
               friend.username.includes(this.state.input)
           )
-              console.log('hello ', this.state.friends[x]);
-            friends.push(this.displayUser(x, this.state.friends[x]));
+              console.log('hello ', this.state.users[x]);
+            friends.push(this.displayUser(x, this.state.users[x]));
         }
         x++;
       }
@@ -168,6 +155,37 @@ class Modal extends Component<
     return friends;
   };
 
+    checkIfOwner(chan: ChanType) {
+        for (let index = 0; index < this.props.chans.length; index++) {
+            if (chan.id === this.props.chans[index].id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkIfBanned(chan: ChanType) {
+        const ctx: any = this.context;
+        const banned = ctx.bannedFrom;
+        for (let index = 0; index < banned.length; index++) {
+            if (chan.id === banned[index].id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkIfAlreadyIn(chan: ChanType) {
+        const ctx: any = this.context;
+        const joined = ctx.chanFrom;
+        for (let index = 0; index < joined.length; index++) {
+            if (chan.id === joined[index].id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
   chans = () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
@@ -175,48 +193,29 @@ class Modal extends Component<
           this.state.allChans[x].type !== "private" &&
           this.state.allChans[x].type !== "direct"
       ) {
-        for (let y = 0; y < this.props.chans.length; y++) {
-          if (this.state.allChans[x].name === this.props.chans[y].name)
-            continue;
-          ret.push(
-              <div className="row" key={x}>
-                <button
-                    className="col-6"
-                    onClick={() =>
-                        this.props.parentCallBack.joinRoom(
-                            this.state.allChans[x],
-                            true
-                        )
-                    }
-                >
-                  JOIN
-                </button>
-                <p className="col-6">{this.state.allChans[x].name}</p>
-              </div>
-          );
-          break;
-        }
-        if (!this.props.chans.length) {
-          ret.push(
-              <div className="row" key={x}>
-                <button
-                    className="col-6"
-                    onClick={() =>
-                        this.props.parentCallBack.joinRoom(
-                            this.state.allChans[x],
-                            true
-                        )
-                    }
-                >
-                  JOIN
-                </button>
-                <p className="col-6">{this.state.allChans[x].name}</p>
-              </div>
-          );
+        if (!this.checkIfOwner(this.state.allChans[x]) &&
+            !this.checkIfBanned(this.state.allChans[x]) &&
+            !this.checkIfAlreadyIn(this.state.allChans[x])) {
+            ret.push(
+                <div className="row" key={x}>
+                    <button
+                        className="col-6"
+                        onClick={() =>
+                            this.props.parentCallBack.joinRoom(
+                                this.state.allChans[x],
+                                true
+                            )
+                        }
+                    >
+                        JOIN
+                    </button>
+                    <p className="col-6">{this.state.allChans[x].name}</p>
+                </div>
+            );
         }
       }
     }
-    return ret;
+    this.setState({ printed: ret })
   };
 
   joinPrivateChan = async () => {
@@ -239,6 +238,7 @@ class Modal extends Component<
     }
   };
 
+  /*
   sendRequest = async () => {
     const login = document.getElementById("changeLogin") as HTMLInputElement;
     let ret = await Request(
@@ -266,15 +266,19 @@ class Modal extends Component<
       loginError.classList.add("hidden");
     }, 1700);
   };
+  */
 
+    /*
   openWin = () => {
     var input = document.createElement("input");
     input.type = "file";
     input.click();
   };
+     */
 
   printer = () => {
     switch (this.props.calledBy) {
+        /*
       case "Avatar":
         return (
             <div className="p-4 pb-1">
@@ -292,6 +296,7 @@ class Modal extends Component<
               </footer>
             </div>
         );
+
       case "Login":
         return (
             <div className="p-4 pb-1">
@@ -318,6 +323,7 @@ class Modal extends Component<
               </footer>
             </div>
         );
+         */
       case "newChan":
         return (
             <div className="p-4 pb-1">
@@ -401,7 +407,7 @@ class Modal extends Component<
                   ></input>
                   <button onClick={this.joinPrivateChan}>JOIN</button>
                 </div>
-                <div>{this.chans()}</div>
+                <div>{this.state.printed}</div>
               </div>
               <footer>
                 <button className="mx-1" onClick={this.hidden}>

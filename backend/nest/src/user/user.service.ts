@@ -79,6 +79,9 @@ export class UserService {
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
     user.blocked = [];
+    user.channelJoined = [];
+    user.channelBanned = [];
+    user.channelMuted = [];
     try {
       return this.userRepository.save(user);
     } catch (error) {
@@ -94,6 +97,9 @@ export class UserService {
     user.email = email;
     user.friends = [];
     user.blocked = [];
+    user.channelJoined = [];
+    user.channelBanned = [];
+    user.channelMuted = [];
     user.createdAt = new Date();
     try {
       await this.userRepository.save(user);

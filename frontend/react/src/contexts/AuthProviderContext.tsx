@@ -20,6 +20,9 @@ export const AuthContext = createContext<any>({
   updateFriendsList: (usr: UserType, action: boolean) => {},
   updateUserList: () => {},
   updateBlockedList: (usr: UserType, action: boolean) => {},
+  updateBannedFromList: () => {},
+  updateMutedFromList: () => {},
+  updateChanFromList: () => {},
   setError: (value: any) => {}
 });
 
@@ -35,6 +38,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userList, setUserList] = useState<string[]>([]);
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [blockedList, setBlockedList] = useState<string[]>([]);
+  const [allChans, setAllChans] = useState<ChanType[]>([]);
+  const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
+  const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
+  const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
 
   const fetchUserList = async () => {
     let list = await Request(
@@ -48,6 +55,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       array_users[index] = list[index].username;
     }
     setUserList(array_users);
+  }
+
+  const fetchChans = async () => {
+    let chans = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan"
+    )
+    setAllChans(chans);
   }
 
   const fetchData = async () => {
@@ -120,6 +137,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //------------------
 
+                let mlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/muted"
+                )
+                setMutedFrom(mlist);
+
+                //------------------
+
+                let banlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/banned"
+                )
+                setBannedFrom(banlist);
+
+                //------------------
+
+                let jlist = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/joined"
+                )
+                setChanFrom(jlist);
+
+                //--------------------
+
                 setIsAuth(true);
                 setLoading(false);
                 return ;
@@ -141,10 +188,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       if (typeof error === "object" && error !== null) {
-        console.log("oulala -", error);
+        setError(error);
         setLoading(false);
       } else {
-        console.log("unexpected error ", error);
+        setError(error);
         setLoading(false);
       }
     }
@@ -200,6 +247,119 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserList(array_users);
   }, [])
 
+  /*
+  const rmvBan = (chan: ChanType) => {
+    const idx = bannedFrom.findIndex(obj => {
+      return obj.id === chan.id;
+    })
+    const newArr: ChanType[] = bannedFrom;
+    if (idx !== -1) {
+      newArr.splice(idx);
+    }
+    setBannedFrom(newArr);
+  }
+
+  const rmvMute = (chan: ChanType) => {
+    const idx = bannedFrom.findIndex(obj => {
+      return obj.id === chan.id;
+    })
+    const newArr: ChanType[] = mutedFrom;
+    if (idx !== -1) {
+      newArr.splice(idx);
+    }
+    setMutedFrom(newArr);
+  }
+  */
+
+  const updateBannedFromList = useCallback(async () => {
+    /*
+    if (action) {
+      setBannedFrom(prevState => [...prevState, chan])
+      setTimeout(() => {
+        rmvBan(chan);
+      }, 10000)
+    }
+    if (!action) {
+      rmvBan(chan);
+    }
+     */
+    let banlist = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/banned"
+    )
+    setBannedFrom(banlist);
+    setTimeout(async () => {
+      let banlist = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/banned"
+      )
+      setBannedFrom(banlist);
+    }, 100010)
+
+  }, [bannedFrom])
+
+  const updateMutedFromList = useCallback( async () => {
+    /*
+    if (action) {
+      setMutedFrom(prevState => [...prevState, chan])
+      setTimeout(() => {
+        rmvMute(chan);
+      }, 10000)
+    }
+    if (!action) {
+      rmvMute(chan);
+    }
+     */
+    let mlist = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/muted"
+    )
+    setBannedFrom(mlist);
+    setTimeout(async () => {
+      let mlist = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/muted"
+      )
+      setBannedFrom(mlist);
+    }, 100010)
+
+  }, [mutedFrom])
+
+  const updateChanFromList = useCallback(async () => {
+    /*
+    if (action) {
+      setChanFrom(prevState => [...prevState, chan])
+    }
+    if (!action) {
+      const idx = chanFrom.findIndex(obj => {
+        return obj.id === chan.id;
+      })
+      const newArr: ChanType[] = chanFrom;
+      if (idx !== -1) {
+        newArr.splice(idx);
+      }
+      setChanFrom(newArr);
+    }
+    */
+    let jlist = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/joined"
+    )
+    setChanFrom(jlist);
+
+  }, [chanFrom])
+
+
   const updateUser = useCallback((avatar: string, username: string) => {
     //console.log('callback called');
     if (avatar || username) {
@@ -244,6 +404,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
       fetchData();
       fetchUserList();
+      fetchChans();
   }, []);
 
   const memoedValue = useMemo(
@@ -252,6 +413,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuth,
       isToken,
       isTwoFa,
+      allChans,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       errorShow,
       errorMsg,
       errorCode,
@@ -263,6 +428,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
+      updateBannedFromList: () => updateBannedFromList(),
+      updateChanFromList: () => updateChanFromList(),
+      updateMutedFromList: () => updateMutedFromList(),
       setError: (value: any) => setError(value),
     }),
     [
@@ -272,8 +440,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       isAuth,
       loading,
+      allChans,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       isToken,
       isTwoFa,
+      updateBannedFromList,
+      updateChanFromList,
+      updateMutedFromList,
       updateFriendsList,
       userAuthentication,
       updateUserList,
@@ -293,7 +468,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuthData = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useUserContext was used outside of its Provider");
+    throw new Error("Context was used outside of its Provider");
   }
   return context;
 };

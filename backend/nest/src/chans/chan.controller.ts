@@ -4,6 +4,7 @@ import { CreateChanDto } from "./dto/create-chan.dto";
 import {AuthGuard} from "@nestjs/passport";
 import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 import UserEntity from "../user/entities/user-entity";
+import ChanEntity from "./entities/chan-entity";
 
 @Controller('chan')
 @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -11,21 +12,33 @@ export class ChanController {
     constructor(private readonly chanService: ChanService) {}
 
     @Get()
-    getChans() { return this.chanService.findAll(); }
+    getChans(): Promise<ChanEntity[]> { return this.chanService.findAll(); }
 
-    @Get(':id')
-    findOne(@Param('id') username: string) {
-        return this.chanService.findOne(username);
+    @Get(':name')
+    async findOne(@Param('name') name: string) {
+        const chan: ChanEntity = await this.chanService.findOne(name);
+        if (!chan) {
+            throw new BadRequestException('Error while fetching chan by name: Cant find chan');
+        }
+        return chan;
     }
 
     @Get('/id/:id')
-    findOnebyID(@Param('id') id: string) {
-        return this.chanService.findOnebyID(id);
+    async findOnebyID(@Param('id') id: string) {
+        const chan: ChanEntity = await this.chanService.findOnebyID(id);
+        if (!chan) {
+            throw new BadRequestException('Error while fetching chan by id: Cant find chan');
+        }
+        return (chan);
     }
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
-        return this.chanService.createChan(createUserDto);
+        try {
+            return this.chanService.createChan(createUserDto);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
     @Get(':id/banned')
@@ -37,15 +50,16 @@ export class ChanController {
         }
     }
 
-    @Get(':id/isbanned')
-    async isBanned(@Param('id') idroom: string,
-             @Body() obj): Promise<boolean> {
+    @Get(':idroom/isbanned/:iduser')
+    async isBanned(@Param('idroom') idroom: string,
+                   @Param('iduser') iduser: string
+    ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new BadRequestException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.banUser.length; index++) {
-            if (obj.auth_id === chan.banUser[index].auth_id) {
+            if (iduser === chan.banUser[index].auth_id) {
                 return true;
             }
         }
@@ -64,15 +78,33 @@ export class ChanController {
     }
      */
 
-    @Get(':id/ismuted')
-    async isMuted(@Param('id') idroom: string,
-                  @Body() obj): Promise<boolean> {
+    @Get(':idroom/ismuted/:iduser')
+    async isMuted(@Param('idroom') idroom: string,
+                  @Param('iduser') iduser: string
+    ): Promise<boolean> {
         const chan = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new BadRequestException('Error while checking user status: Cant find chan');
         }
         for (let index = 0; index < chan.muteUser.length; index++) {
-            if (obj.auth_id === chan.muteUser[index].auth_id) {
+            if (iduser === chan.muteUser[index].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Get(':idroom/ispresent/:iduser')
+    async isPresent(@Param('idroom') idroom: string,
+                    @Param('iduser') iduser: string
+    ): Promise<boolean> {
+        const chan = await this.chanService.findOnebyID(idroom);
+        if (!chan) {
+            throw new BadRequestException('Error while checking if user is present in chan: Cant find chan');
+        }
+        for (let index = 0; index < chan.chanUser.length; index++) {
+            console.log('checking ', chan.chanUser[index].auth_id, ', and ', iduser)
+            if (iduser === chan.chanUser[index].auth_id) {
                 return true;
             }
         }
@@ -100,11 +132,19 @@ export class ChanController {
 
     @Delete(':id')
     remove(@Param('id') username: string) {
-        return this.chanService.remove(username);
+        try {
+            return this.chanService.remove(username);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
 	@Post('chanchat')
 	tryChan(@Body() test: any) {
-		return this.chanService.addMessage(test);
+        try {
+            return this.chanService.addMessage(test);
+        } catch (error) {
+            throw new Error(error);
+        }
 	}
 }
