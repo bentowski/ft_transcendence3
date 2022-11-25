@@ -144,7 +144,7 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
-                        <h2>Ban/Unban user from chan #{chan}</h2>
+                        <h2>Ban/Unban user from chan #{chan} for 100 seconds</h2>
                     </Modal.Header>
                     <Modal.Body>
                         <form className="mb-3">
