@@ -23,6 +23,7 @@ export const AuthContext = createContext<any>({
   updateBannedFromList: () => {},
   updateMutedFromList: () => {},
   updateChanFromList: () => {},
+  updateAllChans: () => {},
   setError: (value: any) => {}
 });
 
@@ -359,6 +360,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   }, [chanFrom])
 
+  const updateAllChans = useCallback(async () => {
+    try {
+      let res = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan"
+      )
+      setAllChans(res);
+    } catch (error) {
+      setError(error);
+    }
+  }, [])
+
 
   const updateUser = useCallback((avatar: string, username: string) => {
     //console.log('callback called');
@@ -431,6 +446,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       updateBannedFromList: () => updateBannedFromList(),
       updateChanFromList: () => updateChanFromList(),
       updateMutedFromList: () => updateMutedFromList(),
+      updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),
     [
@@ -450,6 +466,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       updateChanFromList,
       updateMutedFromList,
       updateFriendsList,
+      updateAllChans,
       userAuthentication,
       updateUserList,
       updateUser,

@@ -22,7 +22,16 @@ export const WebSocket = () => {
   const [banned, setBanned] = useState({room:{},banned:false});
   //const [currentChan, setCurrentChan] = useState<ChanType>();
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
-  const { user, setError, updateBannedFromList, updateMutedFromList, updateChanFromList, mutedFrom, bannedFrom } = useAuthData();
+  const {
+    user,
+    setError,
+    updateBannedFromList,
+    updateMutedFromList,
+    updateChanFromList,
+    updateAllChans,
+    mutedFrom,
+    bannedFrom
+  } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate();
@@ -213,19 +222,22 @@ export const WebSocket = () => {
         chan = await Request(
             "POST",
             {
-              Accept: "application/json",
+              //Accept: "application/json",
               "Content-Type": "application/json",
             },
             {
               name: name.value,
               type: radioCheck,
               password: pswd,
-              owner: user.username
+              owner: user.username,
             },
             "http://localhost:3000/chan/create"
         );
       } catch (error) {
         setError(error);
+      }
+      if (!chan) {
+        return ;
       }
       name.value = "";
       password.value = "";
@@ -233,6 +245,8 @@ export const WebSocket = () => {
       radioPri.checked = false;
       radioPro.checked = false;
       socket.emit('chanCreated');
+      updateAllChans();
+      updateChanFromList();
       window.location.replace('http://localhost:8080/tchat/' + chan.id)
     }
   };

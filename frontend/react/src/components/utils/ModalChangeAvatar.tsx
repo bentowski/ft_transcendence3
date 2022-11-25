@@ -87,8 +87,8 @@ const ModalChangeAvatar = ({
             {selectedImage && (
               <div>
                 <img
-                  alt="not fount"
-                  width={"250px"}
+                  alt=""
+                  width="250px"
                   src={URL.createObjectURL(selectedImage)}
                 />
                 <br />
@@ -122,8 +122,8 @@ const ModalChangeAvatar = ({
             height={100}
             src={`${avatarUrl.url}?${avatarUrl.hash}`}
             alt="prout"
-            data-bs-toggle="modal"
-            data-bs-target="#changeAvatar"
+            //data-bs-toggle="modal"
+            //data-bs-target="#changeAvatar"
         />
       </a>
     </div>

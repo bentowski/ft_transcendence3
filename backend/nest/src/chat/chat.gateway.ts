@@ -83,10 +83,9 @@ export class ChatGateway implements OnModuleInit
           //throw new WsException('Error while sending a new message: User not in chat');
       }
       //console.log('user is present in chat hiihih');
-      console.log('muted list = ', chan.muteUser, ', user = ', sender);
       const mfound = chan.muteUser.find(elem => elem.auth_id === sender.auth_id)
       if (mfound) {
-          console.log('muted found, emiting');
+          //console.log('muted found, emiting');
           this.server
               .to(body.room)
               .emit(
@@ -99,7 +98,6 @@ export class ChatGateway implements OnModuleInit
               );
           return ;
       }
-      console.log('yeyeyey');
       const bfound = chan.banUser.find(elem => elem.auth_id === sender.auth_id);
       if (bfound) {
           this.server
