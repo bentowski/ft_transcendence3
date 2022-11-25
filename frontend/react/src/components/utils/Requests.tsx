@@ -53,6 +53,7 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
         }
         throw err;
       }
+
     } else {
       const response: any = await fetch(url, {
         credentials: "include",

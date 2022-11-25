@@ -1,5 +1,4 @@
 import {
-  /* Body, */
   Controller,
   Get,
   Post,
@@ -7,10 +6,12 @@ import {
   Req,
   Res,
   UseGuards,
-  UnauthorizedException,
   Delete,
+  BadRequestException,
+  /* Body,
+  UnauthorizedException,
   HttpException,
-  HttpStatus, BadRequestException,
+  HttpStatus, */
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { IntraAuthGuard } from './guards/intra-auth.guard';
@@ -18,15 +19,16 @@ import { PayloadInterface } from './interfaces/payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { TwoFACodeDto } from './dto/twofacode.dto';
-//import UserEntity from "../user/entities/user-entity";
-//import {JwtPayload} from "jwt-decode";
-//import serialize from 'cookie';
 import { AuthGuard } from '@nestjs/passport';
 import UserEntity from '../user/entities/user-entity';
 import jwt_decode from 'jwt-decode';
 import { UserAuthGuard } from './guards/user-auth.guard';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import {CreateUserDto} from "../user/dto/create-user.dto";
+import { CreateUserDto } from '../user/dto/create-user.dto';
+//import UserEntity from "../user/entities/user-entity";
+//import {JwtPayload} from "jwt-decode";
+//import serialize from 'cookie';
+//import { JwtStrategy } from './strategies/jwt.strategy';
+
 
 @Controller('auth')
 export class AuthController {
@@ -73,7 +75,7 @@ export class AuthController {
   @UseGuards(IntraAuthGuard)
   async redirect(
     @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
+    @Req() req,
   ): Promise<any> {
     //console.log('req = ', req.user);
     const auth_id: string = req.user['auth_id'];

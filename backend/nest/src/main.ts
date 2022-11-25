@@ -2,13 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ValidationPipe } from '@nestjs/common';
 //import * as csurf from 'csurf';
-import * as express from 'express';
-
+//import * as express from 'express';
 //import { DocumentBuilder } from '@nestjs/swagger';
 //import { DataSource } from 'typeorm';
 //import bodyParser from 'body-parser';
-//import { ValidationPipe } from '@nestjs/common';
 //import * as session from 'express-session';
 //import * as passport from 'passport';
 //import { TypeormStore } from 'connect-typeorm';
@@ -58,7 +57,7 @@ async function bootstrap() {
   //app.use(passport.session());
 
   //SWITCH THIS FOLLOWING METHOD ON BEFORE PRODUCTION
-  //app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();

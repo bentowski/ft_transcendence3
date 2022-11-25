@@ -2,22 +2,25 @@ import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
-import ImageUploading from "react-images-uploading";
-import IError from "../../interfaces/error-interface";
-import {HandleError} from "./HandleError";
-import {useErrorContext} from "../../contexts/ErrorProviderContext";
 
 const ModalChangeAvatar = ({
-  show,
-  parentCallBack,
+  //show,
+  //parentCallBack,
 }: {
-  show: boolean;
-  parentCallBack: (newState: boolean) => void;
+  //show: boolean;
+  //parentCallBack: (newState: boolean) => void;
 }) => {
   const { updateUser, setError, user } = useAuthData();
-  //const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   //const [avatar, setAvatar] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState({url:"", hash: 0});
+
+  useEffect(() => {
+    if (user.avatar) {
+      setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
+    }
+  }, [user])
 
   /*
   useEffect(() => {
@@ -70,8 +73,8 @@ const ModalChangeAvatar = ({
     }
   };
 
-  const handleClose = () => parentCallBack(false);
-  //const handleShow = () => changeShowing(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <div className="changeavatar">
@@ -84,8 +87,8 @@ const ModalChangeAvatar = ({
             {selectedImage && (
               <div>
                 <img
-                  alt="not fount"
-                  width={"250px"}
+                  alt=""
+                  width="250px"
                   src={URL.createObjectURL(selectedImage)}
                 />
                 <br />
@@ -112,6 +115,17 @@ const ModalChangeAvatar = ({
           </Modal.Footer>
         </div>
       </Modal>
+      <a onClick={() => handleShow()}>
+        <img
+            className="modifAvatar mb-2"
+            width={100}
+            height={100}
+            src={`${avatarUrl.url}?${avatarUrl.hash}`}
+            alt="prout"
+            //data-bs-toggle="modal"
+            //data-bs-target="#changeAvatar"
+        />
+      </a>
     </div>
   );
 };

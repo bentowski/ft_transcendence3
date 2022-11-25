@@ -79,6 +79,9 @@ export class UserService {
     const user: UserEntity = this.userRepository.create(user42);
     user.friends = [];
     user.blocked = [];
+    user.channelJoined = [];
+    user.channelBanned = [];
+    user.channelMuted = [];
     try {
       return this.userRepository.save(user);
     } catch (error) {
@@ -94,6 +97,9 @@ export class UserService {
     user.email = email;
     user.friends = [];
     user.blocked = [];
+    user.channelJoined = [];
+    user.channelBanned = [];
+    user.channelMuted = [];
     user.createdAt = new Date();
     try {
       await this.userRepository.save(user);
@@ -122,14 +128,23 @@ export class UserService {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',
       );
-    } else {
-      user.username = newUsername;
-      try {
-        return await this.userRepository.save(user);
-      } catch (error) {
-        const err: string = 'Error while saving user in database: ' + error;
-        throw new NotAcceptableException(err);
-      }
+    }
+    if (newUsername.length > 30 || newUsername.length < 2) {
+      throw new BadRequestException(
+        'Error while updating username: Please choose a username between 2 and 30 characters',
+      );
+    }
+    if (!newUsername.match(/^[a-z0-9]+$/)) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be alphanumeric',
+      );
+    }
+    user.username = newUsername;
+    try {
+      return await this.userRepository.save(user);
+    } catch (error) {
+      const err: string = 'Error while saving user in database: ' + error;
+      throw new NotAcceptableException(err);
     }
   }
 
@@ -160,6 +175,17 @@ export class UserService {
       );
     }
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
+    console.log('new username = ', username);
+    if (!username.match(/^[a-z0-9]+$/)) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be alphanumeric',
+      );
+    }
+    if (username.length < 2 || username.length > 30) {
+      throw new BadRequestException(
+        'Error while updating username: New username should be between 2 and 30 characters',
+      );
+    }
     user.username = username;
     user.avatar = avatar;
     user.twoFASecret = twoFASecret;
@@ -375,6 +401,14 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { user_id: id },
+    });
+    if (!user) {
+      throw new BadRequestException(
+        'Error while removing user: Cant find this user in db',
+      );
+    }
     try {
       await this.userRepository.delete(id);
     } catch (error) {
