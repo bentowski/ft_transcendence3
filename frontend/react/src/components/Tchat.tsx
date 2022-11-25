@@ -18,8 +18,8 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
-  //const [muted, setMuted] = useState({room:{},muted:false});
-  //const [banned, setBanned] = useState({room:{},banned:false});
+  const [muted, setMuted] = useState({room:{},muted:false});
+  const [banned, setBanned] = useState({room:{},banned:false});
   //const [currentChan, setCurrentChan] = useState<ChanType>();
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
   const {
