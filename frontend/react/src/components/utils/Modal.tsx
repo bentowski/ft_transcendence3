@@ -52,17 +52,60 @@ class Modal extends Component<
     };
   }
 
-  hidden = () => {
+  hiddenCreate = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
+    const radioPub = document.querySelector("#public") as HTMLInputElement;
+    const radioPri = document.querySelector("#private") as HTMLInputElement;
+    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    const chanName = document.querySelector("#chanName") as HTMLInputElement;
+    const chanPassword = document.querySelector("#chanPassword") as HTMLInputElement;
+    radioPub.checked = false;
+    radioPri.checked = false;
+    radioPro.checked = false;
+    chanName.value = "";
+    chanPassword.value = "";
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
     modal.classList.add("hidden");
-    this.setState({ protected: false });
-    this.setState({ alertRadio: false });
-    this.setState({ fieldName: "" });
-    this.setState({ errName: "" });
-    this.setState({ alertName: false });
-    this.setState({ fieldPass: "" });
-    this.setState({ errPass: "" });
-    this.setState({ alertPass: false });
+    chanPassword.classList.add("hidden");
+  };
+
+  hiddenJoin = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
+    modal.classList.add("hidden");
+  };
+
+  hiddenAddUser = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
+    modal.classList.add("hidden");
   };
 
   // componentDidUpdate = (
@@ -135,10 +178,10 @@ class Modal extends Component<
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
 
-    let retPass = true;
-    if (this.state.protected)
-      retPass = this.verifPass()
-    else if (!regex.test(this.state.fieldName)) {
+    // let retPass = true;
+    // if (this.state.protected)
+    //   retPass = this.verifPass()
+    if (!regex.test(this.state.fieldName)) {
       this.setState({ errName: "Non valid character" });
       this.setState({ alertName: true });
       return false;
@@ -157,8 +200,8 @@ class Modal extends Component<
       this.setState({ errName: "" });
       this.setState({ alertName: false });
     }
-    if (!retPass)
-      return false;
+    // if (!retPass)
+    //   return false;
     return true;
   };
 
@@ -170,18 +213,22 @@ class Modal extends Component<
       this.setState({ alertPass: true });
       return false;
     }
-    else {
-      this.setState({ errPass: "" });
-      this.setState({ alertPass: false });
-    }
-    return true;
+    // else {
+    //   this.setState({ errPass: "" });
+    //   this.setState({ alertPass: false });
+      return true;
+    // }
   };
 
   createChan = async () => {
     let retRadio = this.verifRadio();
-    if (this.verifName() && retRadio) {
+    let retName = this.verifName();
+    let retPass = true;
+    if (this.state.protected)
+      retPass = this.verifPass();
+    if (retRadio && retName && retPass) {
       this.props.parentCallBack.createChannel()
-      this.hidden()
+      this.hiddenCreate()
     }
   };
 
@@ -468,7 +515,7 @@ class Modal extends Component<
               {/* <br /> */}
             </form>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenCreate}>
                 Cancel
               </button>
               <button className="mx-1" onClick={this.createChan}>
@@ -485,7 +532,7 @@ class Modal extends Component<
             </header>
             <div>{this.users()}</div>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenAddUser}>
                 Close
               </button>
             </footer>
@@ -512,7 +559,7 @@ class Modal extends Component<
               <div>{this.state.printed}</div>
             </div>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenJoin}>
                 Close
               </button>
             </footer>
