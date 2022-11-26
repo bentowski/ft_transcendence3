@@ -1,8 +1,8 @@
-import {Component, ReactNode} from 'react';
+import { Component, ReactNode } from 'react';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
 import { Alert } from 'react-bootstrap';
 
@@ -224,25 +224,25 @@ class Modal extends Component<
     );
   };
 
-    users = () => {
+  users = () => {
     let friends: Array<any> = [];
     let isUsers: boolean = false;
     let x: number = 0;
-    if (this.state.users.length > 0) {
+    if (this.state.friends.length > 0) {
       let chanUser: Array<UserType> | undefined = this.props.userChan;
       while (
-          chanUser?.length &&
-          chanUser?.length > 0 &&
-          x < this.state.users.length
-          ) {
-        let friend: UserType = this.state.users[x];
+        chanUser?.length &&
+        chanUser?.length > 0 &&
+        x < this.state.friends.length
+      ) {
+        let friend: UserType = this.state.friends[x];
         if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
           if (
             this.state.input.length === 0 ||
             friend.username.includes(this.state.input)
           )
-          console.log('hello ', this.state.friends[x]);
+            console.log('hello ', this.state.friends[x]);
           friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
@@ -266,36 +266,36 @@ class Modal extends Component<
     return friends;
   };
 
-    checkIfOwner(chan: ChanType) {
-        for (let index = 0; index < this.props.chans.length; index++) {
-            if (chan.id === this.props.chans[index].id) {
-                return true;
-            }
-        }
-        return false;
+  checkIfOwner(chan: ChanType) {
+    for (let index = 0; index < this.props.chans.length; index++) {
+      if (chan.id === this.props.chans[index].id) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    checkIfBanned(chan: ChanType) {
-        const ctx: any = this.context;
-        const banned = ctx.bannedFrom;
-        for (let index = 0; index < banned.length; index++) {
-            if (chan.id === banned[index].id) {
-                return true;
-            }
-        }
-        return false;
+  checkIfBanned(chan: ChanType) {
+    const ctx: any = this.context;
+    const banned = ctx.bannedFrom;
+    for (let index = 0; index < banned.length; index++) {
+      if (chan.id === banned[index].id) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    checkIfAlreadyIn(chan: ChanType) {
-        const ctx: any = this.context;
-        const joined = ctx.chanFrom;
-        for (let index = 0; index < joined.length; index++) {
-            if (chan.id === joined[index].id) {
-                return true;
-            }
-        }
-        return false;
+  checkIfAlreadyIn(chan: ChanType) {
+    const ctx: any = this.context;
+    const joined = ctx.chanFrom;
+    for (let index = 0; index < joined.length; index++) {
+      if (chan.id === joined[index].id) {
+        return true;
+      }
     }
+    return false;
+  }
 
   chans = () => {
     let ret: any[] = [];
@@ -305,24 +305,24 @@ class Modal extends Component<
         this.state.allChans[x].type !== "direct"
       ) {
         if (!this.checkIfOwner(this.state.allChans[x]) &&
-            !this.checkIfBanned(this.state.allChans[x]) &&
-            !this.checkIfAlreadyIn(this.state.allChans[x])) {
-            ret.push(
-                <div className="row" key={x}>
-                    <button
-                        className="col-6"
-                        onClick={() =>
-                            this.props.parentCallBack.joinRoom(
-                                this.state.allChans[x],
-                                true
-                            )
-                        }
-                    >
-                        JOIN
-                    </button>
-                    <p className="col-6">{this.state.allChans[x].name}</p>
-                </div>
-            );
+          !this.checkIfBanned(this.state.allChans[x]) &&
+          !this.checkIfAlreadyIn(this.state.allChans[x])) {
+          ret.push(
+            <div className="row" key={x}>
+              <button
+                className="col-6"
+                onClick={() =>
+                  this.props.parentCallBack.joinRoom(
+                    this.state.allChans[x],
+                    true
+                  )
+                }
+              >
+                JOIN
+              </button>
+              <p className="col-6">{this.state.allChans[x].name}</p>
+            </div>
+          );
         }
       }
     }
@@ -508,7 +508,7 @@ class Modal extends Component<
                 ></input>
                 <button onClick={this.joinPrivateChan}>JOIN</button>
               </div>
-              <div>{this.chans()}</div>
+              {/* <div>{this.chans()}</div> */}
               <div>{this.state.printed}</div>
             </div>
             <footer>
