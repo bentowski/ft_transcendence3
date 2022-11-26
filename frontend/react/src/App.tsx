@@ -40,7 +40,7 @@ const Layout = () => {
   );
 };
 
-const ContextLoader = () => {
+const App = () => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 
@@ -72,42 +72,5 @@ const ContextLoader = () => {
     </Routes>
   ); //
 }; //
-
-class App extends Component {
-
-  getCurrentUser = async () => {
-    try {
-      let user = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/current"
-      );
-      if (!user)
-        return null;
-      const data = {
-        user: {
-          auth_id: user.auth_id,
-          user_id: user.user_id,
-          avatar: "https://avatars.dicebear.com/api/personas/" + 36 + ".svg",
-          username: user.username,
-        },
-      };
-      sessionStorage.setItem("data", JSON.stringify(data));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  componentDidMount = async () => {
-    await this.getCurrentUser();
-  }
-
-  render(){
-    return (
-        <ContextLoader />
-    );
-  }
-}
 
 export default App;

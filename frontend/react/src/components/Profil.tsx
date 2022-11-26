@@ -113,21 +113,18 @@ class Profil extends Component<
     this.setState({ user: JSON.stringify(usr) });
     this.setState({ current_username: usr.username });
     this.setState({ local: this.props.loc });
-    let test = setInterval(async () => {
-      let url = document.URL;
-      if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")
-        window.location.href = "http://localhost:8080/profil/" + cxt.user.username
-      if (!document.URL.includes("localhost:8080/profil"))
-        clearInterval(test);
-      url = url.substring(url.lastIndexOf("/") + 1);
-      if (url !== this.state.location) {
-        await this.getUser(url);
-        await this.getHistory();
-        this.getRank();
-        this.setState({ location: newLoc });
+    let url = document.URL;
+    if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
+      window.location.href = "http://localhost:8080/profil/" + cxt.user.username
     }
-     */
-  };
+    const newUrl: string = url.substring(url.lastIndexOf("/") + 1);
+    if (url !== this.state.local) {
+      this.getUser(newUrl);
+      this.getHistory();
+      this.getRank();
+      this.setState({ local: newUrl });
+    }
+  }
 
   printHeader = () => {
     const ctx: any = this.context;
@@ -157,14 +154,23 @@ class Profil extends Component<
           </div>
       );
     } else {
-      return (
-          <div className="ProfilHeader">
-            <img className="modifAvatar mb-2" alt="prout" width={100} height={100} src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
-            <h3>{this.state.user.username}</h3>
-            <BlockUnBlock auth_id={this.state.user.auth_id}/>
-            <FriendUnFriend auth_id={this.state.user.auth_id}/>
-          </div>
-      );
+      if (this.state.user.auth_id !== undefined) {
+        return (
+            <div className="ProfilHeader">
+              <img
+                  className="modifAvatar mb-2"
+                  alt="prout"
+                  width={100}
+                  height={100}
+                  src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
+              <h3>{this.state.user.username}</h3>
+              <BlockUnBlock auth_id={this.state.user.auth_id}/>
+              <FriendUnFriend auth_id={this.state.user.auth_id}/>
+            </div>
+        );
+      } else {
+        return <p>caca</p>
+      }
     }
   };
 

@@ -22,7 +22,6 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
                     setLoading(false);
                     return ;
                 } catch (error) {
-                    console.log(error);
                     setLoading(false);
                     setError(error);
                 }
@@ -33,21 +32,17 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
 
     const blockunblockUser = async () => {
         try {
-            let res = await fetch("http://localhost:3000/user/update/blocked", {
-                method: "PATCH",
-                credentials: 'include',
-                headers: {
+            let res = await Request(
+                "PATCH",
+                {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ auth_id: auth_id, action: !status}),
-            })
-            if (res.ok) {
-                setStatus((prevState: any) => !prevState);
-                updateBlockedList(user, !status);
-                //updateFriendsList(user, status);
-            }
+                { auth_id: auth_id, action: !status},
+                "http://localhost:3000/user/update/blocked",
+            )
+            setStatus((prevState: any) => !prevState);
+            updateBlockedList(user, !status);
         } catch (error) {
-            console.log(error);
             setError(error);
         }
     }

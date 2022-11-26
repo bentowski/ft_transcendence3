@@ -40,7 +40,6 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
-      // console.log("RECEIVE ////////////////")
       let channels: Array<ChanType> = chans;
       let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
       if (channels[index] !== undefined) {
@@ -142,15 +141,12 @@ export const WebSocket = () => {
     getChan();
   }, [])
 
-  /*
   useEffect(() => {
     if (loaded === 'ok')
       joinUrl()
   }, [loaded])
-   */
 
   useEffect(() => {
-    /*
     let checkUrl = setInterval(() => {
       let url = document.URL
       if (!document.URL.includes("localhost:8080/tchat"))
@@ -163,7 +159,6 @@ export const WebSocket = () => {
     }, 10)
     if (chans.length && user.auth_id !== undefined && !room)
       setLoaded('ok')
-     */
   }, [])
 
   useEffect(() => {
@@ -173,20 +168,7 @@ export const WebSocket = () => {
     }
   }, [room, chans])
 
-  const createChannel = async () => {
-    const name = document.querySelector("#chanName") as HTMLInputElement;
-    const password = document.querySelector("#chanPassword") as HTMLInputElement;
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    let radioCheck = "";
-    let pswd = "";
-    if (radioPub.checked)
-      radioCheck = "public";
-    else if (radioPri.checked)
-      radioCheck = "private";
-    else if (radioPro.checked)
-      radioCheck = "protected";
+  const createChannel = async (name: string, typep: string, pass: string) => {
     let chans = undefined;
     try {
       chans = await Request(
@@ -209,35 +191,35 @@ export const WebSocket = () => {
       }
       setError(error);
     }
-      let chan = undefined;
-      console.log("pass = ", pass)
-      console.log("type = ", typep)
-      try {
-        chan = await Request(
-            "POST",
-            {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            {
-              name: name,
-              type: typep,
-              password: pass,
-              owner: user.username,
-            },
-            "http://localhost:3000/chan/create"
-        );
-      } catch (error) {
-        setError(error);
-      }
-      if (!chan) {
-        return ;
-      }
-      socket.emit('chanCreated');
-      updateAllChans();
-      updateChanFromList();
-      window.location.replace('http://localhost:8080/tchat/' + chan.id)
-      //navigate('/tchat/' + chan.id);
+    let chan = undefined;
+    //console.log("pass = ", pass)
+    //console.log("type = ", typep)
+    try {
+      chan = await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            name: name,
+            type: typep,
+            password: pass,
+            owner: user.username,
+          },
+          "http://localhost:3000/chan/create"
+      );
+    } catch (error) {
+      setError(error);
+    }
+    if (!chan) {
+      return ;
+    }
+    socket.emit('chanCreated');
+    updateAllChans();
+    updateChanFromList();
+    window.location.replace('http://localhost:8080/tchat/' + chan.id)
+    //navigate('/tchat/' + chan.id);
   };
 
   const joinUrl = () => {

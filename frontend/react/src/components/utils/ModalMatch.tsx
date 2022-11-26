@@ -55,7 +55,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           </header>
           <form className='mb-3'>
             <p>
-              <input type="radio" name="playerNum" value="1" id="1" checked/>1 player<br />
+              <input type="radio" name="playerNum" value="1" id="1" />1 player<br />
               <input type="radio" name="playerNum" value="2" id="2" />2 players
             </p>
           </form>

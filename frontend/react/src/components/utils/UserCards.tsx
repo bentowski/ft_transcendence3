@@ -7,7 +7,7 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import BlockUnBlock from './BlockUnBlock';
 // import IUser from "../../interfaces/user-interface";
 // import IAuthContextType from "../../interfaces/authcontexttype-interface";
-import { UserType } from "../../types"
+import {ChanType, UserType} from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import { format } from "path";
 import ModalMatchInvite from "./ModalMatchInvite";
@@ -69,6 +69,27 @@ class UserCards extends Component<
     return ctx.user;
   };
 
+  checkIfChanExists = (title: string) => {
+    const ctx: any = this.context;
+    const chans: ChanType[] = ctx.allChans;
+    for (let index = 0; index < chans.length; index++) {
+      if (title === chans[index].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createChanName = (u1: UserType, u2: UserType) => {
+    let title: string = u1.username.slice(0,3) + "-" + u2.username.slice(0,3);
+    let x = 0;
+    while (this.checkIfChanExists(title)) {
+      title = title + x.toString();
+      x++;
+    }
+    return title;
+  }
+
   createChan = async () => {
     let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
     let u1 = await Request(
@@ -100,7 +121,6 @@ class UserCards extends Component<
       x++;
     }
 
-
     if (x === chans.length) {
       let newChan = await Request(
         "POST",
@@ -109,8 +129,9 @@ class UserCards extends Component<
           "Content-Type": "application/json",
         },
         {
-          name: u1.username + "$" + u2.username,
+          name: this.createChanName(u1, u2),
           type: "direct",
+          owner: u1.username,
           topic: u1.username + "$" + u2.username,
           admin: [u1.username, u2.username],
           password: "",
