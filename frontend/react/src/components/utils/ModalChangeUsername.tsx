@@ -182,6 +182,7 @@ const ModalChangeUsername = () => {
         </div>
       </Modal>
       <a
+          href="/#"
           onClick={handleShow}
           className="d-flex flex-row justify-content-start align-items-center"
           //data-bs-toggle="modal"

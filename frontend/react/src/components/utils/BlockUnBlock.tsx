@@ -5,7 +5,7 @@ import Request from './Requests';
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
     const [status, setStatus] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { user, blockedList, updateBlockedList, updateFriendsList, setError } = useAuthData();
+    const { user, blockedList, updateBlockedList, setError } = useAuthData();
 
     useEffect(() => {
         const updateStatus = async () => {
@@ -32,7 +32,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
 
     const blockunblockUser = async () => {
         try {
-            let res = await Request(
+            await Request(
                 "PATCH",
                 {
                     'Content-Type': 'application/json'

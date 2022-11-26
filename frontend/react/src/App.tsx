@@ -1,5 +1,4 @@
-import {Component, useEffect, useState} from "react";
-import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction, Location} from "react-router-dom";
+import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
@@ -7,7 +6,6 @@ import Tchat from "./components/Tchat";
 import History from "./components/History";
 import Page from "./pages/Page";
 import { useAuthData } from "./contexts/AuthProviderContext";
-import Request from "./components/utils/Requests";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";

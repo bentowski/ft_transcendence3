@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './App';
-import * as serviceWorker from './serviceWorker';
+// import * as serviceWorker from './serviceWorker';
 import {AuthProvider} from "./contexts/AuthProviderContext";
 import {BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -22,4 +22,4 @@ root.render(
 //
 //
 
-serviceWorker.unregister();
+// serviceWorker.unregister();

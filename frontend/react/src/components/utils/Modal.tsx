@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component } from 'react';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
@@ -356,6 +356,7 @@ class Modal extends Component<
             {user.username}
           </Link>
           <img
+            alt=""
             src={user.avatar}
             className="miniAvatar"
             width={150}

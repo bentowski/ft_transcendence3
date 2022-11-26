@@ -4,12 +4,8 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
-import BlockUnBlock from './BlockUnBlock';
-// import IUser from "../../interfaces/user-interface";
-// import IAuthContextType from "../../interfaces/authcontexttype-interface";
 import {ChanType, UserType} from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
-import { format } from "path";
 import ModalMatchInvite from "./ModalMatchInvite";
 
 const socket = io("http://localhost:3000/update");
@@ -222,6 +218,7 @@ class UserCards extends Component<
                 {this.state.login}
               </Link>
               <img
+                alt=""
                 src={
                   "http://localhost:3000/user/" +
                   this.props.user.auth_id +
@@ -254,6 +251,7 @@ class UserCards extends Component<
       >
         <div className="col-3 d-flex flex-row justify-content-start align-items-center">
           <img
+            alt=""
             src={
               "http://localhost:3000/user/" +
               this.props.user.auth_id +

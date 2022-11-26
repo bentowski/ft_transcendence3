@@ -1,11 +1,11 @@
-import {Component, useCallback} from "react";
+import {Component} from "react";
 import {Link, NavigateFunction} from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
-import GetAvatar from "./utils/GetAvatar";
+// import GetAvatar from "./utils/GetAvatar";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import { MessagePayload, ChanType, UserType } from "../types"
+import { UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";

@@ -1,9 +1,7 @@
 import { Component } from 'react';
-import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
-import { First } from 'react-bootstrap/esm/PageItem';
 
 const socket = io("http://localhost:3000/update");
 

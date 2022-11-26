@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import {useLocation, useNavigate} from "react-router-dom";
 import {UserType} from "../../types";
 
 const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
