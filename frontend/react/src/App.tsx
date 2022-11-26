@@ -1,6 +1,7 @@
 import {Component, useEffect, useState} from "react";
 import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import Game from "./pages/Game";
+import GameUp from "./pages/GameUp";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Tchat from "./components/Tchat";
@@ -58,6 +59,8 @@ const ContextLoader = () => {
           </Route>
           <Route path="/game" element={<Game />} />
           <Route path="/game/*" element={<Game />} />
+          <Route path="/gameup" element={<GameUp />} />
+          <Route path="/gameup/*" element={<GameUp />} />
         </Route>
       </Route>
 

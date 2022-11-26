@@ -8,12 +8,16 @@ import { io } from 'socket.io-client';
 
 const updateSocket = io("http://localhost:3000/update");
 
+let ball = new Image();
+let p1 = new Image();
+let p2 = new Image();
+let bubble = new Image();
+
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
   socket.off('userJoinChannel')
-	console.log("ARRRG")
 	// window.location.href = "http://localhost:8080/profil"
 }
 
@@ -22,8 +26,7 @@ let movePlayer = (ctx: any, move: number, globale: any, settings: any) => {
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player1 = [settings.player1[0], newPos]
       ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-      ctx.fillStyle = "white"
-      ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+	ctx.drawImage(p1, settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
     }
 }
 
@@ -32,8 +35,7 @@ let movePlayer1 = (ctx: any, globale: any, position: number, settings: any) => {
   if (newPos > 0 && newPos < settings.h - settings.playerSize) {
     settings.player1 = [settings.player1[0], newPos]
     ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-    ctx.fillStyle = "white"
-    ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+	ctx.drawImage(p1, settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
   }
 }
 
@@ -42,32 +44,26 @@ let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player2 = [settings.player2[0], newPos]
       ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
-      ctx.fillStyle = "white"
-      ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
-    }
+      ctx.drawImage(p2, settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+}
 }
 
 
 let print = (ctx: any, newPos: number, settings: any) => {
   let y = 0;
-
   while (y < settings.h) {
-    ctx.fillStyle = "white"
-    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
+	ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
     y += settings.sizeBall * 2
   }
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.drawImage(p1, settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
   settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
-	if (settings.ballPos[0] < 0)
+  if (settings.ballPos[0] < 0)
   	settings.ballPos[0] = 1;
   if (settings.ballPos[0] > settings.w)
   	settings.ballPos[0] = settings.w - 1;
-	ctx.fillStyle = "white"
   ctx.beginPath();
-  ctx.fillRect(settings.ballPos[0] - settings.sizeBall / 2, newPos - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
+  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, newPos - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.fill()
   ctx.closePath();
 }
@@ -164,143 +160,35 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	  //   settings.end = 1
   	// }
 	}
-	print(ctx, newPos, settings)
-	if (settings.admin) {
-    socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]})
-	}
-	if (!settings.end) {
-    window.requestAnimationFrame(() => {
-    	moveBall(ctx, globale, settings)
-  	})
+  	print(ctx, newPos, settings)
+  	if (settings.admin) {
+	    socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]})
+  	}
+  	if (!settings.end) {
+	    window.requestAnimationFrame(() => {
+      	moveBall(ctx, globale, settings)
+    	})
 
-	}
+  	}
 }
-
-// let moveBall = (ctx: any, globale: any, settings: any) => {
-//   let newPos: number = settings.ballPos[1]
-// 	if (settings.admin) {
-// 		if (settings.ballPos[1] + (settings.sizeBall / 2) >= globale.height) {
-// 			newPos = globale.height - (settings.sizeBall / 2)
-// 			settings.vector = [settings.vector[0], -settings.vector[1]]
-// 			settings.ballPos = [settings.ballPos[0], newPos]
-// 		}
-// 		if (settings.ballPos[1] - (settings.sizeBall / 2) < 0) {
-// 			newPos = (0 + (settings.sizeBall / 2))
-// 			settings.vector = [settings.vector[0], -settings.vector[1]]
-// 			settings.ballPos = [settings.ballPos[0], newPos]
-// 		}
-// 	}
-// 	ctx.clearRect(0, 0, globale.width, globale.height)
-// 	console.log(settings.sizeBall);
-//
-// 	// =========== Players moves ==========
-// 	if (settings.spec === false) {
-// 	let move = 0;
-// 		if (settings.up == 1)  {
-// 			movePlayer(ctx, -1, globale, settings)
-// 			move += 1;
-// 		}
-// 		if (settings.down == 1) {
-// 			movePlayer(ctx, 1, globale, settings)
-// 			move += 1;
-// 		}
-// 		if (move === 1) {
-// 			socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
-// 		}
-// 	}
-//
-// 	// ============== End Players Moves ===============
-// 	if (settings.admin) {
-// 		if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0]) {
-// 			if (settings.ballPos[1] >= settings.player1[1] && settings.ballPos[1] <= settings.player1[1] + settings.sizeBall * 4) {
-// 				let percent = Math.floor((settings.ballPos[1] - settings.player1[1]) / ((settings.player1[1] + settings.sizeBall * 4) - settings.player1[1]) * 100)
-// 				if (percent <= 20) {
-// 					settings.vector = [-0.5, -Math.sqrt(3) / 2];
-// 				}
-// 				else if (percent <= 40) {
-// 					settings.vector = [-Math.sqrt(3) / 2, -0.5];
-// 				}
-// 				else if (percent <= 60) {
-// 					settings.vector = [-1, 0];
-// 				}
-// 				else if (percent <= 80) {
-// 					settings.vector = [-Math.sqrt(3) / 2, 0.5];
-// 				}
-// 				else {
-// 					settings.vector = [-0.5, Math.sqrt(3) / 2];
-// 				}
-// 			}
-// 			else {
-// 				settings.ballPos = [settings.w / 2, settings.h / 2]
-// 				settings.speed = settings.baseSpeed
-// 				// settings.round++
-// 				//! give point to p1
-// 			}
-// 		}
-// 		if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall * 1.5)
-// 		{
-// 			if (settings.ballPos[1] >= settings.player2[1] && settings.ballPos[1] <= settings.player2[1] + settings.sizeBall * 4) {
-// 				let percent = Math.floor((settings.ballPos[1] - settings.player2[1]) / ((settings.player2[1] + settings.sizeBall * 4) - settings.player2[1]) * 100)
-// 				if (percent <= 20) {
-// 					settings.vector = [0.5, -Math.sqrt(3) / 2];
-// 				}
-// 				else if (percent <= 40) {
-// 					settings.vector = [Math.sqrt(3) / 2, -0.5];
-// 				}
-// 				else if (percent <= 60) {
-// 					settings.vector = [1, 0];
-// 				}
-// 				else if (percent <= 80) {
-// 					settings.vector = [Math.sqrt(3) / 2, 0.5];
-// 				}
-// 				else {
-// 					settings.vector = [0.5, Math.sqrt(3) / 2];
-// 				}
-// 			}
-// 			else {
-// 				settings.ballPos = [settings.w / 2, settings.h / 2]
-// 				settings.speed = settings.baseSpeed
-// 				// settings.round++
-// 				//! give point to p2
-// 			}
-// 			settings.speed++;
-//
-// 			console.log(settings.ballPos[0])
-// 		}
-// 		console.log("AAAAAAAAAAAAAAAAAAA : ", settings.round)
-// 		if (settings.round >= 3)
-// 		{
-// 			gameOver()
-// 			return;
-// 		}
-// 	}
-// 	console.log("TEST")
-// 	print(ctx, newPos, settings)
-// 	if (settings.admin) {
-// 		socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]}/* {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]} */)
-// 	}
-// 	window.requestAnimationFrame(() => {
-//     moveBall(ctx, globale, settings)
-//   })
-// }
 
 let init = (ctx: any, globale: any, settings: any) => {
   //======ligne centrale=========
   let y = 0;
+  p1.src = "http://localhost:8080/pictures/barre2.png";
+  p2.src = "http://localhost:8080/pictures/barre1.png";
+  ball.src = "http://localhost:8080/pictures/ball.png";
+  bubble.src = "http://localhost:8080/pictures/bubble2.png";
   while (y < settings.h) {
-    ctx.fillStyle = "white"
-    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
+    ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
     y += settings.sizeBall * 2
   }
   //======joueurs========
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+	ctx.drawImage(p1, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+	ctx.drawImage(p2, settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
 
   //========balle========
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.ballPos[0] - settings.sizeBall, settings.ballPos[1] - settings.sizeBall / 4, settings.sizeBall, settings.sizeBall)
+  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.fill()
 
   let infosClavier = (e: KeyboardEvent) => {
@@ -343,7 +231,7 @@ let init = (ctx: any, globale: any, settings: any) => {
      }
 	})
   socket.on('ballMoved', (ball) => {
-    if (ball.room !== settings.room)
+    if (settings.admin || ball.room !== settings.room)
       return ;
     if (!settings.admin && !settings.spec) {
       settings.ballPos[0] = (1 - ball.ballPos[0]) * settings.w;
@@ -370,6 +258,7 @@ let settings = {
   sizeBall: 0,
   ballPos: [0, 0],
   vector: [0, 0],
+  baseSpeed: 5,
   speed: 0,
   middle: 0,
   end: 0,
@@ -381,73 +270,38 @@ let settings = {
   gameStarted: false,
   timer: 5,
   callback: (countdown: number) => {},
-	round: 0,
-	nextRound: 0
-}
-
-let reSet = () => {
-	settings = {
-		w: settings.w,
-		h: settings.h,
-		nbPlayer: settings.nbPlayer,
-		playerHighStart: settings.playerHighStart,
-		playerSize: settings.playerSize,
-		player1: settings.player1,
-		player2: settings.player2,
-		playerSpeed: settings.playerSpeed,
-		sizeBall:  settings.sizeBall,
-		ballPos: [settings.w / 2, settings.h / 2],
-		vector: [1, 1],
-		speed: 4,
-		middle: settings.middle,
-		end: settings.end,
-		move: settings.move,
-		currentUser: settings.currentUser,
-		spec: settings.spec,
-		admin: settings.admin,
-		room: settings.room,
-		gameStarted: settings.gameStarted,
-		timer: settings.	// if (settings.ballPos[0] + settings.sizeBall < 0) {
-	  //   settings.end = 1
-  	// }
-  	// if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-	  //   settings.end = 1
-  	// }timer,
-		callback: settings.callback,
-		round: settings.round + 1,
-		nextRound: 0
-	}
 }
 
 let setSettings = () => {
   //===============interaction=================
-	const globale = document.getElementById('globale') as HTMLCanvasElement
-	const ctx: any = globale.getContext('2d')
+  const globale = document.getElementById('globale') as HTMLCanvasElement
+  const ctx: any = globale.getContext('2d')
 
 	let currentUser:any = sessionStorage.getItem('data');
 	currentUser = JSON.parse(currentUser);
-	let element = document.body as HTMLDivElement,
-	winWidth: number = element.clientWidth,
-	winHeight: number = element.clientHeight
+  let element = document.body as HTMLDivElement,
+  winWidth: number = element.clientWidth,
+  winHeight: number = element.clientHeight
 	let url = document.URL
 	url = url.substring(url.lastIndexOf("/") + 1)
-	if ((winWidth * 19) / 26 > winHeight)
-	  winWidth = ((winHeight * 26) / 19)
-	else
-	  winHeight = ((winWidth * 19) / 26)
+  if ((winWidth * 19) / 26 > winHeight)
+    winWidth = ((winHeight * 26) / 19)
+  else
+    winHeight = ((winWidth * 19) / 26)
   settings = {
     w: winWidth,
     h: winHeight,
     nbPlayer: 1,
     playerHighStart: winHeight / 2 + (winHeight / 25),
     playerSize: (winHeight / 30) * 4,
-    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 25)],
-    player2: [0, (winHeight / 2) - (winHeight / 25)],
-    playerSpeed: 20,
+    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 15)],
+    player2: [0 + winHeight / 20 - winHeight / 30, (winHeight / 2) - (winHeight / 15)],
+    playerSpeed: 10,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
-    vector: [1, 1],
-    speed: 4,
+    vector: [-1, 0],
+		baseSpeed: settings.baseSpeed,
+    speed: settings.baseSpeed,
     middle: winWidth / 2,
     end: 0,
     move: 0,
@@ -458,8 +312,6 @@ let setSettings = () => {
     gameStarted: settings.gameStarted,
     timer: settings.timer,
 		callback: settings.callback,
-		round: settings.round,
-		nextRound: settings.nextRound
   }
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
@@ -496,14 +348,13 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
     settings.admin = true;
   }
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
-  	settings.spec = false
-	socket.on('userJoinChannel', (game:any) => {
-	  console.log(game)
-	  if (game.id === settings.room) {
-	    if (game.p1 !== null && game.p2 !== null) {
-	      startGame(ctx, globale);
-	    }
-	  }
+    settings.spec = false
+  socket.on('userJoinChannel', (game:any) => {
+    if (game.id === settings.room) {
+      if (game.p1 !== null && game.p2 !== null) {
+        startGame(ctx, globale);
+      }
+    }
   })
 }
 
@@ -526,7 +377,7 @@ let joinUrl = async (ctx: any, globale: any) => {
 }
 
 
-class Game extends Component<{},{ w:number, h: number, timer: number}> {
+class GameUp extends Component<{},{ w:number, h: number, timer: number}> {
   constructor(props: any)
   {
     super(props)
@@ -562,19 +413,19 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
 		this.setState({timer: countdown})
   }
 
-  modalCountDown = () => {
-	if (settings.gameStarted === true && settings.timer >= 0)
-		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" countdown={settings.timer}/>)
-	else
-		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" />)
-  }
+  // modalCountDown = () => {
+	// if (settings.gameStarted === true && settings.timer >= 0)
+	// 	return (<ModalMatchWaiting title="Create new game" calledBy="newGame" countdown={settings.timer}/>)
+	// else
+	// 	return (<ModalMatchWaiting title="Create new game" calledBy="newGame" />)
+  // }
 
   render() {
     window.onresize = () => {window.location.reload()}
     return (
-      <div>
+	  <div>
         <div className="canvas" id="canvas">
-          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
+          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h} style={{backgroundImage: "url(http://localhost:8080/pictures/bg-pong.jpg)", backgroundPosition: "center", backgroundSize: "cover"}}></canvas>
           <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
@@ -582,4 +433,4 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
   }
 }
 
-export default Game;
+export default GameUp;
