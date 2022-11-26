@@ -1,5 +1,5 @@
 import {Component, useEffect, useState} from "react";
-import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
+import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction, Location} from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
@@ -41,6 +41,9 @@ const Layout = () => {
 };
 
 const ContextLoader = () => {
+  const nav: NavigateFunction = useNavigate();
+  const loc: any = useLocation();
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -50,13 +53,16 @@ const ContextLoader = () => {
         {/* private route */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
-            <Route path="/tchat" element={<Tchat />} />
-            <Route path="/tchat/*" element={<Tchat />} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/profil/*" element={<Profil />} />
+            <Route path="/tchat/" element={<Tchat />} >
+              <Route path="/tchat/*" element={<Tchat />} />
+            </Route>
+            <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
+              <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
+            </Route>
             <Route path="/history" element={<History />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/game/*" element={<Game />} />
+            <Route path="/game/" element={<Game />} >
+              <Route path="/game/*" element={<Game />} />
+            </Route>
           </Route>
         </Route>
       </Route>
