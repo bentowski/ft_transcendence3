@@ -7,11 +7,6 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import IAuthContextType from "../interfaces/authcontexttype-interface";
-import ResponseData from "../interfaces/error-interface";
-import IError from "../interfaces/error-interface";
-import { IResponseData } from "../interfaces/responsedata-interface";
-import IUser from "../interfaces/user-interface";
 import {ChanType, UserType} from "../types";
 
 export const AuthContext = createContext<any>({
@@ -85,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return ;
         } else if (res.isTok > 0) {
           setIsToken(true);
+          fetchChans();
           if (res.isTok === 1) {
             setLoading(false);
             return ;
@@ -419,7 +415,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
       fetchData();
       fetchUserList();
-      fetchChans();
   }, []);
 
   const memoedValue = useMemo(

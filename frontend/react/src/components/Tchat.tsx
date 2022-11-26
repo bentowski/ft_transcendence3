@@ -40,7 +40,6 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
-      // console.log("RECEIVE ////////////////")
       let channels: Array<ChanType> = chans;
       let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
       if (channels[index] !== undefined) {

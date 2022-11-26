@@ -248,6 +248,7 @@ export class UserService {
           'Error while updating friends list: User is already in your friend list.',
         );
       }
+      /*
       const blocked = adduser.blocked.find((elem) => elem === curuser.auth_id);
       if (blocked) {
         throw new BadRequestException(
@@ -261,6 +262,7 @@ export class UserService {
           curuser.blocked.splice(index, 1);
         }
       }
+      */
       curuser.friends.push(adduser.auth_id);
       adduser.friends.push(curuser.auth_id);
     }
@@ -319,18 +321,19 @@ export class UserService {
           'Error while updating blocked users: User is already in your blocked list.',
         );
       }
-      const blocking = curuser.friends.find((elem) => elem === blouser.auth_id);
-      if (blocking) {
-        const idx_1: number = curuser.friends.indexOf(blouser.auth_id);
-        if (idx_1 !== -1) {
-          curuser.friends.splice(idx_1, 1);
-        }
-
-        const idx_2: number = blouser.friends.indexOf(curuser.auth_id);
-        if (idx_2 !== -1) {
-          blouser.friends.splice(idx_2, 1);
-        }
+     /*
+     const blocking = curuser.friends.find((elem) => elem === blouser.auth_id);
+     if (blocking) {
+       const idx_1: number = curuser.friends.indexOf(blouser.auth_id);
+       if (idx_1 !== -1) {
+         curuser.friends.splice(idx_1, 1);
+       }
+       const idx_2: number = blouser.friends.indexOf(curuser.auth_id);
+       if (idx_2 !== -1) {
+         blouser.friends.splice(idx_2, 1);
+       }
       }
+      */
       curuser.blocked.push(blouser.auth_id);
     }
     if (action === false) {

@@ -156,14 +156,23 @@ class Profil extends Component<
           </div>
       );
     } else {
-      return (
-          <div className="ProfilHeader">
-            <img className="modifAvatar mb-2" alt="prout" width={100} height={100} src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
-            <h3>{this.state.user.username}</h3>
-            <BlockUnBlock auth_id={this.state.user.auth_id}/>
-            <FriendUnFriend auth_id={this.state.user.auth_id}/>
-          </div>
-      );
+      if (this.state.user.auth_id !== undefined) {
+        return (
+            <div className="ProfilHeader">
+              <img
+                  className="modifAvatar mb-2"
+                  alt="prout"
+                  width={100}
+                  height={100}
+                  src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
+              <h3>{this.state.user.username}</h3>
+              <BlockUnBlock auth_id={this.state.user.auth_id}/>
+              <FriendUnFriend auth_id={this.state.user.auth_id}/>
+            </div>
+        );
+      } else {
+        return <p>caca</p>
+      }
     }
   };
 
