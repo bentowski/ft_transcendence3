@@ -546,7 +546,7 @@ export const WebSocket = () => {
                 </div>
               </div> {/*fin tchatMain*/}
               <div className="tchatMembers col-2">
-                <p> Channnnnel's members ({chanUser.length}) </p>
+                <p> Channel's members ({chanUser.length}) </p>
                 <UsersInActualchannel />
               </div>
             </div>
