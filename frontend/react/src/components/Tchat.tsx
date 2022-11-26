@@ -61,6 +61,16 @@ export const WebSocket = () => {
       getChan();
     });
 
+    socket.on("chanDeleted", (roomId: string) => {
+      chans.forEach((c) => {
+        if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
+          getChan();
+          window.location.href = "http://localhost:8080/tchat"; //!
+          return ;
+        }
+      })
+    })
+
     socket.on("userLeaveChannel", () => {
       getChan();
       window.location.replace("http://localhost:8080/tchat");
@@ -74,14 +84,14 @@ export const WebSocket = () => {
       socket.off('onMessage');
       socket.off('newChan');
       socket.off('userJoinChannel');
-      chans.map((c:ChanType) => {
+      /* chans.map((c:ChanType) => {
         if (c.chanUser) {
           c.chanUser.map((u:UserType) => {
             if (u.auth_id === user.auth_id)
               socket.emit('leaveRoom', c.id, user.auth_id);
           })
         }
-      })
+      }) */
     }
   });
 
@@ -219,19 +229,22 @@ export const WebSocket = () => {
 
     if (index === -1) {
       chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
-      if (chan !== undefined)
+      if (chan !== undefined) {
         joinRoom(chan)
+      }
     }
     else {
       url = url.substring(url.lastIndexOf("/") + 1);
       chan = chans.find((c:ChanType) => c.id === url);
       // console.log("chan", chan)
-      if (chan !== undefined)
+      if (chan !== undefined) {
         joinRoom(chan)
+      }
       else {
         chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
-        if (chan !== undefined)
+        if (chan !== undefined) {
           joinRoom(chan)
+        }
       }
     }
   }
@@ -267,6 +280,9 @@ export const WebSocket = () => {
         socket.emit("leaveRoom", { room: room, auth_id: user.auth_id });
         changeActiveRoom("");
         setMessage([]);
+        setRoom("null");
+        getChan();
+        window.location.href = "http://localhost:8080/tchat"; //!
       } else
         socket.emit("newMessage", {
           chat: value,
@@ -285,6 +301,7 @@ export const WebSocket = () => {
     tmp.map((chan) => {
       if (chan.id === id) {
         chan.isActive = true;
+        setRoom(chan.id);
       }
       else {
         chan.isActive = false;
@@ -467,7 +484,7 @@ export const WebSocket = () => {
     render() {
       let chan = chans[chans.findIndex((c: ChanType) => c.id === room)]
       let tab: any[] = chan.admin
-      console.log(tab)
+      // console.log(tab)
       if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username) {
         return (
             <div className="row">
