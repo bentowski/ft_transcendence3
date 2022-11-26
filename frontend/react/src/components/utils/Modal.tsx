@@ -114,7 +114,7 @@ class Modal extends Component<
     // let users = await getUsers();
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
-
+    
     let retPass = true;
     if (this.state.protected)
       retPass = this.verifPass()
@@ -128,11 +128,11 @@ class Modal extends Component<
       this.setState({ alertName: true });
       return false;
     }
-    // else if (this.state.allChans.findIndex((c: any) => c.name === this.state.fieldName) > -1) {
-    //   this.setState({errName: "This username already exists"});
-    //   this.setState({alertName: true});
-    //   return false;
-    // }
+    else if (this.state.allChans.findIndex((c: any) => c.name === this.state.fieldName) > -1) {
+      this.setState({errName: "This username already exists"});
+      this.setState({alertName: true});
+      return false;
+    }
     else if (!retPass)
       return false;
     return true;
