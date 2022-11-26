@@ -80,6 +80,7 @@ class Modal extends Component<
         >
           <div className="col-5 h-100 overflow-hidden buttons">
             <button
+              className='btn btn-outline-dark shadow-none'
                 onClick={() =>
                     this.props.parentCallBack.socket.emit("addToChannel", {
                       room: this.props.parentCallBack.room,
@@ -165,7 +166,7 @@ class Modal extends Component<
           ret.push(
               <div className="row" key={x}>
                 <button
-                    className="col-6"
+                    className="col-6 btn btn-outline-dark shadow-none"
                     onClick={() =>
                         this.props.parentCallBack.joinRoom(
                             this.state.allChans[x],
@@ -184,7 +185,7 @@ class Modal extends Component<
           ret.push(
               <div className="row" key={x}>
                 <button
-                    className="col-6"
+                    className="col-6 btn btn-outline-dark shadow-none"
                     onClick={() =>
                         this.props.parentCallBack.joinRoom(
                             this.state.allChans[x],
@@ -245,7 +246,7 @@ class Modal extends Component<
         ret.push(
             <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
               <div className="col-5 h-100 overflow-hidden buttons">
-                <button onClick={() => this.byebye(usersChan[x])}>BAN</button>
+                <button className="btn btn-outline-dark shadow-none" onClick={() => this.byebye(usersChan[x])}>BAN</button>
               </div>
               <div className="col-2 d-flex flex-row d-flex justify-content-center">
                 <input className={usersChan[x].status ? "online" : "offline"} type="radio"></input>
@@ -273,7 +274,7 @@ class Modal extends Component<
         ret.push(
             <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
               <div className="col-5 h-100 overflow-hidden buttons">
-                <button onClick={() => this.byebye(this.state.friends[x])}>MUTE</button>
+                <button className="btn btn-outline-dark shadow-none" onClick={() => this.byebye(this.state.friends[x])}>MUTE</button>
               </div>
               <div className="col-2 d-flex flex-row d-flex justify-content-center">
                 <input className={this.state.friends[x].status ? "online" : "offline"} type="radio"></input>
@@ -355,8 +356,8 @@ class Modal extends Component<
                 <input type="text" placeholder="new user name"></input>
               </form>
               <footer>
-                <button className="mx-1">Change</button>
-                <button className="mx-1" onClick={this.hidden}>
+                <button className="mx-1 btn btn-outline-dark shadow-none">Change</button>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                   Cancel
                 </button>
               </footer>
@@ -379,10 +380,10 @@ class Modal extends Component<
                 </p>
               </form>
               <footer>
-                <button className="mx-1" onClick={this.hidden}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                   Cancel
                 </button>
-                <button className="mx-1" onClick={this.sendRequest}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.sendRequest}>
                   Change
                 </button>
               </footer>
@@ -431,10 +432,10 @@ class Modal extends Component<
                 </p>
               </form>
               <footer>
-                <button className="mx-1" onClick={this.hidden}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                   Cancel
                 </button>
-                <button className="mx-1" onClick={this.createChan}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
                   Create
                 </button>
               </footer>
@@ -448,7 +449,7 @@ class Modal extends Component<
               </header>
               <div>{this.users()}</div>
               <footer>
-                <button className="mx-1" onClick={this.hidden}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                   Close
                 </button>
               </footer>
@@ -469,12 +470,12 @@ class Modal extends Component<
                       placeholder="Enter Private Channel"
                       onKeyDown={this.pressEnter}
                   ></input>
-                  <button onClick={this.joinPrivateChan}>JOIN</button>
+                  <button className="btn btn-outline-dark shadow-none" onClick={this.joinPrivateChan}>JOIN</button>
                 </div>
                 <div>{this.chans()}</div>
               </div>
               <footer>
-                <button className="mx-1" onClick={this.hidden}>
+                <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                   Close
                 </button>
               </footer>
@@ -493,7 +494,7 @@ class Modal extends Component<
                   </div>
                 </form>
                 <footer>
-                  <button className="mx-1" onClick={this.hidden}>
+                  <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                     Close
                   </button>
                 </footer>
@@ -513,7 +514,7 @@ class Modal extends Component<
                   </div>
                 </form>
                 <footer>
-                  <button className="mx-1" onClick={this.hidden}>
+                  <button className="mx-1 btn btn-outline-dark shadow-none" onClick={this.hidden}>
                     Close
                   </button>
                 </footer>

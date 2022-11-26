@@ -65,8 +65,11 @@ class FriendsNav extends Component<{}, { friends: Array<UserType> }> {
   }
 
   pressEnter = (e: any) => {
-    if (e.key === 'Enter')
-    this.addFriends();
+    if (e.key === 'Enter') {
+      this.addFriends();
+      let input = document.getElementById("InputAddFriends") as HTMLInputElement
+      input.value = "";
+    }
   }
 
   render() {

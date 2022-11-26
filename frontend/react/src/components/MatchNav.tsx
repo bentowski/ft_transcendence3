@@ -36,7 +36,7 @@ function OpenGames() {
 		return (
 			<div key={key} className="gamesDiv row justify-content-start">
 				<div className="col-4">
-					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>Join</button>
+					<button className="btn btn-outline-dark shadow-none" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>Join</button>
 				</div>
 				<div className="col w-100">
 					<p className="text-start">game {login}</p>

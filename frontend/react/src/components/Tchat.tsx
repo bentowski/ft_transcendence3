@@ -532,8 +532,8 @@ export const WebSocket = () => {
     {
       return (
         <div className="channels col-2">
-          <button onClick={createChan}>Create Channel</button>
-          <button onClick={joinChan}>Join Channel</button>
+          <button className="btn btn-outline-dark shadow-none" onClick={createChan}>Create Channel</button>
+          <button className="btn btn-outline-dark shadow-none" onClick={joinChan}>Join Channel</button>
           <div className="channelsList">
             <p>{chansJoined(chans)} Channels</p>
             <div className="list-group">
