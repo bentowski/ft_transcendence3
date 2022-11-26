@@ -10,6 +10,9 @@ import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
 import { UserService} from "../user/user.service";
+import * as io from "socket.io-client";
+
+const socket = io.connect("http://localhost:3000/chat");
 
 type Msg = {
 	content: string;
@@ -225,12 +228,12 @@ export class ChanService {
 			relations: ['chanUser', 'banUser'],
 		});
 		if (!chan) {
-			throw new NotFoundException('Error while adding user to channel: Cant find channel');
+			throw new NotFoundException('Error while adding user to a channel: Cant find channel');
 		}
 		if (chan.banUser.find(s => s.user_id === user.user_id)) {
 			const error = {
 				statusCode: 450,
-				message: 'Error: User is not allowed it get in this channel',
+				message: 'Error: User is not allowed to get in this channel',
 			}
 			throw error;
 		}
@@ -244,6 +247,36 @@ export class ChanService {
 	}
 
 	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		const chan = await this.chanRepository.findOne({
+			where: { id: room },
+			relations: ['chanUser', 'banUser'],
+		});
+		if (!chan) {
+			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
+		}
+		// console.log("avant : ", chan.chanUser)
+		if (chan.owner === user.username) {
+			try {
+				await this.chanRepository.delete(chan.id);
+				//! socket emit reload for room's user
+				socket.emit("updateChan", room);
+				return ;
+			} catch (error) {
+				throw new Error(error);
+			}
+		}
+		chan.chanUser.splice(chan.chanUser.findIndex((u) => u === user))
+		// console.log("apres : ", chan.chanUser)
+		// chan.chanUser.push(user);
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error(error);
+		}
+
+	}
+
+	/* async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
 		const chan = await this.chanRepository.findOne({
 			where: {id: room},
 			relations: { chanUser: true },
@@ -262,7 +295,7 @@ export class ChanService {
 			throw new Error();
 		}
 
-	}
+	} */
 
 	/*
 	async banUnBanUser(action: boolean, idroom: string, iduser: string) {
