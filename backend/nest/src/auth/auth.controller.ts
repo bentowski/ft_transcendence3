@@ -8,10 +8,7 @@ import {
   UseGuards,
   Delete,
   BadRequestException,
-  /* Body,
-  UnauthorizedException,
-  HttpException,
-  HttpStatus, */
+  NotFoundException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { IntraAuthGuard } from './guards/intra-auth.guard';
@@ -24,11 +21,6 @@ import UserEntity from '../user/entities/user-entity';
 import jwt_decode from 'jwt-decode';
 import { UserAuthGuard } from './guards/user-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-//import UserEntity from "../user/entities/user-entity";
-//import {JwtPayload} from "jwt-decode";
-//import serialize from 'cookie';
-//import { JwtStrategy } from './strategies/jwt.strategy';
-
 
 @Controller('auth')
 export class AuthController {
@@ -61,7 +53,6 @@ export class AuthController {
     const access_token: string = this.jwtService.sign(payload);
     try {
       this.authService.changeStatusUser(auth_id, 1);
-      //console.log('after change status');
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
@@ -77,15 +68,12 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Req() req,
   ): Promise<any> {
-    //console.log('req = ', req.user);
     const auth_id: string = req.user['auth_id'];
     const isAuth = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
-    //console.log('before change status');
     try {
       this.authService.changeStatusUser(auth_id, 1);
-      //console.log('after change status');
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
@@ -95,7 +83,6 @@ export class AuthController {
     }
   }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Get('istoken')
   async authenticated(@Req() req, @Res() res): Promise<any> {
     const req_token = req.cookies['jwt'];
@@ -120,7 +107,6 @@ export class AuthController {
     }
   }
 
-  //@UseGuards(AuthenticatedGuard)
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete('logout')
   logout(@Req() req, @Res({ passthrough: true }) res) {
@@ -138,7 +124,7 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const user = this.authService.findUser(auid);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while generating 2FA QR Code: Cant find user in database',
       );
     }
@@ -190,8 +176,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Body() obj: TwoFACodeDto,
   ) {
-    //console.log('twofacode = ', obj.twoFACode);
-    //console.log('obj = ', obj);
     const auid: string = req.user.auth_id;
     const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {

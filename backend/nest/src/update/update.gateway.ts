@@ -12,7 +12,7 @@ import { UserService } from '../user/user.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:8080/'],
+    origin: ['http://localhost:8080'],
   },
   namespace: '/update',
 })
