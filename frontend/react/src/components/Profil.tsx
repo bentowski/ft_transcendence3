@@ -67,6 +67,8 @@ class Profil extends Component<
   };
 
   getRank = async () => {
+    console.log("user = ", this.state.user)
+    console.log("hist = ", this.state.histories)
     let users: any = await Request("GET", {}, {}, "http://localhost:3000/user");
     if (!users) return;
     users.sort(function (a: UserType, b: UserType) {
@@ -111,17 +113,16 @@ class Profil extends Component<
     this.setState({ user: JSON.stringify(usr) });
     this.setState({ current_username: usr.username });
     this.setState({ local: this.props.loc });
-    console.log('navigate = ', this.props.nav);
-    console.log('location = ', this.props.loc);
-    let url = document.URL;
-    if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
-        window.location.href = "http://localhost:8080/profil/" + usr.username
-    }
-    /*
-    const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
-    if (newLoc !== this.state.location) {
-        this.getUser(newLoc);
-        this.getHistory();
+    let test = setInterval(async () => {
+      let url = document.URL;
+      if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")
+        window.location.href = "http://localhost:8080/profil/" + cxt.user.username
+      if (!document.URL.includes("localhost:8080/profil"))
+        clearInterval(test);
+      url = url.substring(url.lastIndexOf("/") + 1);
+      if (url !== this.state.location) {
+        await this.getUser(url);
+        await this.getHistory();
         this.getRank();
         this.setState({ location: newLoc });
     }
