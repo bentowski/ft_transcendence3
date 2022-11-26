@@ -4,6 +4,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const AskTwoFa = () => {
+  /*
   const { isAuth, isTwoFa, isToken } = useAuthData();
   const [code, setCode] = useState("");
   const location = useLocation();
@@ -11,9 +12,7 @@ const AskTwoFa = () => {
   const from = location.state?.from?.pathname || "/";
 
   const validateTwoFa = async () => {
-    console.log("code = ", code);
     try {
-      console.log("before fetch");
       let res: any = await Request(
         "POST",
         {
@@ -22,9 +21,7 @@ const AskTwoFa = () => {
         { twoFACode: code },
         "http://localhost:3000/auth/2fa/authenticate"
       );
-      console.log("res ===== ", res);
       if (res) {
-        console.log("2fa auth ok");
         navigate(from);
         return;
       }
@@ -66,5 +63,6 @@ const AskTwoFa = () => {
       </button>
     </div>
   );
+   */
 };
 export default AskTwoFa;
