@@ -33,11 +33,11 @@ export class ChanService {
 		if (name.length < 3 || name.length > 10) {
 			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 30 characters')
 		}
-		if (!name.match(/^[a-z0-9_]+$/)) {
+		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new chan: Name should be alphanum')
 		}
 		let hashed = undefined;
-		if ((type === 'public' || type === 'protected') && (password !== null && password !== '')) {
+		if ((type === 'public' || type === 'private') && (password !== null && password !== '')) {
 			throw new BadRequestException('Error while creating new Chan: Public or Private chans cant have a password');
 		}
 		if (password && type === 'protected') {
