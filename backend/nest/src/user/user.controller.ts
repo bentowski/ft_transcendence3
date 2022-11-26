@@ -14,18 +14,9 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  BadRequestException, ParseIntPipe,
-  /*
+  ParseIntPipe,
   NotFoundException,
-  Request,
-  UsePipes,
-  HttpException,
-  HttpStatus,
-  ValidationPipe,
-  Response,
-  */
 } from '@nestjs/common';
-import { Request } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
@@ -33,29 +24,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
   BlockedUserDto,
   UpdateUsernameDto,
 } from './dto/update-user.dto';
-import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
-import jwt_decode from 'jwt-decode';
 import { Express } from 'express';
-import path, { join } from 'path';
-import JwtService from '@nestjs/jwt';
+import { join } from 'path';
 import { AuthGuard } from '@nestjs/passport';
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import { JwtStrategy } from '../auth/strategies/jwt.strategy';
-import fs from 'fs';
-import ChanEntity from "../chans/entities/chan-entity";
-import {DeleteUserDto} from "./dto/user.dto";
-//import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-//import { fileURLToPath } from 'url';
-//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
-//import { fileURLToPath } from 'url';
+import ChanEntity from '../chans/entities/chan-entity';
 
 export const storage = {
   storage: diskStorage({
@@ -123,11 +102,10 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    //console.log('saloute');
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while uploading an image: Failed requesting user in database',
       );
     }
@@ -137,7 +115,6 @@ export class UserController {
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
       return newNameAvatar;
-      //res.status(200)
     } catch (error) {
       throw new Error(error);
     }
@@ -146,12 +123,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/name/:username')
   async findOnebyUsername(
-    //@Res({ passthrough: true }) res,
     @Param('username') username: string,
   ) {
     const user: UserEntity = await this.userService.findOnebyUsername(username);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching database: User with that username doesnt exists',
       );
     }
@@ -161,14 +137,12 @@ export class UserController {
   //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   async findOnebyID(@Param('id') id: string) {
-    //console.log('ID - ', id);
     const user: UserEntity = await this.userService.findOneByAuthId(id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching database: User with that id doesnt exists',
       );
     }
-    //console.log('uuuuuuSER - ', user);
     return user;
   }
 
@@ -178,7 +152,6 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
-    //console.log('DATETETETE: ', date);
     try {
       let imagename: string = await this.userService.getAvatar(id);
       imagename = this.userService.checkFolder(imagename);
@@ -223,59 +196,46 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/banned')
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go banned');
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching banned chans: Cant find user',
       );
     }
-    //console.log('channelBanned = ', user.channelBanned);
-    if (!user.channelBanned) return [];
+    if (!user.channelBanned) {
+      return [];
+    }
     return user.channelBanned;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/muted')
   async chanMuted(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go muted');
-
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching muted chans: Cant find user',
       );
     }
-    //try {
-    //console.log('channelMuted = ', user.channelMuted);
-    if (!user.channelMuted) return [];
+    if (!user.channelMuted) {
+      return [];
+    }
     return user.channelMuted;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/joined')
   async chanPresent(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go joined');
-
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching joined chans: Cant find user',
       );
     }
-    //try {
-    //console.log('channeljoined = ', user.channelJoined);
-    if (!user.channelJoined) return [];
+    if (!user.channelJoined) {
+      return [];
+    }
     return user.channelJoined;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -292,7 +252,6 @@ export class UserController {
   @Get(':id/isfriend')
   async isFriend(@Req() req, @Param('id') id: string): Promise<boolean> {
     try {
-      //console.log('auth_id = ', id);
       const users: UserEntity[] = await this.userService.getFriends(
         req.user.auth_id,
       );
@@ -341,7 +300,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
-    //console.log('update dto = ', obj);
     const auid: string = req.user.auth_id;
     try {
       return this.userService.updateUsername(auid, obj.username);
