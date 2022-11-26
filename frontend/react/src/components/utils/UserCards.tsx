@@ -44,7 +44,14 @@ class UserCards extends Component<
 
   updateUser = (user : {auth_id: number, status: number}) => {
     if (user.auth_id === this.state.id) {
-      this.setState({online: user.status ? "online" : "offline"})
+      let str:string;
+      if (user.status === 2)
+        str = "in-game";
+      else if (user.status === 1)
+        str = "online";
+      else
+        str = "offline";
+      this.setState({online: str})
     }
   }
 
@@ -156,7 +163,7 @@ class UserCards extends Component<
             className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
           >
             <div className="col-5 h-100 overflow-hidden buttons">
-              <button className=" p-1" onClick={this.createChan}>
+              <button className="p-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="30"
@@ -170,8 +177,8 @@ class UserCards extends Component<
                 </svg>
               </button>
               {/* </Link> */}
-              {/* <Link to={"/game"}> */}
-                <button className="mx-2 p-1" id="canBlink" onClick={this.startNewGame}>
+              <Link to={"/game"}>
+                <button className="mx-2 p-1 btn btn-outline-dark shadow-none">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
@@ -184,7 +191,7 @@ class UserCards extends Component<
                     <path d="M0 9.665v1.717a1 1 0 0 0 .553.894l6.553 3.277a2 2 0 0 0 1.788 0l6.553-3.277a1 1 0 0 0 .553-.894V9.665c0-.1-.06-.19-.152-.23L9.5 6.715v.993l5.227 2.178a.125.125 0 0 1 .001.23l-5.94 2.546a2 2 0 0 1-1.576 0l-5.94-2.546a.125.125 0 0 1 .001-.23L6.5 7.708l-.013-.988L.152 9.435a.25.25 0 0 0-.152.23z" />
                   </svg>
                 </button>
-              {/* </Link> */}
+              </Link>
             </div>
             <div className="col-2 d-flex flex-row d-flex justify-content-center">
               <input className={this.state.online} type="radio"></input>
@@ -213,7 +220,7 @@ class UserCards extends Component<
             <input className={this.state.online} type="radio"></input>
           </div>
           <div className="col-6 row">
-            <p className="col-12">{this.state.login}</p>
+            <a href={"/profil/" + this.state.login} className="col-12">{this.state.login}</a>
           </div>
         </div>
       );
@@ -313,7 +320,7 @@ class UserCards extends Component<
     this.setState({ ssname: this.getCurrentUser().username });
     this.initSocket();
     // console.log(this.getCurrentUser())
-    // this.setSocket();
+    this.setSocket();
   };
 
   render() {

@@ -10,6 +10,12 @@ input[class="offline"]{
   border-radius: 6px
 }
 
+input[class="in-game"]{
+  appearance: none;
+  border: 6px solid rgb(0, 110, 255);
+  border-radius: 6px
+}
+
 .blink_me {
   animation: blinker 0.5s linear infinite;
 }

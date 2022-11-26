@@ -38,7 +38,7 @@ export const WebSocket = () => {
   let location = ""
 
   useEffect(() => {
-    socket.on('connect', () => {});
+    socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
       // console.log("RECEIVE ////////////////")
       let channels: Array<ChanType> = chans;
@@ -50,7 +50,6 @@ export const WebSocket = () => {
           channels[index].messages = [newMessage];
         setChans(channels);
         if (channels[index].isActive) {
-          //setCurrentChan(channels[index]);
           if (channels[index].messages)
             setMessage(channels[index].messages);
           else
@@ -192,7 +191,7 @@ export const WebSocket = () => {
     if (!chans) {
       return ;
     }
-    const found = chans.find((c:ChanType) => c.name === name.value)
+    const found = chans.find((c:ChanType) => c.name === name)
     if (found) {
       const error = {
         statusCode: 400,
@@ -200,11 +199,9 @@ export const WebSocket = () => {
       }
       setError(error);
     }
-    if (radioCheck !== "" && name.value && found === undefined) {
-      if (password.value) {
-        pswd = password.value;
-      }
       let chan = undefined;
+      console.log("pass = ", pass)
+      console.log("type = ", typep)
       try {
         chan = await Request(
             "POST",
@@ -213,9 +210,9 @@ export const WebSocket = () => {
               "Content-Type": "application/json",
             },
             {
-              name: name.value,
-              type: radioCheck,
-              password: pswd,
+              name: name,
+              type: typep,
+              password: pass,
               owner: user.username,
             },
             "http://localhost:3000/chan/create"
@@ -226,23 +223,11 @@ export const WebSocket = () => {
       if (!chan) {
         return ;
       }
-      name.value = "";
-      password.value = "";
-      radioPub.checked = false;
-      radioPri.checked = false;
-      radioPro.checked = false;
       socket.emit('chanCreated');
       updateAllChans();
       updateChanFromList();
       window.location.replace('http://localhost:8080/tchat/' + chan.id)
       //navigate('/tchat/' + chan.id);
-    } else {
-      const error = {
-        statusCode: 400,
-        message: 'Error while creating new chan: You should provide type/name value'
-      }
-      setError(error);
-    }
   };
 
   const joinUrl = () => {
@@ -438,7 +423,7 @@ export const WebSocket = () => {
   }
 
 
-// ======================== RENDER ==========================
+  // ======================== RENDER ==========================
 
   class UsersInActualchannel extends Component<{}, {}> {
     render() {
@@ -453,8 +438,7 @@ export const WebSocket = () => {
   }
 
   class DispatchMsg extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       messages.map((msg: MessagePayload, index: number) => {
         if (msg.sender_socket_id === user.auth_id)
@@ -499,11 +483,10 @@ export const WebSocket = () => {
 
   class AdminButtons extends Component<{}, {}> {
     render() {
-      let chan = chans[chans.findIndex((c:ChanType) => c.id === room)]
+      let chan = chans[chans.findIndex((c: ChanType) => c.id === room)]
       let tab: any[] = chan.admin
       console.log(tab)
-      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username)
-      {
+      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username) {
         return (
             <div className="row">
               <ModalBanUser chan={room} socket={socket}/>
@@ -539,8 +522,7 @@ export const WebSocket = () => {
 
   class PrintChannel extends Component<{}, {}> {
     render() {
-      if (room)
-      {
+      if (room) {
         return (
             <div className="inTchat row col-10">
               <div className="tchatMain col-10">
@@ -558,7 +540,7 @@ export const WebSocket = () => {
                 </div>
               </div> {/*fin tchatMain*/}
               <div className="tchatMembers col-2">
-                <p> Channnnnel's members ({chanUser.length}) </p>
+                <p> Channel's members ({chanUser.length}) </p>
                 <UsersInActualchannel />
               </div>
             </div>
@@ -567,9 +549,8 @@ export const WebSocket = () => {
     }
   }
 
-  class ListOfPrivateMessages extends Component< {}, {} >{
-    render()
-    {
+  class ListOfPrivateMessages extends Component<{}, {}>{
+    render() {
       let ret: any[] = []
       chans.map((chan) => {
             if (chan.type === "direct")
@@ -587,8 +568,7 @@ export const WebSocket = () => {
   }
 
   class ListOfJoinedChans extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       chans.map((chan: ChanType) => {
             if (chan.type !== "direct" && inChan(chan))
@@ -606,22 +586,21 @@ export const WebSocket = () => {
   }
 
   class ChannelList extends Component<{}, {}> {
-    render()
-    {
+    render() {
       return (
-          <div className="channels col-2">
-            <button onClick={createChan}>Create Channel</button>
-            <button onClick={joinChan}>Join Channel</button>
-            <div className="channelsList">
-              <p>{chansJoined(chans)} Channels</p>
-              <div className="list-group">
-                <ul>
-                  <ListOfJoinedChans />
-                </ul>
-                <ul>
-                  <ListOfPrivateMessages />
-                </ul>
-              </div>
+        <div className="channels col-2">
+          <button className="btn btn-outline-dark shadow-none" onClick={createChan}>Create Channel</button>
+          <button className="btn btn-outline-dark shadow-none" onClick={joinChan}>Join Channel</button>
+          <div className="channelsList">
+            <p>{chansJoined(chans)} Channels</p>
+            <div className="list-group">
+              <ul>
+                <ListOfJoinedChans />
+              </ul>
+              <ul>
+                <ListOfPrivateMessages />
+              </ul>
+            </div>
             </div>
           </div>
       )
@@ -650,7 +629,7 @@ class Tchat extends Component<{}, {}> {
         </div>
     ); // fin de return
   } // fin de render
-  // <UserCards value={2} avatar={false}/>
+// <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;

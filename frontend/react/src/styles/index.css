@@ -1,12 +1,12 @@
 body {
 	margin: 0;
 	padding: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+	font-family: 'SpongeBobFont', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
 		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: white;
+	color: rgb(0, 0, 0);
 	/* letter-spacing: 0.42px; */
   background-color: #3b3c3a;
 }
@@ -16,25 +16,45 @@ code {
 		monospace;
 }
 
+@font-face {
+	font-family: "SpongeBobFont";
+	src: url("http://localhost:8080/font/spongebobfont.woff");
+}
+
 p {
 	margin: 0;
+	color: rgb(55, 55, 55);
 }
 
 a {
 	text-decoration: none;
-	color: orange;
+	color: rgb(55, 55, 55);
 }
 
 a:hover {
 	/* font-weight: 600;
 	letter-spacing: 0px; */
-	color: orange;
+	color: gray;
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 }
 
+.Page {
+	background-image: url(http://localhost:8080/pictures/bgSponge3-blur.jpg);
+	background-size: cover;
+	background-position: center;
+	/* -webkit-backdrop-filter: blur(15px); assure la compatibilité avec safari */
+    /* filter: blur(7px); */
+}
+
 a:active {
   color: white;
+}
+
+.globalError {
+	z-index: 2000;
+	position: absolute;
+	width: 100%;
 }
 
 .logoutMenu p {
@@ -52,30 +72,32 @@ a:active {
 }
 
 button {
-  border: 2px solid orange;
+  border: 2px solid black;
   border-radius: 10px;
   background: none;
-  color: orange;
+  color: rgb(55, 55, 55);
 }
 
-button:hover {
-  position: relative;
-  outline: none;
-  color: black;
-  mix-blend-mode: screen;
+/* .btn:focus,.btn:active {
+	outline: none !important;
+	box-shadow: none;
+ } */
+
+label {
+	color: rgb(55, 55, 55);
 }
 
-button:hover::before {
+/* button:hover::before {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: orange;
+  background: gray;
   border-radius: 4px;
   content: '';
   mix-blend-mode: color;
-}
+} */
 
 button:active {
   position: relative;
@@ -155,16 +177,43 @@ img {
 	height: 62px;
 	padding: 20px;
 	padding-right: 10px;
+	background-image: url(http://localhost:8080/pictures/banner.jpg);
+	background-size: auto 500%!important;
+	background-position: center;
 }
 
-.FriendsNav, .MatchNav , .Menu {
+.BobLePong {
+	position: absolute;
+	text-align: center;
+	transform: translate(-50%, -50%);
+	height: 150px;
+	width: auto;
+}
+
+.FriendsNav, #MatchNav , .Menu {
 	background-color:rgba(125, 0, 125, 0.2);
 	border-radius: 20px;
+	background-size: cover;
+	background-position: center;
+	z-index: 999!important;
+}
+
+.front {
+	z-index: 99;
 }
 
 .FriendsNav, .MatchNav {
 	height: 100%;
 	padding: 10px;
+}
+
+.FriendsNav {
+	background-image: url(http://localhost:8080/pictures/divBg2.jpg);
+}
+
+#MatchNav {
+	background-image: url(http://localhost:8080/pictures/divBg.jpg);
+	z-index: 999999!important;
 }
 
 .Ratio {
@@ -283,6 +332,7 @@ img {
 	word-wrap: break-word;
   }
 
+  
 	/* background-image: linear-gradient(purple 10%, transparent); */
 
 /* .Menu {

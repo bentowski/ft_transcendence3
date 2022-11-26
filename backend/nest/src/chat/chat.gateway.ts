@@ -15,7 +15,7 @@ import ChanEntity from '../chans/entities/chan-entity';
   cors: {
     origin: ['http://localhost:8080'],
   },
-  namespace: '/chat',
+  namespace: '/chat'
 })
 export class ChatGateway implements OnModuleInit
 {
@@ -314,10 +314,5 @@ export class ChatGateway implements OnModuleInit
   @SubscribeMessage('newParty')
   onNewParty(client: Socket) {
 	this.server.emit('onNewParty');
-  }
-
-  @SubscribeMessage('updateUser')
-  onUpdateUser(client: Socket, user: { auth_id: number; status: number }) {
-	this.server.emit('onUpdateUser', user);
   }
 }
