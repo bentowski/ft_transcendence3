@@ -244,9 +244,7 @@ export class ChatGateway implements OnModuleInit
 
     @SubscribeMessage('banToChannel')
     async banUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
-        //console.log('banUserToChan');
         try {
-            //const usr = await this.userService.findOneByAuthId(body.auth_id)
             await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
             client.emit('banRoom');
             this.server
@@ -303,9 +301,13 @@ export class ChatGateway implements OnModuleInit
     }
 
     @SubscribeMessage('leaveRoom')
-  onLeaveRoom(client: Socket, room: string) {
-  	client.join(room);
-  	client.emit('leftRoom', room);
+    async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}) {
+  	// client.leave(body.room);
+  	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id)
+    console.log("C EST ICI ///////////////////////////////////////////////////////////////////////////////////////////////////////////")
+    console.log(usr)
+    await this.chanService.delUserToChannel(usr, body.room)
+  	client.emit('leftRoom', body.room);
   }
 
   @SubscribeMessage('chanCreated')
@@ -318,8 +320,8 @@ export class ChatGateway implements OnModuleInit
 	this.server.emit('onNewParty');
   }
 
-  @SubscribeMessage('updateUser')
-  onUpdateUser(client: Socket, user: { auth_id: number; status: number }) {
-	this.server.emit('onUpdateUser', user);
-  }
+    @SubscribeMessage('updateChan')
+    onUpdateChan(client: Socket, room:string) {
+        this.server.emit('chanDeleted', room);
+}
 }

@@ -44,7 +44,14 @@ class UserCards extends Component<
 
   updateUser = (user : {auth_id: number, status: number}) => {
     if (user.auth_id === this.state.id) {
-      this.setState({online: user.status ? "online" : "offline"})
+      let str:string;
+      if (user.status === 2)
+        str = "in-game";
+      else if (user.status === 1)
+        str = "online";
+      else
+        str = "offline";
+      this.setState({online: str})
     }
   }
 
@@ -213,7 +220,7 @@ class UserCards extends Component<
             <input className={this.state.online} type="radio"></input>
           </div>
           <div className="col-6 row">
-            <p className="col-12">{this.state.login}</p>
+            <a href={"/profil/" + this.state.login} className="col-12">{this.state.login}</a>
           </div>
         </div>
       );
@@ -313,7 +320,7 @@ class UserCards extends Component<
     this.setState({ ssname: this.getCurrentUser().username });
     this.initSocket();
     // console.log(this.getCurrentUser())
-    // this.setSocket();
+    this.setSocket();
   };
 
   render() {

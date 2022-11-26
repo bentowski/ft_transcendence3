@@ -6,7 +6,7 @@ import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
 
-const updateSocket = io("http://localhost:3000/chat");
+const updateSocket = io("http://localhost:3000/update");
 
 let ball = new Image();
 let p1 = new Image();
@@ -351,7 +351,6 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
     settings.spec = false
   socket.on('userJoinChannel', (game:any) => {
-    console.log(game)
     if (game.id === settings.room) {
       if (game.p1 !== null && game.p2 !== null) {
         startGame(ctx, globale);
