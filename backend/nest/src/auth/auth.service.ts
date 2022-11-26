@@ -12,7 +12,7 @@ import { PayloadInterface } from './interfaces/payload.interface';
 import * as io from 'socket.io-client';
 import {CreateUserDto} from "../user/dto/create-user.dto";
 
-const socket = io.connect("http://localhost:3000/chat");
+const socket = io.connect("http://localhost:3000/update");
 
 @Injectable()
 export class AuthService {
@@ -100,6 +100,7 @@ export class AuthService {
     try {
       await this.userService.setStatus(auth_id, status);
       socket.emit('updateUser', { auth_id: auth_id, status: status })
+      //console.log("update: " + auth_id)
     } catch (error) {
       throw new Error(error);
     }

@@ -6,7 +6,7 @@ import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
 
-const updateSocket = io("http://localhost:3000/chat");
+const updateSocket = io("http://localhost:3000/update");
 
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
@@ -321,7 +321,7 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
   socket.on('userJoinChannel', (game:any) => {
     // let modal:any;
     // console.log("lets go")
-    console.log(game)
+    // console.log(game)
     if (game.id === settings.room) {
       if (game.p1 !== null && game.p2 !== null) {
         startGame(ctx, globale);
