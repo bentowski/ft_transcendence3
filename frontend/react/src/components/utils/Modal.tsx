@@ -28,7 +28,8 @@ class Modal extends Component<
     fieldPass: string,
     errPass: string,
     alertPass: boolean,
-    printed: any
+    printed: any,
+    type: string
   }
 > {
   static context = AuthContext;
@@ -49,6 +50,7 @@ class Modal extends Component<
       errPass: "",
       alertPass: false,
       printed: [],
+      type: ""
     };
   }
 
@@ -160,7 +162,8 @@ class Modal extends Component<
     }
   };
 
-  verifRadio = () => {
+    
+    verifRadio = async () => {
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
@@ -168,8 +171,18 @@ class Modal extends Component<
       this.setState({ alertRadio: true });
       return false;
     }
-    else
-      this.setState({ alertRadio: false });
+    else if (radioPub.checked === true)
+    {
+      await this.setState({ alertRadio: false, type: "public" });
+    }
+    else if (radioPri.checked === true)
+    {
+      await  this.setState({ alertRadio: false, type: "private" });
+    }
+    else if (radioPro.checked === true)
+    {
+      await  this.setState({ alertRadio: false, type: "protected" });
+    }
     return true;
   };
 
@@ -187,7 +200,7 @@ class Modal extends Component<
       return false;
     }
     else if (!minmax.test(this.state.fieldName)) {
-      this.setState({ errName: "Name must contains between 3 and 10 characters" });
+    this.setState({ errName: "Name must contains between 3 and 10 characters" });
       this.setState({ alertName: true });
       return false;
     }
@@ -209,25 +222,29 @@ class Modal extends Component<
     var minmax = /^.{8,30}$/
 
     if (!minmax.test(this.state.fieldPass)) {
+    // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
       this.setState({ errPass: "Password must contains between 8 and 30 characters" });
       this.setState({ alertPass: true });
       return false;
     }
-    // else {
-    //   this.setState({ errPass: "" });
-    //   this.setState({ alertPass: false });
+    else {
+      this.setState({ errPass: "" });
+      this.setState({ alertPass: false });
       return true;
-    // }
+    }
   };
 
   createChan = async () => {
-    let retRadio = this.verifRadio();
-    let retName = this.verifName();
+    // const radioPub = document.querySelector("#public") as HTMLInputElement;
+    // const radioPri = document.querySelector("#private") as HTMLInputElement;
+    // const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    let retRadio = await this.verifRadio();
+    let retName = await this.verifName();
     let retPass = true;
     if (this.state.protected)
-      retPass = this.verifPass();
+      retPass = await this.verifPass();
     if (retRadio && retName && retPass) {
-      this.props.parentCallBack.createChannel()
+      this.props.parentCallBack.createChannel(this.state.fieldName, this.state.type, this.state.fieldPass)
       this.hiddenCreate()
     }
   };
@@ -503,6 +520,7 @@ class Modal extends Component<
                 type="text"
                 id="chanPassword"
                 placeholder="password"
+                onChange={this.handlePass}
                 className='hidden'
               ></input>
               <div>
