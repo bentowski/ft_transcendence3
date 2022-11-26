@@ -20,9 +20,13 @@ class Modal extends Component<
     input: string;
     allChans: Array<ChanType>;
     protected: boolean;
+    alertRadio: boolean;
     fieldName: string;
     errName: string;
     alertName: boolean;
+    fieldPass: string;
+    errPass: string;
+    alertPass: boolean;
   }
 > {
   static context = AuthContext;
@@ -39,19 +43,27 @@ class Modal extends Component<
       input: "",
       allChans: [],
       protected: false,
+      alertRadio: false,
       fieldName: "",
       errName: "",
       alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false,
     };
   }
 
   hidden = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.add("hidden");
+    this.setState({ protected: false });
+    this.setState({ alertRadio: false });
     this.setState({ fieldName: "" });
     this.setState({ errName: "" });
     this.setState({ alertName: false });
-    this.setState({ protected: false })
+    this.setState({ fieldPass: "" });
+    this.setState({ errPass: "" });
+    this.setState({ alertPass: false });
   };
 
   getCurrentUser = () => {
@@ -60,10 +72,10 @@ class Modal extends Component<
   };
 
   componentDidMount = async () => {
-    let newUser: any = sessionStorage.getItem("data");
+    const ctx: any = this.context
+    let newUser: UserType = ctx.user
     if (newUser) {
-      newUser = JSON.parse(newUser);
-      this.setState({ user: newUser.user });
+      this.setState({ user: newUser });
     }
     try {
       let friends: any = await Request(
@@ -87,11 +99,25 @@ class Modal extends Component<
     }
   };
 
+  verifRadio = () => {
+    const radioPub = document.querySelector("#public") as HTMLInputElement;
+    const radioPri = document.querySelector("#private") as HTMLInputElement;
+    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    if (radioPub.checked === false && radioPri.checked === false && radioPro.checked === false) {
+      this.setState({ alertRadio: true});
+      return false;
+    }
+    return true;
+  };
+
   verifName = () => {
     // let users = await getUsers();
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
 
+    let retPass = true;
+    if (this.state.protected)
+      retPass = this.verifPass()
     if (!regex.test(this.state.fieldName)) {
       this.setState({ errName: "Non valid character" });
       this.setState({ alertName: true });
@@ -107,11 +133,25 @@ class Modal extends Component<
     //   this.setState({alertName: true});
     //   return false;
     // }
+    else if (!retPass)
+      return false;
+    return true;
+  };
+
+  verifPass = () => {
+    var minmax = /^.{8,30}$/
+
+    if (!minmax.test(this.state.fieldPass)) {
+      this.setState({ errPass: "Password must contains between 8 and 30 characters" });
+      this.setState({ alertPass: true });
+      return false;
+    }
     return true;
   };
 
   createChan = async () => {
-    if (this.verifName()) {
+    let retRadio = this.verifRadio();
+    if (this.verifName() && retRadio) {
       this.props.parentCallBack.createChannel()
       this.hidden()
     }
@@ -335,6 +375,10 @@ class Modal extends Component<
     // login.value = "";
   };
 
+  closeAlertRadio = () => {
+    this.setState({ alertRadio: false });
+  }
+
   handleName = (evt: any) => {
     evt.preventDefault();
     this.setState({ fieldName: evt.target.value });
@@ -346,6 +390,16 @@ class Modal extends Component<
     this.setState({ errName: "" })
     // setErr("");
     // setAlertMsg("");
+  }
+
+  handlePass = (evt: any) => {
+    evt.preventDefault();
+    this.setState({ fieldPass: evt.target.value });
+  };
+
+  closeAlertPass = () => {
+    this.setState({ alertPass: false });
+    this.setState({ errPass: "" })
   }
 
   printer = () => {
@@ -433,6 +487,13 @@ class Modal extends Component<
                 />
                 Protected
               </div>
+              <div>
+                {this.state.alertRadio ?
+                  <Alert onClose={this.closeAlertRadio} variant="danger" dismissible>{"Choose a chan type"}</Alert> :
+                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                  <div />
+                }
+              </div>
               <input
                 type="text"
                 id="chanName"
@@ -454,6 +515,13 @@ class Modal extends Component<
                 placeholder="password"
                 className='hidden'
               ></input>
+              <div>
+                {this.state.alertPass ?
+                  <Alert onClose={this.closeAlertPass} variant="danger" dismissible>{this.state.errPass}</Alert> :
+                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                  <div />
+                }
+              </div>
               {/* <br /> */}
             </form>
             <footer>
