@@ -34,7 +34,7 @@ export class ChanService {
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
         const { name, type, password, owner /*, chanUser */ } = createChanDto;
 		if (name.length < 3 || name.length > 10) {
-			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 30 characters')
+			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 10 characters')
 		}
 		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new chan: Name should be alphanum')

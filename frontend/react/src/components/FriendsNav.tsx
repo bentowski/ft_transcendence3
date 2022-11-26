@@ -56,8 +56,14 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       return ;
     }
     try {
-      let userToAdd = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + input.value)
-      let test = await Request('PATCH',
+      let userToAdd = await Request(
+          'GET',
+          {},
+          {},
+          "http://localhost:3000/user/name/" + input.value
+      )
+      console.log('usertoadd = ', userToAdd);
+      await Request('PATCH',
           {
             Accept: 'application/json',
             'Content-Type': 'application/json'
@@ -88,7 +94,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     const uslist = ctx.userList;
     const query: any = e.target.value;
     let updatedList = [...uslist];
-    console.log('updated list = ', updatedList);
+    //console.log('updated list = ', updatedList);
     updatedList = updatedList.filter((item: any) => {
       if (e.target.value.length === 0) {
         return null;
@@ -106,7 +112,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     this.setState({ filteredList: updatedList })
     if (e.key === 'Enter') {
       this.addFriends();
-      // input.value = "";
+      //input.value = "";
     }
   }
 
