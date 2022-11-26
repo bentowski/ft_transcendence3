@@ -74,60 +74,107 @@ let print = (ctx: any, newPos: number, settings: any) => {
 
 let moveBall = (ctx: any, globale: any, settings: any) => {
   let newPos: number = settings.ballPos[1]
-  ctx.clearRect(0, 0, globale.width, globale.height)
-  if (settings.admin) {
-    if (settings.ballPos[1] + (settings.sizeBall / 2) > globale.height) {
-      newPos = globale.height - (settings.sizeBall / 2)
-      settings.vector = [settings.vector[0], -settings.vector[1]]
-      settings.ballPos = [settings.ballPos[0], newPos]
-    }
-    if (settings.ballPos[1] - (settings.sizeBall / 2) < 0) {
-      newPos = (0 + (settings.sizeBall / 2))
-      settings.vector = [settings.vector[0], -settings.vector[1]]
-      settings.ballPos = [settings.ballPos[0], newPos]
-    }
-  }
-  // =========== Players moves ==========
-  if (settings.spec === false) {
-  let move = 0;
-    if (settings.up == 1)  {
-      movePlayer(ctx, -1, globale, settings)
-      move += 1;
-    }
-    if (settings.down == 1) {
-      movePlayer(ctx, 1, globale, settings)
-      move += 1;
-    }
-    if (move === 1) {
-      socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
-    }
-  }
+	if (settings.admin) {
+		if (settings.ballPos[1] + (settings.sizeBall / 2) >= globale.height) {
+			newPos = globale.height - (settings.sizeBall / 2)
+			settings.vector = [settings.vector[0], -settings.vector[1]]
+			settings.ballPos = [settings.ballPos[0], newPos]
+		}
+		if (settings.ballPos[1] - (settings.sizeBall / 2) < 0) {
+			newPos = (0 + (settings.sizeBall / 2))
+			settings.vector = [settings.vector[0], -settings.vector[1]]
+			settings.ballPos = [settings.ballPos[0], newPos]
+		}
+	}
+	ctx.clearRect(0, 0, globale.width, globale.height)
+	console.log(settings.sizeBall);
 
-  // ============== End Players Moves ===============
-  if (settings.admin) {
-	  if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
-	  {
-	    settings.vector = [-settings.vector[0], -1]
-	    settings.speed++;
-	  }
-	  if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall)
-	  {
+	if (settings.ballPos[0] + settings.sizeBall < 0 + settings.sizeBall) {
+		console.log("AAAAAAAAAAAAAAAA");
+		settings.nextRound = 1
+	}
+	else if (settings.ballPos[0] - settings.sizeBall > globale.width) {
+		settings.nextRound = 1
+	}
+	else {
+		// =========== Players moves ==========
+		if (settings.spec === false) {
+		let move = 0;
+			if (settings.up == 1)  {
+				movePlayer(ctx, -1, globale, settings)
+				move += 1;
+			}
+			if (settings.down == 1) {
+				movePlayer(ctx, 1, globale, settings)
+				move += 1;
+			}
+			if (move === 1) {
+				socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
+			}
+		}
 
-	    settings.vector = [-settings.vector[0], settings.vector[1]]
-	  }
-	  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
-	  }
-	  if (settings.ballPos[0] + settings.sizeBall < 0) {
-	    settings.nextRound = 1
-	  }
-	  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-	    settings.nextRound = 1
-	  }
+		// ============== End Players Moves ===============
+		if (settings.admin) {
+			if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0]) {
+				if (settings.ballPos[1] >= settings.player1[1] && settings.ballPos[1] <= settings.player1[1] + settings.sizeBall * 4) {
+					let percent = Math.floor((settings.ballPos[1] - settings.player1[1]) / ((settings.player1[1] + settings.sizeBall * 4) - settings.player1[1]) * 100)
+					if (percent <= 20) {
+						settings.vector = [-0.5, -Math.sqrt(3) / 2];
+					}
+					else if (percent <= 40) {
+						settings.vector = [-Math.sqrt(3) / 2, -0.5];
+					}
+					else if (percent <= 60) {
+						settings.vector = [-1, 0];
+					}
+					else if (percent <= 80) {
+						settings.vector = [-Math.sqrt(3) / 2, 0.5];
+					}
+					else {
+						settings.vector = [-0.5, Math.sqrt(3) / 2];
+					}
+				}
+				else {
+					settings.ballPos = [settings.w / 2, settings.h / 2]
+					settings.speed = settings.baseSpeed
+					//! give point to p1
+				}
+			}
+			if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall * 1.5)
+			{
+				if (settings.ballPos[1] >= settings.player2[1] && settings.ballPos[1] <= settings.player2[1] + settings.sizeBall * 4) {
+					let percent = Math.floor((settings.ballPos[1] - settings.player2[1]) / ((settings.player2[1] + settings.sizeBall * 4) - settings.player2[1]) * 100)
+					if (percent <= 20) {
+						settings.vector = [0.5, -Math.sqrt(3) / 2];
+					}
+					else if (percent <= 40) {
+						settings.vector = [Math.sqrt(3) / 2, -0.5];
+					}
+					else if (percent <= 60) {
+						settings.vector = [1, 0];
+					}
+					else if (percent <= 80) {
+						settings.vector = [Math.sqrt(3) / 2, 0.5];
+					}
+					else {
+						settings.vector = [0.5, Math.sqrt(3) / 2];
+					}
+				}
+				else {
+					settings.ballPos = [settings.w / 2, settings.h / 2]
+					settings.speed = settings.baseSpeed
+					//! give point to p2
+				}
+				settings.speed++;
+			}
+			console.log(settings.ballPos[0])
+		}
 	}
 
-	console.log(settings.nextRound)
+
 	if (settings.nextRound == 0)
 	{
+		console.log("TEST")
 		print(ctx, newPos, settings)
 		if (settings.admin) {
 			socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]}/* {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]} */)
@@ -139,7 +186,11 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	else if (settings.round < 3)
 	{
 		console.log("NEXTROUND")
-		reSet()
+		settings.ballPos[0] = settings.w / 2
+		settings.ballPos[1] = settings.h / 2
+		settings.speed = 0
+		settings.nextRound = 0
+		settings.round++
 		print(ctx, newPos, settings)
 			window.requestAnimationFrame(() => {
 				moveBall(ctx, globale, settings)
@@ -283,20 +334,20 @@ let reSet = () => {
 
 let setSettings = () => {
   //===============interaction=================
-  const globale = document.getElementById('globale') as HTMLCanvasElement
-  const ctx: any = globale.getContext('2d')
+	const globale = document.getElementById('globale') as HTMLCanvasElement
+	const ctx: any = globale.getContext('2d')
 
 	let currentUser:any = sessionStorage.getItem('data');
 	currentUser = JSON.parse(currentUser);
-  let element = document.body as HTMLDivElement,
-  winWidth: number = element.clientWidth,
-  winHeight: number = element.clientHeight
+	let element = document.body as HTMLDivElement,
+	winWidth: number = element.clientWidth,
+	winHeight: number = element.clientHeight
 	let url = document.URL
 	url = url.substring(url.lastIndexOf("/") + 1)
-  if ((winWidth * 19) / 26 > winHeight)
-    winWidth = ((winHeight * 26) / 19)
-  else
-    winHeight = ((winWidth * 19) / 26)
+	if ((winWidth * 19) / 26 > winHeight)
+	  winWidth = ((winHeight * 26) / 19)
+	else
+	  winHeight = ((winWidth * 19) / 26)
   settings = {
     w: winWidth,
     h: winHeight,
@@ -308,7 +359,7 @@ let setSettings = () => {
     playerSpeed: 20,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
-    vector: [1, 1],
+    vector: [-1, 1],
     speed: 4,
     middle: winWidth / 2,
     end: 0,
@@ -332,7 +383,7 @@ let startGame = (ctx: any, globale: any) => {
     let countdown = setInterval(() => {
       console.log('Game start in ' + settings.timer + '...');
       settings.timer--;
-	  settings.callback(settings.timer)
+		  settings.callback(settings.timer)
       if (settings.timer === -1) {
         let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
         modal.classList.add("hidden")
@@ -342,9 +393,9 @@ let startGame = (ctx: any, globale: any) => {
     }, 1000);
   }
   else if (settings.gameStarted === false && settings.spec === true) {
-	settings.gameStarted = true;
-	settings.timer = -1;
-	let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+		settings.gameStarted = true;
+		settings.timer = -1;
+		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add("hidden")
     moveBall(ctx, globale, settings)
   }
@@ -358,14 +409,14 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
     settings.admin = true;
   }
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
-    settings.spec = false
-  socket.on('userJoinChannel', (game:any) => {
-    console.log(game)
-    if (game.id === settings.room) {
-      if (game.p1 !== null && game.p2 !== null) {
-        startGame(ctx, globale);
-      }
-    }
+  	settings.spec = false
+	socket.on('userJoinChannel', (game:any) => {
+	  console.log(game)
+	  if (game.id === settings.room) {
+	    if (game.p1 !== null && game.p2 !== null) {
+	      startGame(ctx, globale);
+	    }
+	  }
   })
 }
 
@@ -421,7 +472,7 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
   }
 
   updateState = (countdown: number) => {
-	this.setState({timer: countdown})
+		this.setState({timer: countdown})
   }
 
   modalCountDown = () => {
@@ -437,7 +488,7 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
       <div>
         <div className="canvas" id="canvas">
           <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
-          {this.modalCountDown()}
+          <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
     );
