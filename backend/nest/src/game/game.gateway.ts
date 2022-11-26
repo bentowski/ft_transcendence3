@@ -12,7 +12,7 @@ import { UserService } from '../user/user.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:8080/game'],
+    origin: ['http://localhost:8080'],
   },
   namespace: '/game',
 })
@@ -26,10 +26,10 @@ export class GameGateway implements OnModuleInit
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      console.log("Game : ");
-      console.log(socket.id);
-      console.log("Connected");
-      console.log("======= FIN =========");
+      //console.log("Game : ");
+      //console.log(socket.id);
+      //console.log("Connected");
+      //console.log("======= FIN =========");
     });
   }
 

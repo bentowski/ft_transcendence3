@@ -1,6 +1,6 @@
 //import React from 'react';
 import React, { Component, useEffect, useState } from 'react';
-import { socket } from '../contexts/WebSocketContext';
+import { socket } from '../contexts/WebSocketContextUpdate';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
@@ -9,7 +9,7 @@ import Request from "./utils/Requests"
 function OpenGames() {
 	const [games, setGames] = useState<any[]>([]);
 	const [items, setItems] = useState<any[]>([]);
-	
+
 	useEffect(() => {
 		socket.on('onNewParty', () => {
 			getGames()
@@ -32,14 +32,22 @@ function OpenGames() {
 		setGames(parties)
 	}
 
-	const renderGames = (login: string, key: number, id: number) => {
+	const renderGames = (login: string, key: number, id: number, p1: string, p2: string) => {
+		let count = 0;
+		if (p1 !== null)
+			count++;
+		if (p2 !== null)
+			count++;
 		return (
-			<div key={key} className="gamesDiv row justify-content-start">
-				<div className="col-4">
-					<button className="btn btn-outline-dark shadow-none" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>Join</button>
+			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
+				<div className="">
+					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
 				</div>
-				<div className="col w-100">
-					<p className="text-start">game {login}</p>
+				<div className="">
+					<p className="text-start">{login}</p>
+				</div>
+				<div className="" >
+					{count}/2
 				</div>
 			</div>
 		)
@@ -48,7 +56,7 @@ function OpenGames() {
 		let x = 0; //variable a changer selon le back
 		const item: any = []
 		while (x < games.length) {
-			item.push(renderGames(games[x].login, x, games[x].id))
+			item.push(renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))
 			x++;
 		}
 		setItems(item)
@@ -75,31 +83,19 @@ class MatchNav extends Component {
 		}).then(response => response.json())
 	}
 
-	randomMatchmaking = () => {
-		let url: string = "http://localhost:3000/parties";
-		this.reqUrl("GET", url)
-			.then((json) => {
-				if (json.length === 0) {
-					alert("No game found");
-					return;
-				}
-				let randomUser: any = json[(Math.floor(Math.random() * json.length))];
-				let games: any[] = this.state.allGames;
-				let i = 0;
-				for (; i < games.length; i++) {
-					if (games[i].id === randomUser.id) {
-						games.splice(i, 1);
-						break;
-					}
-				}
-				alert("Random game with : " + randomUser.login);
-				this.setState({ allGames: games });
-				fetch(url + '/' + randomUser.id, { method: 'DELETE' });
-				//! insert connection to partie : log user vs randomUser.login
-			})
-			.catch((error) => {
-				console.log("Random matchmaking error : " + error);
-			});
+	randomMatchmaking = async () => {
+		const games = await Request('GET', {}, {}, "http://localhost:3000/parties")
+		let availableGames = games.filter((game:any) => {
+			if (game.p1 === null || game.p2 === null)
+				return true;
+			return false;
+		})
+		if (availableGames.length === 0) {
+			alert("No available game joinable")
+			return ;
+		}
+		let randomGame: any = availableGames[(Math.floor(Math.random() * availableGames.length))];
+		window.location.href = "http://localhost:8080/game/" + randomGame.id
 	}
 
 	prompt = () => {

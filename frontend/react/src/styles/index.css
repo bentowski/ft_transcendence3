@@ -51,6 +51,12 @@ a:active {
   color: white;
 }
 
+.globalError {
+	z-index: 2000;
+	position: absolute;
+	width: 100%;
+}
+
 .logoutMenu p {
 	color: orangered;
 }

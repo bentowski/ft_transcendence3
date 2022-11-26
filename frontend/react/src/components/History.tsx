@@ -28,17 +28,16 @@ class History extends Component<
   };
 
   render() {
-    let user: Array<any> = [];
+    let user: JSX.Element[] = [];
     let y = 0;
     while (y < this.state.users.length) {
       // console.log("avatar est un bon film = ", this.state.users[y]);
       user.push(
-        <div className="d-flex flex-row d-flex align-items-center">
+        <div key={y} className="d-flex flex-row d-flex align-items-center">
           <div className="nb col-1 mr-2 d-flex flex-row justify-content-start">
             {y + 1}
           </div>
           <UserCards
-            key={y}
             user={this.state.users[y]}
             avatar={true}
             stat={true}

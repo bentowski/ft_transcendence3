@@ -7,12 +7,15 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import BlockUnBlock from './BlockUnBlock';
 // import IUser from "../../interfaces/user-interface";
 // import IAuthContextType from "../../interfaces/authcontexttype-interface";
-//import { UserType } from "../../types"
+import { UserType } from "../../types"
+import ModalMatchWaiting from "./ModalMatchWaiting";
+import { format } from "path";
+import ModalMatchInvite from "./ModalMatchInvite";
 
-const socket = io("http://localhost:3000/chat");
+const socket = io("http://localhost:3000/update");
 
 class UserCards extends Component<
-  { user: any; avatar: any; stat: any },
+  { user: any, avatar: any, stat: any },
   {
     login: string;
     id: number;
@@ -20,6 +23,7 @@ class UserCards extends Component<
     ssname: string;
     ssid: string;
     chanId: string;
+    socket: string;
     loaded: string;
   }
 > {
@@ -27,13 +31,14 @@ class UserCards extends Component<
   constructor(props: any) {
     super(props);
     this.state = {
-      login: "test",
+      login: "",
       id: props.user.auth_id,
       online: this.props.user.status ? "online" : "offline",
       ssname: "",
       ssid: "",
       chanId: "",
       loaded: '',
+      socket: ''
     };
   }
 
@@ -87,6 +92,8 @@ class UserCards extends Component<
 
       x++;
     }
+
+
     if (x === chans.length) {
       let newChan = await Request(
         "POST",
@@ -114,6 +121,31 @@ class UserCards extends Component<
     let newUrl = "http://localhost:8080/tchat/#" + ret;
     window.location.href = newUrl;
   };
+
+  startNewGame = async () => {
+    // await Request(
+    //   "POST",
+    //   {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   {
+    //     login: this.state.login,
+    //     public: true
+    //   },
+    //   "http://localhost:3000/parties/create"
+    // );
+
+    socket.emit("askForGameUp", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
+    console.log("emit : ", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
+    let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+    modal.classList.remove('hidden');
+    // let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
+    // let ids = parties.map((p:any) => {
+    //   return p.id;
+    // })
+    // window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
+  }
 
   renderUserCards = (id: number) => {
     if (!this.props.stat) {
@@ -169,7 +201,7 @@ class UserCards extends Component<
                 }
                 className="miniAvatar"
               />
-              <BlockUnBlock auth_id={this.props.user.auth_id}/>
+
             </div>
           </div>
         );
@@ -217,7 +249,55 @@ class UserCards extends Component<
     );
   };
 
+  openInvite = (body: {"to": string, "from": string}) => {
+      if (body.to === this.getCurrentUser().auth_id) {
+        let modal = document.getElementById("ModalMatchInvite" + this.state.login)as HTMLDivElement;
+        modal.classList.remove('hidden')
+    }
+  }
+
+  closeInvite = (body: {"to": string, "from": string}) => {
+    console.log("close !")
+    if (body.to === this.getCurrentUser().auth_id) {
+      let modal = document.getElementById('ModalMatchInvite' + this.state.login)as HTMLDivElement;
+      modal.classList.add('hidden')
+    }
+  }
+
+  initSocket = () => {
+    if (this.state.socket !== "on") {
+      this.setState({socket: 'on'});
+      socket.on("onAskForGameUp", (body: {"to": string, "from": string}) => {
+        this.openInvite(body);
+      });
+      socket.on("onAskForGameDown", (body: {"to": string, "from": string}) => {
+        this.closeInvite(body);
+      });
+      socket.on("onInviteAccepted", (body: {"to": string, "from": string, "partyID": string}) => {
+        if (body.to === this.getCurrentUser().auth_id)
+          window.location.href = "http://localhost:8080/game/" + body.partyID;
+      });
+      socket.on("onInviteDeclined", (body: {"to": string, "from": string}) => {
+        if (body.to === this.getCurrentUser().auth_id) {
+          let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+          modal.classList.add('hidden');
+        }
+          // console.log("LETS NOT CONNECT !") ///////////////
+      });
+    }
+  }
+
+  callback = (status: string) => {
+    if (status === "accepted") {
+      // socket.emit
+    }
+    else if (status === "declined") {
+
+    }
+  }
+
   componentDidMount = async () => {
+    //console.log('this.state.id = ', this.state.id);
     let user = await Request(
       "GET",
       {},
@@ -226,12 +306,14 @@ class UserCards extends Component<
     );
     let status = "offline";
     if (user) {
-      if (user.status == 1) status = "online";
+      if (user.status === 1) status = "online";
       this.setState({ login: user.username, online: status });
     }
     this.setState({ ssid: this.getCurrentUser().auth_id });
     this.setState({ ssname: this.getCurrentUser().username });
-    this.setSocket();
+    this.initSocket();
+    // console.log(this.getCurrentUser())
+    // this.setSocket();
   };
 
   render() {
@@ -242,6 +324,8 @@ class UserCards extends Component<
         key={(this.state.id * 5) / 3}
         className="col-12 my-2 d-flex flex-row justify-content-between"
       >
+        <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user}/>
+        <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user}/>
         {items}
       </div>
     );

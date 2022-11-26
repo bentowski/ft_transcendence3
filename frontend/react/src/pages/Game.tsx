@@ -4,6 +4,9 @@ import Request from "../components/utils/Requests"
 // import Menu from '../components/Menu'
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
+import { io } from 'socket.io-client';
+
+const updateSocket = io("http://localhost:3000/chat");
 
 let ball = new Image();
 let p1 = new Image();
@@ -82,7 +85,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   }
   // =========== Players moves ==========
   if (settings.spec === false) {
-    let move = 0;
+  let move = 0;
     if (settings.up == 1)  {
       movePlayer(ctx, -1, globale, settings)
       move += 1;
@@ -91,8 +94,9 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
       movePlayer(ctx, 1, globale, settings)
       move += 1;
     }
-    if (move === 1)
+    if (move === 1) {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
+    }
   }
 
   // ============== End Players Moves ===============
@@ -164,7 +168,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	    window.requestAnimationFrame(() => {
       	moveBall(ctx, globale, settings)
     	})
-		
+
   	}
 }
 
@@ -266,6 +270,7 @@ let settings = {
   room: '',
   gameStarted: false,
   timer: 5,
+  callback: (countdown: number) => {},
 }
 
 let setSettings = () => {
@@ -307,16 +312,18 @@ let setSettings = () => {
     room: url,
     gameStarted: settings.gameStarted,
     timer: settings.timer,
+	callback: settings.callback,
   }
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
 
 let startGame = (ctx: any, globale: any) => {
-  if (settings.gameStarted === false) {
+  if (settings.gameStarted === false && settings.spec === false) {
     settings.gameStarted = true;
     let countdown = setInterval(() => {
       console.log('Game start in ' + settings.timer + '...');
       settings.timer--;
+	  settings.callback(settings.timer)
       if (settings.timer === -1) {
         let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
         modal.classList.add("hidden")
@@ -324,6 +331,13 @@ let startGame = (ctx: any, globale: any) => {
         clearInterval(countdown);
       }
     }, 1000);
+  }
+  else if (settings.gameStarted === false && settings.spec === true) {
+	settings.gameStarted = true;
+	settings.timer = -1;
+	let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+    modal.classList.add("hidden")
+    moveBall(ctx, globale, settings)
   }
 }
 
@@ -365,13 +379,14 @@ let joinUrl = async (ctx: any, globale: any) => {
 }
 
 
-class Game extends Component<{},{ w:number, h: number}> {
+class Game extends Component<{},{ w:number, h: number, timer: number}> {
   constructor(props: any)
   {
     super(props)
     this.state = {
       w: 0,
-      h: 0
+      h: 0,
+	  timer: 0,
     }
   }
 
@@ -392,10 +407,20 @@ class Game extends Component<{},{ w:number, h: number}> {
         w : winWidth,
         h: winHeight,
       })
+	settings.callback = this.updateState;
     setSettings()
   }
 
- 
+  updateState = (countdown: number) => {
+	this.setState({timer: countdown})
+  }
+
+  modalCountDown = () => {
+	if (settings.gameStarted === true && settings.timer >= 0)
+		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" countdown={settings.timer}/>)
+	else
+		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" />)
+  }
 
   render() {
     window.onresize = () => {window.location.reload()}

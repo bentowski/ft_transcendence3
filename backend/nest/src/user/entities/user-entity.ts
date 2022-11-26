@@ -3,18 +3,16 @@ import {
   Entity,
   ManyToMany,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  JoinTable, JoinColumn,
 } from 'typeorm';
 import { HistoryEntity } from '../../parties/entities/history-entity';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { ChanEntity } from '../../chans/entities/chan-entity';
 // import { ProfileEntity } from './profile-entity';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   user_id: string;
 
   @Column({
@@ -74,16 +72,23 @@ export class UserEntity {
   })
   status: number;
 
-  @ManyToMany(() => UserEntity, (friend) => friend.friends, {
-    onDelete: 'CASCADE',
-  })
-  @JoinTable({ name: 'Friends' })
-  friends: UserEntity[];
-
+  /*
   @Type(() => UserEntity)
-  @JoinTable({ joinColumn: { name: 'UserEntity_id_1' } })
+  @JoinTable({ name: 'users_id_1' })
+  @ManyToMany(() => UserEntity, {
+    cascade: true,
+  })
+  */
+  @Column('simple-array', { default: [] })
+  friends: string[];
+
+  /*
+  @Type(() => UserEntity)
+  @JoinTable({ joinColumn: { name: 'UserEntity_blocked_id_1' } })
   @ManyToMany(() => UserEntity, { cascade: true })
-  blocked: UserEntity[];
+  */
+  @Column('simple-array', { default: [] })
+  blocked: string[];
 
   @Exclude()
   @Column({
@@ -103,11 +108,23 @@ export class UserEntity {
   })
   createdAt: Date;
 
-  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.chanUser, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   channelJoined: ChanEntity[];
 
-  @ManyToMany(() => ChanEntity, (chan) => chan.banUser)
+  @ManyToMany(() => ChanEntity, (chan) => chan.banUser, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   channelBanned: ChanEntity[];
+
+  @ManyToMany(() => ChanEntity, (chan) => chan.muteUser, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  channelMuted: ChanEntity[];
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

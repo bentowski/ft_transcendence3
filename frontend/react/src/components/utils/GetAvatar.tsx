@@ -1,44 +1,34 @@
-import { useAuthData } from "../../contexts/AuthProviderContext";
-import ModalChangeAvatar from "./ModalChangeAvatar";
-import { useState } from "react";
+//import { useAuthData } from "../../contexts/AuthProviderContext";
+//import ModalChangeAvatar from "./ModalChangeAvatar";
+//import {useEffect, useState} from "react";
 
-const GetAvatar = ({
-  className,
-  width,
-  height,
-  alt,
-}: {
-  className: string;
-  width: string;
-  height: string;
-  alt: string;
-}) => {
-  const { user } = useAuthData();
-  const [show, setShow] = useState(false);
+const GetAvatar = () => {
+  //const { user } = useAuthData();
+  //const [show, setShow] = useState(false);
+  //const [fallback, setFallback] = useState(false);
 
-  const handleShow = (value: boolean) => setShow(value);
-  //console.log("user avatar url = ", user.avatar);
 
+  /*
+  const reloadSrc = (evt: any) => {
+    if (fallback) {
+      evt.target.src = '/img/blank'
+    } else {
+      evt.target.src = avatarUrl;
+      setFallback(true);
+    }
+  }
+   */
+
+  /*
   if (user) {
     return (
       <div className="avatar">
-        <a onClick={() => handleShow(true)}>
-          <img
-            className={className}
-            width={width}
-            height={height}
-            src={"http://localhost:3000/user/" + user.auth_id + "/avatar/"}
-            alt={alt}
-            data-bs-toggle="modal"
-            data-bs-target="#changeAvatar"
-          />
-        </a>
-        <ModalChangeAvatar show={show} parentCallBack={handleShow} />
+        <ModalChangeAvatar />
       </div>
     );
   } else {
     return <div>Unknown</div>;
   }
+   */
 };
-
 export default GetAvatar;

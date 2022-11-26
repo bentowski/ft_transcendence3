@@ -2,6 +2,7 @@ import {useState} from "react";
 import Request from "../components/utils/Requests";
 
 export const useLocalStorage = (keyName: any, defaultValue: any) => {
+    /*
     const [storedValue, setStoredValue] = useState(async () => {
         try {
             //const value = window.localStorage.getItem(keyName);
@@ -24,4 +25,5 @@ export const useLocalStorage = (keyName: any, defaultValue: any) => {
         setStoredValue(newValue);
     };
     return [storedValue, setValue];
+    */
 }

@@ -1,0 +1,9 @@
+li {
+    list-style-type: none;
+}
+
+.item-list {
+    background-color: white;
+    color: black;
+    width: 200px;
+}

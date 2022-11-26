@@ -1,23 +1,32 @@
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
-import { useState } from "react";
-import ImageUploading from "react-images-uploading";
-import IError from "../../interfaces/error-interface";
-import {HandleError} from "./HandleError";
-import {useErrorContext} from "../../contexts/ErrorProviderContext";
+import {useEffect, useState} from "react";
 
 const ModalChangeAvatar = ({
-  show,
-  parentCallBack,
+  //show,
+  //parentCallBack,
 }: {
-  show: boolean;
-  parentCallBack: (newState: boolean) => void;
+  //show: boolean;
+  //parentCallBack: (newState: boolean) => void;
 }) => {
-  const { user } = useAuthData();
-  const { setError } = useErrorContext();
-  //const [show, setShow] = useState(false);
+  const { updateUser, setError, user } = useAuthData();
+  const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  //const [avatar, setAvatar] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState({url:"", hash: 0});
+
+  useEffect(() => {
+    if (user.avatar) {
+      setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
+    }
+  }, [user])
+
+  /*
+  useEffect(() => {
+    setAvatar(user.avatar);
+  }, [user])
+   */
 
   const requestChangeAvatar = async () => {
     const formData = new FormData();
@@ -37,9 +46,12 @@ const ModalChangeAvatar = ({
     let res = await fetch("http://localhost:3000/user/upload", params)
     if (res.ok) {
       //console.log("upload success!");
+      const str = await res.json();
+      //const avatar: string = "http://localhost:3000/user/" + user.auth_id + "/avatar/" + Date.now();
+      //console.log('str = ', avatar);
+      updateUser(str.avatar, null);
       setSelectedImage(null);
       handleClose();
-      window.location.reload();
     } else {
       setSelectedImage(null);
       const err: any = await res.json();
@@ -61,8 +73,8 @@ const ModalChangeAvatar = ({
     }
   };
 
-  const handleClose = () => parentCallBack(false);
-  //const handleShow = () => changeShowing(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <div className="changeavatar">
@@ -75,8 +87,8 @@ const ModalChangeAvatar = ({
             {selectedImage && (
               <div>
                 <img
-                  alt="not fount"
-                  width={"250px"}
+                  alt=""
+                  width="250px"
                   src={URL.createObjectURL(selectedImage)}
                 />
                 <br />
@@ -103,6 +115,17 @@ const ModalChangeAvatar = ({
           </Modal.Footer>
         </div>
       </Modal>
+      <a onClick={() => handleShow()}>
+        <img
+            className="modifAvatar mb-2"
+            width={100}
+            height={100}
+            src={`${avatarUrl.url}?${avatarUrl.hash}`}
+            alt="prout"
+            //data-bs-toggle="modal"
+            //data-bs-target="#changeAvatar"
+        />
+      </a>
     </div>
   );
 };

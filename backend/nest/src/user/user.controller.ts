@@ -11,20 +11,12 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  NotFoundException,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  BadRequestException,
-  /*Request,
-  UsePipes,
-  HttpException,
-  HttpStatus,
-  ValidationPipe,
-  Response,
-  */
+  ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Observable, of } from 'rxjs';
@@ -32,26 +24,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  UpdateUserDto,
   UpdateFriendsDto,
   UpdateAvatarDto,
   BlockedUserDto,
+  UpdateUsernameDto,
 } from './dto/update-user.dto';
-import { PayloadInterface } from '../auth/interfaces/payload.interface';
 import UserEntity from './entities/user-entity';
-import jwt_decode from 'jwt-decode';
 import { Express } from 'express';
-import path, { join } from 'path';
-import JwtService from '@nestjs/jwt';
+import { join } from 'path';
 import { AuthGuard } from '@nestjs/passport';
-import { IntraAuthGuard } from '../auth/guards/intra-auth.guard';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-import { JwtStrategy } from '../auth/strategies/jwt.strategy';
-import fs from 'fs';
-//import { UserAuthGuard } from '../auth/guards/user-auth.guard';
-//import { fileURLToPath } from 'url';
-//import { ValidateCreateUserPipe } from './pipes/validate-create-user.pipe';
-//import { fileURLToPath } from 'url';
+import ChanEntity from '../chans/entities/chan-entity';
 
 export const storage = {
   storage: diskStorage({
@@ -87,93 +70,20 @@ export class UserController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get('/name/:username')
-  findOnebyUsername(@Param('username') username: string) {
-    return this.userService.findOnebyUsername(username);
-  }
-
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get('/id/:id')
-  findOnebyID(@Param('id') id: string) {
-    return this.userService.findOneByAuthId(id);
-  }
-
   //@UseGuards(UserAuthGuard)
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Patch('addFriends/:id')
-  updateFriends(
-    @Param('id') userId: string,
-    @Body() updateFriendsDto: UpdateFriendsDto,
-  ) {
-    try {
-      return this.userService.updateFriends(userId, updateFriendsDto);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get(':id/getfriends')
-  async getFriends(@Param(':id') id: string): Promise<UserEntity[]> {
-    try {
-      return this.userService.getFriends(id);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get(':id/isblocked')
-  async isBlocked(@Req() req, @Param(':id') id: string): Promise<boolean> {
-    try {
-      const users: UserEntity[] = await this.userService.getBlocked(
-        req.user.auth_id,
-      );
-      for (let index = 0; index < users.length; index++) {
-        if (users[index].auth_id === id) {
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Get(':id/getblocked')
-  async getBlocked(@Param(':id') id: string): Promise<UserEntity[]> {
-    try {
-      return this.userService.getBlocked(id);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
-  @Patch('updateblocked')
-  async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
-    try {
-      return this.userService.updateBlocked(
-        usr.action,
-        usr.auth_id,
-        req.user.auth_id,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
   //@UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Param('id') username: string) {
-    return this.userService.remove(username);
+  async remove(@Param('id', ParseIntPipe) id: string) {
+    try {
+      return this.userService.remove(id);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -192,11 +102,10 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    //console.log('saloute');
     const auid: string = req.user.auth_id;
     const user: UserEntity = await this.userService.findOneByAuthId(auid);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while uploading an image: Failed requesting user in database',
       );
     }
@@ -205,10 +114,36 @@ export class UserController {
     };
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
-      //res.status(200)
+      return newNameAvatar;
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('/name/:username')
+  async findOnebyUsername(
+    @Param('username') username: string,
+  ) {
+    const user: UserEntity = await this.userService.findOnebyUsername(username);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while fetching database: User with that username doesnt exists',
+      );
+    }
+    return user;
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('/id/:id')
+  async findOnebyID(@Param('id') id: string) {
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while fetching database: User with that id doesnt exists',
+      );
+    }
+    return user;
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -231,11 +166,143 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isblocked')
+  async isBlocked(@Req() req, @Param('id') id: string): Promise<boolean> {
+    try {
+      const users: UserEntity[] = await this.userService.getBlocked(
+        req.user.auth_id,
+      );
+      for (let index = 0; index < users.length; index++) {
+        if (users[index].auth_id === id) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/getblocked')
+  async getBlocked(@Param('id') id: string): Promise<UserEntity[]> {
+    try {
+      return this.userService.getBlocked(id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('chan/banned')
+  async chanBanned(@Req() req): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while fetching banned chans: Cant find user',
+      );
+    }
+    if (!user.channelBanned) {
+      return [];
+    }
+    return user.channelBanned;
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('chan/muted')
+  async chanMuted(@Req() req): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while fetching muted chans: Cant find user',
+      );
+    }
+    if (!user.channelMuted) {
+      return [];
+    }
+    return user.channelMuted;
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('chan/joined')
+  async chanPresent(@Req() req): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while fetching joined chans: Cant find user',
+      );
+    }
+    if (!user.channelJoined) {
+      return [];
+    }
+    return user.channelJoined;
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/getfriends')
+  async getFriends(@Param('id') id: string): Promise<UserEntity[]> {
+    try {
+      return this.userService.getFriends(id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get(':id/isfriend')
+  async isFriend(@Req() req, @Param('id') id: string): Promise<boolean> {
+    try {
+      const users: UserEntity[] = await this.userService.getFriends(
+        req.user.auth_id,
+      );
+      for (let index = 0; index < users.length; index++) {
+        if (users[index].auth_id === id) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('update/friends')
+  updateFriends(
+    @Req() req,
+    @Body() updateFriendsDto: UpdateFriendsDto,
+  ): Promise<UserEntity> {
+    try {
+      return this.userService.updateFriends(
+        updateFriendsDto.action,
+        req.user.auth_id,
+        updateFriendsDto.auth_id,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Patch('update/blocked')
+  async updateBlocked(@Req() req, @Body() usr: BlockedUserDto) {
+    try {
+      return this.userService.updateBlocked(
+        usr.action,
+        usr.auth_id,
+        req.user.auth_id,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
-  updateUsername(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+  updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
     const auid: string = req.user.auth_id;
     try {
-      return this.userService.updateUsername(auid, updateUserDto);
+      return this.userService.updateUsername(auid, obj.username);
     } catch (error) {
       throw new Error(error);
     }
