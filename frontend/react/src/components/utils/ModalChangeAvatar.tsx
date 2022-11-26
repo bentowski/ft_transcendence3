@@ -108,7 +108,7 @@ const ModalChangeAvatar = () => {
           </Modal.Footer>
         </div>
       </Modal>
-      <a href="/#" onClick={() => handleShow()}>
+      <button onClick={() => handleShow()}>
         <img
             className="modifAvatar mb-2"
             width={100}
@@ -118,7 +118,7 @@ const ModalChangeAvatar = () => {
             //data-bs-toggle="modal"
             //data-bs-target="#changeAvatar"
         />
-      </a>
+      </button>
     </div>
   );
 };
