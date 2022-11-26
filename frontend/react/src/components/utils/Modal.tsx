@@ -339,30 +339,35 @@ class Modal extends Component<
 
   sendRequest = async () => {
     const login = document.getElementById("changeLogin") as HTMLInputElement;
-    let ret = await Request(
-      "PATCH",
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      {
-        username: login.value,
-        avatar: this.getCurrentUser().avatar,
-      },
-      "http://localhost:3000/user/settings/" + this.getCurrentUser().auth_id
-    );
-
-    if (!ret.ok) {
-      window.location.href = "/#" + login.value;
-      login.value = "";
-      this.hidden();
-    }
-    let loginError = document.getElementById("loginError") as HTMLDivElement;
-    loginError.classList.remove("hidden");
-    setTimeout(() => {
+    try {
+      let ret = await Request(
+        "PATCH",
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        {
+          username: login.value,
+          avatar: this.getCurrentUser().avatar,
+        },
+        "http://localhost:3000/user/settings/" + this.getCurrentUser().auth_id
+      );
+  
+      if (!ret.ok) {
+        window.location.href = "/#" + login.value;
+        login.value = "";
+        this.hidden();
+      }
       let loginError = document.getElementById("loginError") as HTMLDivElement;
-      loginError.classList.add("hidden");
-    }, 1700);
+      loginError.classList.remove("hidden");
+      setTimeout(() => {
+        let loginError = document.getElementById("loginError") as HTMLDivElement;
+        loginError.classList.add("hidden");
+      }, 1700);
+    } catch (error) {
+      const ctx: any = this.context;
+      ctx.setError(error);
+    }
   };
 
   openWin = () => {
