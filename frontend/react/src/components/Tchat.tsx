@@ -22,30 +22,30 @@ export const WebSocket = () => {
   const [loaded, setLoaded] = useState("");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
-  const { user } = useAuthData();
+  const { user, setError } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   let location = ""
 
   useEffect(() => {
-    socket.on('connect', () => {});
+    socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
       // console.log("RECEIVE ////////////////")
       let channels: Array<ChanType> = chans;
-  		let index:number = chans.findIndex((c:ChanType) => c.id === newMessage.room);
-  		if (channels[index] !== undefined) {
-  			if (channels[index].messages)
-  				channels[index].messages = [...channels[index].messages, newMessage];
-  			else
-  				channels[index].messages = [newMessage];
-  			setChans(channels);
-  				if (channels[index].isActive) {
-  				if (channels[index].messages)
-  					setMessage(channels[index].messages);
-  				else
-  					setMessage([])
-  			}
-  		}
+      let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
+      if (channels[index] !== undefined) {
+        if (channels[index].messages)
+          channels[index].messages = [...channels[index].messages, newMessage];
+        else
+          channels[index].messages = [newMessage];
+        setChans(channels);
+        if (channels[index].isActive) {
+          if (channels[index].messages)
+            setMessage(channels[index].messages);
+          else
+            setMessage([])
+        }
+      }
     });
 
     socket.on("userJoinChannel", () => {
@@ -63,34 +63,34 @@ export const WebSocket = () => {
       socket.off('connect');
       socket.off('onMessage');
       socket.off('newChan');
-  	  socket.off('userJoinChannel');
-  	  chans.map((c:ChanType) => {
-    		if (c.chanUser) {
-    			c.chanUser.map((u:UserType) => {
-    				if (u.auth_id === auth_id)
-    					socket.emit('leaveRoom', c.id, auth_id);
-    			})
-    		}
-  	  })
+      socket.off('userJoinChannel');
+      chans.map((c: ChanType) => {
+        if (c.chanUser) {
+          c.chanUser.map((u: UserType) => {
+            if (u.auth_id === auth_id)
+              socket.emit('leaveRoom', c.id, auth_id);
+          })
+        }
+      })
     }
   });
 
-  	useEffect(() => {
-		let data:any = sessionStorage.getItem('data');
-		let parseData = JSON.parse(data);
+  useEffect(() => {
+    let data: any = sessionStorage.getItem('data');
+    let parseData = JSON.parse(data);
     let newUser: UserType = parseData.user
-		getChan();
-		setAvatar(newUser.avatar);
-    	setUsername(newUser.username);
-		setAuthId(newUser.auth_id);
-  	}, [])
+    getChan();
+    setAvatar(newUser.avatar);
+    setUsername(newUser.username);
+    setAuthId(newUser.auth_id);
+  }, [])
 
-	useEffect(() => {
-		if (loaded === 'ok')
-			joinUrl()
-	}, [loaded])
+  useEffect(() => {
+    if (loaded === 'ok')
+      joinUrl()
+  }, [loaded])
 
-	useEffect(() => {
+  useEffect(() => {
     let checkUrl = setInterval(() => {
       let url = document.URL
       if (!document.URL.includes("localhost:8080/tchat"))
@@ -101,16 +101,16 @@ export const WebSocket = () => {
         joinUrl()
       }
     }, 10)
-		if (chans.length && auth_id !== undefined && !room)
-			setLoaded('ok')
-	}, [chans])
+    if (chans.length && auth_id !== undefined && !room)
+      setLoaded('ok')
+  }, [chans])
 
-	useEffect(() => {
-		let chanUserFind:Array<UserType>|undefined = chans.find((c:ChanType) => c.id === room)?.chanUser
-        if (chanUserFind !== undefined) {
-          setChanUser(chanUserFind)
-        }
-	}, [room, chans])
+  useEffect(() => {
+    let chanUserFind: Array<UserType> | undefined = chans.find((c: ChanType) => c.id === room)?.chanUser
+    if (chanUserFind !== undefined) {
+      setChanUser(chanUserFind)
+    }
+  }, [room, chans])
 
 
 
@@ -129,74 +129,82 @@ export const WebSocket = () => {
       radioCheck = "private";
     else if (radioPro.checked === true)
       radioCheck = "protected";
-    let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-    chans = chans.find((c:ChanType) => c.name === name.value)
-    if (radioCheck !== "" && name.value && chans === undefined) {
-      if (password.value)
-        pswd = password.value;
-      await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: name.value,
-          type: radioCheck,
-          password: pswd,
-          owner: username
-        },
-        "http://localhost:3000/chan/create"
-      );
-    let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
-      name.value = "";
-      password.value = "";
-      radioPub.checked = false;
-      radioPri.checked = false;
-      radioPro.checked = false;
-      socket.emit('chanCreated');
-    window.location.replace('http://localhost:8080/tchat/' + chan.id)
-    // window.location.reload();
+    try {
+      let chans = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+      chans = chans.find((c: ChanType) => c.name === name.value)
+      if (radioCheck !== "" && name.value && chans === undefined) {
+        if (password.value)
+          pswd = password.value;
+        await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            name: name.value,
+            type: radioCheck,
+            password: pswd,
+            owner: username
+          },
+          "http://localhost:3000/chan/create"
+        );
+        let chan = await Request('GET', {}, {}, ("http://localhost:3000/chan/" + name.value))
+        name.value = "";
+        password.value = "";
+        radioPub.checked = false;
+        radioPri.checked = false;
+        radioPro.checked = false;
+        socket.emit('chanCreated');
+        window.location.replace('http://localhost:8080/tchat/' + chan.id)
+        // window.location.reload();
+      }
+    } catch (error) {
+      setError(error);
     }
   };
 
-	const joinUrl = () => {
-		let url = document.URL;
-		let chan:ChanType|undefined;
-		let index = url.lastIndexOf("/");
+  const joinUrl = () => {
+    let url = document.URL;
+    let chan: ChanType | undefined;
+    let index = url.lastIndexOf("/");
 
-		if (index === -1) {
-			chan = chans.find((c:ChanType) => c.chanUser.find((user:UserType) => user.auth_id === auth_id));
-			if (chan !== undefined)
-				joinRoom(chan)
-		}
-		else {
-			url = url.substring(url.lastIndexOf("/") + 1);
-			chan = chans.find((c:ChanType) => c.id === url);
+    if (index === -1) {
+      chan = chans.find((c: ChanType) => c.chanUser.find((user: UserType) => user.auth_id === auth_id));
+      if (chan !== undefined)
+        joinRoom(chan)
+    }
+    else {
+      url = url.substring(url.lastIndexOf("/") + 1);
+      chan = chans.find((c: ChanType) => c.id === url);
       // console.log("chan", chan)
-			if (chan !== undefined)
-				joinRoom(chan)
-			else {
-				chan = chans.find((c:ChanType) => c.chanUser.find((user:UserType) => user.auth_id === auth_id));
-				if (chan !== undefined)
-					joinRoom(chan)
-			}
-		}
-	}
+      if (chan !== undefined)
+        joinRoom(chan)
+      else {
+        chan = chans.find((c: ChanType) => c.chanUser.find((user: UserType) => user.auth_id === auth_id));
+        if (chan !== undefined)
+          joinRoom(chan)
+      }
+    }
+  }
 
   const getChan = async () => {
-		let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
-		channels.map((c:ChanType, idx:number) => {
-			if (c.id === room)
-				c.isActive = true;
-			if (c.messages) {
-				c.messages.map((m:any, index:number) => {
-					c.messages[index] = JSON.parse(String(m));
-				})
-			}
-			channels[idx] = c;
-		})
-		setChans(channels);
+    try {
+      let channels = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+      channels.map((c: ChanType, idx: number) => {
+        if (c.id === room)
+          c.isActive = true;
+        if (c.messages) {
+          c.messages.map((m: any, index: number) => {
+            c.messages[index] = JSON.parse(String(m));
+          })
+        }
+        channels[idx] = c;
+      })
+      setChans(channels);
+    } catch (error) {
+      setError(error);
+    }
   }
 
   const onSubmit = () => {
@@ -324,17 +332,14 @@ export const WebSocket = () => {
 
   const printName = (chan: ChanType) => {
     if (chan && chan.type === "direct") {
-      if (user.username === chan.chanUser[0].username)
-      {
+      if (user.username === chan.chanUser[0].username) {
         return chan.chanUser[1].username;
       }
-      else
-      {
+      else {
         return chan.chanUser[0].username;
       }
     }
-    else
-    {
+    else {
       return chan.name;
     }
   };
@@ -354,32 +359,31 @@ export const WebSocket = () => {
   };
 
 
-    const chansJoined = (chan: Array<ChanType>) => {
-      let count = 0;
-      for (let x = 0; x < chans.length; x++)
-        if (chan[x].chanUser.find((u: UserType) => u.auth_id === auth_id))
-          count++;
-      return count;
-    }
+  const chansJoined = (chan: Array<ChanType>) => {
+    let count = 0;
+    for (let x = 0; x < chans.length; x++)
+      if (chan[x].chanUser.find((u: UserType) => u.auth_id === auth_id))
+        count++;
+    return count;
+  }
 
 
-// ======================== RENDER ==========================
+  // ======================== RENDER ==========================
 
   class UsersInActualchannel extends Component<{}, {}> {
     render() {
       let users: any = [];
       const actualChan = chanUser;
       if (actualChan.length)
-        actualChan.map((u:UserType) => {
-          {users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)}
-      })
+        actualChan.map((u: UserType) => {
+          { users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>) }
+        })
       return users;
     }
   }
 
   class DispatchMsg extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       messages.map((msg, index) => {
         if (msg.sender_socket_id === auth_id)
@@ -422,14 +426,13 @@ export const WebSocket = () => {
 
   class AdminButtons extends Component<{}, {}> {
     render() {
-      let chan = chans[chans.findIndex((c:ChanType) => c.id === room)]
+      let chan = chans[chans.findIndex((c: ChanType) => c.id === room)]
       let tab: any[] = chan.admin
       console.log(tab)
-      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username)
-      {
+      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username) {
         return (
           <div className="row">
-            <ModalBanUser chan={room} socket={socket}/>
+            <ModalBanUser chan={room} socket={socket} />
             <ModalMuteUser chan={room} socket={socket} />
           </div>
         )
@@ -465,8 +468,7 @@ export const WebSocket = () => {
 
   class PrintChannel extends Component<{}, {}> {
     render() {
-      if (room)
-      {
+      if (room) {
         return (
           <div className="inTchat row col-10">
             <div className="tchatMain col-10">
@@ -489,9 +491,8 @@ export const WebSocket = () => {
     }
   }
 
-  class ListOfPrivateMessages extends Component< {}, {} >{
-    render()
-    {
+  class ListOfPrivateMessages extends Component<{}, {}>{
+    render() {
       let ret: any[] = []
       chans.map((chan) => {
         if (chan.type === "direct")
@@ -502,34 +503,32 @@ export const WebSocket = () => {
               </li>
             </Link>
           )
-        }
+      }
       )
       return ret
     }
   }
 
   class ListOfJoinedChans extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       chans.map((chan) => {
-          if (chan.type !== "direct" && inChan(chan))
-            ret.push(
-              <Link key={chan.id} to={"/tchat/" + chan.id}>
-                <li onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
-                  {printName(chan)}
-                </li>
-              </Link>
-            )
-          }
+        if (chan.type !== "direct" && inChan(chan))
+          ret.push(
+            <Link key={chan.id} to={"/tchat/" + chan.id}>
+              <li onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
+                {printName(chan)}
+              </li>
+            </Link>
+          )
+      }
       )
       return ret
     }
   }
 
   class ChannelList extends Component<{}, {}> {
-    render()
-    {
+    render() {
       return (
         <div className="channels col-2">
           <button onClick={createChan}>Create Channel</button>
@@ -554,7 +553,7 @@ export const WebSocket = () => {
     <div>
       <div className="tchat row">
         <h4>CHAT</h4>
-        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
+        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{ "socket": socket, "room": room, joinRoom, createChannel }} chans={listChansJoined(chans)} />
         <ChannelList />
         <PrintChannel />
       </div>

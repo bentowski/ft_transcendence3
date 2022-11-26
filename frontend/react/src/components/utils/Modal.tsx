@@ -104,9 +104,11 @@ class Modal extends Component<
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
     if (radioPub.checked === false && radioPri.checked === false && radioPro.checked === false) {
-      this.setState({ alertRadio: true});
+      this.setState({ alertRadio: true });
       return false;
     }
+    else
+      this.setState({ alertRadio: false });
     return true;
   };
 
@@ -114,11 +116,11 @@ class Modal extends Component<
     // let users = await getUsers();
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
-    
+
     let retPass = true;
     if (this.state.protected)
       retPass = this.verifPass()
-    if (!regex.test(this.state.fieldName)) {
+    else if (!regex.test(this.state.fieldName)) {
       this.setState({ errName: "Non valid character" });
       this.setState({ alertName: true });
       return false;
@@ -129,11 +131,15 @@ class Modal extends Component<
       return false;
     }
     else if (this.state.allChans.findIndex((c: any) => c.name === this.state.fieldName) > -1) {
-      this.setState({errName: "This username already exists"});
-      this.setState({alertName: true});
+      this.setState({ errName: "This username already exists" });
+      this.setState({ alertName: true });
       return false;
     }
-    else if (!retPass)
+    else {
+      this.setState({ errName: "" });
+      this.setState({ alertName: false });
+    }
+    if (!retPass)
       return false;
     return true;
   };
@@ -145,6 +151,10 @@ class Modal extends Component<
       this.setState({ errPass: "Password must contains between 8 and 30 characters" });
       this.setState({ alertPass: true });
       return false;
+    }
+    else {
+      this.setState({ errPass: "" });
+      this.setState({ alertPass: false });
     }
     return true;
   };
@@ -500,7 +510,7 @@ class Modal extends Component<
                 placeholder="name"
                 onChange={this.handleName}
                 className='mt-2'
-                />
+              />
               <div>
                 {this.state.alertName ?
                   <Alert onClose={this.closeAlertName} variant="danger" dismissible>{this.state.errName}</Alert> :
