@@ -4,7 +4,7 @@ import Modal from "./utils/Modal";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContext';
-import { MessagePayload, ChanType, UserType } from "../types"
+import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../types"
 import { useAuthData } from "../contexts/AuthProviderContext";
 import ModalBanUser from './utils/ModalBanUser';
 import ModalMuteUser from './utils/ModalMuteUser';
@@ -18,8 +18,8 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
-  const [muted, setMuted] = useState({room:{},muted:false});
-  const [banned, setBanned] = useState({room:{},banned:false});
+  //const [muted, setMuted] = useState({room:{},muted:false});
+  //const [banned, setBanned] = useState({room:{},banned:false});
   //const [currentChan, setCurrentChan] = useState<ChanType>();
   //const [userBan, setBanUser] = useState<Array<UserType>>([]);
   const {
@@ -87,19 +87,13 @@ export const WebSocket = () => {
     }
   });
 
-
-  /*
-  userIsBanned = () => {
-
-  }*/
-
   useEffect(() => {
-    const handleMute = (obj: any) => {
+    const handleMute = (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id) {
         updateMutedFromList();
       }
     }
-    const handleBan = (obj: any) => {
+    const handleBan = (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id) {
         updateBannedFromList();
       }
@@ -114,13 +108,12 @@ export const WebSocket = () => {
 
 
   useEffect(() => {
-    const handleError = (error: any, auth_id: string) => {
-      console.log('error happened, oh noooo');
+    const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
           updateBannedFromList();
-          navigate("/tchat/")
+          //navigate("/tchat/");
         }
         if (error.statusCode === 451) {
           updateMutedFromList();
@@ -134,18 +127,21 @@ export const WebSocket = () => {
     return () => {
       socket.off('error', handleError);
     }
-  })
+  }, [])
 
   useEffect(() => {
     getChan();
   }, [])
 
+  /*
   useEffect(() => {
     if (loaded === 'ok')
       joinUrl()
   }, [loaded])
+   */
 
   useEffect(() => {
+    /*
     let checkUrl = setInterval(() => {
       let url = document.URL
       if (!document.URL.includes("localhost:8080/tchat"))
@@ -158,7 +154,8 @@ export const WebSocket = () => {
     }, 10)
     if (chans.length && user.auth_id !== undefined && !room)
       setLoaded('ok')
-  }, [chans])
+     */
+  }, [])
 
   useEffect(() => {
     let chanUserFind:Array<UserType>|undefined = chans.find((c:ChanType) => c.id === room)?.chanUser
@@ -166,22 +163,6 @@ export const WebSocket = () => {
       setChanUser(chanUserFind)
     }
   }, [room, chans])
-
-  /*
-  useEffect(() => {
-    const fetchMute = async () => {
-      let res = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/chan/" + room +"/ismuted/" + user.auth_id,
-      )
-      setMuted(res);
-    }
-    fetchMute();
-  }, [room, user])
-   */
-
 
   const createChannel = async () => {
     const name = document.querySelector("#chanName") as HTMLInputElement;
@@ -349,7 +330,7 @@ export const WebSocket = () => {
 
     let chanToJoin = chans.find((chan: ChanType) => chan.id === newRoom.id)
     if (chanToJoin !== undefined) {
-      if (chanToJoin.chanUser.find((u) => u.auth_id === user.auth_id)) {
+      if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
@@ -402,7 +383,7 @@ export const WebSocket = () => {
 
   const arrayUserInActualchannel = () => {
     let users: Array<UserType> = [];
-    const actualChan = chans.find((c) => c.isActive);
+    const actualChan = chans.find((c: ChanType) => c.isActive);
     if (actualChan?.chanUser) {
       users = actualChan.chanUser;
     }
@@ -464,7 +445,7 @@ export const WebSocket = () => {
       let users: any = [];
       const actualChan = chanUser;
       if (actualChan.length)
-        actualChan.map((u:UserType) => {
+        actualChan.map((u: UserType) => {
           users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)
         })
       return users;
@@ -475,7 +456,7 @@ export const WebSocket = () => {
     render()
     {
       let ret: any[] = []
-      messages.map((msg, index) => {
+      messages.map((msg: MessagePayload, index: number) => {
         if (msg.sender_socket_id === user.auth_id)
           ret.push(
               <div key={index} className="outgoing_msg break-text">
@@ -609,7 +590,7 @@ export const WebSocket = () => {
     render()
     {
       let ret: any[] = []
-      chans.map((chan) => {
+      chans.map((chan: ChanType) => {
             if (chan.type !== "direct" && inChan(chan))
               ret.push(
                   <Link key={chan.id} to={"/tchat/" + chan.id}>

@@ -21,7 +21,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
                     setStatus(res);
                     return ;
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                     setError(error);
                 }
             }
@@ -51,12 +51,14 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
     }
 
     return (
-        <button onClick={() => friendunfriendUser()} >
-            { status ?
-                <p>UNFRIEND</p>
-                :
-                <p>FRIEND</p> }
-        </button>
+        <div>
+            <button onClick={() => friendunfriendUser()} >
+                { status ?
+                    <p>UNFRIEND</p>
+                    :
+                    <p>FRIEND</p> }
+            </button>
+        </div>
     )
 }
 export default FriendUnFriend;

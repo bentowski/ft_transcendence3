@@ -8,6 +8,8 @@ export type MessagePayload = {
   room: string
 };
 
+
+
 export type ChanType = {
   id: string,
   type: string,
@@ -37,4 +39,15 @@ export type UserType = {
   channelJoind: Array<ChanType>
   friends: string[],
   blocked: string[],
+}
+
+export type ErrorType = {
+  statusCode: number,
+  message: string,
+}
+
+export type PunishSocketType = {
+  room: string,
+  auth_id: string,
+  action: string,
 }
