@@ -80,7 +80,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return ;
         } else if (res.isTok > 0) {
           setIsToken(true);
-          fetchChans();
           if (res.isTok === 1) {
             setLoading(false);
             return ;
@@ -93,6 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             )
             if (user) {
               setUser(user);
+              fetchChans();
               if (res.isTok === 2) {
                 setIsTwoFa(true);
                 setLoading(false);

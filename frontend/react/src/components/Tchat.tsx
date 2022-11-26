@@ -192,8 +192,8 @@ export const WebSocket = () => {
       setError(error);
     }
     let chan = undefined;
-    console.log("pass = ", pass)
-    console.log("type = ", typep)
+    //console.log("pass = ", pass)
+    //console.log("type = ", typep)
     try {
       chan = await Request(
           "POST",
