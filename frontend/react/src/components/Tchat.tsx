@@ -621,19 +621,19 @@ export const WebSocket = () => {
   class ChannelList extends Component<{}, {}> {
     render() {
       return (
-          <div className="channels col-2">
-            <button onClick={createChan}>Create Channel</button>
-            <button onClick={joinChan}>Join Channel</button>
-            <div className="channelsList">
-              <p>{chansJoined(chans)} Channels</p>
-              <div className="list-group">
-                <ul>
-                  <ListOfJoinedChans />
-                </ul>
-                <ul>
-                  <ListOfPrivateMessages />
-                </ul>
-              </div>
+        <div className="channels col-2">
+          <button className="btn btn-outline-dark shadow-none" onClick={createChan}>Create Channel</button>
+          <button className="btn btn-outline-dark shadow-none" onClick={joinChan}>Join Channel</button>
+          <div className="channelsList">
+            <p>{chansJoined(chans)} Channels</p>
+            <div className="list-group">
+              <ul>
+                <ListOfJoinedChans />
+              </ul>
+              <ul>
+                <ListOfPrivateMessages />
+              </ul>
+            </div>
             </div>
           </div>
       )
@@ -662,7 +662,7 @@ class Tchat extends Component<{}, {}> {
         </div>
     ); // fin de return
   } // fin de render
-  // <UserCards value={2} avatar={false}/>
+// <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;
