@@ -4,16 +4,21 @@ import Request from "./Requests";
 import UserCards from "./UserCards";
 
 const DisplayFriendsList = () => {
-    const { friendsList } = useAuthData();
+    const { friendsList, setError } = useAuthData();
     const [result, setResult] = useState<JSX.Element[]>([]);
 
     const fetchUser = async (auth_id: string) => {
-        return await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/user/id/" + auth_id,
-        );
+        try {
+            let user: any = await Request(
+                "GET",
+                {},
+                {},
+                "http://localhost:3000/user/id/" + auth_id,
+            );
+            return user;
+        } catch (error) {
+            setError(error);
+        }
     }
 
     useEffect(() => {
