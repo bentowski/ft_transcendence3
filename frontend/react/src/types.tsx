@@ -2,6 +2,7 @@ export type MessagePayload = {
   content: string,
   msg: string,
   username: string,
+  auth_id: string,
   avatar: string,
   sender_socket_id: string,
   room: string

@@ -23,6 +23,7 @@ type Msg = {
 	sender_socket_id: string;
 	username: string;
 	avatar: string;
+	auth_id: string;
 	room: string;
 };
 
@@ -36,17 +37,47 @@ export class ChanService {
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
 		//console.log('createchandto = ', createChanDto);
-        let { name, type, password, owner, chanUser } = createChanDto;
-        password = await argon2.hash(password)
+        const { name, type, password, owner /*, chanUser */ } = createChanDto;
+		if (name.length < 3 || name.length > 30) {
+			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 30 characters')
+		}
+		if (!name.match(/^[a-z0-9]+$/)) {
+			throw new BadRequestException('Error while creating new chan: Name should be alphanum')
+		}
+		let hashed = undefined;
+		if ((type === 'public' || type === 'protected') && (password !== null && password !== '')) {
+			throw new BadRequestException('Error while creating new Chan: Public or Private chans cant have a password');
+		}
+		if (password && type === 'protected') {
+			if (password.length < 8 || password.length > 30) {
+				throw new BadRequestException('Error while creating new chan: Password should be between 8 and 30 characters')
+			}
+			hashed = await argon2.hash(password)
+		} else {
+			hashed = null;
+		}
         const chanInDb = await this.chanRepository.findOne({
-            where: { name }
+            where: { name: name },
         });
         if (chanInDb) {
-            throw new HttpException('Chan already exists', HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('Error while creating new Chan: Chan already exists');
         }
-        const chan: ChanEntity = await this.chanRepository.create({
-            name, type, password, owner, chanUser
+		console.log('owner = ', owner, ', password = ', password);
+		const user: UserEntity = await this.userService.findOnebyUsername(owner);
+		if (!user) {
+			throw new BadRequestException('Error while creating new Chan: Cant find user');
+		}
+        const chan: ChanEntity = this.chanRepository.create({
+            type: type,
+			name: name,
+			owner: owner,
+			password: hashed,
+			messages: [],
+			chanUser: [],
+			banUser: [],
+			muteUser: [],
         })
+		chan.chanUser.push(user);
 		//console.log('new chan = ', chan);
 		try {
 			await this.chanRepository.save(chan);
@@ -82,21 +113,29 @@ export class ChanService {
         await this.chanRepository.delete(id);
     }
 
-	async addMessage(message: Msg): Promise<ChanEntity> {
+	async addMessage(msg: Msg) {
 		try {
-			const chan = await this.chanRepository.findOne({ where: { id: message.room }});
-			if (chan) {
-				if (chan.messages)
-					chan.messages = [...chan.messages, message];
-				else
-					chan.messages = [message];
-				return this.chanRepository.save(chan);
+			const chan = await this.chanRepository.findOne({ where: { id: msg.room }});
+			if (!chan) {
+				const error = {
+					statusCode: 400,
+					message: 'Error while adding new message: Can find channel',
+				}
+				return error;
 			}
+			chan.messages.push(msg);
+			/*
+			if (chan.messages)
+				chan.messages = [...chan.messages, message];
+			else
+				chan.messages = [message];
+			 */
+			await this.chanRepository.save(chan);
 			//chan.messages.push(message);
 			//return chan;
 		}
 		catch (error) {
-			console.log(error);
+			throw new Error(error);
 		}
 	}
 
@@ -117,7 +156,11 @@ export class ChanService {
 		const banning = chan.banUser.find(elem => elem === user);
 		//console.log('banning = ', banning);
 		if (banning) {
-			throw new BadRequestException('Error while banning user from channel: User already banned');
+			const error = {
+				statusCode: 450,
+				message: 'Error while banning user from channel: User already banned',
+			}
+			throw error;
 		}
 		/*
 		const user_ch = chan.chanUser.find(elem => elem === user);
@@ -168,7 +211,11 @@ export class ChanService {
 		}
 		const found = chan.muteUser.find(elem => elem === user);
 		if (found) {
-			throw new BadRequestException('Error while muting user from channel: User already muted');
+			const error = {
+				statusCode: 451,
+				message: 'Error while muting user from channel: User already muted',
+			}
+			throw error;
 		}
 		/*
 		const user_ch = chan.chanUser.find(elem => elem === user);
@@ -203,9 +250,12 @@ export class ChanService {
 			throw new BadRequestException('Error while adding user to channel: Cant find channel');
 		}
 		if (chan.banUser.find(s => s.user_id === user.user_id)) {
-			throw new ForbiddenException('Error: User is not allowed it get in this channel')
+			const error = {
+				statusCode: 450,
+				message: 'Error: User is not allowed it get in this channel',
+			}
+			throw error;
 		}
-		console.log('adding user to channel');
 		chan.chanUser.push(user);
 		try {
 			return await this.chanRepository.save(chan);
@@ -223,12 +273,17 @@ export class ChanService {
 		if (!chan)
 			return ;
 		if (chan.chanUser && chan.chanUser.length) {
-			let index = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
+			const index = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
 			if (index >= 0) {
 				chan.chanUser = chan.chanUser.filter((u) => u.auth_id !== user.auth_id);
 			}
 		}
-		return await this.chanRepository.save(chan);
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error();
+		}
+
 	}
 
 	/*

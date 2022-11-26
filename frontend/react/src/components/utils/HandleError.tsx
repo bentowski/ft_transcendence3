@@ -3,9 +3,11 @@ import {useAuthData} from "../../contexts/AuthProviderContext";
 import {useEffect} from "react";
 import {Alert} from "react-bootstrap";
 import {useErrorContext} from "../../contexts/ErrorProviderContext";
+import {useNavigate} from "react-router-dom";
 
 const HandleError = () => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();
+    const navigate = useNavigate();
 
     //console.log('errorshow = ', errorShow, ', errorMsg = ', errorMsg, ', errorCode = ', errorCode);
 
@@ -13,9 +15,9 @@ const HandleError = () => {
         setError(null);
     }
 
-    useEffect(() => {
-            //
-    }, [])
+    if (errorCode === 404) {
+        navigate("/pagenotfound");
+    }
 
     return (
         <div>

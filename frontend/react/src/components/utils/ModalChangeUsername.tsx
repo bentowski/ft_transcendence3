@@ -1,26 +1,22 @@
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { Alert } from 'react-bootstrap';
 
-const ModalChangeUsername = ({
-  show,
-  parentCallBack,
-}: {
-  show: boolean;
-  parentCallBack: (newState: boolean) => void;
-}) => {
-  const { updateUser, setError } = useAuthData();
+const ModalChangeUsername = () => {
+  const { user, updateUser, setError } = useAuthData();
   const [field, setField] = useState("");
   const navigate = useNavigate();
   const [err, setErr] = useState("");
   const [alert, setAlert] = useState(false);
+  const [show, setShow] = useState(false)
+  const [username, setUsername] = useState('');
   // const [alertMsg, setAlertMsg] = useState("");
 
   const getUsers = async () => {
-    try {
+    // try {
       let users = await Request(
         "GET",
         {},
@@ -28,11 +24,37 @@ const ModalChangeUsername = ({
         "http://localhost:3000/user/"
       );
       return users;
-    } catch (error) {
-      setError(error);
-      setField("");
-    }
+    // }
   }
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username)
+    }
+  }, [user])
+
+  // const requestChangeUsername = async () => {
+  //   try {
+  //     let res = await Request(
+  //         "PATCH",
+  //         {
+  //           "Content-Type": "application/json",
+  //         },
+  //         { username: field },
+  //         "http://localhost:3000/user/update/username"
+  //     )
+  //     if (res) {
+  //       const newName = field;
+  //       updateUser(null, field);
+  //       setField("");
+  //       handleClose();
+  //       navigate("/profil/" + newName);
+  //     }
+  //   } catch (error) {
+  //     setError(error);
+  //     setField("");
+  //   }
+  // }
 
   const verifField = async () => {
     let users = await getUsers();
@@ -106,16 +128,20 @@ const ModalChangeUsername = ({
   };
 
   const handleClose = () => {
-    //console.log('callging parentcall back');
-    parentCallBack(false);
+    setShow(false);
   }
 
+  const handleShow = () => {
+    console.log('pouet');
+    setShow(true);
+  }
   const closeAlert = () => {
     // console.log('closing alert');
     setAlert(false);
     setErr("");
     // setAlertMsg("");
   }
+
 
   return (
     <div className="changeusername">
@@ -152,6 +178,7 @@ const ModalChangeUsername = ({
               Validate
             </Button>
           </Modal.Footer>
+
         </div>
       </Modal>
     </div>

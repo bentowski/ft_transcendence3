@@ -17,15 +17,13 @@ export class CreateChanDto {
     @ApiProperty({ description: 'takes name'})
     public name: string;
 
-    @IsEmail()
     @IsNotEmpty()
     public owner: string;
 
     @IsString()
-    @IsNotEmpty()
     password: string;
 
-    @IsNotEmpty()
-    public chanUser: Array<UserEntity>;
+    //@IsNotEmpty()
+    //public chanUser: Array<UserEntity>;
 
 }

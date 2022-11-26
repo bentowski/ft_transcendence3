@@ -17,7 +17,7 @@ const Switch = () => {
     if (isTwoFa) {
       setTick(true);
     }
-  }, []);
+  }, [isTwoFa]);
 
   const generateTwoFA = async () => {
     console.log('calling generating avatar');
@@ -109,7 +109,7 @@ const Switch = () => {
   const handleTick = () => setTick(true);
   const handleUnTick = () => setTick(false);
 
-  const handleToggle = (evt: any) => {
+  const handleToggle = () => {
     //this.setState({ isTwoFA: evt.target.checked });
     if (tick) {
       //console.log("deactivating twofa");
@@ -125,19 +125,6 @@ const Switch = () => {
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
   };
-
-  /*
-  const hidden = () => {
-    let modal = document.getElementById("ModalCode") as HTMLDivElement;
-    modal.classList.add("hidden");
-  };
-
-    const prompt = () => {
-    let modal = document.getElementById("ModalCode") as HTMLDivElement;
-    modal.classList.remove("hidden");
-  };
-
-   */
 
   const handleChange = (evt: any) => {
     evt.preventDefault();
@@ -177,14 +164,12 @@ const Switch = () => {
             <Button className="mx-1" onClick={cancelling}>
               Cancel
             </Button>
-
             <Button onClick={activateTwoFa} className="mx-1">
               Validate
             </Button>
           </Modal.Footer>
         </div>
       </Modal>
-
       <form onSubmit={handleSubmit}>
         <label>
           2fa
