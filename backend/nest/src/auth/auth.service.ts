@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import UserEntity from '../user/entities/user-entity';
 import { User42Dto } from '../user/dto/user42.dto';
@@ -7,9 +7,6 @@ import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
 import * as io from 'socket.io-client';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-//import { qrcode } from 'qrcode';
-//import { serialize } from 'cookie';
-//import { CreateUserDto } from '../user/dto/create-user.dto';
 
 const socket = io.connect('http://localhost:3000/chat');
 
@@ -40,9 +37,16 @@ export class AuthService {
     }
   }
 
+  checkUser(user) {
+    if (!user) {
+      throw new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+    }
+  }
+
   async generateTwoFASecret(auth_id: string) {
     try {
       const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      this.checkUser(user);
       const secret = authenticator.generateSecret();
       const otpauthUrl = authenticator.keyuri(
         user.auth_id,
@@ -66,6 +70,9 @@ export class AuthService {
   async isTwoFAValid(twoFACode: string, auth_id: string) {
     try {
       const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      if (!user) {
+        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+      }
       return authenticator.verify({
         token: twoFACode,
         secret: user.twoFASecret,
@@ -78,6 +85,9 @@ export class AuthService {
   async turnOnTwoFAAuth(auth_id: string) {
     try {
       const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      if (!user) {
+        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+      }
       return await this.userService.turnOnTwoFA(auth_id, user);
     } catch (error) {
       throw new Error(error);
@@ -87,6 +97,9 @@ export class AuthService {
   async turnOffTwoFAAuth(auth_id: string) {
     try {
       const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+      if (!user) {
+        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+      }
       await this.userService.turnOffTwoFA(auth_id, user);
     } catch (error) {
       throw new Error(error);

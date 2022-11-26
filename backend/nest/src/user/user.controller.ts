@@ -14,7 +14,6 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  BadRequestException,
   ParseIntPipe,
   NotFoundException,
 } from '@nestjs/common';
@@ -144,7 +143,6 @@ export class UserController {
         'Error while fetching database: User with that id doesnt exists',
       );
     }
-    //console.log('uuuuuuSER - ', user);
     return user;
   }
 
@@ -154,7 +152,6 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
-    //console.log('DATETETETE: ', date);
     try {
       let imagename: string = await this.userService.getAvatar(id);
       imagename = this.userService.checkFolder(imagename);
@@ -199,59 +196,46 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/banned')
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go banned');
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching banned chans: Cant find user',
       );
     }
-    //console.log('channelBanned = ', user.channelBanned);
-    if (!user.channelBanned) return [];
+    if (!user.channelBanned) {
+      return [];
+    }
     return user.channelBanned;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/muted')
   async chanMuted(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go muted');
-
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching muted chans: Cant find user',
       );
     }
-    //try {
-    //console.log('channelMuted = ', user.channelMuted);
-    if (!user.channelMuted) return [];
+    if (!user.channelMuted) {
+      return [];
+    }
     return user.channelMuted;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/joined')
   async chanPresent(@Req() req): Promise<ChanEntity[]> {
-    //console.log('lets go joined');
-
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching joined chans: Cant find user',
       );
     }
-    //try {
-    //console.log('channeljoined = ', user.channelJoined);
-    if (!user.channelJoined) return [];
+    if (!user.channelJoined) {
+      return [];
+    }
     return user.channelJoined;
-    //} catch (error) {
-    //  throw new Error(error);
-    //}
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -268,7 +252,6 @@ export class UserController {
   @Get(':id/isfriend')
   async isFriend(@Req() req, @Param('id') id: string): Promise<boolean> {
     try {
-      //console.log('auth_id = ', id);
       const users: UserEntity[] = await this.userService.getFriends(
         req.user.auth_id,
       );
@@ -317,7 +300,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Patch('update/username')
   updateUsername(@Req() req, @Body() obj: UpdateUsernameDto) {
-    //console.log('update dto = ', obj);
     const auid: string = req.user.auth_id;
     try {
       return this.userService.updateUsername(auid, obj.username);

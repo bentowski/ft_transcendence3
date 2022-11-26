@@ -34,7 +34,6 @@ export class ChanController {
 
     @Post('create')
     createChan(@Body() createUserDto: CreateChanDto) {
-        console.log('createuserdto ::: ', createUserDto)
         try {
             return this.chanService.createChan(createUserDto);
         } catch (error) {
@@ -66,18 +65,6 @@ export class ChanController {
         }
         return false;
     }
-
-    /*
-    @Patch(':id/ban')
-    async banUnBan(@Param('id') idroom: string,
-                   @Body() obj) {
-        try {
-            return this.chanService.banUserToChannel(obj.auth_id, idroom);
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-     */
 
     @Get(':idroom/ismuted/:iduser')
     async isMuted(@Param('idroom') idroom: string,
