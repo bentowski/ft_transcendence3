@@ -6,7 +6,7 @@ import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
 
-const updateSocket = io("http://localhost:3000/chat");
+const updateSocket = io("http://localhost:3000/update");
 
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
@@ -53,7 +53,7 @@ let print = (ctx: any, newPos: number, settings: any) => {
 
   while (y < settings.h) {
     ctx.fillStyle = "white"
-    ctx.fillRect(settings.middle, y, settings.sizeBall / 10, settings.sizeBall)
+    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
   }
   ctx.fillStyle = "white"
@@ -61,9 +61,13 @@ let print = (ctx: any, newPos: number, settings: any) => {
   ctx.fillStyle = "white"
   ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
   settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
-  ctx.fillStyle = "white"
+	if (settings.ballPos[0] < 0)
+  	settings.ballPos[0] = 1;
+  if (settings.ballPos[0] > settings.w)
+  	settings.ballPos[0] = settings.w - 1;
+	ctx.fillStyle = "white"
   ctx.beginPath();
-  ctx.fillRect(settings.ballPos[0], newPos, settings.sizeBall, settings.sizeBall)
+  ctx.fillRect(settings.ballPos[0] - settings.sizeBall / 2, newPos - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.fill()
   ctx.closePath();
 }
@@ -72,13 +76,13 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   let newPos: number = settings.ballPos[1]
   ctx.clearRect(0, 0, globale.width, globale.height)
   if (settings.admin) {
-    if (settings.ballPos[1] + settings.sizeBall > globale.height) {
-      newPos = globale.height - (settings.sizeBall)
+    if (settings.ballPos[1] + (settings.sizeBall / 2) > globale.height) {
+      newPos = globale.height - (settings.sizeBall / 2)
       settings.vector = [settings.vector[0], -settings.vector[1]]
       settings.ballPos = [settings.ballPos[0], newPos]
     }
-    if (settings.ballPos[1] < 0) {
-      newPos = (0)
+    if (settings.ballPos[1] - (settings.sizeBall / 2) < 0) {
+      newPos = (0 + (settings.sizeBall / 2))
       settings.vector = [settings.vector[0], -settings.vector[1]]
       settings.ballPos = [settings.ballPos[0], newPos]
     }
@@ -101,7 +105,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 
   // ============== End Players Moves ===============
   if (settings.admin) {
-	  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
+	  if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
 	  {
 	    settings.vector = [-settings.vector[0], -1]
 	    settings.speed++;
@@ -152,7 +156,7 @@ let init = (ctx: any, globale: any, settings: any) => {
   let y = 0;
   while (y < settings.h) {
     ctx.fillStyle = "white"
-    ctx.fillRect(settings.middle, y, settings.sizeBall / 10, settings.sizeBall)
+    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
   }
   //======joueurs========
@@ -163,7 +167,7 @@ let init = (ctx: any, globale: any, settings: any) => {
 
   //========balle========
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
+  ctx.fillRect(settings.ballPos[0] - settings.sizeBall, settings.ballPos[1] - settings.sizeBall / 4, settings.sizeBall, settings.sizeBall)
   ctx.fill()
 
   let infosClavier = (e: KeyboardEvent) => {
