@@ -1,16 +1,11 @@
-import {useContext, useEffect, useState} from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useContext, ReactNode, useEffect, useState } from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
-import {Modal} from 'react-bootstrap';
-import {Link} from "react-router-dom";
-import { WebsocketContext} from "../../contexts/WebSocketContext";
-//import {socket} from "../../contexts/WebSocketContext";
-//import {UserType} from "../../types";
+import { Modal } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
 const ModalMuteUser = ({chan, socket}:{chan: any, socket: any}) => {
-    //const [chans, setChans] = useState();
     const { user, setError } = useAuthData();
-    //const { socket } = useContext(WebsocketContext);
     const [ show, setShow ] = useState(false);
     const [ usersChan, setUsersChan ] = useState<any[]>([{user:{},isMute:false}]);
     const [ loading, setLoading ] = useState(false);
@@ -27,17 +22,14 @@ const ModalMuteUser = ({chan, socket}:{chan: any, socket: any}) => {
                         {},
                         "http://localhost:3000/chan/" + chan + "/user"
                     )
-                    console.log('users = ', users);
                     const newArray = [];
                     for (let index = 0; index < users.length; index++) {
-                        console.log('users[index].auth_id = ', users[index].auth_id);
                         let result = await Request(
                             "GET",
                             {},
                             {},
                             "http://localhost:3000/chan/" + chan + "/ismuted/" + users[index].auth_id,
                         )
-                        console.log('res = ', result);
                         newArray.push({
                             user: users[index],
                             isMute: result,
@@ -69,8 +61,6 @@ const ModalMuteUser = ({chan, socket}:{chan: any, socket: any}) => {
     }
 
     const muteUser = (obj: any) => {
-        console.log('muting user');
-        console.log('mute user =')
         socket.emit('muteToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isMute });
         const newArray = [];
         for (let index = 0; index < usersChan.length; index++) {
@@ -79,14 +69,11 @@ const ModalMuteUser = ({chan, socket}:{chan: any, socket: any}) => {
             }
             newArray.push(usersChan[index]);
         }
-        //console.log('newarray = ', newArray);
         setUsersChan(newArray);
     }
 
     const listUserCards = async () => {
-        //let usersChan: any = await getUsersFromChan(chan);
-        //console.log('getusersfrom chan = ', usersChan);
-        let ret: any[] = []
+        let ret: ReactNode[] = []
 
         for(let x = 0; x < usersChan.length; x++)
         {
@@ -122,7 +109,7 @@ const ModalMuteUser = ({chan, socket}:{chan: any, socket: any}) => {
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
-                        <h2>Mute/Unmute user from channel #{chan}</h2>
+                        <h2>Mute/Unmute user from channel for 100 seconds</h2>
                     </Modal.Header>
                     <Modal.Body>
                         <form className="mb-3">
