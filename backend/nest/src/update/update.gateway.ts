@@ -52,6 +52,11 @@ export class UpdateGateway implements OnModuleInit
 	  this.server.emit('onInviteDeclined', body);
   }
 
+  @SubscribeMessage('updateUser')
+  onUpdateUser(client: Socket, user: { auth_id: number; status: number }) {
+	this.server.emit('onUpdateUser', user);
+  }
+
 //   @SubscribeMessage('barMove')
 //   onNewMessage(@MessageBody() body: any) {
 //     // console.log(this.server.)

@@ -77,12 +77,14 @@ export class PartiesService {
         if (game.p1 === null) {
             game.p1 = auth_id;
 			update.emit('newParty');
+            update.emit('updateUser', { auth_id: auth_id, status: 2 })
 		}
         else if (game.p1 === auth_id)
             return ;
         else if (game.p2 === null) {
             game.p2 = auth_id;
 			update.emit('newParty');
+            update.emit('updateUser', { auth_id: auth_id, status: 2 })
 		}
         await this.partiesRepository.save(game);
     }

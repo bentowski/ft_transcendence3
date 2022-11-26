@@ -317,9 +317,4 @@ export class ChatGateway implements OnModuleInit
   onNewParty(client: Socket) {
 	this.server.emit('onNewParty');
   }
-
-  @SubscribeMessage('updateUser')
-  onUpdateUser(client: Socket, user: { auth_id: number; status: number }) {
-	this.server.emit('onUpdateUser', user);
-  }
 }
