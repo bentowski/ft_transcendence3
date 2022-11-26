@@ -371,6 +371,7 @@ let settings = {
   ballPos: [0, 0],
   vector: [0, 0],
   speed: 0,
+  baseSpeed: 5,
   middle: 0,
   end: 0,
   move: 0,
@@ -398,7 +399,8 @@ let reSet = () => {
 		sizeBall:  settings.sizeBall,
 		ballPos: [settings.w / 2, settings.h / 2],
 		vector: [1, 1],
-		speed: 4,
+		baseSpeed: settings.baseSpeed,
+		speed: settings.baseSpeed,
 		middle: settings.middle,
 		end: settings.end,
 		move: settings.move,
@@ -407,13 +409,8 @@ let reSet = () => {
 		admin: settings.admin,
 		room: settings.room,
 		gameStarted: settings.gameStarted,
-		timer: settings.	// if (settings.ballPos[0] + settings.sizeBall < 0) {
-	  //   settings.end = 1
-  	// }
-  	// if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-	  //   settings.end = 1
-  	// }timer,
-		callback: settings.callback,
+		timer: settings.timer,
+        callback: settings.callback,
 		round: settings.round + 1,
 		nextRound: 0
 	}
@@ -447,7 +444,8 @@ let setSettings = () => {
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
     vector: [1, 1],
-    speed: 4,
+	baseSpeed: settings.baseSpeed,
+    speed: settings.baseSpeed,
     middle: winWidth / 2,
     end: 0,
     move: 0,
