@@ -220,7 +220,7 @@ class UserCards extends Component<
             <input className={this.state.online} type="radio"></input>
           </div>
           <div className="col-6 row">
-            <p className="col-12">{this.state.login}</p>
+            <a href={"/profil/" + this.state.login} className="col-12">{this.state.login}</a>
           </div>
         </div>
       );
