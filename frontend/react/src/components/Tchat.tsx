@@ -38,7 +38,7 @@ export const WebSocket = () => {
   let location = ""
 
   useEffect(() => {
-    socket.on('connect', () => {});
+    socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
       // console.log("RECEIVE ////////////////")
       let channels: Array<ChanType> = chans;
@@ -50,7 +50,6 @@ export const WebSocket = () => {
           channels[index].messages = [newMessage];
         setChans(channels);
         if (channels[index].isActive) {
-          //setCurrentChan(channels[index]);
           if (channels[index].messages)
             setMessage(channels[index].messages);
           else
@@ -457,7 +456,7 @@ export const WebSocket = () => {
   }
 
 
-// ======================== RENDER ==========================
+  // ======================== RENDER ==========================
 
   class UsersInActualchannel extends Component<{}, {}> {
     render() {
@@ -472,8 +471,7 @@ export const WebSocket = () => {
   }
 
   class DispatchMsg extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       messages.map((msg, index) => {
         if (msg.sender_socket_id === user.auth_id)
@@ -518,11 +516,10 @@ export const WebSocket = () => {
 
   class AdminButtons extends Component<{}, {}> {
     render() {
-      let chan = chans[chans.findIndex((c:ChanType) => c.id === room)]
+      let chan = chans[chans.findIndex((c: ChanType) => c.id === room)]
       let tab: any[] = chan.admin
       console.log(tab)
-      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username)
-      {
+      if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username) {
         return (
             <div className="row">
               <ModalBanUser chan={room} socket={socket}/>
@@ -558,8 +555,7 @@ export const WebSocket = () => {
 
   class PrintChannel extends Component<{}, {}> {
     render() {
-      if (room)
-      {
+      if (room) {
         return (
             <div className="inTchat row col-10">
               <div className="tchatMain col-10">
@@ -586,9 +582,8 @@ export const WebSocket = () => {
     }
   }
 
-  class ListOfPrivateMessages extends Component< {}, {} >{
-    render()
-    {
+  class ListOfPrivateMessages extends Component<{}, {}>{
+    render() {
       let ret: any[] = []
       chans.map((chan) => {
             if (chan.type === "direct")
@@ -606,8 +601,7 @@ export const WebSocket = () => {
   }
 
   class ListOfJoinedChans extends Component<{}, {}> {
-    render()
-    {
+    render() {
       let ret: any[] = []
       chans.map((chan) => {
             if (chan.type !== "direct" && inChan(chan))
@@ -625,8 +619,7 @@ export const WebSocket = () => {
   }
 
   class ChannelList extends Component<{}, {}> {
-    render()
-    {
+    render() {
       return (
           <div className="channels col-2">
             <button onClick={createChan}>Create Channel</button>
