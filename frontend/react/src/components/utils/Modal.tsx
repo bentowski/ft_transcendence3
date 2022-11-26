@@ -95,7 +95,7 @@ class Modal extends Component<
     if (newUser) {
       this.setState({ user: newUser });
     }
-    try {
+    // try {
       let friends: any = await Request(
         "GET",
         {},
@@ -108,14 +108,93 @@ class Modal extends Component<
         {},
         {},
         "http://localhost:3000/chan"
-      );
-      if (!allChans) return;
-      this.setState({ friends: friends, allChans: allChans });
-    } catch (error) {
-      const ctx: any = this.context;
-      ctx.setError(error);
-    }
+    );
+    if (!allChans) return;
+    this.setState({ friends: friends, allChans: allChans });
   };
+
+  // displayUser = (id: number, user: UserType) => {
+  //   return (
+  //       <div
+  //           key={id}
+  //           className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+  //       >
+  //         <div className="col-5 h-100 overflow-hidden buttons">
+  //           <button
+  //             className='btn btn-outline-dark shadow-none'
+  //               onClick={() =>
+  //                   this.props.parentCallBack.socket.emit("addToChannel", {
+  //                     room: this.props.parentCallBack.room,
+  //                     auth_id: user.auth_id,
+  //                   })
+  //               }
+  //           >
+  //             ADD
+  //           </button>
+  //         </div>
+  //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
+  //           <input
+  //               className={user.status ? "online" : "offline"}
+  //               type="radio"
+  //           ></input>
+  //         </div>
+  //         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  //           <a href={"/profil/#" + user.username} className="mx-2">
+  //             {user.username}
+  //           </a>
+  //           <img
+  //               src={user.avatar}
+  //               className="miniAvatar"
+  //               width={150}
+  //               height={150}
+  //           />
+  //         </div>
+  //       </div>
+  //   );
+  // };
+
+  // users = () => {
+  //   let friends: Array<any> = [];
+  //   let isUsers: boolean = false;
+  //   let x: number = 0;
+  //   if (this.state.friends.length > 0) {
+  //     let chanUser: Array<UserType> | undefined = this.props.userChan;
+  //     while (
+  //         chanUser?.length &&
+  //         chanUser?.length > 0 &&
+  //         x < this.state.friends.length
+  //         ) {
+  //       let friend: UserType = this.state.friends[x];
+  //       if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
+  //         isUsers = true;
+  //         if (
+  //             this.state.input.length === 0 ||
+  //             friend.username.includes(this.state.input)
+  //         )
+  //           friends.push(this.displayUser(x, this.state.friends[x]));
+  //       }
+  //       x++;
+  //     }
+  //   }
+  //   if (isUsers)
+  //     friends.unshift(
+  //         <input
+  //             key={x++}
+  //             id="searchUserToAdd"
+  //             className="w-100"
+  //             type="text"
+  //             placeholder="Search user here"
+  //             value={this.state.input}
+  //             onChange={(e) => this.setState({ input: e.target.value })}
+  //         />
+  //     );
+  //     // if (!allChans) return;
+  //     // this.setState({ friends: friends, allChans: allChans });
+  //   // } catch (error) {
+  //   //   const ctx: any = this.context;
+  //   //   ctx.setError(error);
+  //   // }
+  // };
 
   verifRadio = () => {
     const radioPub = document.querySelector("#public") as HTMLInputElement;
@@ -266,7 +345,7 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfOwner(chan: ChanType) {
+  checkIfOwner = (chan: ChanType) => {
     for (let index = 0; index < this.props.chans.length; index++) {
       if (chan.id === this.props.chans[index].id) {
         return true;
@@ -275,7 +354,7 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfBanned(chan: ChanType) {
+  checkIfBanned = (chan: ChanType) => {
     const ctx: any = this.context;
     const banned = ctx.bannedFrom;
     for (let index = 0; index < banned.length; index++) {
@@ -286,7 +365,7 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn(chan: ChanType) {
+  checkIfAlreadyIn = (chan: ChanType) => {
     const ctx: any = this.context;
     const joined = ctx.chanFrom;
     for (let index = 0; index < joined.length; index++) {

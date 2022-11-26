@@ -106,6 +106,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     this.setState({ filteredList: updatedList })
     if (e.key === 'Enter') {
       this.addFriends();
+      // input.value = "";
     }
   }
 
@@ -137,7 +138,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
               ))}
             </ol>
           </div>
-          <button className="col-2 mx-2" onClick={this.addFriends}>ADD</button>
+          <button className="col-2 mx-2 btn btn-outline-dark shadow-none" onClick={this.addFriends}>ADD</button>
           <div>
             <DisplayFriendsList />
           </div>
