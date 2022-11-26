@@ -77,6 +77,8 @@ class Profil extends Component<
   };
 
   getRank = async () => {
+    console.log("user = ", this.state.user)
+    console.log("hist = ", this.state.histories)
     let users: any = await Request("GET", {}, {}, "http://localhost:3000/user");
     if (!users) return;
     users.sort(function (a: UserType, b: UserType) {
@@ -95,7 +97,7 @@ class Profil extends Component<
     const usr = cxt.user;
     this.setState({ user: JSON.stringify(usr) });
     this.setState({ current_username: usr.username });
-    let test = setInterval(() => {
+    let test = setInterval(async () => {
       let url = document.URL;
       if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/")
         window.location.href = "http://localhost:8080/profil/" + cxt.user.username
@@ -103,8 +105,8 @@ class Profil extends Component<
         clearInterval(test);
       url = url.substring(url.lastIndexOf("/") + 1);
       if (url !== this.state.location) {
-        this.getUser(url);
-        this.getHistory();
+        await this.getUser(url);
+        await this.getHistory();
         this.getRank();
         this.setState({ location: url });
       }
