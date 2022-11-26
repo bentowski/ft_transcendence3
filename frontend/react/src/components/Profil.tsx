@@ -120,14 +120,14 @@ class Profil extends Component<
       if (!document.URL.includes("localhost:8080/profil"))
         clearInterval(test);
       url = url.substring(url.lastIndexOf("/") + 1);
-      if (url !== this.state.location) {
+      if (url !== this.state.local) {
         await this.getUser(url);
         await this.getHistory();
         this.getRank();
-        this.setState({ location: newLoc });
-    }
-     */
-  };
+        // this.setState({ local: newLoc });
+      }
+    }, 1000);
+  }
 
   printHeader = () => {
     const ctx: any = this.context;
