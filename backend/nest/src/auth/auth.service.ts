@@ -5,14 +5,13 @@ import { User42Dto } from '../user/dto/user42.dto';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
-import { PayloadInterface } from './interfaces/payload.interface';
+import * as io from 'socket.io-client';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 //import { qrcode } from 'qrcode';
 //import { serialize } from 'cookie';
 //import { CreateUserDto } from '../user/dto/create-user.dto';
-import * as io from 'socket.io-client';
-import {CreateUserDto} from "../user/dto/create-user.dto";
 
-const socket = io.connect("http://localhost:3000/chat");
+const socket = io.connect('http://localhost:3000/chat');
 
 @Injectable()
 export class AuthService {
@@ -27,9 +26,7 @@ export class AuthService {
 
   async validateUser(user42: User42Dto): Promise<UserEntity> {
     try {
-      //console.log('validate user auth service');
       return this.userService.validateUser42(user42);
-      //console.log('after validate user');
     } catch (error) {
       throw new Error(error);
     }

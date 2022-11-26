@@ -8,6 +8,7 @@ import {
   UseGuards,
   Delete,
   BadRequestException,
+  NotFoundException,
   /* Body,
   UnauthorizedException,
   HttpException,
@@ -138,7 +139,7 @@ export class AuthController {
     const auid: string = req.user.auth_id;
     const user = this.authService.findUser(auid);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while generating 2FA QR Code: Cant find user in database',
       );
     }
