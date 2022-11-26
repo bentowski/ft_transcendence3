@@ -1,9 +1,6 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,14 +12,7 @@ import { User42Dto } from './dto/user42.dto';
 import {
   UpdateUserDto,
   UpdateAvatarDto,
-  UpdateFriendsDto,
-  BlockedUserDto,
 } from './dto/update-user.dto';
-import { UpdateUsernameDto } from './dto/update-user.dto';
-import { of } from 'rxjs';
-import { join } from 'path';
-import { plainToClass } from 'class-transformer';
-import fs from 'fs';
 
 @Injectable()
 export class UserService {
@@ -52,7 +42,7 @@ export class UserService {
   async currentUser(auth_id: string): Promise<UserEntity> {
     const foundUser: UserEntity = await this.findOneByAuthId(auth_id);
     if (!foundUser) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while fetching your data: Failed requesting user in database',
       );
     }
@@ -118,23 +108,22 @@ export class UserService {
   async updateUsername(auth_id: string, newUsername: string) {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while updating username: Failed requesting user in database',
       );
     }
-    //console.log('new username = ', newUsername);
     const findUser: UserEntity = await this.findOnebyUsername(newUsername);
     if (findUser) {
       throw new BadRequestException(
         'Error while updating username: Username is already taken',
       );
     }
-    if (newUsername.length > 30 || newUsername.length < 2) {
+    if (newUsername.length > 10 || newUsername.length < 2) {
       throw new BadRequestException(
         'Error while updating username: Please choose a username between 2 and 30 characters',
       );
     }
-    if (!newUsername.match(/^[a-z0-9]+$/)) {
+    if (!newUsername.match(/^[a-z0-9_]+$/)) {
       throw new BadRequestException(
         'Error while updating username: New username should be alphanumeric',
       );
@@ -151,7 +140,7 @@ export class UserService {
   async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto) {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while updating avatar: Failed requesting user in database',
       );
     }
@@ -170,18 +159,17 @@ export class UserService {
   ): Promise<UserEntity> {
     const user: UserEntity = await this.findOneByAuthId(authId);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while updating user informations: Failed requesting user in database',
       );
     }
     const { username, avatar, twoFASecret, isTwoFA } = updateUserDto;
-    console.log('new username = ', username);
-    if (!username.match(/^[a-z0-9]+$/)) {
+    if (!username.match(/^[a-z0-9_]+$/)) {
       throw new BadRequestException(
         'Error while updating username: New username should be alphanumeric',
       );
     }
-    if (username.length < 2 || username.length > 30) {
+    if (username.length < 2 || username.length > 10) {
       throw new BadRequestException(
         'Error while updating username: New username should be between 2 and 30 characters',
       );
@@ -202,7 +190,7 @@ export class UserService {
   async getFriends(id: string): Promise<UserEntity[]> {
     const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while getting friends list: Failed requesting user in database',
       );
     }
@@ -218,7 +206,7 @@ export class UserService {
   async getBlocked(id: string): Promise<UserEntity[]> {
     const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while getting blocked users list: Failed requesting user in database',
       );
     }
@@ -231,32 +219,6 @@ export class UserService {
     return list;
   }
 
-  /*
-  async updateMuted(
-    action: boolean,
-    muted_id: string,
-    current_id: string,
-  ): Promise<UserEntity> {
-    const curuser: UserEntity = await this.findOneByAuthId(current_id);
-    if (!curuser) {
-      throw new BadRequestException(
-        'Error while updating blocked users: Failed requesting (un)mutted user in database',
-      );
-    }
-    const muuser: UserEntity = await this.findOneByAuthId(muted_id);
-    if (!muuser) {
-      throw new BadRequestException(
-        'Error while updating muted users: Failed requesting (un)muted user in database.',
-      );
-    }
-    if (action === true) {
-    }
-    if (action === false) {
-    }
-    return curuser;
-  }
-   */
-
   async updateFriends(
     action: boolean,
     current_id: string,
@@ -264,7 +226,7 @@ export class UserService {
   ): Promise<UserEntity> {
     const curuser: UserEntity = await this.findOneByAuthId(current_id);
     if (!curuser) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while updating friends list: Failed requesting user in database',
       );
     }
@@ -286,14 +248,12 @@ export class UserService {
           'Error while updating friends list: User is already in your friend list.',
         );
       }
-
       const blocked = adduser.blocked.find((elem) => elem === curuser.auth_id);
       if (blocked) {
         throw new BadRequestException(
           'Error while updating friends list: You have been blocked by this user.',
         );
       }
-
       const blocking = curuser.blocked.find((elem) => elem === adduser.auth_id);
       if (blocking) {
         const index: number = curuser.blocked.indexOf(adduser.auth_id);
@@ -301,7 +261,6 @@ export class UserService {
           curuser.blocked.splice(index, 1);
         }
       }
-
       curuser.friends.push(adduser.auth_id);
       adduser.friends.push(curuser.auth_id);
     }
@@ -312,12 +271,10 @@ export class UserService {
           'Error while updating friends list: User is not in your friend list.',
         );
       }
-
       const idx_1: number = curuser.friends.indexOf(adduser.auth_id);
       if (idx_1 !== -1) {
         curuser.friends.splice(idx_1, 1);
       }
-
       const idx_2: number = adduser.friends.indexOf(curuser.auth_id);
       if (idx_2 !== -1) {
         adduser.friends.splice(idx_2, 1);
@@ -340,7 +297,7 @@ export class UserService {
   ): Promise<UserEntity> {
     const curuser: UserEntity = await this.findOneByAuthId(current_id);
     if (!curuser) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while updating blocked users: Failed requesting (un)blocking user in database',
       );
     }
@@ -362,7 +319,6 @@ export class UserService {
           'Error while updating blocked users: User is already in your blocked list.',
         );
       }
-
       const blocking = curuser.friends.find((elem) => elem === blouser.auth_id);
       if (blocking) {
         const idx_1: number = curuser.friends.indexOf(blouser.auth_id);
@@ -375,7 +331,6 @@ export class UserService {
           blouser.friends.splice(idx_2, 1);
         }
       }
-
       curuser.blocked.push(blouser.auth_id);
     }
     if (action === false) {
@@ -405,7 +360,7 @@ export class UserService {
       where: { user_id: id },
     });
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while removing user: Cant find this user in db',
       );
     }
@@ -474,7 +429,7 @@ export class UserService {
   async getAvatar(id: string) {
     const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while getting avatar: Failed requesting user in database',
       );
     }
@@ -488,7 +443,7 @@ export class UserService {
   async setStatus(auth_id: string, status: number) {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
-      throw new BadRequestException(
+      throw new NotFoundException(
         'Error while setting status of user: Failed requesting user in database',
       );
     }

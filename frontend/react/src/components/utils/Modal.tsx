@@ -28,7 +28,8 @@ class Modal extends Component<
     fieldPass: string,
     errPass: string,
     alertPass: boolean,
-    printed: any
+    printed: any,
+    type: string
   }
 > {
   static context = AuthContext;
@@ -49,20 +50,64 @@ class Modal extends Component<
       errPass: "",
       alertPass: false,
       printed: [],
+      type: ""
     };
   }
 
-  hidden = () => {
+  hiddenCreate = () => {
     let modal = document.getElementById("Modal") as HTMLDivElement;
+    const radioPub = document.querySelector("#public") as HTMLInputElement;
+    const radioPri = document.querySelector("#private") as HTMLInputElement;
+    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    const chanName = document.querySelector("#chanName") as HTMLInputElement;
+    const chanPassword = document.querySelector("#chanPassword") as HTMLInputElement;
+    radioPub.checked = false;
+    radioPri.checked = false;
+    radioPro.checked = false;
+    chanName.value = "";
+    chanPassword.value = "";
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
     modal.classList.add("hidden");
-    this.setState({ protected: false });
-    this.setState({ alertRadio: false });
-    this.setState({ fieldName: "" });
-    this.setState({ errName: "" });
-    this.setState({ alertName: false });
-    this.setState({ fieldPass: "" });
-    this.setState({ errPass: "" });
-    this.setState({ alertPass: false });
+    chanPassword.classList.add("hidden");
+  };
+
+  hiddenJoin = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
+    modal.classList.add("hidden");
+  };
+
+  hiddenAddUser = () => {
+    let modal = document.getElementById("Modal") as HTMLDivElement;
+    this.setState({
+      protected: false,
+      alertRadio: false,
+      fieldName: "",
+      errName: "",
+      alertName: false,
+      fieldPass: "",
+      errPass: "",
+      alertPass: false
+    });
+    modal.classList.add("hidden");
   };
 
   // componentDidUpdate = (
@@ -95,7 +140,7 @@ class Modal extends Component<
     if (newUser) {
       this.setState({ user: newUser });
     }
-    try {
+    // try {
       let friends: any = await Request(
         "GET",
         {},
@@ -108,16 +153,95 @@ class Modal extends Component<
         {},
         {},
         "http://localhost:3000/chan"
-      );
-      if (!allChans) return;
-      this.setState({ friends: friends, allChans: allChans });
-    } catch (error) {
-      const ctx: any = this.context;
-      ctx.setError(error);
-    }
+    );
+    if (!allChans) return;
+    this.setState({ friends: friends, allChans: allChans });
   };
 
-  verifRadio = () => {
+  // displayUser = (id: number, user: UserType) => {
+  //   return (
+  //       <div
+  //           key={id}
+  //           className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+  //       >
+  //         <div className="col-5 h-100 overflow-hidden buttons">
+  //           <button
+  //             className='btn btn-outline-dark shadow-none'
+  //               onClick={() =>
+  //                   this.props.parentCallBack.socket.emit("addToChannel", {
+  //                     room: this.props.parentCallBack.room,
+  //                     auth_id: user.auth_id,
+  //                   })
+  //               }
+  //           >
+  //             ADD
+  //           </button>
+  //         </div>
+  //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
+  //           <input
+  //               className={user.status ? "online" : "offline"}
+  //               type="radio"
+  //           ></input>
+  //         </div>
+  //         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  //           <a href={"/profil/#" + user.username} className="mx-2">
+  //             {user.username}
+  //           </a>
+  //           <img
+  //               src={user.avatar}
+  //               className="miniAvatar"
+  //               width={150}
+  //               height={150}
+  //           />
+  //         </div>
+  //       </div>
+  //   );
+  // };
+
+  // users = () => {
+  //   let friends: Array<any> = [];
+  //   let isUsers: boolean = false;
+  //   let x: number = 0;
+  //   if (this.state.friends.length > 0) {
+  //     let chanUser: Array<UserType> | undefined = this.props.userChan;
+  //     while (
+  //         chanUser?.length &&
+  //         chanUser?.length > 0 &&
+  //         x < this.state.friends.length
+  //         ) {
+  //       let friend: UserType = this.state.friends[x];
+  //       if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
+  //         isUsers = true;
+  //         if (
+  //             this.state.input.length === 0 ||
+  //             friend.username.includes(this.state.input)
+  //         )
+  //           friends.push(this.displayUser(x, this.state.friends[x]));
+  //       }
+  //       x++;
+  //     }
+  //   }
+  //   if (isUsers)
+  //     friends.unshift(
+  //         <input
+  //             key={x++}
+  //             id="searchUserToAdd"
+  //             className="w-100"
+  //             type="text"
+  //             placeholder="Search user here"
+  //             value={this.state.input}
+  //             onChange={(e) => this.setState({ input: e.target.value })}
+  //         />
+  //     );
+  //     // if (!allChans) return;
+  //     // this.setState({ friends: friends, allChans: allChans });
+  //   // } catch (error) {
+  //   //   const ctx: any = this.context;
+  //   //   ctx.setError(error);
+  //   // }
+  // };
+
+  verifRadio = async () => {
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
     const radioPro = document.querySelector("#protected") as HTMLInputElement;
@@ -125,8 +249,18 @@ class Modal extends Component<
       this.setState({ alertRadio: true });
       return false;
     }
-    else
-      this.setState({ alertRadio: false });
+    else if (radioPub.checked === true)
+    {
+      await this.setState({ alertRadio: false, type: "public" });
+    }
+    else if (radioPri.checked === true)
+    {
+      await  this.setState({ alertRadio: false, type: "private" });
+    }
+    else if (radioPro.checked === true)
+    {
+      await  this.setState({ alertRadio: false, type: "protected" });
+    }
     return true;
   };
 
@@ -135,16 +269,16 @@ class Modal extends Component<
     var regex = /^[\w-]+$/
     var minmax = /^.{3,10}$/
 
-    let retPass = true;
-    if (this.state.protected)
-      retPass = this.verifPass()
-    else if (!regex.test(this.state.fieldName)) {
+    // let retPass = true;
+    // if (this.state.protected)
+    //   retPass = this.verifPass()
+    if (!regex.test(this.state.fieldName)) {
       this.setState({ errName: "Non valid character" });
       this.setState({ alertName: true });
       return false;
     }
     else if (!minmax.test(this.state.fieldName)) {
-      this.setState({ errName: "Name must contains between 3 and 10 characters" });
+    this.setState({ errName: "Name must contains between 3 and 10 characters" });
       this.setState({ alertName: true });
       return false;
     }
@@ -157,8 +291,8 @@ class Modal extends Component<
       this.setState({ errName: "" });
       this.setState({ alertName: false });
     }
-    if (!retPass)
-      return false;
+    // if (!retPass)
+    //   return false;
     return true;
   };
 
@@ -166,6 +300,7 @@ class Modal extends Component<
     var minmax = /^.{8,30}$/
 
     if (!minmax.test(this.state.fieldPass)) {
+    // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
       this.setState({ errPass: "Password must contains between 8 and 30 characters" });
       this.setState({ alertPass: true });
       return false;
@@ -173,15 +308,22 @@ class Modal extends Component<
     else {
       this.setState({ errPass: "" });
       this.setState({ alertPass: false });
+      return true;
     }
-    return true;
   };
 
   createChan = async () => {
-    let retRadio = this.verifRadio();
-    if (this.verifName() && retRadio) {
-      this.props.parentCallBack.createChannel()
-      this.hidden()
+    // const radioPub = document.querySelector("#public") as HTMLInputElement;
+    // const radioPri = document.querySelector("#private") as HTMLInputElement;
+    // const radioPro = document.querySelector("#protected") as HTMLInputElement;
+    let retRadio = await this.verifRadio();
+    let retName = await this.verifName();
+    let retPass = true;
+    if (this.state.protected)
+      retPass = await this.verifPass();
+    if (retRadio && retName && retPass) {
+      this.props.parentCallBack.createChannel(this.state.fieldName, this.state.type, this.state.fieldPass)
+      this.hiddenCreate()
     }
   };
 
@@ -266,7 +408,7 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfOwner(chan: ChanType) {
+  checkIfOwner = (chan: ChanType) => {
     for (let index = 0; index < this.props.chans.length; index++) {
       if (chan.id === this.props.chans[index].id) {
         return true;
@@ -275,7 +417,7 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfBanned(chan: ChanType) {
+  checkIfBanned = (chan: ChanType) => {
     const ctx: any = this.context;
     const banned = ctx.bannedFrom;
     for (let index = 0; index < banned.length; index++) {
@@ -286,7 +428,7 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn(chan: ChanType) {
+  checkIfAlreadyIn = (chan: ChanType) => {
     const ctx: any = this.context;
     const joined = ctx.chanFrom;
     for (let index = 0; index < joined.length; index++) {
@@ -456,6 +598,7 @@ class Modal extends Component<
                 type="text"
                 id="chanPassword"
                 placeholder="password"
+                onChange={this.handlePass}
                 className='hidden'
               ></input>
               <div>
@@ -468,7 +611,7 @@ class Modal extends Component<
               {/* <br /> */}
             </form>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenCreate}>
                 Cancel
               </button>
               <button className="mx-1" onClick={this.createChan}>
@@ -485,7 +628,7 @@ class Modal extends Component<
             </header>
             <div>{this.users()}</div>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenAddUser}>
                 Close
               </button>
             </footer>
@@ -512,7 +655,7 @@ class Modal extends Component<
               <div>{this.state.printed}</div>
             </div>
             <footer>
-              <button className="mx-1" onClick={this.hidden}>
+              <button className="mx-1" onClick={this.hiddenJoin}>
                 Close
               </button>
             </footer>

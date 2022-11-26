@@ -1,22 +1,15 @@
 import {
 	BadRequestException,
-	ForbiddenException,
-	HttpException,
-	HttpStatus,
+	NotFoundException,
 	Injectable
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateChanDto } from "./dto/create-chan.dto";
 import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
-import {WsException} from "@nestjs/websockets";
-import {UserService} from "../user/user.service";
-// import { ChanDto } from "./dto/chan.dto";
-// import { toChanDto } from "../shared/mapper";
-
-// const argon2 = require('argon2')
+import { UserService} from "../user/user.service";
 
 type Msg = {
 	content: string;
@@ -36,16 +29,15 @@ export class ChanService {
     ) {}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
-		//console.log('createchandto = ', createChanDto);
         const { name, type, password, owner /*, chanUser */ } = createChanDto;
-		if (name.length < 3 || name.length > 30) {
+		if (name.length < 3 || name.length > 10) {
 			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 30 characters')
 		}
-		if (!name.match(/^[a-z0-9]+$/)) {
+		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new chan: Name should be alphanum')
 		}
 		let hashed = undefined;
-		if ((type === 'public' || type === 'protected') && (password !== null && password !== '')) {
+		if ((type === 'public' || type === 'private') && (password !== null && password !== '')) {
 			throw new BadRequestException('Error while creating new Chan: Public or Private chans cant have a password');
 		}
 		if (password && type === 'protected') {
@@ -62,10 +54,9 @@ export class ChanService {
         if (chanInDb) {
             throw new BadRequestException('Error while creating new Chan: Chan already exists');
         }
-		console.log('owner = ', owner, ', password = ', password);
 		const user: UserEntity = await this.userService.findOnebyUsername(owner);
 		if (!user) {
-			throw new BadRequestException('Error while creating new Chan: Cant find user');
+			throw new NotFoundException('Error while creating new Chan: Cant find user');
 		}
         const chan: ChanEntity = this.chanRepository.create({
             type: type,
@@ -78,7 +69,6 @@ export class ChanService {
 			muteUser: [],
         })
 		chan.chanUser.push(user);
-		//console.log('new chan = ', chan);
 		try {
 			await this.chanRepository.save(chan);
 			return chan;
@@ -118,21 +108,14 @@ export class ChanService {
 			const chan = await this.chanRepository.findOne({ where: { id: msg.room }});
 			if (!chan) {
 				const error = {
-					statusCode: 400,
+					statusCode: 404,
 					message: 'Error while adding new message: Can find channel',
 				}
 				return error;
 			}
 			chan.messages.push(msg);
-			/*
-			if (chan.messages)
-				chan.messages = [...chan.messages, message];
-			else
-				chan.messages = [message];
-			 */
 			await this.chanRepository.save(chan);
-			//chan.messages.push(message);
-			//return chan;
+			return chan;
 		}
 		catch (error) {
 			throw new Error(error);
@@ -140,21 +123,18 @@ export class ChanService {
 	}
 
 	async banUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
-		//console.log('hello les amis');
 		const chan = await this.chanRepository.findOne({
 				where: { id: room },
 				relations: ['banUser', 'chanUser'],
 			});
 		if (!chan) {
-			throw new BadRequestException('Error while banning user from channel: Cant find channel');
+			throw new NotFoundException('Error while banning user from channel: Cant find channel');
 		}
 		const user = await this.userService.findOneByAuthId(iduser);
-		//console.log('user = ', user);
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
 		}
 		const banning = chan.banUser.find(elem => elem === user);
-		//console.log('banning = ', banning);
 		if (banning) {
 			const error = {
 				statusCode: 450,
@@ -187,8 +167,6 @@ export class ChanService {
 				chan.banUser.splice(index);
 			}
 		}
-
-		//console.log('list of chan users = ', chan.banUser, ' list of ban users = ', chan.banUser);
 		try {
 			return await this.chanRepository.save(chan);
 		} catch (error) {
@@ -202,7 +180,7 @@ export class ChanService {
 			relations: ['muteUser','chanUser'],
 		});
 		if (!chan) {
-			throw new BadRequestException('Error while muting user from channel: Cant find channel');
+			throw new NotFoundException('Error while muting user from channel: Cant find channel');
 		}
 		const user = await this.userService.findOneByAuthId(iduser);
 		//console.log('user = ', user);
@@ -247,7 +225,7 @@ export class ChanService {
 			relations: ['chanUser', 'banUser'],
 		});
 		if (!chan) {
-			throw new BadRequestException('Error while adding user to channel: Cant find channel');
+			throw new NotFoundException('Error while adding user to channel: Cant find channel');
 		}
 		if (chan.banUser.find(s => s.user_id === user.user_id)) {
 			const error = {
@@ -302,14 +280,13 @@ export class ChanService {
 	}
 	 */
 
-
 	async getBanned(idroom: string) {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where:{id: idroom},
 			relations: ['banUser']
 		});
 		if (!chan)
-			throw new BadRequestException('Error while fetching banned users: Cant find channel');
+			throw new NotFoundException('Error while fetching banned users: Cant find channel');
 		return chan.banUser;
 	}
 
@@ -319,7 +296,7 @@ export class ChanService {
 			relations: ['muteUser']
 		});
 		if (!chan)
-			throw new BadRequestException('Error while fetching muted users: Cant find channel');
+			throw new NotFoundException('Error while fetching muted users: Cant find channel');
 		return chan.muteUser;
 	}
 
@@ -329,7 +306,7 @@ export class ChanService {
 			relations: ['chanUser','banUser','muteUser']
 		});
 		if (!chan)
-			throw new BadRequestException('Error while fetching users: Cant find channel');
+			throw new NotFoundException('Error while fetching users: Cant find channel');
 		return chan.chanUser; //.map((users) => users);
 	}
 }

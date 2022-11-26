@@ -182,20 +182,7 @@ export const WebSocket = () => {
    */
 
 
-  const createChannel = async () => {
-    const name = document.querySelector("#chanName") as HTMLInputElement;
-    const password = document.querySelector("#chanPassword") as HTMLInputElement;
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    let radioCheck = "";
-    let pswd = "";
-    if (radioPub.checked)
-      radioCheck = "public";
-    else if (radioPri.checked)
-      radioCheck = "private";
-    else if (radioPro.checked)
-      radioCheck = "protected";
+  const createChannel = async (name: string, typep: string, pass: string) => {
     let chans = undefined;
     try {
       chans = await Request(
@@ -210,7 +197,7 @@ export const WebSocket = () => {
     if (!chans) {
       return ;
     }
-    const found = chans.find((c:ChanType) => c.name === name.value)
+    const found = chans.find((c:ChanType) => c.name === name)
     if (found) {
       const error = {
         statusCode: 400,
@@ -218,11 +205,9 @@ export const WebSocket = () => {
       }
       setError(error);
     }
-    if (radioCheck !== "" && name.value && found === undefined) {
-      if (password.value) {
-        pswd = password.value;
-      }
       let chan = undefined;
+      console.log("pass = ", pass)
+      console.log("type = ", typep)
       try {
         chan = await Request(
             "POST",
@@ -231,9 +216,9 @@ export const WebSocket = () => {
               "Content-Type": "application/json",
             },
             {
-              name: name.value,
-              type: radioCheck,
-              password: pswd,
+              name: name,
+              type: typep,
+              password: pass,
               owner: user.username,
             },
             "http://localhost:3000/chan/create"
@@ -244,23 +229,11 @@ export const WebSocket = () => {
       if (!chan) {
         return ;
       }
-      name.value = "";
-      password.value = "";
-      radioPub.checked = false;
-      radioPri.checked = false;
-      radioPro.checked = false;
       socket.emit('chanCreated');
       updateAllChans();
       updateChanFromList();
       window.location.replace('http://localhost:8080/tchat/' + chan.id)
       //navigate('/tchat/' + chan.id);
-    } else {
-      const error = {
-        statusCode: 400,
-        message: 'Error while creating new chan: You should provide type/name value'
-      }
-      setError(error);
-    }
   };
 
   const joinUrl = () => {
@@ -621,19 +594,19 @@ export const WebSocket = () => {
   class ChannelList extends Component<{}, {}> {
     render() {
       return (
-          <div className="channels col-2">
-            <button onClick={createChan}>Create Channel</button>
-            <button onClick={joinChan}>Join Channel</button>
-            <div className="channelsList">
-              <p>{chansJoined(chans)} Channels</p>
-              <div className="list-group">
-                <ul>
-                  <ListOfJoinedChans />
-                </ul>
-                <ul>
-                  <ListOfPrivateMessages />
-                </ul>
-              </div>
+        <div className="channels col-2">
+          <button className="btn btn-outline-dark shadow-none" onClick={createChan}>Create Channel</button>
+          <button className="btn btn-outline-dark shadow-none" onClick={joinChan}>Join Channel</button>
+          <div className="channelsList">
+            <p>{chansJoined(chans)} Channels</p>
+            <div className="list-group">
+              <ul>
+                <ListOfJoinedChans />
+              </ul>
+              <ul>
+                <ListOfPrivateMessages />
+              </ul>
+            </div>
             </div>
           </div>
       )
@@ -662,7 +635,7 @@ class Tchat extends Component<{}, {}> {
         </div>
     ); // fin de return
   } // fin de render
-  // <UserCards value={2} avatar={false}/>
+// <UserCards value={2} avatar={false}/>
 } // fin de App
 
 export default Tchat;

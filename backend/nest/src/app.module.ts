@@ -12,10 +12,6 @@ import { AuthModule } from './auth/auth.module';
 import { UserAuthGuard } from './auth/guards/user-auth.guard';
 import { GameModule } from './game/game.module';
 import { UpdateModule } from './update/update.module';
-//import { PassportModule } from '@nestjs/passport';
-//import { JwtModule } from '@nestjs/jwt';
-//import { User } from './user/entities/user-entity';
-//import { JwtStrategy } from './auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -29,7 +25,7 @@ import { UpdateModule } from './update/update.module';
     ChanModule,
     AuthModule,
     GameModule,
-	UpdateModule
+    UpdateModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserAuthGuard],
