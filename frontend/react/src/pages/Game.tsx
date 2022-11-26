@@ -13,6 +13,7 @@ let gameOver = () => {
 	socket.off('player2')
   socket.off('ballMoved')
   socket.off('userJoinChannel')
+	console.log("ARRRG")
 	// window.location.href = "http://localhost:8080/profil"
 }
 
@@ -49,6 +50,7 @@ let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
 
 let print = (ctx: any, newPos: number, settings: any) => {
   let y = 0;
+
   while (y < settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle, y, settings.sizeBall / 10, settings.sizeBall)
@@ -96,42 +98,53 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
     }
   }
-  // console.log('spec', settings.spec, 'admin', settings.admin)
-	// if ()
-	// 	socket.emit('Ball', {})
-
 
   // ============== End Players Moves ===============
   if (settings.admin) {
-  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
-  {
-    settings.vector = [-settings.vector[0], -1]
-    settings.speed++;
-  }
-  if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall)
-  {
-    
-    settings.vector = [-settings.vector[0], settings.vector[1]]
-  }
-  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
-  }
-  if (settings.ballPos[0] + settings.sizeBall < 0) {
-    settings.end = 1
-  }
-  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-    settings.end = 1
-  }
-}
-  print(ctx, newPos, settings)
-  if (settings.admin) {
-    socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]}/* {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]} */)
-  }
-  if (!settings.end) {
-    window.requestAnimationFrame(() => {
+	  if (settings.ballPos[0] + settings.sizeBall >= settings.player1[0] && settings.ballPos[0] + settings.sizeBall < globale.width)
+	  {
+	    settings.vector = [-settings.vector[0], -1]
+	    settings.speed++;
+	  }
+	  if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall)
+	  {
+
+	    settings.vector = [-settings.vector[0], settings.vector[1]]
+	  }
+	  if (settings.ballPos[0] <= 10 && settings.player1[1] < settings.ballPos[1] + settings.sizeBall && settings.ballPos[1] - settings.sizeBall < settings.player1[1] + 100) {
+	  }
+	  if (settings.ballPos[0] + settings.sizeBall < 0) {
+	    settings.nextRound = 1
+	  }
+	  if (settings.ballPos[0] - settings.sizeBall > globale.width) {
+	    settings.nextRound = 1
+	  }
+	}
+
+	console.log(settings.nextRound)
+	if (settings.nextRound == 0)
+	{
+		print(ctx, newPos, settings)
+		if (settings.admin) {
+			socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]}/* {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]} */)
+		}
+		window.requestAnimationFrame(() => {
       moveBall(ctx, globale, settings)
     })
-    
-  }
+	}
+	else if (settings.round < 3)
+	{
+		console.log("NEXTROUND")
+		reSet()
+		print(ctx, newPos, settings)
+			window.requestAnimationFrame(() => {
+				moveBall(ctx, globale, settings)
+			})
+	}
+	else
+	{
+		gameOver();
+	}
 }
 
 let init = (ctx: any, globale: any, settings: any) => {
@@ -152,11 +165,6 @@ let init = (ctx: any, globale: any, settings: any) => {
   ctx.fillStyle = "white"
   ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
   ctx.fill()
-
-  //moveBall(ctx, globale, settings)
-
-  // let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
-	// modal.classList.remove('hidden');
 
   let infosClavier = (e: KeyboardEvent) => {
     let number = Number(e.keyCode);
@@ -236,6 +244,37 @@ let settings = {
   gameStarted: false,
   timer: 5,
   callback: (countdown: number) => {},
+	round: 0,
+	nextRound: 0
+}
+
+let reSet = () => {
+	settings = {
+		w: settings.w,
+		h: settings.h,
+		nbPlayer: settings.nbPlayer,
+		playerHighStart: settings.playerHighStart,
+		playerSize: settings.playerSize,
+		player1: settings.player1,
+		player2: settings.player2,
+		playerSpeed: settings.playerSpeed,
+		sizeBall:  settings.sizeBall,
+		ballPos: [settings.w / 2, settings.h / 2],
+		vector: [1, 1],
+		speed: 4,
+		middle: settings.middle,
+		end: settings.end,
+		move: settings.move,
+		currentUser: settings.currentUser,
+		spec: settings.spec,
+		admin: settings.admin,
+		room: settings.room,
+		gameStarted: settings.gameStarted,
+		timer: settings.timer,
+		callback: settings.callback,
+		round: settings.round + 1,
+		nextRound: 0
+	}
 }
 
 let setSettings = () => {
@@ -276,11 +315,10 @@ let setSettings = () => {
     room: url,
     gameStarted: settings.gameStarted,
     timer: settings.timer,
-	callback: settings.callback,
+		callback: settings.callback,
+		round: settings.round,
+		nextRound: settings.nextRound
   }
-	// if (url === currentUser.user.username)
-	// 	settings.admin = true
-
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
 
@@ -304,14 +342,13 @@ let startGame = (ctx: any, globale: any) => {
 	settings.timer = -1;
 	let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add("hidden")
-    moveBall(ctx, globale, settings)	
+    moveBall(ctx, globale, settings)
   }
 }
 
 let joinRoom = (game: any, ctx: any, globale: any) => {
   let currentUser:any = sessionStorage.getItem('data');
   currentUser = JSON.parse(currentUser);
-  // console.log("join room ", game);
   socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
   if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
     settings.admin = true;
@@ -319,8 +356,6 @@ let joinRoom = (game: any, ctx: any, globale: any) => {
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
     settings.spec = false
   socket.on('userJoinChannel', (game:any) => {
-    // let modal:any;
-    // console.log("lets go")
     console.log(game)
     if (game.id === settings.room) {
       if (game.p1 !== null && game.p2 !== null) {
@@ -393,7 +428,6 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
   }
 
   render() {
-		//document.addEventListener('hashchange', (event) => {this.joinUrl()})
     window.onresize = () => {window.location.reload()}
     return (
       <div>
