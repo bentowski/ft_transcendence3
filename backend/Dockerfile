@@ -10,6 +10,8 @@ FROM node:alpine As development
 # ... put your development instructions here.
 ENV TZ="Europe/Paris"
 
+RUN npm install -g npm@latest
+
 WORKDIR /home/node/app
 
 COPY --chown=node:node ./nest/package*.json ./
