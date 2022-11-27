@@ -18,7 +18,7 @@ type Msg = {
 
 @Entity('chan')
 export class ChanEntity {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn()
     id: string;
 
     @Column({
