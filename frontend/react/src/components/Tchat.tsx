@@ -410,7 +410,6 @@ export const WebSocket = () => {
     return ret;
   };
 
-
   const chansJoined = (chan: Array<ChanType>) => {
     let count = 0;
     for (let x = 0; x < chans.length; x++)
@@ -419,7 +418,6 @@ export const WebSocket = () => {
       }
     return count;
   }
-
 
   // ======================== RENDER ==========================
 
