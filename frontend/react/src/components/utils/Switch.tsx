@@ -9,7 +9,7 @@ const Switch = () => {
   const [src, setSrc] = useState("");
   const [show, setShow] = useState(false);
   const [tick, setTick] = useState(false);
-  const { isTwoFa } = useAuthData();
+  const { isTwoFa, setError } = useAuthData();
 
   useEffect(() => {
     if (isTwoFa) {
@@ -40,6 +40,9 @@ const Switch = () => {
       };
        */
       handleShow();
+    } else {
+      const err = await res.json();
+      setError(err);
     }
   };
 
@@ -69,16 +72,18 @@ const Switch = () => {
     if (res.ok) {
        handleClose();
        handleTick();
+       setCode("");
        return;
     } else {
        const errmsg: any = await res.json();
        setCode("");
+       setError(errmsg);
        return;
     }
   };
 
   const deactivateTwoFA = async () => {
-    fetch("http://localhost:3000/auth/2fa/deactivate", {
+    let res = await fetch("http://localhost:3000/auth/2fa/deactivate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -86,14 +91,13 @@ const Switch = () => {
       },
       body: JSON.stringify({}),
     })
-      .then((res) => {
-        if (res.ok) {
-          handleUnTick();
-          return;
-        }
-      })
-      .catch((error) => {
-      });
+    if (res.ok) {
+      handleUnTick();
+      return;
+    } else {
+      const err: any = await res.json();
+      setError(err);
+    }
   };
 
   const handleTick = () => setTick(true);
