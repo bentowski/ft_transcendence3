@@ -88,13 +88,17 @@ class UserCards extends Component<
 
   createChan = async () => {
     const ctx: any = this.context;
+    let u2
     try {
-      let u2 = await Request(
+      u2 = await Request(
           "GET",
           {},
           {},
           "http://localhost:3000/user/name/" + this.state.login,
       )
+
+      const name: string = this.createChanName(ctx.user, u2)
+      console.log(ctx.user.auth_id, u2.auth_id);
       let newChan = await Request(
           "POST",
           {
@@ -102,15 +106,32 @@ class UserCards extends Component<
             "Content-Type": "application/json",
           },
           {
-            name: this.createChanName(ctx.user, u2),
             type: "direct",
-            user_1: ctx.user.auth_id,
-            user_2: u2.auth_id,
+            name: name,
+            user_1_id: ctx.user.auth_id,
+            user_2_id: u2.auth_id,
           },
           "http://localhost:3000/chan/createpriv"
       );
+       // let newChan = await fetch("http://localhost:3000/chan/createpriv", {
+       //   method: "POST",
+       //   credentials: "include",
+       //   headers: {
+       //     Accept: "application/json",
+       //     "Content-Type": "application/json",
+       //   },
+       //   body: JSON.stringify({
+       //     type: "direct",
+       //     name: this.createChanName(ctx.user, u2),
+       //     user_1: ctx.user.auth_id,
+       //     user_2: u2.auth_id,
+       //   }),
+       // }
+       //  );
+
       console.log('NEW PRIV CHAN = ', newChan);
     } catch (error) {
+      console.log(ctx.user.auth_id, u2.auth_id);
       ctx.setError(error);
     }
 

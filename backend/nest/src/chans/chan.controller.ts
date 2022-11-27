@@ -1,13 +1,14 @@
 import { NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
 import { ChanService } from "./chan.service";
-import { CreateChanDto, CreatePrivChanDto } from "./dto/create-chan.dto";
+import { CreateChanDto } from "./dto/create-chan.dto";
+import { CreatePrivChanDto } from "./dto/test.dto"
 import {AuthGuard } from "@nestjs/passport";
 import { UserAuthGuard } from "../auth/guards/user-auth.guard";
 import UserEntity from "../user/entities/user-entity";
 import ChanEntity from "./entities/chan-entity";
 
 @Controller('chan')
-@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+// @UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class ChanController {
     constructor(private readonly chanService: ChanService) {}
 
@@ -23,15 +24,6 @@ export class ChanController {
         return chan;
     }
 
-    @Get('/id/:id')
-    async findOnebyID(@Param('id') id: string) {
-        const chan: ChanEntity = await this.chanService.findOnebyID(id);
-        if (!chan) {
-            throw new NotFoundException('Error while fetching chan by id: Cant find chan');
-        }
-        return (chan);
-    }
-
     @Post('create')
     createChan(@Body() createChanDto: CreateChanDto) {
         try {
@@ -43,11 +35,21 @@ export class ChanController {
 
     @Post('createpriv')
     createPrivChan(@Body() createPrivChanDto: CreatePrivChanDto) {
+      console.log("BLA", createPrivChanDto);
         try {
             return this.chanService.createPrivChan(createPrivChanDto);
         } catch (error) {
             throw new Error(error);
         }
+    }
+
+    @Get('/id/:id')
+    async findOnebyID(@Param('id') id: string) {
+        const chan: ChanEntity = await this.chanService.findOnebyID(id);
+        if (!chan) {
+            throw new NotFoundException('Error while fetching chan by id: Cant find chan');
+        }
+        return (chan);
     }
 
     @Get(':id/banned')
@@ -143,4 +145,5 @@ export class ChanController {
             throw new Error(error);
         }
 	}
+
 }

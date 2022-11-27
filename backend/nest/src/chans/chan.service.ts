@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {CreateChanDto, CreatePrivChanDto} from "./dto/create-chan.dto";
+import { CreateChanDto } from "./dto/create-chan.dto";
+import { CreatePrivChanDto } from "./dto/test.dto"
 import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
@@ -33,12 +34,16 @@ export class ChanService {
 
 	async createPrivChan(createPrivChanDto: CreatePrivChanDto): Promise<ChanEntity> {
 		const { type, name, user_1_id, user_2_id } = createPrivChanDto;
+		console.log(user_1_id," : ", user_2_id);
+
 		if (name.length < 3 || name.length > 10) {
 			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 10 characters')
 		}
 		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new Chan: Name should be alphanum')
 		}
+		console.log("WORK HERE");
+
 		const chanInDb = await this.chanRepository.findOne({
 			where: { name: name },
 		});

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateChanDto {
+export class CreatePrivChanDto {
     @IsString()
     @IsNotEmpty()
     public type: string;
@@ -9,9 +9,11 @@ export class CreateChanDto {
     @IsNotEmpty()
     public name: string;
 
-    @IsNotEmpty()
-    public owner: string;
+    // @IsString()
+    // @IsNotEmpty()
+    public user_1_id: string;
 
-    @IsString()
-    password: string;
+    // @IsString()
+    // @IsNotEmpty()
+    public user_2_id: string;
 }
