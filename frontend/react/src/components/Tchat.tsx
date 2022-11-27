@@ -41,7 +41,6 @@ export const WebSocket = () => {
 	// console.log("set !!")
     socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
-		console.log("newmessage: ", newMessage)
       let channels: Array<ChanType> = chans;
       let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
       if (channels[index] !== undefined) {
@@ -232,9 +231,7 @@ export const WebSocket = () => {
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
 	chans.forEach((chan) => {
-		console.log("try");
 		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
-			console.log("joinroom : ", chan.name);
 			socket.emit("joinRoom", chan.id, user.auth_id);
 		}
 	})
@@ -282,8 +279,6 @@ export const WebSocket = () => {
       channels[idx] = c;
     })
     setChans(channels);
-	console.log("loaded :", loaded)
-	console.log(chans.length, user.auth_id, room)
 	// chans.length && user.auth_id !== undefined && !room
   }
 
