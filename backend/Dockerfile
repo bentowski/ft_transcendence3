@@ -18,6 +18,8 @@ RUN npm ci
 
 COPY --chown=node:node ./nest ./
 
+COPY --chown=node:node ./default.jpg ./uploads/profileimages/
+
 #USER node
 
 # End of development instructions.

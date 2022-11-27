@@ -1,15 +1,8 @@
-import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
 
-const ModalChangeAvatar = ({
-  //show,
-  //parentCallBack,
-}: {
-  //show: boolean;
-  //parentCallBack: (newState: boolean) => void;
-}) => {
+const ModalChangeAvatar = () => {
   const { updateUser, setError, user } = useAuthData();
   const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -115,7 +108,7 @@ const ModalChangeAvatar = ({
           </Modal.Footer>
         </div>
       </Modal>
-      <a onClick={() => handleShow()}>
+      <button onClick={() => handleShow()}>
         <img
             className="modifAvatar mb-2"
             width={100}
@@ -125,7 +118,7 @@ const ModalChangeAvatar = ({
             //data-bs-toggle="modal"
             //data-bs-target="#changeAvatar"
         />
-      </a>
+      </button>
     </div>
   );
 };

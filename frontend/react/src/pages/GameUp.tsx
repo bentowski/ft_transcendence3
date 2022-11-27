@@ -1,8 +1,12 @@
 import { Component } from 'react';
-import { socket } from '../contexts/WebSocketContextGame';
+import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
+// import Menu from '../components/Menu'
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
+import { io } from 'socket.io-client';
+
+const updateSocket = io("http://localhost:3000/update");
 
 let ball = new Image();
 let p1 = new Image();
@@ -82,11 +86,11 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   // =========== Players moves ==========
   if (settings.spec === false) {
   let move = 0;
-    if (settings.up === 1)  {
+    if (settings.up == 1)  {
       movePlayer(ctx, -1, globale, settings)
       move += 1;
     }
-    if (settings.down === 1) {
+    if (settings.down == 1) {
       movePlayer(ctx, 1, globale, settings)
       move += 1;
     }
@@ -184,8 +188,7 @@ let init = (ctx: any, globale: any, settings: any) => {
 	ctx.drawImage(p2, settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
 
   //========balle========
-	  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
-
+  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.fill()
 
   let infosClavier = (e: KeyboardEvent) => {
@@ -297,18 +300,18 @@ let setSettings = () => {
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
     vector: [1, 0],
-	baseSpeed: settings.baseSpeed,
+		baseSpeed: settings.baseSpeed,
     speed: settings.baseSpeed,
     middle: winWidth / 2,
     end: 0,
     move: 0,
-	currentUser: currentUser.user,
+		currentUser: currentUser.user,
     spec: true,
     admin: settings.admin,
     room: url,
     gameStarted: settings.gameStarted,
     timer: settings.timer,
-	callback: settings.callback,
+		callback: settings.callback,
   }
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
@@ -319,7 +322,7 @@ let startGame = (ctx: any, globale: any) => {
     let countdown = setInterval(() => {
       console.log('Game start in ' + settings.timer + '...');
       settings.timer--;
-	  settings.callback(settings.timer)
+		  settings.callback(settings.timer)
       if (settings.timer === -1) {
         let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
         modal.classList.add("hidden")
@@ -329,9 +332,9 @@ let startGame = (ctx: any, globale: any) => {
     }, 1000);
   }
   else if (settings.gameStarted === false && settings.spec === true) {
-	settings.gameStarted = true;
-	settings.timer = -1;
-	let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+		settings.gameStarted = true;
+		settings.timer = -1;
+		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add("hidden")
     moveBall(ctx, globale, settings)
   }
@@ -407,15 +410,15 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
   }
 
   updateState = (countdown: number) => {
-	this.setState({timer: countdown})
+		this.setState({timer: countdown})
   }
 
-  modalCountDown = () => {
-	if (settings.gameStarted === true && settings.timer >= 0)
-		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" countdown={settings.timer}/>)
-	else
-		return (<ModalMatchWaiting title="Create new game" calledBy="newGame" />)
-  }
+  // modalCountDown = () => {
+	// if (settings.gameStarted === true && settings.timer >= 0)
+	// 	return (<ModalMatchWaiting title="Create new game" calledBy="newGame" countdown={settings.timer}/>)
+	// else
+	// 	return (<ModalMatchWaiting title="Create new game" calledBy="newGame" />)
+  // }
 
   render() {
     window.onresize = () => {window.location.reload()}

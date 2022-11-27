@@ -1,11 +1,3 @@
-//import IError from "../../interfaces/error-interface";
-//import {useAuthData} from "../../contexts/AuthProviderContext";
-//import {useEffect, useState} from "react";
-//import {HandleError} from "./HandleError";
-//import {ErrorContext, useErrorContext} from "../../contexts/ErrorProviderContext";
-//import useRequest from "../../hooks/useRequest";
-import React, {useEffect, useState} from "react";
-import {ErrorContext, useErrorContext} from "../../contexts/ErrorProviderContext";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 
 const Logout = async () => {

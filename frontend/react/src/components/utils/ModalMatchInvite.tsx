@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
-import userEvent from '@testing-library/user-event';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 
@@ -58,7 +57,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
               You received an invitation
             </h2>
             <div className="d-flex flex-column justify-content-center">
-              <img src={"http://localhost:3000/user/" +
+              <img alt="" src={"http://localhost:3000/user/" +
                   this.props.user.auth_id +
                   "/avatar"} className='modifAvatar mx-auto'></img>
               <div>

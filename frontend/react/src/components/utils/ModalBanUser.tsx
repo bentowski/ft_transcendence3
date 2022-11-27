@@ -1,6 +1,6 @@
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
-import React, {ReactNode, useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import {UserType} from "../../types";
@@ -104,7 +104,7 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
                         </div>
                         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
                             <Link to={"/profil/" + usersChan[x].user.username} className="mx-2">{usersChan[x].user.username}</Link>
-                            <img src={'http://localhost:3000/user/' + usersChan[x].user.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+                            <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
                         </div>
                     </div>
                 );

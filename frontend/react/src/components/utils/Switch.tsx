@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
-import IError from "../../interfaces/error-interface";
-import {Alert} from "react-bootstrap";
+// import IError from "../../interfaces/error-interface";
 
 const Switch = () => {
   const [label, setLabel] = useState("2fa");
@@ -11,7 +10,7 @@ const Switch = () => {
   const [src, setSrc] = useState("");
   const [show, setShow] = useState(false);
   const [tick, setTick] = useState(false);
-  const { isTwoFa, isAuth, isToken, loading } = useAuthData();
+  const { isTwoFa } = useAuthData();
 
   useEffect(() => {
     if (isTwoFa) {
@@ -79,7 +78,7 @@ const Switch = () => {
        return;
     } else {
        //console.log("nnoooo ");
-       const errmsg: IError = await res.json();
+       // const errmsg: any = await res.json();
        setCode("");
        return;
     }
