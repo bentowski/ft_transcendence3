@@ -1,5 +1,5 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, Navigate, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Modal from "./utils/Modal";
 import UserCards from './utils/UserCards'
 import Request from "./utils/Requests"
@@ -96,12 +96,12 @@ export const WebSocket = () => {
   });
 
   useEffect(() => {
-    const handleMute = (obj: PunishSocketType) => {
+    const handleMute = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id) {
         updateMutedFromList();
       }
     }
-    const handleBan = (obj: PunishSocketType) => {
+    const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id) {
         updateBannedFromList();
       }
@@ -116,7 +116,7 @@ export const WebSocket = () => {
 
 
   useEffect(() => {
-    const handleError = (error: ErrorType, auth_id: string) => {
+    const handleError = async (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {

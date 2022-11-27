@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import Switch from "./utils/Switch";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import {useEffect, useState} from "react";
 

@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component } from 'react';
 import Request from "./Requests"
 import { AuthContext } from "../../contexts/AuthProviderContext"
 import "../../styles/components/utils/modal.css";
@@ -7,31 +7,33 @@ import { ChanType, UserType } from "../../types"
 import { Alert } from 'react-bootstrap';
 
 class Modal extends Component<
-  {
-    title: string,
-    calledBy: string,
-    userChan?: any[],
-    userBan?: any[],
-    parentCallBack?: any,
-    chans?: any
-  },
-  {
-    user: any,
-    friends: any[],
-    input: string,
-    allChans: Array<ChanType>,
-    protected: boolean,
-    alertRadio: boolean,
-    fieldName: string,
-    errName: string,
-    alertName: boolean,
-    fieldPass: string,
-    errPass: string,
-    alertPass: boolean,
-    printed: any,
-    type: string
-  }
-> {
+    {
+      title: string,
+      calledBy: string,
+      userChan?: any[],
+      userBan?: any[],
+      parentCallBack?: any,
+      chans?: any
+    },
+    {
+      user: any,
+      friends: any[],
+      input: string,
+      allChans: Array<ChanType>,
+      protected: boolean,
+      alertRadio: boolean,
+      fieldName: string,
+      errName: string,
+      alertName: boolean,
+      fieldPass: string,
+      errPass: string,
+      alertPass: boolean,
+      printed: any,
+      type: string
+      banned: any[],
+      joined: any[],
+    }
+    > {
   static context = AuthContext;
   constructor(props: any) {
     super(props);
@@ -50,7 +52,9 @@ class Modal extends Component<
       errPass: "",
       alertPass: false,
       printed: [],
-      type: ""
+      type: "",
+      banned: [],
+      joined: [],
     };
   }
 
@@ -74,7 +78,7 @@ class Modal extends Component<
       alertName: false,
       fieldPass: "",
       errPass: "",
-      alertPass: false
+      alertPass: false,
     });
     modal.classList.add("hidden");
     chanPassword.classList.add("hidden");
@@ -136,26 +140,32 @@ class Modal extends Component<
 
   componentDidMount = async () => {
     const ctx: any = this.context
+    this.setState({ banned: ctx.banned })
+    this.setState({ joined: ctx. joined })
     let newUser: UserType = ctx.user
     if (newUser) {
       this.setState({ user: newUser });
     }
-    // try {
-      let friends: any = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/"
+    let users: UserType[] = [];
+    let chans: ChanType[] = [];
+    try {
+      users = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/"
       );
-      if (!friends) return;
-      let allChans: Array<ChanType> = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan"
-    );
-    if (!allChans) return;
-    this.setState({ friends: friends, allChans: allChans });
+      chans = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
+    this.setState({ friends: users, allChans: chans });
+    this.chans();
   };
 
   // displayUser = (id: number, user: UserType) => {
@@ -278,7 +288,7 @@ class Modal extends Component<
       return false;
     }
     else if (!minmax.test(this.state.fieldName)) {
-    this.setState({ errName: "Name must contains between 3 and 10 characters" });
+      this.setState({ errName: "Name must contains between 3 and 10 characters" });
       this.setState({ alertName: true });
       return false;
     }
@@ -300,7 +310,7 @@ class Modal extends Component<
     var minmax = /^.{8,30}$/
 
     if (!minmax.test(this.state.fieldPass)) {
-    // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
+      // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
       this.setState({ errPass: "Password must contains between 8 and 30 characters" });
       this.setState({ alertPass: true });
       return false;
@@ -329,40 +339,41 @@ class Modal extends Component<
 
   displayUser = (id: number, user: UserType) => {
     return (
-      <div
-        key={id}
-        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
-      >
-        <div className="col-5 h-100 overflow-hidden buttons">
-          <button
-            onClick={() =>
-              this.props.parentCallBack.socket.emit("addToChannel", {
-                room: this.props.parentCallBack.room,
-                auth_id: user.auth_id,
-              })
-            }
-          >
-            ADD
-          </button>
+        <div
+            key={id}
+            className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+        >
+          <div className="col-5 h-100 overflow-hidden buttons">
+            <button
+                onClick={() =>
+                    this.props.parentCallBack.socket.emit("addToChannel", {
+                      room: this.props.parentCallBack.room,
+                      auth_id: user.auth_id,
+                    })
+                }
+            >
+              ADD
+            </button>
+          </div>
+          <div className="col-2 d-flex flex-row d-flex justify-content-center">
+            <input
+                className={user.status ? "online" : "offline"}
+                type="radio"
+            ></input>
+          </div>
+          <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+            <Link to={"/profil/" + user.username} className="mx-2">
+              {user.username}
+            </Link>
+            <img
+                alt=""
+                src={user.avatar}
+                className="miniAvatar"
+                width={150}
+                height={150}
+            />
+          </div>
         </div>
-        <div className="col-2 d-flex flex-row d-flex justify-content-center">
-          <input
-            className={user.status ? "online" : "offline"}
-            type="radio"
-          ></input>
-        </div>
-        <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-          <Link to={"/profil/" + user.username} className="mx-2">
-            {user.username}
-          </Link>
-          <img
-            src={user.avatar}
-            className="miniAvatar"
-            width={150}
-            height={150}
-          />
-        </div>
-      </div>
     );
   };
 
@@ -373,16 +384,16 @@ class Modal extends Component<
     if (this.state.friends.length > 0) {
       let chanUser: Array<UserType> | undefined = this.props.userChan;
       while (
-        chanUser?.length &&
-        chanUser?.length > 0 &&
-        x < this.state.friends.length
-      ) {
+          chanUser?.length &&
+          chanUser?.length > 0 &&
+          x < this.state.friends.length
+          ) {
         let friend: UserType = this.state.friends[x];
         if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
           if (
-            this.state.input.length === 0 ||
-            friend.username.includes(this.state.input)
+              this.state.input.length === 0 ||
+              friend.username.includes(this.state.input)
           )
             console.log('hello ', this.state.friends[x]);
           friends.push(this.displayUser(x, this.state.friends[x]));
@@ -392,15 +403,15 @@ class Modal extends Component<
     }
     if (isUsers)
       friends.unshift(
-        <input
-          key={x++}
-          id="searchUserToAdd"
-          className="w-100"
-          type="text"
-          placeholder="Search user here"
-          value={this.state.input}
-          onChange={(e) => this.setState({ input: e.target.value })}
-        />
+          <input
+              key={x++}
+              id="searchUserToAdd"
+              className="w-100"
+              type="text"
+              placeholder="Search user here"
+              value={this.state.input}
+              onChange={(e) => this.setState({ input: e.target.value })}
+          />
       );
     if ((isUsers && friends.length === 1) || !isUsers) {
       friends.push(<p key={x}>No available users to add</p>);
@@ -417,9 +428,13 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfBanned = (chan: ChanType) => {
-    const ctx: any = this.context;
-    const banned = ctx.bannedFrom;
+  checkIfBanned = async (chan: ChanType) => {
+    let banned = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/banned",
+    )
     for (let index = 0; index < banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
@@ -428,9 +443,13 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn = (chan: ChanType) => {
-    const ctx: any = this.context;
-    const joined = ctx.chanFrom;
+  checkIfAlreadyIn = async (chan: ChanType) => {
+    let joined = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/joined",
+    )
     for (let index = 0; index < joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;
@@ -439,31 +458,32 @@ class Modal extends Component<
     return false;
   }
 
-  chans = () => {
+  chans = async () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
-        this.state.allChans[x].type !== "private" &&
-        this.state.allChans[x].type !== "direct"
+          this.state.allChans[x].type !== "private" &&
+          this.state.allChans[x].type !== "direct"
       ) {
         if (!this.checkIfOwner(this.state.allChans[x]) &&
-          !this.checkIfBanned(this.state.allChans[x]) &&
-          !this.checkIfAlreadyIn(this.state.allChans[x])) {
+            !await this.checkIfAlreadyIn(this.state.allChans[x]) &&
+            !await this.checkIfBanned(this.state.allChans[x])
+            ) {
           ret.push(
-            <div className="row" key={x}>
-              <button
-                className="col-6"
-                onClick={() =>
-                  this.props.parentCallBack.joinRoom(
-                    this.state.allChans[x],
-                    true
-                  )
-                }
-              >
-                JOIN
-              </button>
-              <p className="col-6">{this.state.allChans[x].name}</p>
-            </div>
+              <div className="row" key={x}>
+                <button
+                    className="col-6"
+                    onClick={() =>
+                        this.props.parentCallBack.joinRoom(
+                            this.state.allChans[x],
+                            true
+                        )
+                    }
+                >
+                  JOIN
+                </button>
+                <p className="col-6">{this.state.allChans[x].name}</p>
+              </div>
           );
         }
       }
@@ -473,13 +493,13 @@ class Modal extends Component<
 
   joinPrivateChan = async () => {
     let input = document.getElementById(
-      "InputJoinPrivateChan"
+        "InputJoinPrivateChan"
     ) as HTMLInputElement;
     let chan = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/chan/" + input.value
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan/" + input.value
     );
     if (!chan) return;
     this.props.parentCallBack.joinRoom(chan, true);
@@ -534,141 +554,141 @@ class Modal extends Component<
     switch (this.props.calledBy) {
       case "newChan":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
-            <form className="mb-3 d-flex align-items-start flex-column">
-              <div className="d-flex align-items-center">
+            <div className="p-4 pb-1">
+              <header className="mb-3">
+                <h2>{this.props.title}</h2>
+              </header>
+              <form className="mb-3 d-flex align-items-start flex-column">
+                <div className="d-flex align-items-center">
+                  <input
+                      type="radio"
+                      name="ChanType"
+                      value="public"
+                      id="public"
+                      onChange={this.hiddenPass}
+                      className='mx-2'
+                  />
+                  Public
+                </div>
+                <div className="d-flex align-items-center">
+                  <input
+                      type="radio"
+                      name="ChanType"
+                      value="private"
+                      id="private"
+                      onChange={this.hiddenPass}
+                      className='mx-2'
+                  />
+                  Private
+                </div>
+                <div className="d-flex align-items-center">
+                  <input
+                      type="radio"
+                      name="ChanType"
+                      value="protected"
+                      id="protected"
+                      onChange={this.showPass}
+                      className='mx-2'
+                  />
+                  Protected
+                </div>
+                <div>
+                  {this.state.alertRadio ?
+                      <Alert onClose={this.closeAlertRadio} variant="danger" dismissible>{"Choose a chan type"}</Alert> :
+                      // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                      <div />
+                  }
+                </div>
                 <input
-                  type="radio"
-                  name="ChanType"
-                  value="public"
-                  id="public"
-                  onChange={this.hiddenPass}
-                  className='mx-2'
+                    type="text"
+                    id="chanName"
+                    placeholder="name"
+                    onChange={this.handleName}
+                    className='mt-2'
                 />
-                Public
-              </div>
-              <div className="d-flex align-items-center">
+                <div>
+                  {this.state.alertName ?
+                      <Alert onClose={this.closeAlertName} variant="danger" dismissible>{this.state.errName}</Alert> :
+                      // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                      <div />
+                  }
+                </div>
+                {/* <br /> */}
                 <input
-                  type="radio"
-                  name="ChanType"
-                  value="private"
-                  id="private"
-                  onChange={this.hiddenPass}
-                  className='mx-2'
-                />
-                Private
-              </div>
-              <div className="d-flex align-items-center">
-                <input
-                  type="radio"
-                  name="ChanType"
-                  value="protected"
-                  id="protected"
-                  onChange={this.showPass}
-                  className='mx-2'
-                />
-                Protected
-              </div>
-              <div>
-                {this.state.alertRadio ?
-                  <Alert onClose={this.closeAlertRadio} variant="danger" dismissible>{"Choose a chan type"}</Alert> :
-                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-                  <div />
-                }
-              </div>
-              <input
-                type="text"
-                id="chanName"
-                placeholder="name"
-                onChange={this.handleName}
-                className='mt-2'
-              />
-              <div>
-                {this.state.alertName ?
-                  <Alert onClose={this.closeAlertName} variant="danger" dismissible>{this.state.errName}</Alert> :
-                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-                  <div />
-                }
-              </div>
-              {/* <br /> */}
-              <input
-                type="text"
-                id="chanPassword"
-                placeholder="password"
-                onChange={this.handlePass}
-                className='hidden'
-              ></input>
-              <div>
-                {this.state.alertPass ?
-                  <Alert onClose={this.closeAlertPass} variant="danger" dismissible>{this.state.errPass}</Alert> :
-                  // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-                  <div />
-                }
-              </div>
-              {/* <br /> */}
-            </form>
-            <footer>
-              <button className="mx-1" onClick={this.hiddenCreate}>
-                Cancel
-              </button>
-              <button className="mx-1" onClick={this.createChan}>
-                Create
-              </button>
-            </footer>
-          </div>
+                    type="text"
+                    id="chanPassword"
+                    placeholder="password"
+                    onChange={this.handlePass}
+                    className='hidden'
+                ></input>
+                <div>
+                  {this.state.alertPass ?
+                      <Alert onClose={this.closeAlertPass} variant="danger" dismissible>{this.state.errPass}</Alert> :
+                      // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                      <div />
+                  }
+                </div>
+                {/* <br /> */}
+              </form>
+              <footer>
+                <button className="mx-1" onClick={this.hiddenCreate}>
+                  Cancel
+                </button>
+                <button className="mx-1" onClick={this.createChan}>
+                  Create
+                </button>
+              </footer>
+            </div>
         );
       case "addUser":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
-            <div>{this.users()}</div>
-            <footer>
-              <button className="mx-1" onClick={this.hiddenAddUser}>
-                Close
-              </button>
-            </footer>
-          </div>
+            <div className="p-4 pb-1">
+              <header className="mb-3">
+                <h2>{this.props.title}</h2>
+              </header>
+              <div>{this.users()}</div>
+              <footer>
+                <button className="mx-1" onClick={this.hiddenAddUser}>
+                  Close
+                </button>
+              </footer>
+            </div>
         );
       case "joinChan":
         return (
-          <div className="p-4 pb-1">
-            <header className="mb-3">
-              <h2>{this.props.title}</h2>
-            </header>
-            <div>
+            <div className="p-4 pb-1">
+              <header className="mb-3">
+                <h2>{this.props.title}</h2>
+              </header>
               <div>
-                <input
-                  id="InputJoinPrivateChan"
-                  className="col-8"
-                  type="text"
-                  placeholder="Enter Private Channel"
-                  onKeyDown={this.pressEnter}
-                ></input>
-                <button onClick={this.joinPrivateChan}>JOIN</button>
+                <div>
+                  <input
+                      id="InputJoinPrivateChan"
+                      className="col-8"
+                      type="text"
+                      placeholder="Enter Private Channel"
+                      onKeyDown={this.pressEnter}
+                  ></input>
+                  <button onClick={this.joinPrivateChan}>JOIN</button>
+                </div>
+                {/* <div>{this.chans()}</div> */}
+                <div>{this.state.printed}</div>
               </div>
-              {/* <div>{this.chans()}</div> */}
-              <div>{this.state.printed}</div>
+              <footer>
+                <button className="mx-1" onClick={this.hiddenJoin}>
+                  Close
+                </button>
+              </footer>
             </div>
-            <footer>
-              <button className="mx-1" onClick={this.hiddenJoin}>
-                Close
-              </button>
-            </footer>
-          </div>
         )
     }
   };
 
   render() {
     return (
-      <div className="Modal hidden" id="Modal">
-        {this.printer()}
-      </div>
+        <div className="Modal hidden" id="Modal">
+          {this.printer()}
+        </div>
     );
   }
 }

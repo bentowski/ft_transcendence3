@@ -4,12 +4,8 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
-import BlockUnBlock from './BlockUnBlock';
-// import IUser from "../../interfaces/user-interface";
-// import IAuthContextType from "../../interfaces/authcontexttype-interface";
 import {ChanType, UserType} from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
-import { format } from "path";
 import ModalMatchInvite from "./ModalMatchInvite";
 
 const socket = io("http://localhost:3000/update");
@@ -91,19 +87,54 @@ class UserCards extends Component<
   }
 
   createChan = async () => {
+    const ctx: any = this.context;
+    try {
+      let u2 = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/name/" + this.state.login,
+      )
+      let newChan = await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            name: this.createChanName(ctx.user, u2),
+            type: "direct",
+            user_1: ctx.user.auth_id,
+            user_2: u2.auth_id,
+          },
+          "http://localhost:3000/chan/createpriv"
+      );
+      console.log('NEW PRIV CHAN = ', newChan);
+    } catch (error) {
+      ctx.setError(error);
+    }
+
+    /*
     let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
-    let u1 = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/name/" + this.state.ssname
-    );
-    let u2 = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/name/" + this.state.login
-    );
+    const ctx: any = this.context;
+    let u1 = undefined;
+    let u2 = undefined;
+    try {
+      u1 = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/name/" + this.state.ssname
+      );
+      u2 = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/name/" + this.state.login
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     let ret = 0;
     let x = 0;
     while (x < chans.length) {
@@ -117,7 +148,6 @@ class UserCards extends Component<
         ret = chans[x].id;
         break;
       }
-
       x++;
     }
 
@@ -148,6 +178,7 @@ class UserCards extends Component<
     }
     let newUrl = "http://localhost:8080/tchat/#" + ret;
     window.location.href = newUrl;
+     */
   };
 
   startNewGame = async () => {

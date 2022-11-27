@@ -53,16 +53,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserList(array_users);
   }
 
-  const fetchChans = async () => {
-    let chans = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan"
-    )
-    setAllChans(chans);
-  }
-
   const fetchData = async () => {
     setIsToken(false);
     setUser(undefined);
@@ -92,7 +82,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             )
             if (user) {
               setUser(user);
-              fetchChans();
               if (res.isTok === 2) {
                 setIsTwoFa(true);
                 setLoading(false);
@@ -103,6 +92,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setLoading(false);
                 return ;
               } else if (res.isTok === 4) {
+
+                //------------------
+
+                let chans = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/chan"
+                )
+                setAllChans(chans);
 
                 //------------------
 
@@ -357,6 +356,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [chanFrom])
 
   const updateAllChans = useCallback(async () => {
+    console.log('updateAllChans called');
     try {
       let res = await Request(
           "GET",
@@ -413,8 +413,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   },[])
 
   useEffect(() => {
-      fetchData();
-      fetchUserList();
+    fetchData();
+    fetchUserList();
   }, []);
 
   const memoedValue = useMemo(

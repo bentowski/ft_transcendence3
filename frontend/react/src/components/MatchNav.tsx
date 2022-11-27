@@ -1,10 +1,8 @@
-//import React from 'react';
 import React, { Component, useEffect, useState } from 'react';
 import { socket } from '../contexts/WebSocketContextUpdate';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
-
 
 function OpenGames() {
 	const [games, setGames] = useState<any[]>([]);

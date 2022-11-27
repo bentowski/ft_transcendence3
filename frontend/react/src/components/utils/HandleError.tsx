@@ -1,8 +1,6 @@
-import IError from "../../interfaces/error-interface";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import {useEffect} from "react";
 import {Alert} from "react-bootstrap";
-import {useErrorContext} from "../../contexts/ErrorProviderContext";
 import {useNavigate} from "react-router-dom";
 
 const HandleError = () => {

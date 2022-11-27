@@ -1,11 +1,4 @@
-//import IError from "../../interfaces/error-interface";
-//import {useAuthData} from "../../contexts/AuthProviderContext";
-//import {useEffect, useState} from "react";
-//import {HandleError} from "./HandleError";
-//import {ErrorContext, useErrorContext} from "../../contexts/ErrorProviderContext";
-//import useRequest from "../../hooks/useRequest";
 import React, {useEffect, useState} from "react";
-import {ErrorContext, useErrorContext} from "../../contexts/ErrorProviderContext";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 
 const Logout = async () => {
@@ -22,14 +15,12 @@ const Logout = async () => {
       .then((data) => {
         if (data.status === 200) {
           userAuthentication(false);
-          //navigate("/login")
           return ;
         }
       })
       .catch((error) => {
         console.log("some shit happened");
         userAuthentication(false);
-        //navigate("/login")
         return ;
       });
 }
@@ -44,7 +35,6 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
       });
       if (response.ok) {
         const res = await response.json();
-        //console.log('response = ', res);
         return res;
       } else {
         const err: any = await response.json();
