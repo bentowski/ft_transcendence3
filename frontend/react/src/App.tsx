@@ -58,9 +58,9 @@ const App = () => {
               <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
             </Route>
             <Route path="/history" element={<History />} />
-            <Route path="/game/" element={<Game />} >
-              <Route path="/game/*" element={<Game />} />
-            </Route>
+          </Route>
+          <Route path="/game/" element={<Game />} >
+            <Route path="/game/*" element={<Game />} />
           </Route>
         </Route>
       </Route>
