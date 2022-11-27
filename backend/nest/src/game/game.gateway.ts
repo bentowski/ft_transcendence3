@@ -54,7 +54,14 @@ export class GameGateway implements OnModuleInit
 
   @SubscribeMessage('moveBall')
   onBallMove(@MessageBody() body: any) {
+    console.log(body.round)
     this.server.to(body.room).emit('ballMoved', body)
+  }
+
+  @SubscribeMessage('gameover')
+  gameOver(@MessageBody() body: any) {
+    console.log("AAAAAAAAAAAAAAAAAAA")
+    this.server.to(body.room).emit('gameoverSend', body)
   }
 //   @SubscribeMessage('leaveRoom')
 //   onLeaveRoom(client: Socket, room: string) {
