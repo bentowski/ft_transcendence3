@@ -16,7 +16,7 @@ export const WebSocket = () => {
   const [messages, setMessage] = useState<MessagePayload[]>([]);
   const [modalType, setModalType] = useState("");
   const [modalTitle, setModalTitle] = useState("");
-  const [loaded, setLoaded] = useState("");
+  const [loaded, setLoaded] = useState("not ok");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
   //const [muted, setMuted] = useState({room:{},muted:false});
   //const [banned, setBanned] = useState({room:{},banned:false});
@@ -38,8 +38,10 @@ export const WebSocket = () => {
   let location = ""
 
   useEffect(() => {
+	// console.log("set !!")
     socket.on('connect', () => { });
     socket.on('onMessage', (newMessage: MessagePayload) => {
+		console.log("newmessage: ", newMessage)
       let channels: Array<ChanType> = chans;
       let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
       if (channels[index] !== undefined) {
@@ -157,9 +159,12 @@ export const WebSocket = () => {
         joinUrl()
       }
     }, 10)
-    if (chans.length && user.auth_id !== undefined && !room)
-      setLoaded('ok')
   }, [])
+
+  useEffect(() => {
+	if (chans.length && user.auth_id !== undefined)
+		setLoaded('ok')
+  })
 
   useEffect(() => {
     let chanUserFind:Array<UserType>|undefined = chans.find((c:ChanType) => c.id === room)?.chanUser
@@ -226,6 +231,13 @@ export const WebSocket = () => {
     let url = document.URL;
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
+	chans.forEach((chan) => {
+		console.log("try");
+		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
+			console.log("joinroom : ", chan.name);
+			socket.emit("joinRoom", chan.id, user.auth_id);
+		}
+	})
     if (index === -1) {
       chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
       if (chan !== undefined) {
@@ -270,6 +282,9 @@ export const WebSocket = () => {
       channels[idx] = c;
     })
     setChans(channels);
+	console.log("loaded :", loaded)
+	console.log(chans.length, user.auth_id, room)
+	// chans.length && user.auth_id !== undefined && !room
   }
 
   const onSubmit = () => {
@@ -282,7 +297,7 @@ export const WebSocket = () => {
         setRoom("null");
         getChan();
         window.location.href = "http://localhost:8080/tchat"; //!
-      } else
+      } else {
         socket.emit("newMessage", {
           chat: value,
           sender_socket_id: user.auth_id,
@@ -291,6 +306,7 @@ export const WebSocket = () => {
           auth_id: user.auth_id,
           room: room,
         });
+		}
     }
     setValue("");
   };
@@ -325,6 +341,7 @@ export const WebSocket = () => {
         }
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+		//console.log("join room : ", user.auth_id, " newroom ", newRoom)
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
         if (newRoom.messages) {
