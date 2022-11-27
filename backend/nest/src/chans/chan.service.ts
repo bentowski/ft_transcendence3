@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateChanDto } from "./dto/create-chan.dto";
+import {CreateChanDto, CreatePrivChanDto} from "./dto/create-chan.dto";
 import ChanEntity from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
@@ -30,6 +30,48 @@ export class ChanService {
         private readonly chanRepository: Repository<ChanEntity>,
 		private readonly userService: UserService,
     ) {}
+
+	async createPrivChan(createPrivChanDto: CreatePrivChanDto): Promise<ChanEntity> {
+		const { type, name, user_1_id, user_2_id } = createPrivChanDto;
+		if (name.length < 3 || name.length > 10) {
+			throw new BadRequestException('Error while creating new chan: Chan name length should be between 3 and 10 characters')
+		}
+		if (!name.match(/^[\w-]+$/)) {
+			throw new BadRequestException('Error while creating new Chan: Name should be alphanum')
+		}
+		const chanInDb = await this.chanRepository.findOne({
+			where: { name: name },
+		});
+		if (chanInDb) {
+			throw new BadRequestException('Error while creating new Chan: Chan already exists');
+		}
+		const user1: UserEntity = await this.userService.findOneByAuthId(user_1_id);
+		if (!user1) {
+			throw new NotFoundException('Error while creating new Chan: Cant find user');
+		}
+		const user2: UserEntity = await this.userService.findOneByAuthId(user_2_id);
+		if (!user2) {
+			throw new NotFoundException('Error while creating new Chan: Cant find user');
+		}
+		const chan: ChanEntity = this.chanRepository.create({
+			type: type,
+			name: name,
+			owner: user1.username,
+			password: '',
+			messages: [],
+			chanUser: [],
+			banUser: [],
+			muteUser: [],
+		})
+		chan.chanUser.push(user1);
+		chan.chanUser.push(user2);
+		try {
+			await this.chanRepository.save(chan);
+			return chan;
+		} catch (error) {
+			throw new Error(error);
+		}
+	}
 
     async createChan(createChanDto: CreateChanDto): Promise<ChanEntity> {
         const { name, type, password, owner /*, chanUser */ } = createChanDto;
@@ -336,10 +378,12 @@ export class ChanService {
 	async getUsers(idroom: string) {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: {id: idroom},
-			relations: ['chanUser','banUser','muteUser']
+			relations: ['chanUser']
 		});
-		if (!chan)
+		if (!chan) {
 			throw new NotFoundException('Error while fetching users: Cant find channel');
+		}
+		//console.log('list of users in chan = ', chan.chanUser);
 		return chan.chanUser; //.map((users) => users);
 	}
 }

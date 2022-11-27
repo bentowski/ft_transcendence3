@@ -2,7 +2,6 @@ import {Component} from "react";
 import {Link, NavigateFunction} from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
-// import GetAvatar from "./utils/GetAvatar";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
 import { UserType } from "../types"

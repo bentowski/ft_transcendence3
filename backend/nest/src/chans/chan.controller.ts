@@ -1,8 +1,8 @@
-import {BadRequestException, NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
+import { NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
 import { ChanService } from "./chan.service";
-import { CreateChanDto } from "./dto/create-chan.dto";
-import {AuthGuard} from "@nestjs/passport";
-import {UserAuthGuard} from "../auth/guards/user-auth.guard";
+import { CreateChanDto, CreatePrivChanDto } from "./dto/create-chan.dto";
+import {AuthGuard } from "@nestjs/passport";
+import { UserAuthGuard } from "../auth/guards/user-auth.guard";
 import UserEntity from "../user/entities/user-entity";
 import ChanEntity from "./entities/chan-entity";
 
@@ -33,9 +33,18 @@ export class ChanController {
     }
 
     @Post('create')
-    createChan(@Body() createUserDto: CreateChanDto) {
+    createChan(@Body() createChanDto: CreateChanDto) {
         try {
-            return this.chanService.createChan(createUserDto);
+            return this.chanService.createChan(createChanDto);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    @Post('createpriv')
+    createPrivChan(@Body() createPrivChanDto: CreatePrivChanDto) {
+        try {
+            return this.chanService.createPrivChan(createPrivChanDto);
         } catch (error) {
             throw new Error(error);
         }
