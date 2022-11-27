@@ -1,10 +1,10 @@
-import {Component, useCallback} from "react";
+import {Component} from "react";
 import {Link, NavigateFunction} from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import { MessagePayload, ChanType, UserType } from "../types"
+import { UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
@@ -81,7 +81,7 @@ class Profil extends Component<
     this.setState({ rank: x + 1 });
   };
 
-  componentDidUpdate(
+  async componentDidUpdate(
       prevProps: Readonly<{
           nav: NavigateFunction,
           loc: any,
@@ -99,9 +99,9 @@ class Profil extends Component<
     }
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
     if (newLoc !== this.state.local || prevState.local !== newLoc) {
-      this.getUser(newLoc);
-      this.getHistory();
-      this.getRank();
+      await this.getUser(newLoc);
+      await this.getHistory();
+      await this.getRank();
       this.setState({ local: newLoc });
     }
   }

@@ -367,7 +367,11 @@ class Modal extends Component<
             </Link>
             <img
                 alt=""
-                src={user.avatar}
+                src={
+                  "http://localhost:3000/user/" +
+                  user.auth_id +
+                  "/avatar"
+                }
                 className="miniAvatar"
                 width={150}
                 height={150}

@@ -9,7 +9,7 @@ const Switch = () => {
   const [src, setSrc] = useState("");
   const [show, setShow] = useState(false);
   const [tick, setTick] = useState(false);
-  const { isTwoFa, isAuth, isToken, loading } = useAuthData();
+  const { isTwoFa } = useAuthData();
 
   useEffect(() => {
     if (isTwoFa) {

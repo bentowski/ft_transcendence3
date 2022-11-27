@@ -1,12 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import {useEffect, useState} from "react";
 
 const Menu = () => {
-  const { user, userAuthentication, updateUserList } = useAuthData();
+  const { user, userAuthentication } = useAuthData();
   const [username, setUsername] = useState<string>(user.username);
   const [avatarUrl, setAvatarUrl] = useState({url:'',hash:0});
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user.username) {
@@ -54,7 +53,7 @@ const Menu = () => {
       </div>{" "}
       {/* homeButtonDiv */}
       <div className="titleDiv">
-        <h1 className="m-0"><img className="BobLePong" src="http://localhost:8080/pictures/boblepongelogo.png"/></h1>
+        <h1 className="m-0"><img alt="" className="BobLePong" src="http://localhost:8080/pictures/boblepongelogo.png"/></h1>
       </div>{" "}
       {/* titleDiv */}
       <div className="profilMenu d-flex justify-content-end align-items-center col-3">
