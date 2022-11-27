@@ -455,21 +455,20 @@ class Modal extends Component<
         //   !this.checkIfBanned(this.state.allChans[x]) &&
         //   !this.checkIfAlreadyIn(this.state.allChans[x])
         // ) {
-          if (this.state.allChans[x].type !== "protected")
+          if (this.state.allChans[x].type == "protected")
             ret.push(
               <div className="row" key={x}>
-                {/* <button
+                <button
                   className="col-6"
-                  // onClick={() =>
-                  //   this.props.parentCallBack.joinRoom(
-                  //     this.state.allChans[x],
-                  //     true
-                  //   )
-                  // }
-                  // onClick={checkPassword}
+                  onClick={() =>
+                    this.props.parentCallBack.getProtectedChan(
+                      this.state.allChans[x],
+                      true
+                    )
+                  }
                 >
                   JOIN
-                </button> */}
+                </button>
                 <p className="col-6">{this.state.allChans[x].name}</p>
               </div>
             )

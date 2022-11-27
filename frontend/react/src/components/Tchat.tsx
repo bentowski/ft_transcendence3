@@ -608,17 +608,27 @@ export const WebSocket = () => {
     }
   }
   let chan : ChanType | undefined;
-
+  let showModal: boolean = false
+  
   const getProtectedChan = (chanRec: ChanType) => {
+    showModal = true
     chan = chanRec;
+    console.log("COUCOU")
+    let ModalCheckPass = document.getElementById('Modal') as HTMLDivElement
+    ModalCheckPass.classList.add("hidden")
   }
 
   return (
     <div>
       <div className="tchat row">
         <h4>CHAT</h4>
-        <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{ "socket": socket, "room": room, joinRoom, createChannel, getProtectedChan }} chans={listChansJoined(chans)} />
-        <ModalCheckPass chanToJoin={chan} />
+        <Modal 
+        title={modalTitle} 
+        calledBy={modalType} /* userBan={userBan} */ 
+        userChan={arrayUserInActualchannel()} 
+        parentCallBack={{ "socket": socket, "room": room, joinRoom, createChannel, getProtectedChan }} 
+        chans={listChansJoined(chans)} />
+        <ModalCheckPass show={showModal} chanToJoin={chan} />
         <ChannelList />
         <PrintChannel />
       </div>

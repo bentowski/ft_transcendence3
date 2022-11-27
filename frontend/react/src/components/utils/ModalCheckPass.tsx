@@ -10,21 +10,21 @@ const ModalCheckPass = (
   const [field, setField] = useState("");
   const [alert, setAlert] = useState(false);
 
-  const handleShow = () => {
-    console.log("chan = ", chanToJoin)
-    let modal = document.getElementById("Modal") as HTMLDivElement;
-    modal.classList.add("hidden");
-    setShow(true);
-  }
+  // const handleShow = () => {
+  //   console.log("chan = ", chanToJoin)
+  //   let modal = document.getElementById("Modal") as HTMLDivElement;
+  //   modal.classList.add("hidden");
+  //   setShow(true);
+  // }
 
-  const handleClose = () => {
-    setShow(false);
-  }
+  // const handleClose = () => {
+  //   show = false
+  // }
 
   const cancelling = () => {
     setAlert(false);
     setField("");
-    handleClose();
+    // handleClose();
   };
 
   const handleChange = (evt: any) => {
@@ -34,7 +34,7 @@ const ModalCheckPass = (
 
   return (
     <div className="checkPassword" id='checkPassword'>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
             <h2>Checking Password</h2>
@@ -70,16 +70,16 @@ const ModalCheckPass = (
 
         </div>
       </Modal>
-      <button
-          onClick={handleShow}
-          className="d-flex flex-row justify-content-start align-items-center"
-          //data-bs-toggle="modal"
-          //data-bs-target="#changeName"
-      >
-        JOIN
-      </button>
     </div>
   );
+      // <button
+      //     onClick={handleShow}
+      //     className="d-flex flex-row justify-content-start align-items-center"
+      //     //data-bs-toggle="modal"
+      //     //data-bs-target="#changeName"
+      // >
+      //   JOIN
+      // </button>
 }
 
 export default ModalCheckPass;
