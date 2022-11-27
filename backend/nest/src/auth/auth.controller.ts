@@ -55,7 +55,7 @@ export class AuthController {
       this.authService.changeStatusUser(auth_id, 1);
       res
         .status(202)
-        .cookie('jwt', access_token, { httpOnly: true })
+        .cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false  })
         .redirect('http://localhost:8080');
     } catch (error) {
       throw new Error(error);
@@ -76,7 +76,7 @@ export class AuthController {
       this.authService.changeStatusUser(auth_id, 1);
       res
         .status(202)
-        .cookie('jwt', access_token, { httpOnly: true })
+        .cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false })
         .redirect('http://localhost:8080');
     } catch (error) {
       throw new Error(error);
@@ -112,7 +112,14 @@ export class AuthController {
   logout(@Req() req, @Res({ passthrough: true }) res) {
     try {
       this.authService.changeStatusUser(req.user.auth_id, 0);
-      res.status(200).cookie('jwt', '', { expires: new Date() });
+      const now = new Date();
+      const time = now.getTime();
+      console.log('get time = ', time)
+      const exp = time + 2000;
+      now.setTime(exp);
+      res
+          .status(200)
+          .cookie('jwt', '', { expires: now, httpOnly: true, sameSite: "none", secure: false  })
     } catch (error) {
       throw new Error(error);
     }
@@ -152,7 +159,7 @@ export class AuthController {
     const access_token: string = this.jwtService.sign(payload);
     try {
       await this.authService.turnOnTwoFAAuth(auid);
-      res.status(200).cookie('jwt', access_token, { httpOnly: true });
+      res.status(200).cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false  });
     } catch (error) {
       throw new Error(error);
     }
@@ -187,6 +194,6 @@ export class AuthController {
     const isAuth = true;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token = this.jwtService.sign(payload);
-    res.status(200).cookie('jwt', access_token, { httpOnly: true });
+    res.status(200).cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false });
   }
 }
