@@ -170,13 +170,13 @@ class UserCards extends Component<
         "http://localhost:3000/chan/create"
       );
       socket.emit("chanCreated");
-      let newUrl = "http://localhost:8080/tchat/#" + newChan.id;
+      let newUrl = "http://localhost:8080/chat/#" + newChan.id;
       setTimeout(() => {
         window.location.href = newUrl;
       }, 100);
       return;
     }
-    let newUrl = "http://localhost:8080/tchat/#" + ret;
+    let newUrl = "http://localhost:8080/chat/#" + ret;
     window.location.href = newUrl;
      */
   };

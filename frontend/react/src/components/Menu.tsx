@@ -44,7 +44,7 @@ const Menu = () => {
   return (
     <div className="Menu shadow d-flex justify-content-between align-items-center">
       <div className="homeButtonDiv col-3 d-flex justify-content-start">
-        <Link to={"/tchat"}>
+        <Link to={"/chat"}>
           <p className="m-0">chat</p>
         </Link>
         <Link to={"/history"}>

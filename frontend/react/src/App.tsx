@@ -2,7 +2,7 @@ import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunct
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
-import Tchat from "./components/Tchat";
+import Chat from "./components/Chat/Chat";
 import History from "./components/History";
 import Page from "./pages/Page";
 import { useAuthData } from "./contexts/AuthProviderContext";
@@ -51,8 +51,8 @@ const App = () => {
         {/* private route */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
-            <Route path="/tchat/" element={<Tchat />} >
-              <Route path="/tchat/*" element={<Tchat />} />
+            <Route path="/chat/" element={<Chat />} >
+              <Route path="/chat/*" element={<Chat />} />
             </Route>
             <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
               <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
