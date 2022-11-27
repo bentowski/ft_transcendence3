@@ -147,28 +147,28 @@ class UserCards extends Component<
   };
 
   startNewGame = async () => {
-    // await Request(
-    //   "POST",
-    //   {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   {
-    //     login: this.state.login,
-    //     public: true
-    //   },
-    //   "http://localhost:3000/parties/create"
-    // );
+    await Request(
+      "POST",
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      {
+        login: this.state.login,
+        public: true
+      },
+      "http://localhost:3000/parties/create"
+    );
 
     socket.emit("askForGameUp", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
     console.log("emit : ", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
     let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
-    // let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-    // let ids = parties.map((p:any) => {
-    //   return p.id;
-    // })
-    // window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
+    let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
+    let ids = parties.map((p:any) => {
+      return p.id;
+    })
+    window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number) => {
@@ -195,7 +195,7 @@ class UserCards extends Component<
               </button>
               {/* </Link> */}
               <Link to={"/game"}>
-                <button className="mx-2 p-1 btn btn-outline-dark shadow-none">
+                <button className="mx-2 p-1 btn btn-outline-dark shadow-none" onClick={this.startNewGame}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
