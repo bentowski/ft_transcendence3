@@ -3,6 +3,7 @@ import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
 
+
 class History extends Component<
   {},
   { users: Array<UserType>; histories: Array<any> }

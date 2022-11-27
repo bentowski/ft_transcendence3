@@ -25,7 +25,6 @@ import { UpdateModule } from './update/update.module';
     GameModule,
     UpdateModule,
   ],
-  controllers: [],
   providers: [UserAuthGuard],
 })
 export class AppModule {}

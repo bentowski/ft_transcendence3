@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
-// import IError from "../../interfaces/error-interface";
 
 const Switch = () => {
   const [label, setLabel] = useState("2fa");
@@ -29,7 +28,6 @@ const Switch = () => {
     })
     if (res.ok) {
       const myblobi = await res.blob();
-      //console.log(myblobi);
       const blobURL = URL.createObjectURL(myblobi);
       setSrc(blobURL);
       /*
@@ -55,12 +53,9 @@ const Switch = () => {
   };
 
   const activateTwoFa = async () => {
-    //console.log('activating two fa...');
     if (!checkVal(code) && code.length !== 6) {
-      //console.log("wrong code format");
       return;
     }
-    //console.log("before fetch request");
     let res = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
@@ -74,11 +69,9 @@ const Switch = () => {
     if (res.ok) {
        handleClose();
        handleTick();
-       //console.log("yey");
        return;
     } else {
-       //console.log("nnoooo ");
-       // const errmsg: any = await res.json();
+       const errmsg: any = await res.json();
        setCode("");
        return;
     }
@@ -96,12 +89,10 @@ const Switch = () => {
       .then((res) => {
         if (res.ok) {
           handleUnTick();
-          //console.log("deactivated ok ");
           return;
         }
       })
       .catch((error) => {
-        //console.log("failed deactivate ", error);
       });
   };
 
@@ -109,16 +100,12 @@ const Switch = () => {
   const handleUnTick = () => setTick(false);
 
   const handleToggle = () => {
-    //this.setState({ isTwoFA: evt.target.checked });
     if (tick) {
-      //console.log("deactivating twofa");
       return deactivateTwoFA();
     }
     if (!tick) {
-      //console.log("generating twofa");
       return generateTwoFA();
     }
-    //console.log("evt target = ", evt.target.checked);
   };
 
   const handleSubmit = (evt: any) => {
@@ -180,32 +167,3 @@ const Switch = () => {
 };
 
 export default Switch;
-
-//<div className="Modal hidden" id="ModalCode">
-//         <div className="p-4 pb-1">
-//           <header className="mb-3">
-//             <h2>{label}</h2>
-//             <img alt="qrcode" src={src} />
-//           </header>
-//           <form className="mb-3">
-//             <input
-//               type="text"
-//               placeholder="2fa activation code"
-//               maxLength={6}
-//               id="code"
-//               name="code"
-//               onChange={handleChange}
-//               value={code}
-//             />
-//           </form>
-//           <footer>
-//             <button className="mx-1" onClick={hidden}>
-//               Cancel
-//             </button>
-//
-//             <button onClick={activateTwoFa} className="mx-1">
-//               Validate
-//             </button>
-//           </footer>
-//         </div>
-//       </div>
