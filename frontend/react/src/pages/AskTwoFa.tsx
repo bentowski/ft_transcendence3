@@ -3,7 +3,7 @@ import {Navigate} from "react-router-dom";
 import {useAuthData} from "../contexts/AuthProviderContext";
 
 const AskTwoFa = () => {
-  const { user, updateUserList, userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
+  const { user, setError, updateUserList, userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
   const [code, setCode] = useState("");
   const [validate, setValidate] = useState(false);
 
@@ -20,7 +20,8 @@ const AskTwoFa = () => {
       if (res.ok) {
         userAuthentication(true);
       } else {
-          //seterror
+          let err = await res.json();
+          setError(err);
       }
   };
 
