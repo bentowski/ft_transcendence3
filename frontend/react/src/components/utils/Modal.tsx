@@ -5,6 +5,7 @@ import "../../styles/components/utils/modal.css";
 import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
 import { Alert } from 'react-bootstrap';
+import ModalCheckPass from './ModalCheckPass';
 
 class Modal extends Component<
   {
@@ -141,18 +142,18 @@ class Modal extends Component<
       this.setState({ user: newUser });
     }
     // try {
-      let friends: any = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/"
-      );
-      if (!friends) return;
-      let allChans: Array<ChanType> = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan"
+    let friends: any = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/user/"
+    );
+    if (!friends) return;
+    let allChans: Array<ChanType> = await Request(
+      "GET",
+      {},
+      {},
+      "http://localhost:3000/chan"
     );
     if (!allChans) return;
     this.setState({ friends: friends, allChans: allChans });
@@ -249,17 +250,14 @@ class Modal extends Component<
       this.setState({ alertRadio: true });
       return false;
     }
-    else if (radioPub.checked === true)
-    {
+    else if (radioPub.checked === true) {
       await this.setState({ alertRadio: false, type: "public" });
     }
-    else if (radioPri.checked === true)
-    {
-      await  this.setState({ alertRadio: false, type: "private" });
+    else if (radioPri.checked === true) {
+      await this.setState({ alertRadio: false, type: "private" });
     }
-    else if (radioPro.checked === true)
-    {
-      await  this.setState({ alertRadio: false, type: "protected" });
+    else if (radioPro.checked === true) {
+      await this.setState({ alertRadio: false, type: "protected" });
     }
     return true;
   };
@@ -278,7 +276,7 @@ class Modal extends Component<
       return false;
     }
     else if (!minmax.test(this.state.fieldName)) {
-    this.setState({ errName: "Name must contains between 3 and 10 characters" });
+      this.setState({ errName: "Name must contains between 3 and 10 characters" });
       this.setState({ alertName: true });
       return false;
     }
@@ -300,7 +298,7 @@ class Modal extends Component<
     var minmax = /^.{8,30}$/
 
     if (!minmax.test(this.state.fieldPass)) {
-    // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
+      // if (this.state.fieldPass.length < 8 || this.state.fieldPass.length > 30) {
       this.setState({ errPass: "Password must contains between 8 and 30 characters" });
       this.setState({ alertPass: true });
       return false;
@@ -440,36 +438,75 @@ class Modal extends Component<
     return false;
   }
 
+  checkPassword = () => {
+    
+  };
+
   chans = () => {
+    console.log("allChans.length = ", this.state.allChans.length)
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!this.checkIfOwner(this.state.allChans[x]) &&
-          !this.checkIfBanned(this.state.allChans[x]) &&
-          !this.checkIfAlreadyIn(this.state.allChans[x])) {
-          ret.push(
-            <div className="row" key={x}>
-              <button
-                className="col-6"
-                onClick={() =>
-                  this.props.parentCallBack.joinRoom(
-                    this.state.allChans[x],
-                    true
-                  )
-                }
-              >
-                JOIN
-              </button>
-              <p className="col-6">{this.state.allChans[x].name}</p>
-            </div>
-          );
-        }
+        // if (
+        //   !this.checkIfOwner(this.state.allChans[x]) &&
+        //   !this.checkIfBanned(this.state.allChans[x]) &&
+        //   !this.checkIfAlreadyIn(this.state.allChans[x])
+        // ) {
+          if (this.state.allChans[x].type !== "protected")
+            ret.push(
+              <div className="row" key={x}>
+                {/* <button
+                  className="col-6"
+                  // onClick={() =>
+                  //   this.props.parentCallBack.joinRoom(
+                  //     this.state.allChans[x],
+                  //     true
+                  //   )
+                  // }
+                  // onClick={checkPassword}
+                >
+                  JOIN
+                </button> */}
+                <p className="col-6">{this.state.allChans[x].name}</p>
+              </div>
+            )
+        // }
       }
     }
-    this.setState({ printed: ret })
+    // for (let x = 0; x < this.state.allChans.length; x++) {
+    //  console.log("allChans = ", this.state.allChans[x].name)
+    // if (
+    //   this.state.allChans[x].type !== "private" &&
+    //   this.state.allChans[x].type !== "direct"
+    // ) {
+    //   if (!this.checkIfOwner(this.state.allChans[x]) &&
+    //     !this.checkIfBanned(this.state.allChans[x]) &&
+    //     !this.checkIfAlreadyIn(this.state.allChans[x])) {
+    //     ret.push(
+    //       <div className="row" key={x}>
+    //         <button
+    //           className="col-6"
+    //           onClick={() =>
+    //             this.props.parentCallBack.joinRoom(
+    //               this.state.allChans[x],
+    //               true
+    //             )
+    //           }
+    //         >
+    //           JOIN
+    //         </button>
+    //         <p className="col-6">{this.state.allChans[x].name}</p>
+    //       </div>
+    //     );
+    //   }
+    // }
+    // }
+    // this.setState({ printed: ret })
+    return ret;
+    // return "coucou"
   };
 
   joinPrivateChan = async () => {
@@ -652,7 +689,7 @@ class Modal extends Component<
                 ></input>
                 <button onClick={this.joinPrivateChan}>JOIN</button>
               </div>
-              {/* <div>{this.chans()}</div> */}
+              <div>{this.chans()}</div>
               <div>{this.state.printed}</div>
             </div>
             <footer>

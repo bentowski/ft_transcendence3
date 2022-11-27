@@ -132,9 +132,9 @@ const ModalChangeUsername = () => {
   }
 
   const handleShow = () => {
-    console.log('pouet');
     setShow(true);
   }
+
   const closeAlert = () => {
     // console.log('closing alert');
     setAlert(false);
