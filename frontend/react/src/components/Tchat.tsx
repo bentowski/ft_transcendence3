@@ -218,15 +218,14 @@ export const WebSocket = () => {
     socket.emit('chanCreated');
     updateAllChans();
     updateChanFromList();
-    window.location.replace('http://localhost:8080/tchat/' + chan.id)
-    //navigate('/tchat/' + chan.id);
+    navigate('/tchat/' + chan.id);
+    joinUrl();
   };
 
   const joinUrl = () => {
     let url = document.URL;
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
-
     if (index === -1) {
       chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
       if (chan !== undefined) {

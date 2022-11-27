@@ -329,9 +329,11 @@ class Modal extends Component<
     let retRadio = await this.verifRadio();
     let retName = await this.verifName();
     let retPass = true;
-    if (this.state.protected)
+    if (this.state.protected) {
       retPass = await this.verifPass();
+    }
     if (retRadio && retName && retPass) {
+      console.log('creating channel');
       this.props.parentCallBack.createChannel(this.state.fieldName, this.state.type, this.state.fieldPass)
       this.hiddenCreate()
     }
