@@ -1,4 +1,4 @@
-#!/bin/sh
+# #!/bin/sh
 
 curl -X POST http://localhost:3000/user/create -H "Content-Type: application/json" -d '{"auth_id":"666","username":"gmiel","email":"graviermiel@free.fr","game_won": 5,
         "game_lost": 5,
@@ -9,6 +9,6 @@ curl -X POST http://localhost:3000/user/create -H "Content-Type: application/jso
 curl -X POST http://localhost:3000/user/create -H "Content-Type: application/json" -d '{"auth_id":"888","username":"emacro","email":"emmentalmacro@elysee.fr", "game_won": 25,
         "game_lost": 5,
         "total_games": 30}'
-curl -X POST http://localhost:3000/user/create -H "Content-Type: application/json" -d '{"auth_id":"999","username":"mlepeigne","email":"maritimelepeigne@faf.fr""game_won": 25,
+curl -X POST http://localhost:3000/user/create -H "Content-Type: application/json" -d '{"auth_id":"999","username":"mlepeigne","email":"maritimelepeigne@faf.fr", "game_won": 25,
         "game_lost": 15,
         "total_games": 40}'
