@@ -55,7 +55,7 @@ export class AuthController {
       this.authService.changeStatusUser(auth_id, 1);
       res
         .status(202)
-        .cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false  })
+        .cookie('jwt', access_token, { httpOnly: true  })
         .redirect('http://localhost:8080');
     } catch (error) {
       throw new Error(error);
@@ -76,7 +76,7 @@ export class AuthController {
       this.authService.changeStatusUser(auth_id, 1);
       res
         .status(202)
-        .cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false })
+        .cookie('jwt', access_token, { httpOnly: true })
         .redirect('http://localhost:8080');
     } catch (error) {
       throw new Error(error);
@@ -119,7 +119,7 @@ export class AuthController {
       now.setTime(exp);
       res
           .status(200)
-          .cookie('jwt', '', { expires: now, httpOnly: true, sameSite: "none", secure: false  })
+          .cookie('jwt', '', { expires: now, httpOnly: true  })
     } catch (error) {
       throw new Error(error);
     }
@@ -159,7 +159,7 @@ export class AuthController {
     const access_token: string = this.jwtService.sign(payload);
     try {
       await this.authService.turnOnTwoFAAuth(auid);
-      res.status(200).cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false  });
+      res.status(200).cookie('jwt', access_token, { httpOnly: true  });
     } catch (error) {
       throw new Error(error);
     }
@@ -194,6 +194,6 @@ export class AuthController {
     const isAuth = true;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token = this.jwtService.sign(payload);
-    res.status(200).cookie('jwt', access_token, { httpOnly: true, sameSite: "none", secure: false });
+    res.status(200).cookie('jwt', access_token, { httpOnly: true });
   }
 }
