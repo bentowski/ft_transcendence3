@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { ChanType } from '../../types';
+import Request from './Requests';
+import { useAuthData } from "../../contexts/AuthProviderContext";
 
 const ModalCheckPass = (
-  {chanToJoin, clef, parentCallBack}:
-  {chanToJoin: ChanType | undefined, clef: number, parentCallBack?: any }
-  ) => {
+  { chanToJoin, clef, parentCallBack }:
+    { chanToJoin: ChanType | undefined, clef: number, parentCallBack?: any }
+) => {
   const [show, setShow] = useState(false)
   const [field, setField] = useState("");
   const [alert, setAlert] = useState(false);
+  const { setError } = useAuthData();
 
   const handleShow = () => {
     console.log("chan[x].name = ", chanToJoin?.password)
@@ -36,12 +39,24 @@ const ModalCheckPass = (
     setField(evt.target.value);
   };
 
-  const checkPassword = () => {
-    if (field === chanToJoin?.password) {
-      parentCallBack.joinRoom(chanToJoin)
-    }
-    else {
-      setAlert(true);
+  const checkPassword = async () => {
+    const pass: string | undefined = chanToJoin?.password; 
+    const id: string | undefined = chanToJoin?.id; 
+    try {
+      let res = await Request(
+        "POST",
+        {},
+        { pass },
+        "http://localhost:3000/chan/" + id + "/verify"
+        )
+      if (res) {
+        parentCallBack.joinRoom(chanToJoin)
+      }
+      else {
+        setAlert(true);
+      }
+    } catch (error) {
+      setError(error)
     }
   }
 
@@ -84,10 +99,10 @@ const ModalCheckPass = (
         </div>
       </Modal>
       <button
-          onClick={handleShow}
-          // className="d-flex flex-row justify-content-start align-items-center"
-          //data-bs-toggle="modal"
-          //data-bs-target="#changeName"
+        onClick={handleShow}
+      // className="d-flex flex-row justify-content-start align-items-center"
+      //data-bs-toggle="modal"
+      //data-bs-target="#changeName"
       >
         JOIN
       </button>
