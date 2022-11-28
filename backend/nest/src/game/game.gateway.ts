@@ -63,6 +63,12 @@ export class GameGateway implements OnModuleInit
     console.log("AAAAAAAAAAAAAAAAAAA")
     this.server.to(body.room).emit('gameoverSend', body)
   }
+
+  @SubscribeMessage('endGame')
+  onEndGame(client: Socket, room: string) {
+    console.log("end game !")
+    this.server.to(room).emit('onEndGame', room)
+  }
 //   @SubscribeMessage('leaveRoom')
 //   onLeaveRoom(client: Socket, room: string) {
 // 	client.join(room);

@@ -12,7 +12,7 @@ let gameOver = () => {
 	socket.off('player2')
   socket.off('ballMoved')
   socket.off('userJoinChannel')
-	console.log("ARRRG")
+	//console.log("ARRRG")
   // navigate("/history")
 	window.location.href = "http://localhost:8080/"
 }
@@ -164,6 +164,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
     	settings.speed++;
   	}
 	}
+  //! don't forget to delete this
 	console.log(settings.round)
 	if (settings.round < 3)
 	{
@@ -197,6 +198,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	}
 	else
 	{
+    socket.emit('endGame', settings.room)
 		gameOver()
 	}
 }
@@ -274,6 +276,10 @@ let init = (ctx: any, globale: any, settings: any) => {
     print(ctx, settings.ballPos[1], settings)
 		if (round)
 			settings.round = round
+  })
+  socket.on('onEndGame', (room) => {
+    if (room === settings.room)
+      gameOver();
   })
 }
 
