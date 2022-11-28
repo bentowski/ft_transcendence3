@@ -35,7 +35,7 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('newMessage')
-  async onNewMessage(client: Socket, @MessageBody() body: any) {
+  async onNewMessage(client: Socket, @MessageBody() body: any): Promise<void> {
       const sender: UserEntity = await this.userService.findOnebyUsername(body.username);
       if (!sender) {
           this.server
@@ -77,7 +77,7 @@ export class ChatGateway implements OnModuleInit
               );
             return ;
       }
-      const mfound = chan.muteUser.find(elem => elem.auth_id === sender.auth_id)
+      const mfound: UserEntity = chan.muteUser.find(elem => elem.auth_id === sender.auth_id)
       if (mfound) {
           this.server
               .to(body.room)
@@ -91,7 +91,7 @@ export class ChatGateway implements OnModuleInit
               );
           return ;
       }
-      const bfound = chan.banUser.find(elem => elem.auth_id === sender.auth_id);
+      const bfound: UserEntity = chan.banUser.find(elem => elem.auth_id === sender.auth_id);
       if (bfound) {
           this.server
               .to(body.room)
@@ -130,7 +130,7 @@ export class ChatGateway implements OnModuleInit
   async onJoinRoom(
     client: Socket,
     body: string[] /* room: string, auth_id: string */,
-  ) {
+  ): Promise<void> {
   	client.join(body[0]);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body[1])
       if (!usr) {
@@ -168,9 +168,9 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('addToChannel')
-  async onAddTochannel(client: Socket, body: {room: string, auth_id: string}) {
+  async onAddTochannel(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
      try {
-         const usr = await this.userService.findOneByAuthId(body.auth_id)
+         const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id)
          if (!usr) {
              this.server
                  .to(body[0])
@@ -203,7 +203,7 @@ export class ChatGateway implements OnModuleInit
      }
   }
 
-  launchCounterBan(client: Socket, auth_id: string, room: string) {
+  launchCounterBan(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
             try {
                 await this.chanService.banUserToChannel(auth_id, room, false)
@@ -217,12 +217,12 @@ export class ChatGateway implements OnModuleInit
                         },
                         auth_id
                     );
-                return;
+                return ;
             }
         }, 100000)
   }
 
-    launchCounterMute(client: Socket, auth_id: string, room: string) {
+    launchCounterMute(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
             try {
                 await this.chanService.muteUserToChannel(auth_id, room, false)
@@ -243,7 +243,7 @@ export class ChatGateway implements OnModuleInit
     }
 
     @SubscribeMessage('banToChannel')
-    async banUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
+    async banUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}): Promise<void> {
         try {
             await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
             client.emit('banRoom');
@@ -271,7 +271,7 @@ export class ChatGateway implements OnModuleInit
     }
 
     @SubscribeMessage('muteToChannel')
-    async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}) {
+    async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}): Promise<void> {
         try {
             await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
             client.emit('muteRoom');
@@ -301,27 +301,25 @@ export class ChatGateway implements OnModuleInit
     }
 
     @SubscribeMessage('leaveRoom')
-    async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}) {
+    async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
   	// client.leave(body.room);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id)
-    console.log("C EST ICI ///////////////////////////////////////////////////////////////////////////////////////////////////////////")
-    console.log(usr)
     await this.chanService.delUserToChannel(usr, body.room)
   	client.emit('leftRoom', body.room);
   }
 
   @SubscribeMessage('chanCreated')
-  onChanCreated() {
+  onChanCreated():  void {
   	this.server.emit('newChan');
   }
 
   @SubscribeMessage('newParty')
-  onNewParty(client: Socket) {
+  onNewParty(client: Socket): void {
 	this.server.emit('onNewParty');
   }
 
     @SubscribeMessage('updateChan')
-    onUpdateChan(client: Socket, room:string) {
+    onUpdateChan(client: Socket, room:string): void {
         this.server.emit('chanDeleted', room);
 }
 }

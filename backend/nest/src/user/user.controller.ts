@@ -196,7 +196,6 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/banned')
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
-    console.log('check if user banned');
     const user: UserEntity = await this.findOnebyID(req.user.auth_id);
     if (!user) {
       throw new NotFoundException(

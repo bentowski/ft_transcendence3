@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   @Get('dummyconnect')
-  async dummyConnect(@Res() res) {
+  async dummyConnect(@Res() res): Promise<void> {
     let n_id = 1;
     while (await this.authService.findUser(n_id.toString())) {
       n_id++;
@@ -48,7 +48,7 @@ export class AuthController {
     };
     const newUser: UserEntity = await this.authService.createUser(fakeUser);
     const auth_id: string = newUser.auth_id;
-    const isAuth = false;
+    const isAuth: boolean = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
     try {
@@ -67,9 +67,9 @@ export class AuthController {
   async redirect(
     @Res({ passthrough: true }) res: Response,
     @Req() req,
-  ): Promise<any> {
+  ): Promise<void> {
     const auth_id: string = req.user['auth_id'];
-    const isAuth = false;
+    const isAuth: boolean = false;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
     try {
@@ -84,8 +84,8 @@ export class AuthController {
   }
 
   @Get('istoken')
-  async authenticated(@Req() req, @Res() res): Promise<any> {
-    const req_token = req.cookies['jwt'];
+  async authenticated(@Req() req, @Res() res): Promise<void> {
+    const req_token: string = req.cookies['jwt'];
     if (!req_token) {
       res.status(201).json({ isTok: 0 });
     } else {
@@ -109,13 +109,12 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Delete('logout')
-  logout(@Req() req, @Res({ passthrough: true }) res) {
+  logout(@Req() req, @Res({ passthrough: true }) res): void {
     try {
       this.authService.changeStatusUser(req.user.auth_id, 0);
-      const now = new Date();
-      const time = now.getTime();
-      console.log('get time = ', time)
-      const exp = time + 2000;
+      const now: Date = new Date();
+      const time: number = now.getTime();
+      const exp: number = time + 2000;
       now.setTime(exp);
       res
           .status(200)
@@ -127,9 +126,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('2fa/generate')
-  async register(@Res() response, @Req() req) {
+  async register(@Res() response, @Req() req): Promise<any> {
     const auid: string = req.user.auth_id;
-    const user = this.authService.findUser(auid);
+    const user: UserEntity = await this.authService.findUser(auid);
     if (!user) {
       throw new NotFoundException(
         'Error while generating 2FA QR Code: Cant find user in database',
@@ -145,16 +144,16 @@ export class AuthController {
     @Req() req,
     @Body() obj: TwoFACodeDto,
     @Res({ passthrough: true }) res,
-  ) {
+  ): Promise<void> {
     const auid: string = req.user.auth_id;
-    const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
+    const isValid: boolean = await this.authService.isTwoFAValid(obj.twoFACode, auid);
     if (!isValid) {
       throw new BadRequestException(
         'Error while activating 2FA: Wrong 2fa code',
       );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
-    const isAuth = true;
+    const isAuth: boolean = true;
     const payload: PayloadInterface = { auth_id, isAuth };
     const access_token: string = this.jwtService.sign(payload);
     try {
@@ -167,7 +166,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('2fa/deactivate')
-  async turnOffTwoFAAuth(@Req() req, @Res({ passthrough: true }) res) {
+  async turnOffTwoFAAuth(@Req() req, @Res({ passthrough: true }) res): Promise<void> {
     try {
       await this.authService.turnOffTwoFAAuth(req.user.auth_id);
       res.status(200);
@@ -182,18 +181,23 @@ export class AuthController {
     @Req() req,
     @Res({ passthrough: true }) res: Response,
     @Body() obj: TwoFACodeDto,
-  ) {
+  ): Promise<void> {
     const auid: string = req.user.auth_id;
-    const isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
+    let isValid: boolean = false;
+    try {
+      isValid = await this.authService.isTwoFAValid(obj.twoFACode, auid);
+    } catch (error) {
+      throw new Error(error);
+    }
     if (!isValid) {
       throw new BadRequestException(
         'Error while authenticating 2FA: Wrong 2FA Code',
       );
     }
     const auth_id: string = req.user.auth_id; //user['auth_id'];
-    const isAuth = true;
+    const isAuth: boolean = true;
     const payload: PayloadInterface = { auth_id, isAuth };
-    const access_token = this.jwtService.sign(payload);
+    const access_token: string = this.jwtService.sign(payload);
     res.status(200).cookie('jwt', access_token, { httpOnly: true });
   }
 }

@@ -15,7 +15,7 @@ export class ChanController {
     getChans(): Promise<ChanEntity[]> { return this.chanService.findAll(); }
 
     @Get(':name')
-    async findOne(@Param('name') name: string) {
+    async findOne(@Param('name') name: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanService.findOne(name);
         if (!chan) {
             throw new NotFoundException('Error while fetching chan by name: Cant find chan');
@@ -24,7 +24,7 @@ export class ChanController {
     }
 
     @Get('/id/:id')
-    async findOnebyID(@Param('id') id: string) {
+    async findOnebyID(@Param('id') id: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanService.findOnebyID(id);
         if (!chan) {
             throw new NotFoundException('Error while fetching chan by id: Cant find chan');
@@ -33,7 +33,7 @@ export class ChanController {
     }
 
     @Post('create')
-    createChan(@Body() createChanDto: CreateChanDto) {
+    createChan(@Body() createChanDto: CreateChanDto): Promise<ChanEntity> {
         try {
             return this.chanService.createChan(createChanDto);
         } catch (error) {
@@ -42,7 +42,7 @@ export class ChanController {
     }
 
     @Post('createpriv')
-    createPrivChan(@Body() createPrivChanDto: CreatePrivChanDto) {
+    createPrivChan(@Body() createPrivChanDto: CreatePrivChanDto): Promise<ChanEntity> {
         try {
             return this.chanService.createPrivChan(createPrivChanDto);
         } catch (error) {
@@ -63,7 +63,7 @@ export class ChanController {
     async isBanned(@Param('idroom') idroom: string,
                    @Param('iduser') iduser: string
     ): Promise<boolean> {
-        const chan = await this.chanService.findOnebyID(idroom);
+        const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new NotFoundException('Error while checking user status: Cant find chan');
         }
@@ -79,7 +79,7 @@ export class ChanController {
     async isMuted(@Param('idroom') idroom: string,
                   @Param('iduser') iduser: string
     ): Promise<boolean> {
-        const chan = await this.chanService.findOnebyID(idroom);
+        const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new NotFoundException('Error while checking user status: Cant find chan');
         }
@@ -95,7 +95,7 @@ export class ChanController {
     async isPresent(@Param('idroom') idroom: string,
                     @Param('iduser') iduser: string
     ): Promise<boolean> {
-        const chan = await this.chanService.findOnebyID(idroom);
+        const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new NotFoundException('Error while checking if user is present in chan: Cant find chan');
         }
@@ -118,7 +118,6 @@ export class ChanController {
 
     @Get(':id/user')
     getUsers(@Param('id') idroom: string): Promise<UserEntity[]> {
-        //console.log('param = ', idroom);
         try {
             return this.chanService.getUsers(idroom);
         } catch (error) {
@@ -127,17 +126,18 @@ export class ChanController {
     }
 
     @Delete(':id')
-    remove(@Param('id') username: string) {
+    async remove(@Param('id') username: string): Promise<void> {
         try {
-            return this.chanService.remove(username);
+            await this.chanService.remove(username);
         } catch (error) {
             throw new Error(error);
         }
     }
 
 	@Post('chanchat')
-	tryChan(@Body() test: any) {
+	tryChan(@Body() test: any): Promise<ChanEntity> {
         try {
+            return this.chanService.addMessage(test);
             return this.chanService.addMessage(test);
         } catch (error) {
             throw new Error(error);

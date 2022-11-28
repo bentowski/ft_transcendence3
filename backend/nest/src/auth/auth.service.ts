@@ -37,7 +37,7 @@ export class AuthService {
     }
   }
 
-  checkUser(user) {
+  checkUser(user): void {
     if (!user) {
       throw new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
     }
@@ -47,8 +47,8 @@ export class AuthService {
     try {
       const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
       this.checkUser(user);
-      const secret = authenticator.generateSecret();
-      const otpauthUrl = authenticator.keyuri(
+      const secret: string = authenticator.generateSecret();
+      const otpauthUrl: string = authenticator.keyuri(
         user.auth_id,
         process.env.TWO_FA_APP_NAME,
         secret,
@@ -67,12 +67,12 @@ export class AuthService {
     return toFileStream(stream, otpauthUrl);
   }
 
-  async isTwoFAValid(twoFACode: string, auth_id: string) {
+  async isTwoFAValid(twoFACode: string, auth_id: string): Promise<boolean> {
+    const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+    }
     try {
-      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
-      if (!user) {
-        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
-      }
       return authenticator.verify({
         token: twoFACode,
         secret: user.twoFASecret,
@@ -82,35 +82,34 @@ export class AuthService {
     }
   }
 
-  async turnOnTwoFAAuth(auth_id: string) {
+  async turnOnTwoFAAuth(auth_id: string): Promise<UserEntity> {
+    const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+    }
     try {
-      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
-      if (!user) {
-        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
-      }
       return await this.userService.turnOnTwoFA(auth_id, user);
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async turnOffTwoFAAuth(auth_id: string) {
+  async turnOffTwoFAAuth(auth_id: string): Promise<void> {
+    const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
+    }
     try {
-      const user: UserEntity = await this.userService.findOneByAuthId(auth_id);
-      if (!user) {
-        return new NotFoundException('Error while generating two FA QR Code: Cant find user in database');
-      }
       await this.userService.turnOffTwoFA(auth_id, user);
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async changeStatusUser(auth_id: string, status: number) {
+  async changeStatusUser(auth_id: string, status: number): Promise<void> {
     try {
       await this.userService.setStatus(auth_id, status);
       socket.emit('updateUser', { auth_id: auth_id, status: status })
-      //console.log("update: " + auth_id)
     } catch (error) {
       throw new Error(error);
     }
