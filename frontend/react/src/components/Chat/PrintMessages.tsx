@@ -58,10 +58,10 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
             }
             parentCallBack.setChanList(channels);
           }
-          return () => {
-            socket.off('newChan');
-          }
         });
+        return () => {
+          socket.off('onMessage');
+        }
       });
 
       useEffect(() => {
