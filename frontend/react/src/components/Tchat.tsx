@@ -12,6 +12,7 @@ import ModalMuteUser from './utils/ModalMuteUser';
 export const WebSocket = () => {
   const [value, setValue] = useState('');
   const [room, setRoom] = useState('');
+  const [currentChan, setCurrentChan] = useState<ChanType>();
   const [chans, setChans] = useState<Array<ChanType>>([]);
   const [messages, setMessage] = useState<MessagePayload[]>([]);
   const [modalType, setModalType] = useState("");
@@ -40,24 +41,7 @@ export const WebSocket = () => {
   useEffect(() => {
 	// console.log("set !!")
     socket.on('connect', () => { });
-    socket.on('onMessage', (newMessage: MessagePayload) => {
-		console.log("newmessage: ", newMessage)
-      let channels: Array<ChanType> = chans;
-      let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
-      if (channels[index] !== undefined) {
-        if (channels[index].messages)
-          channels[index].messages = [...channels[index].messages, newMessage];
-        else
-          channels[index].messages = [newMessage];
-        setChans(channels);
-        if (channels[index].isActive) {
-          if (channels[index].messages)
-            setMessage(channels[index].messages);
-          else
-            setMessage([])
-        }
-      }
-    });
+
 
     socket.on("userJoinChannel", () => {
       getChan();
@@ -84,7 +68,6 @@ export const WebSocket = () => {
     return () => {
       socket.off('connect');
       socket.off('onMessage');
-      socket.off('newChan');
       socket.off('userJoinChannel');
       /* chans.map((c:ChanType) => {
         if (c.chanUser) {
@@ -96,6 +79,38 @@ export const WebSocket = () => {
       }) */
     }
   });
+
+  useEffect(() => {
+    socket.on('onMessage', (newMessage: MessagePayload) => {
+      let channels: Array<ChanType> = chans;
+      let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
+      if (channels[index] !== undefined) {
+        if (channels[index].messages)
+          channels[index].messages = [...channels[index].messages, newMessage];
+        else
+          channels[index].messages = [newMessage];
+        setChans(channels);
+        if (channels[index].isActive) {
+          if (channels[index].messages)
+            setMessage(channels[index].messages);
+          else
+            setMessage([])
+        }
+      }
+      return () => {
+        socket.off('newChan');
+      }
+    });
+  });
+
+  useEffect(() => {
+    if (currentChan && currentChan.messages) {
+      setMessage(currentChan.messages);
+    }
+    else {
+      setMessage([]);
+    }
+  }, [currentChan]);
 
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
@@ -330,26 +345,16 @@ export const WebSocket = () => {
     let chanToJoin = chans.find((chan: ChanType) => chan.id === newRoom.id)
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
+        setCurrentChan(chanToJoin);
         setRoom(chanToJoin.id);
-        changeActiveRoom(newRoom.id);
-        setChanUser(newRoom.chanUser);
-        if (newRoom.messages) {
-          setMessage(newRoom.messages);
-        }
-        else {
-          setMessage([]);
-        }
+        changeActiveRoom(chanToJoin.id);
+        setChanUser(chanToJoin.chanUser);
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
 		//console.log("join room : ", user.auth_id, " newroom ", newRoom)
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
-        if (newRoom.messages) {
-          setMessage(newRoom.messages);
-        }
-        else {
-          setMessage([]);
-        }
+        setCurrentChan(chanToJoin);
       }
     }
   };
