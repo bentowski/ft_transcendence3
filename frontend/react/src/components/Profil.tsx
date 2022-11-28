@@ -4,7 +4,7 @@ import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import {AuthContextType, UserType} from "../types"
+import {UserType} from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";

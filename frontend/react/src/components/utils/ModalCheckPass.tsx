@@ -6,7 +6,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 
 const ModalCheckPass = (
   { chanToJoin, clef, parentCallBack }:
-    { chanToJoin: ChanType | undefined, clef: number, parentCallBack?: any }
+    { chanToJoin: ChanType | undefined, clef: number, parentCallBack: any }
 ) => {
   const [show, setShow] = useState(false)
   const [field, setField] = useState("");
@@ -40,23 +40,32 @@ const ModalCheckPass = (
   };
 
   const checkPassword = async () => {
-    const pass: string | undefined = chanToJoin?.password; 
+    //const pass: string | undefined = chanToJoin?.password; 
+    console.log('FIELD = ', field);
     const id: string | undefined = chanToJoin?.id; 
+    console.log('id = ', id);
+    let res: boolean = false;
     try {
-      let res = await Request(
-        "POST",
-        {},
-        { pass },
+        res = await Request(
+        "PATCH",
+        { "Content-Type": "application/json" },
+        { pass: field },
         "http://localhost:3000/chan/" + id + "/verify"
         )
-      if (res) {
-        parentCallBack.joinRoom(chanToJoin)
-      }
-      else {
-        setAlert(true);
-      }
     } catch (error) {
-      setError(error)
+      setError(error);
+    }
+    if (res) {
+      console.log('parentclbk')
+      setAlert(false);
+      setField("");
+      handleClose();
+      console.log(parentCallBack)
+      parentCallBack(chanToJoin)
+      console.log('not printed');
+    }
+    else {
+      setAlert(true);
     }
   }
 

@@ -272,6 +272,7 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while adding user to a channel: Cant find channel');
 		}
+		console.log('//// chan found')
 		if (chan.banUser.find(s => s.user_id === user.user_id)) {
 			const error = {
 				statusCode: 450,
@@ -279,6 +280,7 @@ export class ChanService {
 			}
 			throw error;
 		}
+		console.log('/////p ushing user to channel');
 		chan.chanUser.push(user);
 		try {
 			return await this.chanRepository.save(chan);
@@ -392,17 +394,25 @@ export class ChanService {
 		if (!user) {
 			throw new NotFoundException('Error while verifying channel password: User not found');
 		}
+		console.log('find user ', user)
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: cid }
 		})
 		if (!chan) {
 			throw new NotFoundException('Error while verifying channel password: Chan not found')
 		}
-		if (!pass) {
+		console.log('here is pass ', pass)
+		if (!pass || pass === '') {
 			throw new BadRequestException('Error while verifying channel password: Chan password is empty')
 		}
+		console.log('password is not empty ', pass)
 		if (await argon2.verify(chan.password, pass)) {
-			await this.addUserToChannel(user, cid);
+			console.log('password is ok')
+			try {
+				await this.addUserToChannel(user, cid);
+			} catch (error) {
+				throw new Error(error);
+			}
 			return true;
 		} else {
 			return false;

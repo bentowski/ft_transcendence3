@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
 import { Alert } from 'react-bootstrap';
 import ModalCheckPass from './ModalCheckPass';
+import { createImportSpecifier } from 'typescript';
 
 class Modal extends Component<
   {
@@ -470,6 +471,7 @@ class Modal extends Component<
   // }
 
   joinRoom = (newRoom: ChanType) => {
+    console.log('calling first join room');
     this.props.parentCallBack.joinRoom(newRoom)
   }
 

@@ -7,23 +7,9 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {AuthContextType, ChanType, UserType} from "../types";
+import {ChanType, UserType} from "../types";
 
-export const AuthContext = createContext<AuthContextType>({
-  allChans: [],
-  bannedFrom: [],
-  chanFrom: [],
-  errorCode: 0,
-  errorMsg: "",
-  errorShow: false,
-  friendsList: [],
-  isAuth: false,
-  isToken: false,
-  isTwoFa: false,
-  loading: false,
-  mutedFrom: [],
-  user: "",
-  userList: [],
+export const AuthContext = createContext<any>({
   updateUser: (avatar: string, username: string) => {},
   userAuthentication: (auth: boolean) => {},
   updateFriendsList: (usr: UserType, action: boolean) => {},

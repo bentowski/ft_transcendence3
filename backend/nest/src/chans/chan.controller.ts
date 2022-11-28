@@ -5,6 +5,7 @@ import {AuthGuard } from "@nestjs/passport";
 import { UserAuthGuard } from "../auth/guards/user-auth.guard";
 import UserEntity from "../user/entities/user-entity";
 import ChanEntity from "./entities/chan-entity";
+import { ChanPasswordDto } from "./dto/chan.dto";
 
 @Controller('chan')
 @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -135,15 +136,16 @@ export class ChanController {
         }
     }
 
-    @Post(':id/verify')
+    @Patch(':id/verify')
     verifyPass(
-        @Param ('id') cid: string,
-        @Body() pass: string,
+        @Param('id') cid: string,
+        @Body() obj: ChanPasswordDto,
         @Req() req
     ) {
         const uid: string = req.user['auth_id'];
+        console.log('cid:', cid, ', pass:', obj, ', uid:', uid)
         try {
-            return this.chanService.verifyPass(cid, pass, uid)
+            return this.chanService.verifyPass(cid, obj.pass, uid)
         } catch (error) {
             throw new Error(error);
         }

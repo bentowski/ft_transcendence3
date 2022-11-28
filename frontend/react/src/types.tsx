@@ -50,6 +50,7 @@ export type PunishSocketType = {
   action: string,
 }
 
+/*
 export type AuthContextType = {
   user: string,
   isAuth: boolean,
@@ -76,3 +77,4 @@ export type AuthContextType = {
   updateAllChans: () => void,
   setError: (value: any) => void,
 }
+*/
