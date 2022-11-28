@@ -3,6 +3,7 @@ import { socket } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
+import { AuthContext } from '../contexts/AuthProviderContext';
 
 let ball = new Image();
 let p1 = new Image();
@@ -274,8 +275,8 @@ let setSettings = () => {
   const globale = document.getElementById('globale') as HTMLCanvasElement
   const ctx: any = globale.getContext('2d')
 
-	let currentUser:any = sessionStorage.getItem('data');
-	currentUser = JSON.parse(currentUser);
+	// let currentUser:any = sessionStorage.getItem('data');
+	// currentUser = JSON.parse(currentUser);
   let element = document.body as HTMLDivElement,
   winWidth: number = element.clientWidth,
   winHeight: number = element.clientHeight
@@ -302,7 +303,7 @@ let setSettings = () => {
     middle: winWidth / 2,
     end: 0,
     move: 0,
-	currentUser: currentUser.user,
+	currentUser: settings.currentUser,
     spec: true,
     admin: settings.admin,
     room: url,
@@ -338,13 +339,12 @@ let startGame = (ctx: any, globale: any) => {
 }
 
 let joinRoom = (game: any, ctx: any, globale: any) => {
-  let currentUser:any = sessionStorage.getItem('data');
-  currentUser = JSON.parse(currentUser);
-  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
-  if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
+  let currentUser:any = settings.currentUser;
+  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.auth_id})
+  if (game.p1 === null || game.p1 === currentUser.auth_id) {
     settings.admin = true;
   }
-  if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
+  if ((game.p1 && game.p1 === currentUser.auth_id) || (game.p2 && game.p2 === currentUser.auth_id) || !game.p1 || !game.p2)
     settings.spec = false
   socket.on('userJoinChannel', (game:any) => {
     if (game.id === settings.room) {
@@ -375,6 +375,7 @@ let joinUrl = async (ctx: any, globale: any) => {
 
 
 class Game extends Component<{},{ w:number, h: number, timer: number}> {
+  static contextType = AuthContext;
   constructor(props: any)
   {
     super(props)
@@ -403,6 +404,8 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
         h: winHeight,
       })
 	settings.callback = this.updateState;
+  const ctx: any = this.context;
+  settings.currentUser = ctx.user;
     setSettings()
   }
 

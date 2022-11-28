@@ -50,13 +50,13 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
               channels[index].messages = [...channels[index].messages, newMessage];
             else
               channels[index].messages = [newMessage];
-            parentCallBack.setChans(channels);
             if (channels[index].isActive) {
               if (channels[index].messages)
                 setMessage(channels[index].messages);
               else
                 setMessage([])
             }
+            parentCallBack.setChanList(channels);
           }
           return () => {
             socket.off('newChan');

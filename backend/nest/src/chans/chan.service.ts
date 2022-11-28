@@ -386,4 +386,27 @@ export class ChanService {
 		//console.log('list of users in chan = ', chan.chanUser);
 		return chan.chanUser; //.map((users) => users);
 	}
+
+	async verifyPass(cid: string, pass: string, uid: string) {
+		const user: UserEntity = await this.userService.findOneByAuthId(uid);
+		if (!user) {
+			throw new NotFoundException('Error while verifying channel password: User not found');
+		}
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where: { id: cid }
+		})
+		if (!chan) {
+			throw new NotFoundException('Error while verifying channel password: Chan not found')
+		}
+		if (!pass) {
+			throw new BadRequestException('Error while verifying channel password: Chan password is empty')
+		}
+		if (await argon2.verify(chan.password, pass)) {
+			await this.addUserToChannel(user, cid);
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 }

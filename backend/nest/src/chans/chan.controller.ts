@@ -1,4 +1,4 @@
-import { NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from "@nestjs/common";
+import {NotFoundException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, Req} from "@nestjs/common";
 import { ChanService } from "./chan.service";
 import { CreateChanDto, CreatePrivChanDto } from "./dto/create-chan.dto";
 import {AuthGuard } from "@nestjs/passport";
@@ -130,6 +130,20 @@ export class ChanController {
     remove(@Param('id') username: string) {
         try {
             return this.chanService.remove(username);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    @Post(':id/verify')
+    verifyPass(
+        @Param ('id') cid: string,
+        @Body() pass: string,
+        @Req() req
+    ) {
+        const uid: string = req.user['auth_id'];
+        try {
+            return this.chanService.verifyPass(cid, pass, uid)
         } catch (error) {
             throw new Error(error);
         }

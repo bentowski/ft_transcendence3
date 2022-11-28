@@ -7,9 +7,23 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {ChanType, UserType} from "../types";
+import {AuthContextType, ChanType, UserType} from "../types";
 
-export const AuthContext = createContext<any>({
+export const AuthContext = createContext<AuthContextType>({
+  allChans: [],
+  bannedFrom: [],
+  chanFrom: [],
+  errorCode: 0,
+  errorMsg: "",
+  errorShow: false,
+  friendsList: [],
+  isAuth: false,
+  isToken: false,
+  isTwoFa: false,
+  loading: false,
+  mutedFrom: [],
+  user: "",
+  userList: [],
   updateUser: (avatar: string, username: string) => {},
   userAuthentication: (auth: boolean) => {},
   updateFriendsList: (usr: UserType, action: boolean) => {},
@@ -433,6 +447,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       loading,
       userList,
       friendsList,
+      blockedList,
       updateUser: (avatar: string, username: string) => updateUser(avatar, username),
       userAuthentication: (auth: boolean) => userAuthentication(auth),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
@@ -469,6 +484,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError,
       userList,
       friendsList,
+      blockedList,
     ]
   );
 
