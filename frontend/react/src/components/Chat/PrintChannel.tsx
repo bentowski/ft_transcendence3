@@ -24,8 +24,8 @@ class UsersInActualchannel extends Component<{usersList: UserType[]}, {}> {
 }
 
 export const PrintChannel = (
-  {msgInput, value, chans, user, room, usersInChan, messages, parentCallBack}:
-  {msgInput: any, value: any, chans: ChanType[], user: UserType, usersInChan: UserType[], messages: any, room: any, parentCallBack: any}) => {
+  {msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack}:
+  {msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any}) => {
 
   const setModalType = (newValue: any) => {
     parentCallBack.setModalType(newValue)
@@ -37,6 +37,10 @@ export const PrintChannel = (
 
   const setValue = (newValue: any) => {
     parentCallBack.setValue(newValue)
+  }
+
+  const setChans = (newValue: any) => {
+    parentCallBack.setChans(newValue)
   }
 
   const onSubmit = () => {
@@ -73,10 +77,10 @@ export const PrintChannel = (
     return (
         <div className="inChat row col-10">
           <div className="chatMain col-10">
-            <PrintHeaderChan chanList={chans} parentRoom={room} parentSocket={socket} parentUser={user} callBack={{setModalType, setModalTitle}} />
+            <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{setModalType, setModalTitle}} />
             <div className="row">
               <div>
-              <PrintMessages user={user} messages={""}/>
+              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{setChans}}/>
               <div className="row">
                 <div>
                 <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />

@@ -14,8 +14,8 @@ import { PrintChannel } from './PrintChannel'
 export const WebSocket = () => {
   const [value, setValue] = useState('');
   const [room, setRoom] = useState('');
-  const [chans, setChans] = useState<Array<ChanType>>([]);
-  const [messages, setMessage] = useState<MessagePayload[]>([]);
+  const [currentChan, setCurrentChan] = useState<ChanType>();
+  const [chanList, setChanList] = useState<Array<ChanType>>([]);
   const [modalType, setModalType] = useState("");
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("not ok");
@@ -44,30 +44,11 @@ export const WebSocket = () => {
 
   useEffect(() => {
     socket.on('connect', () => { });
-    socket.on('onMessage', (newMessage: MessagePayload) => {
-      let channels: Array<ChanType> = chans;
-      let index: number = chans.findIndex((c: ChanType) => c.id === newMessage.room);
-      if (channels[index] !== undefined)
-      {
-        if (channels[index].messages)
-          channels[index].messages = [...channels[index].messages, newMessage];
-        else
-          channels[index].messages = [newMessage];
-        setChans(channels);
-        if (channels[index].isActive)
-        {
-          if (channels[index].messages)
-            setMessage(channels[index].messages);
-          else
-            setMessage([])
-        }
-      }
-    });
     socket.on("userJoinChannel", () => {
       getChan();
     });
     socket.on("chanDeleted", (roomId: string) => {
-      chans.forEach((c) => {
+      chanList.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
           getChan();
           window.location.href = "http://localhost:8080/chat"; //!
@@ -82,12 +63,11 @@ export const WebSocket = () => {
     });
     if (msgInput.current)
       msgInput.current.focus();
-    if (chans.length && user.auth_id !== undefined)
+    if (chanList.length && user.auth_id !== undefined)
   		setLoaded('ok')
     return () => {
       socket.off('connect');
       socket.off('onMessage');
-      socket.off('newChan');
       socket.off('userJoinChannel');
     }
   });
@@ -143,11 +123,11 @@ export const WebSocket = () => {
   }, [loaded])
 
   useEffect(() => {
-    let chanUserFind:Array<UserType>|undefined = chans.find((c:ChanType) => c.id === room)?.chanUser
+    let chanUserFind:Array<UserType>|undefined = chanList.find((c:ChanType) => c.id === room)?.chanUser
     if (chanUserFind !== undefined) {
       setChanUser(chanUserFind)
     }
-  }, [room, chans])
+  }, [room, chanList])
 
 // ================= Fin UseEffects ===================
 
@@ -204,25 +184,25 @@ export const WebSocket = () => {
     let url = document.URL;
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
-  	chans.forEach((chan) => {
+  	chanList.forEach((chan) => {
   		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
   			socket.emit("joinRoom", chan.id, user.auth_id);
   		}
   	})
     if (index === -1) {
-      chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+      chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
       if (chan !== undefined) {
         joinRoom(chan)
       }
     }
     else {
       url = url.substring(url.lastIndexOf("/") + 1);
-      chan = chans.find((c:ChanType) => c.id === url);
+      chan = chanList.find((c:ChanType) => c.id === url);
       if (chan !== undefined) {
         joinRoom(chan)
       }
       else {
-        chan = chans.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+        chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
         if (chan !== undefined) {
           joinRoom(chan)
         }
@@ -248,51 +228,38 @@ export const WebSocket = () => {
         }
         channels[idx] = c;
       })
-      setChans(channels);
+      setChanList(channels);
     } catch (error) {
       setError(error);
     }
   }
 
   const changeActiveRoom = (id: string) => {
-    let tmp: Array<ChanType> = chans;
+    let tmp: Array<ChanType> = chanList;
     tmp.map((chan) => {
       if (chan.id === id) {
         chan.isActive = true;
         setRoom(chan.id);
       }
-      else {
+      else
         chan.isActive = false;
-      }
     });
-    setChans(tmp);
+    setChanList(tmp);
   };
 
-
   const joinRoom = async (newRoom: ChanType) => {
-
-    let chanToJoin = chans.find((chan: ChanType) => chan.id === newRoom.id)
+    let chanToJoin = chanList.find((chan: ChanType) => chan.id === newRoom.id)
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
-        if (newRoom.messages) {
-          setMessage(newRoom.messages);
-        }
-        else {
-          setMessage([]);
-        }
+        setCurrentChan(newRoom)
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
-        if (newRoom.messages) {
-          setMessage(newRoom.messages);
-        }
-        else {
-          setMessage([]);
-        }
+        setCurrentChan(newRoom)
       }
     }
   };
@@ -313,31 +280,27 @@ export const WebSocket = () => {
 
   const arrayUserInActualchannel = () => {
     let users: Array<UserType> = [];
-    const actualChan = chans.find((c: ChanType) => c.isActive);
-    if (actualChan?.chanUser) {
+    const actualChan = chanList.find((c: ChanType) => c.isActive);
+    if (actualChan?.chanUser)
       users = actualChan.chanUser;
-    }
     return users;
   };
 
   const listChansJoined = (chan: Array<ChanType>) => {
     let ret: any[] = [];
-    for (let x = 0; x < chans.length; x++)
+    for (let x = 0; x < chanList.length; x++)
       if (chan[x].chanUser.find((u: UserType) => u.auth_id === user.auth_id))
         ret.push(chan[x]);
     return ret;
   };
 
-
-  // ======================== RENDER ==========================
-
   return (
       <div>
         <div className="chat row">
           <h4>CHAT</h4>
-          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
+          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chanList)}/>
           <ChannelList
-            chanList={chans}
+            chanList={chanList}
             room={room}
             user={user}
             parentCallBack={{createChan, joinChan, joinRoom}}
@@ -345,12 +308,12 @@ export const WebSocket = () => {
             <PrintChannel
               msgInput={msgInput}
               value={value}
-              chans={chans}
+              chanList={chanList}
               user={user}
               room={room}
               usersInChan={chanUser}
-              messages={messages}
-              parentCallBack={{setModalType, setModalTitle, setValue, getChan}}
+              currentChan={currentChan}
+              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList}}
                />
         </div>
       </div>

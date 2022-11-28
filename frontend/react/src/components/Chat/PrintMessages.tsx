@@ -38,7 +38,41 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
   }
 }
 
-  export const PrintMessages = ({messages, user}: {messages: any, user: UserType}) => {
+  export const PrintMessages = ({user, currentChan, chanList, parentCallBack}: {user: UserType, currentChan: ChanType, chanList: ChanType[], parentCallBack: any}) => {
+
+    const [messages, setMessage] = useState<MessagePayload[]>([]);
+      useEffect(() => {
+        socket.on('onMessage', (newMessage: MessagePayload) => {
+          let channels: Array<ChanType> = chanList;
+          let index: number = chanList.findIndex((c: ChanType) => c.id === newMessage.room);
+          if (channels[index] !== undefined) {
+            if (channels[index].messages)
+              channels[index].messages = [...channels[index].messages, newMessage];
+            else
+              channels[index].messages = [newMessage];
+            parentCallBack.setChans(channels);
+            if (channels[index].isActive) {
+              if (channels[index].messages)
+                setMessage(channels[index].messages);
+              else
+                setMessage([])
+            }
+          }
+          return () => {
+            socket.off('newChan');
+          }
+        });
+      });
+
+      useEffect(() => {
+        if (currentChan && currentChan.messages) {
+          setMessage(currentChan.messages);
+        }
+        else {
+          setMessage([]);
+        }
+      }, [currentChan]);
+
       if (messages.length === 0) {
         return (<div>No messages here</div>)
       } else {
