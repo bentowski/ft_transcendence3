@@ -230,8 +230,6 @@ export const WebSocket = () => {
     }
   }
 
-
-
   const getChan = async () => {
     let channels: ChanType[] = [];
     try {
@@ -344,7 +342,16 @@ export const WebSocket = () => {
             user={user}
             parentCallBack={{createChan, joinChan, joinRoom}}
             />
-            <PrintChannel msgInput={msgInput} value={value} user={user} room={room} />
+            <PrintChannel
+              msgInput={msgInput}
+              value={value}
+              chans={chans}
+              user={user}
+              room={room}
+              usersInChan={chanUser}
+              messages={messages}
+              parentCallBack={{setModalType, setModalTitle, setValue, getChan}}
+               />
         </div>
       </div>
   ); // fin de return

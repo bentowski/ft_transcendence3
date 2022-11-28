@@ -9,11 +9,11 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 
-class AdminButtons extends Component<{room: any, socket: any}, {}> {
+class AdminButtons extends Component<{room: any, socket: any, user: UserType, chans: ChanType[]}, {}> {
   render() {
-    let chan = chans[chans.findIndex((c: ChanType) => c.id === room)]
+    let chan = this.props.chans[this.props.chans.findIndex((c: ChanType) => c.id === this.props.room)]
     let tab: any[] = chan.admin
-    if ((tab && tab.findIndex((u: any) => u === user.username) > -1) || chan.owner === user.username) {
+    if ((tab && tab.findIndex((u: any) => u === this.props.user.username) > -1) || chan.owner === this.props.user.username) {
       return (
           <div className="row">
             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
@@ -42,8 +42,8 @@ class PrintAddUserButton extends Component<{chans: ChanType[], parentCallBack: a
 }
 
 export const PrintHeaderChan = (
-  {chans, parentRoom, socket, parentCallBack}:
-  {chans: ChanType[], room: any, socket: any, callBack: any}) => {
+  {chanList, parentRoom, parentSocket, parentUser, callBack}:
+  {chanList: ChanType[], parentRoom: any, parentUser: UserType, parentSocket: any, callBack: any}) => {
     const setModalType = (newValue: any) => {
       callBack.setModalType(newValue)
     }
@@ -53,8 +53,8 @@ export const PrintHeaderChan = (
     return (
         <div className="chatMainTitle row">
           <h1 className="col-10">Channel Name</h1>
-          <PrintAddUserButton chans={chans} room={parentRoom} parentCallBack={{setModalType, setModalTitle}} />
-          <AdminButtons room={parentRoom} socket={socket} />
+          <PrintAddUserButton chans={chanList} parentCallBack={{setModalType, setModalTitle}} />
+          <AdminButtons room={parentRoom} socket={parentSocket} user={parentUser} chans={chanList} />
         </div>
     )
 }

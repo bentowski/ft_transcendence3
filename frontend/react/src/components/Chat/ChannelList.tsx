@@ -86,6 +86,7 @@ export const ChannelList = (
   const joinRoom = (chan: ChanType) => {
     parentCallBack.joinRoom(chan)
   }
+  
 
     return (
       <div className="channels col-2">
