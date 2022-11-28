@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
@@ -413,16 +413,18 @@ let joinUrl = async (ctx: any, globale: any) => {
 }
 
 
-class Game extends Component<{},{ w:number, h: number, timer: number}> {
+class Game extends Component<{},{w:number, h: number, timer: number}> {
   constructor(props: any)
   {
     super(props)
+    // this.myRef = React.createRef();
     this.state = {
       w: 0,
       h: 0,
 	  timer: 0,
     }
   }
+	private globale: any = createRef()
 
   // componentWillUnmount = () => {
   //   gameOver();
@@ -461,7 +463,7 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
     return (
       <div>
         <div className="canvas" id="canvas">
-          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h}></canvas>
+          <canvas ref={this.globale} id="globale" width={this.state.w} height={this.state.h}></canvas>
           <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
