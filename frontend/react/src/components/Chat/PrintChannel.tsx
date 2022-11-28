@@ -39,8 +39,8 @@ export const PrintChannel = (
     parentCallBack.setValue(newValue)
   }
 
-  const setChans = (newValue: any) => {
-    parentCallBack.setChans(newValue)
+  const setChanList = (newValue: any) => {
+    parentCallBack.setChanList(newValue)
   }
 
   const onSubmit = () => {
@@ -80,7 +80,7 @@ export const PrintChannel = (
             <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{setModalType, setModalTitle}} />
             <div className="row">
               <div>
-              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{setChans}}/>
+              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{setChanList}}/>
               <div className="row">
                 <div>
                 <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
