@@ -61,8 +61,6 @@ export const WebSocket = () => {
       // window.location.replace("http://localhost:8080/chat");
       navigate("/chat/")
     });
-    if (msgInput.current)
-      msgInput.current.focus();
     if (chanList.length && user.auth_id !== undefined)
   		setLoaded('ok')
     return () => {
@@ -261,6 +259,8 @@ export const WebSocket = () => {
         changeActiveRoom(chanToJoin.id);
         setCurrentChan(newRoom)
       }
+      if (msgInput.current)
+        msgInput.current.focus();
     }
   };
 
