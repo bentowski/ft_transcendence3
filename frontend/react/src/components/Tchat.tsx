@@ -51,7 +51,7 @@ export const WebSocket = () => {
       chans.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          window.location.href = "http://localhost:8080/tchat"; //!
+          window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
       })
@@ -59,8 +59,8 @@ export const WebSocket = () => {
 
     socket.on("userLeaveChannel", () => {
       getChan();
-      window.location.replace("http://localhost:8080/tchat");
-      //navigate("/tchat/")
+      window.location.replace("http://localhost:8080/chat");
+      //navigate("/chat/")
     });
 
     if (msgInput.current) msgInput.current.focus();
@@ -138,7 +138,7 @@ export const WebSocket = () => {
         setError(error);
         if (error.statusCode === 450) {
           updateBannedFromList();
-          //navigate("/tchat/");
+          //navigate("/chat/");
         }
         if (error.statusCode === 451) {
           updateMutedFromList();
@@ -166,7 +166,7 @@ export const WebSocket = () => {
   useEffect(() => {
     let checkUrl = setInterval(() => {
       let url = document.URL
-      if (!document.URL.includes("localhost:8080/tchat"))
+      if (!document.URL.includes("localhost:8080/chat"))
         clearInterval(checkUrl);
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== location) {
@@ -238,7 +238,7 @@ export const WebSocket = () => {
     socket.emit('chanCreated');
     updateAllChans();
     updateChanFromList();
-    navigate('/tchat/' + chan.id);
+    navigate('/chat/' + chan.id);
     joinUrl();
   };
 
@@ -311,7 +311,7 @@ export const WebSocket = () => {
         setMessage([]);
         setRoom("null");
         getChan();
-        window.location.href = "http://localhost:8080/tchat"; //!
+        window.location.href = "http://localhost:8080/chat"; //!
       } else {
         socket.emit("newMessage", {
           chat: value,
@@ -529,7 +529,7 @@ export const WebSocket = () => {
   class PrintHeaderChan extends Component<{}, {}> {
     render() {
       return (
-          <div className="tchatMainTitle row">
+          <div className="chatMainTitle row">
             <h1 className="col-10">Channel Name</h1>
             <PrintAddUserButton />
             <AdminButtons />
@@ -542,8 +542,8 @@ export const WebSocket = () => {
     render() {
       if (room) {
         return (
-            <div className="inTchat row col-10">
-              <div className="tchatMain col-10">
+            <div className="inChat row col-10">
+              <div className="chatMain col-10">
                 <PrintHeaderChan />
                 <div className="row">
                   <div>
@@ -556,8 +556,8 @@ export const WebSocket = () => {
                   </div>
                   </div>
                 </div>
-              </div> {/*fin tchatMain*/}
-              <div className="tchatMembers col-2">
+              </div> {/*fin chatMain*/}
+              <div className="chatMembers col-2">
                 <p> Channel's members ({chanUser.length}) </p>
                 <UsersInActualchannel />
               </div>
@@ -573,7 +573,7 @@ export const WebSocket = () => {
       chans.map((chan) => {
             if (chan.type === "direct")
               ret.push(
-                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                  <Link key={chan.id} to={"/chat/" + chan.id}>
                     <li onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                       {printName(chan)}
                     </li>
@@ -591,7 +591,7 @@ export const WebSocket = () => {
       chans.map((chan: ChanType) => {
             if (chan.type !== "direct" && inChan(chan))
               ret.push(
-                  <Link key={chan.id} to={"/tchat/" + chan.id}>
+                  <Link key={chan.id} to={"/chat/" + chan.id}>
                     <li onClick={() => joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (chanColor(chan))}>
                       {printName(chan)}
                     </li>
@@ -627,7 +627,7 @@ export const WebSocket = () => {
 
   return (
       <div>
-        <div className="tchat row">
+        <div className="chat row">
           <h4>CHAT</h4>
           <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chans)}/>
           <ChannelList />
@@ -637,7 +637,7 @@ export const WebSocket = () => {
   ); // fin de return
 };
 
-class Tchat extends Component<{}, {}> {
+class Chat extends Component<{}, {}> {
   render() {
     return (
         <div>
@@ -650,4 +650,4 @@ class Tchat extends Component<{}, {}> {
 // <UserCards value={2} avatar={false}/>
 } // fin de App
 
-export default Tchat;
+export default Chat;
