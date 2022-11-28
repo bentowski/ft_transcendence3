@@ -1,15 +1,16 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
+import {AvatarType, ErrorType, ParamsImgType} from "../../types";
 
-const ModalChangeAvatar = () => {
+const ModalChangeAvatar = (): JSX.Element => {
   const { updateUser, setError, user } = useAuthData();
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState(null);
   //const [avatar, setAvatar] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState({url:"", hash: 0});
+  const [avatarUrl, setAvatarUrl] = useState<AvatarType>({url:"", hash: 0});
 
-  useEffect(() => {
+  useEffect((): void => {
     if (user.avatar) {
       setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
     }
@@ -21,8 +22,8 @@ const ModalChangeAvatar = () => {
   }, [user])
    */
 
-  const requestChangeAvatar = async () => {
-    const formData = new FormData();
+  const requestChangeAvatar = async (): Promise<void> => {
+    const formData: FormData = new FormData();
     if (!selectedImage) {
       return;
     }
@@ -36,10 +37,10 @@ const ModalChangeAvatar = () => {
       body: formData,
     };
     delete params.headers["Content-Type"];
-    let res = await fetch("http://localhost:3000/user/upload", params)
+    let res: Response = await fetch("http://localhost:3000/user/upload", params);
     if (res.ok) {
       //console.log("upload success!");
-      const str = await res.json();
+      const str: any = await res.json();
       //const avatar: string = "http://localhost:3000/user/" + user.auth_id + "/avatar/" + Date.now();
       //console.log('str = ', avatar);
       updateUser(str.avatar, null);
@@ -47,27 +48,27 @@ const ModalChangeAvatar = () => {
       handleClose();
     } else {
       setSelectedImage(null);
-      const err: any = await res.json();
+      const err: ErrorType = await res.json();
       setError(err);
       //HandleError(err);
       //console.log("upload failed!");
     }
   };
 
-  const cancelling = () => {
+  const cancelling = (): void => {
     setSelectedImage(null);
     handleClose();
   };
 
-  const handleImage = (evt: any) => {
+  const handleImage = (evt: any): void => {
     if (evt.target) {
       //console.log(evt.target.files[0]);
       setSelectedImage(evt.target.files[0]);
     }
   };
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = (): void => setShow(false);
+  const handleShow = (): void => setShow(true);
 
   return (
     <div className="changeavatar">

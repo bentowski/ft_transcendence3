@@ -3,21 +3,19 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-import {UserType} from "../../types";
-//import {socket} from "../../contexts/WebSocketContext";
+import {UsersChanBanType, UserType} from "../../types";
 
-
-const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
+const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
     const { user, setError } = useAuthData();
-    const [show, setShow] = useState(false);
-    const [usersChan, setUsersChan] = useState<any[]>([{user:{},isBan:false}]);
-    const [list, setList] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [show, setShow] = useState<boolean>(false);
+    const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
+    const [list, setList] = useState<JSX.Element[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
+    useEffect((): void => {
         if (show) {
             setLoading(true);
-            const fetchUsersChan = async () => {
+            const fetchUsersChan = async (): Promise<void> => {
                 try {
                     let users: UserType[] = await Request(
                         "GET",
@@ -25,14 +23,14 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
                         {},
                         "http://localhost:3000/chan/" + chan + "/user"
                     )
-                    const newArr = [];
+                    const newArr: UsersChanBanType[] = [];
                     for (let index = 0; index < users.length; index++) {
                         newArr.push({
                             user: users[index],
                             isBan: false,
                         });
                     }
-                    let banned = await Request(
+                    let banned: UserType[] = await Request(
                         "GET",
                         {},
                         {},
@@ -55,25 +53,25 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
         }
     }, [show])
 
-    useEffect(() => {
+    useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
     }, [usersChan])
 
-    const handleClose = () => {
+    const handleClose = (): void => {
         setShow(false);
     }
 
-    const handleOpen = () => {
+    const handleOpen = (): void => {
         setShow(true);
     }
 
-    const banUser = async (obj: any) => {
+    const banUser = async (obj: any): Promise<void> => {
         socket.emit('banToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isBan });
-        const newArray = [];
-        for (let index = 0; index < usersChan.length; index++) {
-            if (usersChan[index].user.auth_id === obj.user.auth_id) {
+        const newArray: UsersChanBanType[] = [];
+        for (let index: number = 0; index < usersChan.length; index++) {
+            if (usersChan[index].user?.auth_id === obj.user.auth_id) {
                 usersChan[index].isBan = !obj.isBan;
             }
             newArray.push(usersChan[index]);
@@ -81,12 +79,12 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
         setUsersChan(newArray);
     }
 
-    const listUserCards = () => {
-        let ret = [];
+    const listUserCards = (): void => {
+        let ret: JSX.Element[] = [];
 
-        for(let x = 0; x < usersChan.length; x++)
+        for(let x: number = 0; x < usersChan.length; x++)
         {
-            if (usersChan[x].user.username !== user.username)
+            if (usersChan[x].user?.username !== user.username)
             {
                 ret.push(
                         <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
@@ -100,11 +98,11 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}) => {
                             </button>
                          </div>
                         <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                            <input className={usersChan[x].user.status ? "online" : "offline"} type="radio"></input>
+                            <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
                         </div>
                         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                            <Link to={"/profil/" + usersChan[x].user.username} className="mx-2">{usersChan[x].user.username}</Link>
-                            <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+                            <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
+                            <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
                         </div>
                     </div>
                 );

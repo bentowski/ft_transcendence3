@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import {useEffect, useState} from "react";
+import {AvatarType} from "../types";
 
 const Menu = () => {
   const { user, userAuthentication } = useAuthData();
   const [username, setUsername] = useState<string>(user.username);
-  const [avatarUrl, setAvatarUrl] = useState({url:'',hash:0});
+  const [avatarUrl, setAvatarUrl] = useState<AvatarType>({url:'',hash:0});
 
   useEffect(() => {
     if (user.username) {
@@ -28,18 +29,13 @@ const Menu = () => {
       .then((data) => {
         if (data.status === 200) {
           userAuthentication(false);
-          //navigate("/login")
           return ;
         }
       })
       .catch((error) => {
-        console.log("some shit happened");
         userAuthentication(false);
-        //navigate("/login")
         return ;
       });
-      //window.location.reload()
-
   };
   return (
     <div className="Menu shadow d-flex justify-content-between align-items-center">

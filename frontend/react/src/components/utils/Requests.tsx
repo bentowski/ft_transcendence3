@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+//import React from "react";
 import {useAuthData} from "../../contexts/AuthProviderContext";
+import {ErrorType} from "../../types";
 
-const Logout = async () => {
+const Logout = async (): Promise<void> => {
   const { userAuthentication } = useAuthData();
 
   await fetch("http://localhost:3000/auth/logout", {
@@ -25,19 +26,19 @@ const Logout = async () => {
       });
 }
 
-const Request = async (type: string, headers: any, body: any, url: string) => {
+const Request = async (type: string, headers: any, body: any, url: string): Promise<any> => {
     console.log(url);
     if (type === "GET") {
-      const response: any = await fetch(url, {
+      const response: Response = await fetch(url, {
         method: type,
         credentials: "include",
         headers: headers,
       });
       if (response.ok) {
-        const res = await response.json();
+        const res: any = await response.json();
         return res;
       } else {
-        const err: any = await response.json();
+        const err: ErrorType = await response.json();
         if (err.statusCode === 401) {
           await Logout();
         }
@@ -45,17 +46,17 @@ const Request = async (type: string, headers: any, body: any, url: string) => {
       }
 
     } else {
-      const response: any = await fetch(url, {
+      const response: Response = await fetch(url, {
         method: type,
         headers: headers,
         credentials: "include",
         body: JSON.stringify(body),
       });
       if (response.ok) {
-        const res = await response.json();
+        const res: any = await response.json();
         return res;
       } else {
-        const err: any = await response.json();
+        const err: ErrorType = await response.json();
         if (err.statusCode === 401) {
           await Logout();
         }

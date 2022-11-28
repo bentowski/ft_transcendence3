@@ -16,17 +16,17 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     };
   }
 
-  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{ ctx: any; uslist: Array<string>; filteredList: Array<string>; friends: Array<UserType> }>, snapshot?: any) {
+  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{ ctx: any; uslist: Array<string>; filteredList: Array<string>; friends: Array<UserType> }>, snapshot?: any): void {
     const ctx: any = this.context;
-    const frnds = ctx.friendsList;
+    const frnds: UserType[] = ctx.friendsList;
     if (prevState.friends !== frnds) {
       this.setState({friends: frnds })
     }
   }
 
-  componentDidMount = async () => {
+  componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;
-    const frnds = ctx.friendsList;
+    const frnds: UserType[] = ctx.friendsList;
     this.setState({friends: frnds})
     //let ctx: any = this.context;
     //let currentUser = this.state.ctx.user;
@@ -46,22 +46,21 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
   }
    */
 
-  addFriends = async () => {
+  addFriends = async (): Promise<void> => {
     const ctx: any = this.context;
-    let currentUser: any = ctx.user;
+    let currentUser: UserType = ctx.user;
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
       return ;
     }
     try {
-      let userToAdd = await Request(
+      let userToAdd: UserType = await Request(
           'GET',
           {},
           {},
           "http://localhost:3000/user/name/" + input.value
       )
-      console.log('usertoadd = ', userToAdd);
       await Request('PATCH',
           {
             Accept: 'application/json',
@@ -87,12 +86,12 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     }
   }
 
-  pressEnter = (e: any) => {
+  pressEnter = (e: any): void => {
     const ctx: any = this.context;
     ctx.updateUserList();
-    const uslist = ctx.userList;
-    const query: any = e.target.value;
-    let updatedList = [...uslist];
+    const uslist: string[] = ctx.userList;
+    const query: string = e.target.value;
+    let updatedList: string[] = [...uslist];
     //console.log('updated list = ', updatedList);
     updatedList = updatedList.filter((item: any) => {
       if (e.target.value.length === 0) {
@@ -115,13 +114,13 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     }
   }
 
-  render() {
+  render(): JSX.Element {
 
-    let onlines;
+    let onlines: number = 0;
     if (this.state.friends.length > 0)
     {
       onlines = 0;
-      let x = 0;
+      let x: number = 0;
       while (x < this.state.friends.length) {
         if (this.state.friends[x].status)
           onlines++;

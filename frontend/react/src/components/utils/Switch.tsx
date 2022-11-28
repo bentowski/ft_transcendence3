@@ -2,24 +2,23 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
+import {ErrorType} from "../../types";
 
-const Switch = () => {
-  const [label, setLabel] = useState("2fa");
-  const [code, setCode] = useState("");
-  const [src, setSrc] = useState("");
-  const [show, setShow] = useState(false);
-  const [tick, setTick] = useState(false);
+const Switch = (): JSX.Element => {
+  const [code, setCode] = useState<string>("");
+  const [src, setSrc] = useState<string>("");
+  const [show, setShow] = useState<boolean>(false);
+  const [tick, setTick] = useState<boolean>(false);
   const { isTwoFa, setError } = useAuthData();
 
-  useEffect(() => {
+  useEffect((): void => {
     if (isTwoFa) {
       setTick(true);
     }
   }, [isTwoFa]);
 
-  const generateTwoFA = async () => {
-    console.log('calling generating avatar');
-    let res = await fetch("http://localhost:3000/auth/2fa/generate", {
+  const generateTwoFA = async (): Promise<void> => {
+    let res: Response = await fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
       headers: {
@@ -27,8 +26,8 @@ const Switch = () => {
       },
     })
     if (res.ok) {
-      const myblobi = await res.blob();
-      const blobURL = URL.createObjectURL(myblobi);
+      const myblobi: Blob = await res.blob();
+      const blobURL: string = URL.createObjectURL(myblobi);
       setSrc(blobURL);
       /*
       const image = document.getElementById("myImg");
@@ -46,7 +45,7 @@ const Switch = () => {
     }
   };
 
-  const checkVal = (value: string) => {
+  const checkVal = (value: string): boolean => {
     for (let i = 0; i < value.length; i++) {
       if (value[i] < "0" || value[i] > "9") {
         return false;
@@ -55,11 +54,11 @@ const Switch = () => {
     return true;
   };
 
-  const activateTwoFa = async () => {
+  const activateTwoFa = async (): Promise<void> => {
     if (!checkVal(code) && code.length !== 6) {
       return;
     }
-    let res = await fetch("http://localhost:3000/auth/2fa/activate", {
+    let res: Response = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -75,29 +74,31 @@ const Switch = () => {
        setCode("");
        return;
     } else {
-       const errmsg: any = await res.json();
+       const errmsg: ErrorType = await res.json();
        setCode("");
        setError(errmsg);
        return;
     }
   };
 
-  const deactivateTwoFA = async () => {
-    let res = await fetch("http://localhost:3000/auth/2fa/deactivate", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    })
-    if (res.ok) {
-      handleUnTick();
-      return;
-    } else {
-      const err: any = await res.json();
-      setError(err);
-    }
+  const deactivateTwoFA = async (): Promise<void> => {
+      let res: Response = await fetch(
+          "http://localhost:3000/auth/2fa/deactivate",
+          {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      })
+      if (res.ok) {
+        handleUnTick();
+        return;
+      } else {
+        const err: ErrorType = await res.json();
+        setError(err);
+      }
   };
 
   const handleTick = () => setTick(true);
@@ -134,7 +135,7 @@ const Switch = () => {
       <Modal show={show} id="ModalCode" onHide={handleClose}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
-            <h2>{label}</h2>
+            <h2>Two Factor Authentication</h2>
             <img alt="qrcode" src={src} />
           </Modal.Header>
           <Modal.Body>

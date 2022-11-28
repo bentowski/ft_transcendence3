@@ -3,6 +3,7 @@ import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
+import {PartiesType, UserType} from "../../types";
 
 const socket = io("http://localhost:3000/update");
 
@@ -10,45 +11,58 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
 
   static contextType = AuthContext;
 
-  accept = async () => {
-    await Request(
-      "POST",
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      {
-        login: this.getCurrentUser().username + "-" + this.props.user.username,
-        public: true
-      },
-      "http://localhost:3000/parties/create"
-    );
+  accept = async (): Promise<void> => {
+    const ctx: any = this.context;
+    try {
+      await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            login: this.getCurrentUser().username + "-" + this.props.user.username,
+            public: true
+          },
+          "http://localhost:3000/parties/create"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     this.hidden();
-    let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-    let party = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
-    // console.log(party)
-    socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party.id})
-    // console.log("http://localhost:8080/game/" + party.id)
-    window.location.href = "http://localhost:8080/game/" + party.id;
+    let parties: PartiesType[] = [];
+    try {
+      parties = await Request(
+        'GET',
+        {},
+        {},
+        "http://localhost:3000/parties/"
+     )
+    } catch (error) {
+      ctx.setError(error);
+    }
+    let party: PartiesType | undefined = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
+    socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party?.id})
+    window.location.href = "http://localhost:8080/game/" + party?.id;
   }
 
-  decline = () => {
+  decline = (): void => {
     socket.emit('inviteDeclined', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id})
     this.hidden();
     console.log("LETS NOT CONNECT !") ///////////////
   }
 
-  hidden = () => {
-    let modal = document.getElementById("ModalMatchInvite" + this.props.user.username) as HTMLDivElement;
+  hidden = (): void => {
+    let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.props.user.username) as HTMLDivElement;
     modal.classList.add('hidden')
   }
 
-  getCurrentUser = () => {
+  getCurrentUser = (): UserType => {
     const ctx: any = this.context;
     return ctx.user;
   };
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="Modal hidden" id={"ModalMatchInvite" + this.props.user.username}>
         <div className='p-4 pb-1'>

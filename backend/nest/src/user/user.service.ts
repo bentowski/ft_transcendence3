@@ -137,7 +137,7 @@ export class UserService {
     }
   }
 
-  async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto): Promise<void> {
+  async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserEntity> {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new NotFoundException(
@@ -146,7 +146,7 @@ export class UserService {
     }
     user.avatar = updateAvatarDto.avatar;
     try {
-      await this.userRepository.save(user);
+      return await this.userRepository.save(user);
     } catch (error) {
       const err: string = 'Error while saving user in database: ' + error;
       throw new NotAcceptableException(err);
