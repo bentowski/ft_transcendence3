@@ -8,7 +8,7 @@ const socket = io("http://localhost:3000/update");
 
 class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
 
-  static context = AuthContext;
+  static contextType = AuthContext;
 
   hidden = () => {
     let modal = document.getElementById("ModalMatch") as HTMLDivElement;
@@ -16,10 +16,9 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
   }
 
   createParties = async () => {
-    let currentUser: any = sessionStorage.getItem("data");
-    currentUser = JSON.parse(currentUser);
+    let currentUser: any = this.context;
     // console.log(currentUser.user.username)
-    try {
+    // try {
       await Request(
         "POST",
         {
@@ -39,10 +38,10 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
       })
       this.hidden()
       window.location.href = "http://localhost:8080/game/" + Math.max(...ids)//currentUser.user.username
-    } catch (error) {
-      const ctx: any = this.context;
-      ctx.setError(error);
-    }
+    // } catch (error) {
+    //   const ctx: any = this.context;
+    //   ctx.setError(error);
+    // }
   }
 
 

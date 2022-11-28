@@ -4,71 +4,14 @@ import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
 
-function OpenGames() {
-	const [games, setGames] = useState<any[]>([]);
-	const [items, setItems] = useState<any[]>([]);
-
-	useEffect(() => {
-		socket.on('onNewParty', () => {
-			getGames()
-		})
-		return () => {
-			socket.off('newParty');
-		}
-	});
-
-	useEffect(() => {
-		getGames()
-	}, [])
-
-	useEffect(() => {
-		render()
-	}, [games])
-
-	const getGames = async () => {
-		let parties = await Request('GET', {}, {}, "http://localhost:3000/parties")
-		setGames(parties)
-	}
-
-	const renderGames = (login: string, key: number, id: number, p1: string, p2: string) => {
-		let count = 0;
-		if (p1 !== null)
-			count++;
-		if (p2 !== null)
-			count++;
-		return (
-			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
-				<div className="">
-					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
-				</div>
-				<div className="">
-					<p className="text-start">{login}</p>
-				</div>
-				<div className="" >
-					{count}/2
-				</div>
-			</div>
-		)
-	}
-	const render = () => {
-		let x = 0; //variable a changer selon le back
-		const item: any = []
-		while (x < games.length) {
-			item.push(renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))
-			x++;
-		}
-		setItems(item)
-	}
-	return (
-		<div>
-			{items}
-		</div>
-	)
-}
-
 class MatchNav extends Component {
 	state = {
-		allGames: []
+		allGames: [],
+		val: '',
+	}
+
+	callBackValueFunction = (childData: string) => {
+		this.setState({ val: childData })
 	}
 
 	callBackFunction = (childData: any) => {
@@ -101,6 +44,37 @@ class MatchNav extends Component {
 		modal.classList.remove('hidden');
 	}
 
+	renderGames = (login: string, key: number, id: number, p1: string, p2: string) => {
+		let count = 0;
+		if (p1 !== null)
+			count++;
+		if (p2 !== null)
+			count++;
+		return (
+			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
+				<div className="">
+					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
+				</div>
+				<div className="">
+					<p className="text-start">{login}</p>
+				</div>
+				<div className="" >
+					{count}/2
+				</div>
+			</div>
+		)
+	}
+	renderItem = () => {
+		let x = 0;
+		const item: any = []
+		const games: any[] = this.state.allGames;
+		while (x < this.state.allGames.length) {
+			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))
+			x++;
+		}
+		return (item)
+	}
+
 	render() {
 		return (
 			<div className="MatchNav h-100" id="MatchNav">
@@ -112,11 +86,12 @@ class MatchNav extends Component {
 					<button className="btn btn-outline-dark shadow-none" onClick={this.randomMatchmaking}>Random matching</button>
 					<button className="mx-2 btn btn-outline-dark shadow-none" onClick={this.prompt}>Create</button>
 					<div className="m-2 p-2">
-						<SearchBar inputSelector={"#MatchNav input"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction} />
+						<SearchBar inputSelector={"MatchNav"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction} />
 					</div>
 				</div>
 				<div className="List">
-					<OpenGames/>
+					{this.renderItem()}
+					{/* <OpenGames allGames={this.state.allGames} /> */}
 				</div> {/* List */}
 			</div>
 		); // fin de return
