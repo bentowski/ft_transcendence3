@@ -89,12 +89,14 @@ class UserCards extends Component<
   createChan = async () => {
     const ctx: any = this.context;
     try {
+      console.log('debut = ');
       let u2 = await Request(
           "GET",
           {},
           {},
           "http://localhost:3000/user/name/" + this.state.login,
       )
+      console.log('avant post = ');
       let newChan = await Request(
           "POST",
           {
@@ -104,8 +106,8 @@ class UserCards extends Component<
           {
             name: this.createChanName(ctx.user, u2),
             type: "direct",
-            user_1: ctx.user.auth_id,
-            user_2: u2.auth_id,
+            user_1_id: ctx.user.auth_id,
+            user_2_id: u2.auth_id,
           },
           "http://localhost:3000/chan/createpriv"
       );
