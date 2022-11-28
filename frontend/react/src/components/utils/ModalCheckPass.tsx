@@ -3,17 +3,15 @@ import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { ChanType } from '../../types';
 
 const ModalCheckPass = (
-  {chanToJoin, clef}:
-  {chanToJoin: ChanType | undefined, clef: number}
+  {chanToJoin, clef, parentCallBack}:
+  {chanToJoin: ChanType | undefined, clef: number, parentCallBack?: any }
   ) => {
   const [show, setShow] = useState(false)
   const [field, setField] = useState("");
   const [alert, setAlert] = useState(false);
 
   const handleShow = () => {
-    // console.log("chan = ", chanToJoin)
-    // let modal = document.getElementById("Modal") as HTMLDivElement;
-    // modal.classList.add("hidden");
+    console.log("chan[x].name = ", chanToJoin?.password)
     setShow(true);
   }
 
@@ -27,10 +25,25 @@ const ModalCheckPass = (
     handleClose();
   };
 
-  const handleChange = (evt: any) => {
+  const closeAlert = () => {
+    // console.log('closing alert');
+    setAlert(false);
+    // setAlertMsg("");
+  }
+
+  const handlePassword = (evt: any) => {
     evt.preventDefault();
     setField(evt.target.value);
   };
+
+  const checkPassword = () => {
+    if (field === chanToJoin?.password) {
+      parentCallBack.joinRoom(chanToJoin)
+    }
+    else {
+      setAlert(true);
+    }
+  }
 
   return (
     <div className="checkPassword" id={"checkPassword" + clef}>
@@ -47,23 +60,23 @@ const ModalCheckPass = (
                 maxLength={30}
                 id="password"
                 name="password"
-                onChange={handleChange}
+                onChange={handlePassword}
                 value={field}
               />
             </Form>
-            {/* <div>
+            <div>
               {alert ?
-                <Alert onClose={closeAlert} variant="danger" dismissible>{err}</Alert> :
+                <Alert onClose={closeAlert} variant="danger" dismissible>{"The password is not valid"}</Alert> :
                 // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
                 <div />
               }
-            </div> */}
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button className="mx-1" onClick={cancelling}>
               Cancel
             </Button>
-            <Button onClick={cancelling} className="mx-1">
+            <Button onClick={checkPassword} className="mx-1">
               Validate
             </Button>
           </Modal.Footer>

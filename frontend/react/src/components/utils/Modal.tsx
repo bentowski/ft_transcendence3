@@ -469,6 +469,10 @@ class Modal extends Component<
   //   modalCheckPass.classList.remove("hidden");
   // }
 
+  joinRoom = (newRoom: ChanType) => {
+    this.props.parentCallBack.joinRoom(newRoom)
+  }
+
   chans = async () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
@@ -485,15 +489,7 @@ class Modal extends Component<
               <div className='d-flex flex-row'>
                 {
                   this.state.allChans[x].type === "protected" ?
-                    <ModalCheckPass chanToJoin={this.state.allChans[x]} clef={x} />
-                    // <button
-                    //   onClick={() => {
-                    //     let modalCheckPass = document.getElementById("checkPassword" + x) as HTMLDivElement;
-                    //     modalCheckPass.classList.remove("hidden");
-                    //   }}
-                    // >
-                    //   JOIN
-                    // </button>
+                    <ModalCheckPass chanToJoin={this.state.allChans[x]} clef={x} parentCallBack={this.joinRoom} />
                     :
                     <button
                       onClick={() =>
