@@ -6,7 +6,7 @@ const HandleError = () => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();
 
     useEffect(() => {
-        setInterval(handleClose, 1800);
+        setInterval(handleClose, 2800);
     })
 
     const handleClose = () => {

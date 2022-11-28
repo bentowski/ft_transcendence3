@@ -313,7 +313,7 @@ export const WebSocket = () => {
               room={room}
               usersInChan={chanUser}
               currentChan={currentChan}
-              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList}}
+              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList, changeActiveRoom, setRoom}}
                />
         </div>
       </div>
