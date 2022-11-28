@@ -1,33 +1,58 @@
-import {Component} from 'react';
+import {Component, useEffect, useState} from 'react';
 import Request from "./Requests"
+import { socket } from '../../contexts/WebSocketContextUpdate';
 
-class SearchBar extends Component<{inputSelector : string, routeForRequest : string, parentCallBack : any}, {}> {
-	state = {
-		onload: 0
-	}
+function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}) {
+	const [onload, setOnload] = useState<number>(0);
+	const [value, setValue] = useState<string>('');
+	// const [input]
+	// state = {
+	// 	onload: 0
+	// }
 
-	requestUrl = async (event:any) => {
-		let url = "http://localhost:3000/" + this.props.routeForRequest + event.target.value;
+	useEffect(() => {
+		if (inputSelector === "MatchNav") {
+			socket.on('onNewParty', () => {
+				updateUrl()
+			})
+			return () => {
+				socket.off('onNewParty');
+			}
+		}
+	})
+
+	const updateUrl = async () => {
+		// let input = document.querySelector("#MatchNav input") as HTMLInputElement;
+		// let value = input.value;
+		let url = "http://localhost:3000/" + routeForRequest + value;
 		let parties = await Request('GET', {}, {}, url);
-		this.props.parentCallBack(parties);
+		parentCallBack(parties);
 	}
 
-	onloadFct = async () => {
-		let url = "http://localhost:3000/" + this.props.routeForRequest;
+	const requestUrl = async (event:any) => {
+		// parentCallBackValue(event.target.value)
+		setValue(event.target.value)
+		let url = "http://localhost:3000/" + routeForRequest + event.target.value;
 		let parties = await Request('GET', {}, {}, url);
-		this.setState({onload: 1});
-		this.props.parentCallBack(parties);
+		parentCallBack(parties);
 	}
 
-	render() {
-		if (this.state.onload === 0)
-			this.onloadFct();
+	const onloadFct = async () => {
+		let url = "http://localhost:3000/" + routeForRequest;
+		let parties = await Request('GET', {}, {}, url);
+		setOnload(1);
+		parentCallBack(parties);
+	}
+
+	//const render = () => {
+		if (onload === 0)
+			onloadFct();
 		return (
 			<div className="SearchBar my-2">
-				<p><input onChange={this.requestUrl} type= "text" placeholder="Search..." className="w-100" required/></p>
+				<p><input onChange={requestUrl} type= "text" placeholder="Search..." className="w-100" required/></p>
 			</div>
 		); // fin de return
-	} // fin de render
+	//} // fin de render
 } // fin de App
 
 export default SearchBar;
