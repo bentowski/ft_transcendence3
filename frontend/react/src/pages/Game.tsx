@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { socket } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
@@ -384,7 +384,9 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
       h: 0,
 	  timer: 0,
     }
+
   }
+	private globale: any = createRef()
 
   componentWillUnmount = () => {
     gameOver();
@@ -425,7 +427,7 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
     return (
 	  <div>
         <div className="canvas" id="canvas">
-          <canvas ref="globale" id="globale" width={this.state.w} height={this.state.h} style={{backgroundImage: "url(http://localhost:8080/pictures/bg-pong.jpg)", backgroundPosition: "center", backgroundSize: "cover"}}></canvas>
+          <canvas ref={this.globale} id="globale" width={this.state.w} height={this.state.h} style={{backgroundImage: "url(http://localhost:8080/pictures/bg-pong.jpg)", backgroundPosition: "center", backgroundSize: "cover"}}></canvas>
           <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
