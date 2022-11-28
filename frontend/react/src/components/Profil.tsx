@@ -66,8 +66,8 @@ class Profil extends Component<
   };
 
   getRank = async () => {
-    console.log("user = ", this.state.user)
-    console.log("hist = ", this.state.histories)
+    // console.log("user = ", this.state.user)
+    // console.log("hist = ", this.state.histories)
     let users: any = await Request("GET", {}, {}, "http://localhost:3000/user");
     if (!users) return;
     users.sort(function (a: UserType, b: UserType) {

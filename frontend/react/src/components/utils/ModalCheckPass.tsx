@@ -14,7 +14,7 @@ const ModalCheckPass = (
   const { setError } = useAuthData();
 
   const handleShow = () => {
-    console.log("chan[x].name = ", chanToJoin?.password)
+    // console.log("chan[x].name = ", chanToJoin?.password)
     setShow(true);
   }
 
@@ -40,10 +40,7 @@ const ModalCheckPass = (
   };
 
   const checkPassword = async () => {
-    //const pass: string | undefined = chanToJoin?.password; 
-    console.log('FIELD = ', field);
     const id: string | undefined = chanToJoin?.id; 
-    console.log('id = ', id);
     let res: boolean = false;
     try {
         res = await Request(
@@ -56,13 +53,12 @@ const ModalCheckPass = (
       setError(error);
     }
     if (res) {
-      console.log('parentclbk')
       setAlert(false);
       setField("");
-      handleClose();
-      console.log(parentCallBack)
       parentCallBack(chanToJoin)
-      console.log('not printed');
+      handleClose();
+      let modal = document.getElementById("Modal") as HTMLDivElement
+      modal.classList.add("hidden")
     }
     else {
       setAlert(true);
@@ -91,7 +87,6 @@ const ModalCheckPass = (
             <div>
               {alert ?
                 <Alert onClose={closeAlert} variant="danger" dismissible>{"The password is not valid"}</Alert> :
-                // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
                 <div />
               }
             </div>
@@ -109,9 +104,6 @@ const ModalCheckPass = (
       </Modal>
       <button
         onClick={handleShow}
-      // className="d-flex flex-row justify-content-start align-items-center"
-      //data-bs-toggle="modal"
-      //data-bs-target="#changeName"
       >
         JOIN
       </button>

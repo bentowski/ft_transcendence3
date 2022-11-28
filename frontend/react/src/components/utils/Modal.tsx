@@ -332,7 +332,7 @@ class Modal extends Component<
       retPass = await this.verifPass();
     }
     if (retRadio && retName && retPass) {
-      console.log('creating channel');
+      // console.log('creating channel');
       this.props.parentCallBack.createChannel(this.state.fieldName, this.state.type, this.state.fieldPass)
       this.hiddenCreate()
     }
@@ -400,7 +400,7 @@ class Modal extends Component<
             this.state.input.length === 0 ||
             friend.username.includes(this.state.input)
           )
-            console.log('hello ', this.state.friends[x]);
+            // console.log('hello ', this.state.friends[x]);
           friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
@@ -471,7 +471,6 @@ class Modal extends Component<
   // }
 
   joinRoom = (newRoom: ChanType) => {
-    console.log('calling first join room');
     this.props.parentCallBack.joinRoom(newRoom)
   }
 
