@@ -1,10 +1,13 @@
-import {Component, useEffect, useState} from 'react';
+import { useEffect, useState} from 'react';
 import Request from "./Requests"
 import { socket } from '../../contexts/WebSocketContextUpdate';
+import {PartiesType} from "../../types";
+import {useAuthData} from "../../contexts/AuthProviderContext";
 
-function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}) {
+function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}): JSX.Element {
 	const [onload, setOnload] = useState<number>(0);
 	const [value, setValue] = useState<string>('');
+	const { setError } = useAuthData();
 	// const [input]
 	// state = {
 	// 	onload: 0
@@ -21,25 +24,54 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 		}
 	})
 
-	const updateUrl = async () => {
+	const updateUrl = async (): Promise<void> => {
 		// let input = document.querySelector("#MatchNav input") as HTMLInputElement;
 		// let value = input.value;
-		let url = "http://localhost:3000/" + routeForRequest + value;
-		let parties = await Request('GET', {}, {}, url);
+		let url: string = "http://localhost:3000/" + routeForRequest + value;
+		let parties: PartiesType[] = []
+		try {
+			parties = await Request(
+				'GET',
+				{},
+				{},
+				url
+			);
+		} catch (error) {
+			setError(error);
+		}
 		parentCallBack(parties);
 	}
 
-	const requestUrl = async (event:any) => {
-		// parentCallBackValue(event.target.value)
+	const requestUrl = async (event: any): Promise<void> => {
 		setValue(event.target.value)
-		let url = "http://localhost:3000/" + routeForRequest + event.target.value;
-		let parties = await Request('GET', {}, {}, url);
+		let url: string = "http://localhost:3000/" + routeForRequest + event.target.value;
+		let parties: PartiesType[] = [];
+		try {
+			parties = await Request(
+				'GET',
+				{},
+				{},
+				url
+			);
+		} catch (error) {
+			setError(error);
+		}
 		parentCallBack(parties);
 	}
 
-	const onloadFct = async () => {
-		let url = "http://localhost:3000/" + routeForRequest;
-		let parties = await Request('GET', {}, {}, url);
+	const onloadFct = async (): Promise<void> => {
+		let url: string = "http://localhost:3000/" + routeForRequest;
+		let parties: PartiesType[] = [];
+		try {
+			parties = await Request(
+				'GET',
+				{},
+				{},
+				url
+			);
+		} catch (error) {
+			setError(error);
+		}
 		setOnload(1);
 		parentCallBack(parties);
 	}

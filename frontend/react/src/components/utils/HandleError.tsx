@@ -2,14 +2,14 @@ import {useAuthData} from "../../contexts/AuthProviderContext";
 import {Alert} from "react-bootstrap";
 import {useEffect} from "react";
 
-const HandleError = () => {
+const HandleError = (): JSX.Element => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();
 
-    useEffect(() => {
+    useEffect((): void => {
         setInterval(handleClose, 1800);
     })
 
-    const handleClose = () => {
+    const handleClose = (): void => {
         setError(null);
     }
     return (

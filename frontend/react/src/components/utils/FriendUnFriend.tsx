@@ -3,15 +3,15 @@ import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import {UserType} from "../../types";
 
-const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
-    const [status, setStatus] = useState(false);
+const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
+    const [status, setStatus] = useState<boolean>(false);
     const { friendsList, updateFriendsList, setError } = useAuthData();
 
-    useEffect(() => {
-        const updateStatus = async () => {
+    useEffect((): void => {
+        const updateStatus = async (): Promise<void> => {
             if (auth_id !== undefined) {
                 try {
-                    let res = await Request(
+                    let res: boolean = await Request(
                         "GET",
                         {},
                         {},
@@ -28,24 +28,19 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}) => {
         updateStatus();
     }, [auth_id, friendsList])
 
-    const friendunfriendUser = async () => {
-        try {
-            let res = await fetch("http://localhost:3000/user/update/friends", {
-                method: "PATCH",
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ action: !status, auth_id: auth_id }),
-            })
-            if (res.ok) {
-                setStatus((prevState: any) => !prevState);
-                const obj: UserType = await res.json();
-                updateFriendsList(obj, !status);
-            }
-        } catch (error) {
-            console.log(error);
-            setError(error);
+    const friendunfriendUser = async (): Promise<void> => {
+        let res: Response = await fetch("http://localhost:3000/user/update/friends", {
+            method: "PATCH",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ action: !status, auth_id: auth_id }),
+        })
+        if (res.ok) {
+            setStatus((prevState: any) => !prevState);
+            const obj: UserType = await res.json();
+            updateFriendsList(obj, !status);
         }
     }
 

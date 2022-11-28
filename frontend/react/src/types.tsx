@@ -8,7 +8,24 @@ export type MessagePayload = {
   room: string
 };
 
+export type HistoryType = {
+  game_id: bigint,
+  user_one: string,
+  user_two: string,
+  score_one: number,
+  score_two: number,
+  winner: string,
+  looser: string,
+  createdAt: Date,
+  users: UserType[],
+}
 
+export type PartiesType = {
+  id: number;
+  login: string;
+  p1: string;
+  p2: string;
+}
 
 export type ChanType = {
   id: string,
@@ -51,3 +68,30 @@ export type PunishSocketType = {
   auth_id: string,
   action: string,
 }
+
+export type AuthType = {
+  isTok: number,
+}
+
+export type AvatarType = {
+  url: string,
+  hash: number,
+}
+
+export type UsersChanMuteType = {
+  user: UserType | undefined,
+  isMute: boolean,
+}
+
+export type UsersChanBanType = {
+  user: UserType | undefined,
+  isBan: boolean,
+}
+
+export type ParamsImgType = {
+  method: string,
+  credentials: string,
+  headers: HeadersInit,
+  body: FormData,
+}
+

@@ -1,8 +1,8 @@
-import React, { Component, useEffect, useState } from 'react';
-import { socket } from '../contexts/WebSocketContextUpdate';
+import React, {Component } from 'react';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
+import {PartiesType} from "../types";
 
 class MatchNav extends Component {
 	state = {
@@ -10,23 +10,39 @@ class MatchNav extends Component {
 		val: '',
 	}
 
+	/*
 	callBackValueFunction = (childData: string) => {
 		this.setState({ val: childData })
 	}
+	 */
 
-	callBackFunction = (childData: any) => {
+	callBackFunction = (childData: any): void => {
 		this.setState({ allGames: childData })
 	}
 
+	/*
 	async reqUrl(request: string, url: string) {
 		return await fetch(url, {
 			method: request,
 		}).then(response => response.json())
 	}
+	 */
 
-	randomMatchmaking = async () => {
-		const games = await Request('GET', {}, {}, "http://localhost:3000/parties")
-		let availableGames = games.filter((game:any) => {
+	randomMatchmaking = async (): Promise<void> => {
+		const ctx: any = this.context;
+		let games: PartiesType[] = [];
+		try {
+			games = await Request(
+				'GET',
+				{},
+				{},
+				"http://localhost:3000/parties"
+			)
+		} catch (error) {
+			ctx.setError(error);
+		}
+
+		let availableGames: PartiesType[] = games.filter((game: PartiesType) => {
 			if (game.p1 === null || game.p2 === null)
 				return true;
 			return false;
@@ -35,17 +51,17 @@ class MatchNav extends Component {
 			alert("No available game joinable")
 			return ;
 		}
-		let randomGame: any = availableGames[(Math.floor(Math.random() * availableGames.length))];
+		let randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
 		window.location.href = "http://localhost:8080/game/" + randomGame.id
 	}
 
-	prompt = () => {
-		let modal = document.getElementById("ModalMatch") as HTMLDivElement;
+	prompt = (): void => {
+		let modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
 		modal.classList.remove('hidden');
 	}
 
-	renderGames = (login: string, key: number, id: number, p1: string, p2: string) => {
-		let count = 0;
+	renderGames = (login: string, key: number, id: number, p1: string, p2: string): JSX.Element => {
+		let count: number = 0;
 		if (p1 !== null)
 			count++;
 		if (p2 !== null)
@@ -64,10 +80,10 @@ class MatchNav extends Component {
 			</div>
 		)
 	}
-	renderItem = () => {
-		let x = 0;
-		const item: any = []
-		const games: any[] = this.state.allGames;
+	renderItem = (): JSX.Element[] => {
+		let x: number = 0;
+		let item: JSX.Element[] = [];
+		const games: PartiesType[] = this.state.allGames;
 		while (x < this.state.allGames.length) {
 			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))
 			x++;
@@ -75,7 +91,7 @@ class MatchNav extends Component {
 		return (item)
 	}
 
-	render() {
+	render(): JSX.Element {
 		return (
 			<div className="MatchNav h-100" id="MatchNav">
 				<div className="Wait m-2 p-2">

@@ -1,10 +1,10 @@
-import {Component} from "react";
+import {Component, Context} from "react";
 import {Link, NavigateFunction} from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import { UserType } from "../types"
+import {HistoryType, UserType} from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
@@ -41,7 +41,7 @@ class Profil extends Component<
       username = this.state.current_username;
     }
     try {
-      let newUser = await Request(
+      let newUser: UserType = await Request(
           "GET",
           {},
           {},
@@ -55,29 +55,44 @@ class Profil extends Component<
   };
 
   getHistory = async () => {
-    let histories = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/parties/histories/all"
-    );
-    if (!histories) return;
+    const ctx: any = this.context;
+    let histories: HistoryType[] = [];
+    try {
+      histories = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/parties/histories/all"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     this.setState({ histories: histories });
   };
 
   getRank = async () => {
-    console.log("user = ", this.state.user)
-    console.log("hist = ", this.state.histories)
-    let users: any = await Request("GET", {}, {}, "http://localhost:3000/user");
-    if (!users) return;
+    const ctx: any = this.context;
+    let users: UserType[] = [];
+    try {
+      users = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
     users.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
-    let x = 0;
-    while (x < users.length && users[x].auth_id !== this.state.user.auth_id) x++;
+    let x: number = 0;
+    while (x < users.length && users[x].auth_id !== this.state.user.auth_id){
+      x++;
+    }
     this.setState({ rank: x + 1 });
   };
 
@@ -93,7 +108,7 @@ class Profil extends Component<
         rank: number;
         local: string }>,
       snapshot?: any) {
-    let url = document.URL;
+    let url: string = document.URL;
     if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
       window.location.href = "http://localhost:8080/profil/" + this.state.user.username
     }
@@ -108,11 +123,11 @@ class Profil extends Component<
 
   componentDidMount = () => {
     const cxt: any = this.context;
-    const usr = cxt.user;
+    const usr: UserType = cxt.user;
     this.setState({ user: JSON.stringify(usr) });
     this.setState({ current_username: usr.username });
     this.setState({ local: this.props.loc });
-    let url = document.URL;
+    let url: string = document.URL;
     if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
       window.location.href = "http://localhost:8080/profil/" + cxt.user.username
     }
@@ -173,9 +188,9 @@ class Profil extends Component<
     }
   };
 
-  render() {
-    let histories: Array<any> = [];
-    let i = this.state.histories.length - 1;
+  render(): JSX.Element {
+    let histories: JSX.Element[] = [];
+    let i: number = this.state.histories.length - 1;
     while (i >= 0) {
       if (
           this.state.histories[i].user_one === this.state.user.username ||

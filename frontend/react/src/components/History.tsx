@@ -3,7 +3,6 @@ import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
 
-
 class History extends Component<
   {},
   { users: Array<UserType>; histories: Array<any> }
@@ -16,9 +15,22 @@ class History extends Component<
     };
   }
 
-  componentDidMount = async () => {
-    let users = await Request("GET", {}, {}, "http://localhost:3000/user");
-    if (!users) return;
+  componentDidMount = async (): Promise<void> => {
+    const ctx: any = this.context;
+    let users: UserType[] = [];
+    try {
+      users = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
+    if (!users) {
+      return;
+    }
     users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
@@ -28,9 +40,9 @@ class History extends Component<
     this.setState({ users: users });
   };
 
-  render() {
+  render(): JSX.Element {
     let user: JSX.Element[] = [];
-    let y = 0;
+    let y: number = 0;
     while (y < this.state.users.length) {
       // console.log("avatar est un bon film = ", this.state.users[y]);
       user.push(

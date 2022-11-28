@@ -1,9 +1,11 @@
 import { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
+import {HistoryType} from "../../types";
+import {Link} from "react-router-dom";
 
-class HistoryCards extends Component<{ history: any, profil: string }, {}> {
+class HistoryCards extends Component<{ history: HistoryType, profil: string }, {}> {
 
-  renderStatus = (user: boolean) => {
+  renderStatus = (user: boolean): JSX.Element => {
     if (!user) {
       if (this.props.history.score_one > this.props.history.score_two)
         return (
@@ -29,9 +31,9 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
     );
   }
 
-  renderHistoryCards = () => {
-    let status_one: any = this.renderStatus(false);
-    let status_two: any = this.renderStatus(true);
+  renderHistoryCards = (): JSX.Element => {
+    let status_one: JSX.Element = this.renderStatus(false);
+    let status_two: JSX.Element = this.renderStatus(true);
     if (this.props.profil) {
       if (this.props.profil === this.props.history.user_one)
         return (
@@ -43,8 +45,8 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_two}</div>
             </div>
             <div className='col-4 d-flex flex-row justify-content-end'>
-              <a className='mx-2' href={"/profil/#" + this.props.history.user_two}>{this.props.history.user_two}</a>
-              <img src="avatar" alt="" className='miniAvatar' />
+              <Link to={"/profil/" + this.props.history.user_two} className='mx-2' >{this.props.history.user_two}</Link>
+              <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
         )
@@ -58,8 +60,8 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_one}</div>
             </div>
             <div className='col-4 d-flex flex-row justify-content-end'>
-              <a className='mx-2' href={"/profil/#" + this.props.history.user_one}>{this.props.history.user_one}</a>
-              <img src="avatar" alt="" className='miniAvatar' />
+              <Link className='mx-2' to={"/profil/" + this.props.history.user_one}>{this.props.history.user_one}</Link>
+              <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
         )
@@ -69,8 +71,8 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
       return (
         <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
           <div className='col-2 d-flex flex-row'>
-            <img src="avatar" alt="" className='miniAvatar' />
-            <a className='mx-2' href={"/profil/#" + this.props.history.user_one}>{this.props.history.user_one}</a>
+            <img src={"http://localhost:3000/user/" + this.props.history.user_one + "/avatar"} alt="" className='miniAvatar' />
+            <Link className='mx-2' to={"/profil/" + this.props.history.user_one}>{this.props.history.user_one}</Link>
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_one}</div>
           <div className='col-4 d-flex flex-row justify-content-center'>
@@ -80,16 +82,16 @@ class HistoryCards extends Component<{ history: any, profil: string }, {}> {
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_two}</div>
           <div className='col-2 d-flex flex-row justify-content-end'>
-            <a className='mx-2' href={"/profil/#" + this.props.history.user_two}>{this.props.history.user_two}</a>
-            <img src="avatar" alt="" className='miniAvatar' />
+            <Link className='mx-2' to={"/profil/#" + this.props.history.user_two}>{this.props.history.user_two}</Link>
+            <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
           </div>
         </div>
       )
     }
   }
 
-  render() {
-    let items: any = this.renderHistoryCards();
+  render(): JSX.Element {
+    let items: JSX.Element = this.renderHistoryCards();
     return (
       <div>
         {items}

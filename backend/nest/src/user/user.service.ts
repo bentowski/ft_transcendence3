@@ -22,7 +22,7 @@ export class UserService {
   ) {}
 
   async validateUser42(user42: User42Dto): Promise<UserEntity> {
-    let user = await this.findOneByAuthId(user42.auth_id);
+    let user: UserEntity = await this.findOneByAuthId(user42.auth_id);
     if (!user) {
       try {
         let x = 0;
@@ -105,7 +105,7 @@ export class UserService {
     return users;
   }
 
-  async updateUsername(auth_id: string, newUsername: string) {
+  async updateUsername(auth_id: string, newUsername: string): Promise<UserEntity> {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new NotFoundException(
@@ -137,7 +137,7 @@ export class UserService {
     }
   }
 
-  async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto) {
+  async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserEntity> {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new NotFoundException(
@@ -146,7 +146,7 @@ export class UserService {
     }
     user.avatar = updateAvatarDto.avatar;
     try {
-      await this.userRepository.save(user);
+      return await this.userRepository.save(user);
     } catch (error) {
       const err: string = 'Error while saving user in database: ' + error;
       throw new NotAcceptableException(err);
@@ -242,32 +242,17 @@ export class UserService {
       );
     }
     if (action === true) {
-      const found = curuser.friends.find((elem) => elem === adduser.auth_id);
+      const found: string = curuser.friends.find((elem) => elem === adduser.auth_id);
       if (found) {
         throw new BadRequestException(
           'Error while updating friends list: User is already in your friend list.',
         );
       }
-      /*
-      const blocked = adduser.blocked.find((elem) => elem === curuser.auth_id);
-      if (blocked) {
-        throw new BadRequestException(
-          'Error while updating friends list: You have been blocked by this user.',
-        );
-      }
-      const blocking = curuser.blocked.find((elem) => elem === adduser.auth_id);
-      if (blocking) {
-        const index: number = curuser.blocked.indexOf(adduser.auth_id);
-        if (index !== -1) {
-          curuser.blocked.splice(index, 1);
-        }
-      }
-      */
       curuser.friends.push(adduser.auth_id);
       adduser.friends.push(curuser.auth_id);
     }
     if (action === false) {
-      const found = curuser.friends.find((elem) => elem === adduser.auth_id);
+      const found: string = curuser.friends.find((elem) => elem === adduser.auth_id);
       if (!found) {
         throw new BadRequestException(
           'Error while updating friends list: User is not in your friend list.',
@@ -315,29 +300,16 @@ export class UserService {
       );
     }
     if (action === true) {
-      const found = curuser.blocked.find((elem) => elem === blouser.auth_id);
+      const found: string = curuser.blocked.find((elem) => elem === blouser.auth_id);
       if (found) {
         throw new BadRequestException(
           'Error while updating blocked users: User is already in your blocked list.',
         );
       }
-     /*
-     const blocking = curuser.friends.find((elem) => elem === blouser.auth_id);
-     if (blocking) {
-       const idx_1: number = curuser.friends.indexOf(blouser.auth_id);
-       if (idx_1 !== -1) {
-         curuser.friends.splice(idx_1, 1);
-       }
-       const idx_2: number = blouser.friends.indexOf(curuser.auth_id);
-       if (idx_2 !== -1) {
-         blouser.friends.splice(idx_2, 1);
-       }
-      }
-      */
       curuser.blocked.push(blouser.auth_id);
     }
     if (action === false) {
-      const found = curuser.blocked.find((elem) => elem === blouser.auth_id);
+      const found: string = curuser.blocked.find((elem) => elem === blouser.auth_id);
       if (!found) {
         throw new BadRequestException(
           'Error while updating blocked users: User is not in your blocked list.',
@@ -374,7 +346,7 @@ export class UserService {
     }
   }
 
-  async setTwoFASecret(secret: string, user: UserEntity) {
+  async setTwoFASecret(secret: string, user: UserEntity): Promise<UserEntity> {
     try {
       return this.updateUser(user.auth_id, {
         username: user.username,
@@ -387,7 +359,7 @@ export class UserService {
     }
   }
 
-  async turnOnTwoFA(auth_id: string, user: UserEntity) {
+  async turnOnTwoFA(auth_id: string, user: UserEntity): Promise<UserEntity> {
     try {
       return this.updateUser(auth_id, {
         username: user.username,
@@ -400,7 +372,7 @@ export class UserService {
     }
   }
 
-  async turnOffTwoFA(auth_id: string, user: UserEntity) {
+  async turnOffTwoFA(auth_id: string, user: UserEntity): Promise<UserEntity> {
     try {
       return this.updateUser(auth_id, {
         username: user.username,
@@ -413,7 +385,7 @@ export class UserService {
     }
   }
 
-  checkFolder(imagename: string) {
+  checkFolder(imagename: string): string {
     const fs = require('fs');
     const files = fs.readdirSync('./uploads/profileimages/');
     if (Object.values(files).indexOf(imagename) === -1) {
@@ -429,7 +401,7 @@ export class UserService {
     return imagename;
   }
 
-  async getAvatar(id: string) {
+  async getAvatar(id: string): Promise<string> {
     const user: UserEntity = await this.findOneByAuthId(id);
     if (!user) {
       throw new NotFoundException(
@@ -439,11 +411,11 @@ export class UserService {
     if (!user.avatar) {
       user.avatar = 'default.jpg';
     }
-    const imagename: any = user.avatar;
+    const imagename: string = user.avatar;
     return imagename;
   }
 
-  async setStatus(auth_id: string, status: number) {
+  async setStatus(auth_id: string, status: number): Promise<void> {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {
       throw new NotFoundException(
