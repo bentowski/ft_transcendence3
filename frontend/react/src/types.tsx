@@ -94,3 +94,4 @@ export type ParamsImgType = {
   headers: HeadersInit,
   body: FormData,
 }
+

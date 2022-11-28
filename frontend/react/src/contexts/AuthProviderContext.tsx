@@ -454,6 +454,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       loading,
       userList,
       friendsList,
+      blockedList,
       updateUser: (avatar: string, username: string) => updateUser(avatar, username),
       userAuthentication: (auth: boolean) => userAuthentication(auth),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
@@ -490,6 +491,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       setError,
       userList,
       friendsList,
+      blockedList,
     ]
   );
 

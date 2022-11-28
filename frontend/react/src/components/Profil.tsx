@@ -1,4 +1,4 @@
-import {Component} from "react";
+import {Component, Context} from "react";
 import {Link, NavigateFunction} from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";

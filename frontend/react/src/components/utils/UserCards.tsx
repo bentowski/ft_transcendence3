@@ -104,8 +104,8 @@ class UserCards extends Component<
           {
             name: this.createChanName(ctx.user, u2),
             type: "direct",
-            user_1: ctx.user.auth_id,
-            user_2: u2.auth_id,
+            user_1_id: ctx.user.auth_id,
+            user_2_id: u2.auth_id,
           },
           "http://localhost:3000/chan/createpriv"
       );

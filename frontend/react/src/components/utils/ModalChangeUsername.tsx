@@ -137,13 +137,13 @@ const ModalChangeUsername = (): JSX.Element => {
   const handleShow = (): void => {
     setShow(true);
   }
+
   const closeAlert = (): void => {
     // console.log('closing alert');
     setAlert(false);
     setErr("");
     // setAlertMsg("");
   }
-
 
   return (
     <div className="changeusername">
