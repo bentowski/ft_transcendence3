@@ -10,7 +10,7 @@ export class AvailableChanController {
 
 
     @Get(':name')
-    findOneChan(@Param('name') name: string) {
+    findOneChan(@Param('name') name: string): void {
         return (this.availableChanService.findOneChan(name));
     }
 

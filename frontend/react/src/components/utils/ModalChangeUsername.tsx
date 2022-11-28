@@ -4,30 +4,33 @@ import { Button, Form, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { Alert } from 'react-bootstrap';
+import {UserType} from "../../types";
 
-const ModalChangeUsername = () => {
+const ModalChangeUsername = (): JSX.Element => {
   const { user, updateUser, setError } = useAuthData();
-  const [field, setField] = useState("");
+  const [field, setField] = useState<string>("");
   const navigate = useNavigate();
-  const [err, setErr] = useState("");
-  const [alert, setAlert] = useState(false);
-  const [show, setShow] = useState(false)
-  const [username, setUsername] = useState('');
+  const [err, setErr] = useState<string>("");
+  const [alert, setAlert] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false)
+  const [username, setUsername] = useState<string>('');
   // const [alertMsg, setAlertMsg] = useState("");
 
-  const getUsers = async () => {
-    // try {
-      let users = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/"
+  const getUsers = async (): Promise<UserType[]|undefined> => {
+    try {
+      let users: UserType[] = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/"
       );
       return users;
-    // }
+    } catch (error) {
+      setError(error);
+    }
   }
 
-  useEffect(() => {
+  useEffect((): void => {
     if (user) {
       setUsername(user.username)
     }
@@ -56,10 +59,10 @@ const ModalChangeUsername = () => {
   //   }
   // }
 
-  const verifField = async () => {
-    let users = await getUsers();
-    var regex = /^[\w-]+$/
-    var minmax = /^.{3,10}$/
+  const verifField = async (): Promise<boolean> => {
+    let users: any = await getUsers();
+    var regex: RegExp = /^[\w-]+$/
+    var minmax: RegExp = /^.{3,10}$/
 
     if (!regex.test(field)) {
       setErr("Non valid character")
@@ -77,7 +80,7 @@ const ModalChangeUsername = () => {
       // }, 1800)
       return false;
     }
-    else if (users.findIndex((u: any) => u.username === field) > -1) {
+    else if (users.findIndex((u: UserType) => u.username === field) > -1) {
       setErr("This username already exists")
       setAlert(true);
       // setTimeout(() => {
@@ -88,11 +91,11 @@ const ModalChangeUsername = () => {
     return true;
   }
 
-  const requestChangeUsername = async () => {
-    let ret = await verifField();
+  const requestChangeUsername = async (): Promise<void> => {
+    let ret: boolean = await verifField();
     if (ret) {
       try {
-        let res = await Request(
+        let res: UserType = await Request(
             "PATCH",
             {
               "Content-Type": "application/json",
@@ -115,28 +118,27 @@ const ModalChangeUsername = () => {
     }
   };
 
-  const handleChange = (evt: any) => {
+  const handleChange = (evt: any): void => {
     evt.preventDefault();
     setField(evt.target.value);
   };
 
-  const cancelling = () => {
+  const cancelling = (): void => {
     setAlert(false);
     setErr("");
     setField("");
     handleClose();
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setShow(false);
   }
 
-  const handleShow = () => {
-    console.log('pouet');
+  const handleShow = (): void => {
     setShow(true);
   }
 
-  const closeAlert = () => {
+  const closeAlert = (): void => {
     // console.log('closing alert');
     setAlert(false);
     setErr("");

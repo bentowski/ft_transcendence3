@@ -1,14 +1,15 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {useAuthData} from "../contexts/AuthProviderContext";
+import {ErrorType} from "../types";
 
-const AskTwoFa = () => {
+const AskTwoFa = (): JSX.Element => {
   const { user, setError, updateUserList, userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
-  const [code, setCode] = useState("");
-  const [validate, setValidate] = useState(false);
+  const [code, setCode] = useState<string>("");
+  const [validate, setValidate] = useState<boolean>(false);
 
-  const validateTwoFa = async () => {
-      let res = await fetch("http://localhost:3000/auth/2fa/authenticate",
+  const validateTwoFa = async (): Promise<void> => {
+      let res: Response = await fetch("http://localhost:3000/auth/2fa/authenticate",
           {
             method: "POST",
             credentials: 'include',
@@ -20,18 +21,18 @@ const AskTwoFa = () => {
       if (res.ok) {
         userAuthentication(true);
       } else {
-          let err = await res.json();
+          let err: ErrorType = await res.json();
           setError(err);
       }
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     if (isAuth) {
       setValidate(true);
     }
   }, [isAuth]);
 
-  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>): void => {
     evt.preventDefault();
     setCode(evt.target.value);
   };

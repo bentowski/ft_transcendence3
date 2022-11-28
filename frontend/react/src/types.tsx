@@ -8,6 +8,25 @@ export type MessagePayload = {
   room: string
 };
 
+export type HistoryType = {
+  game_id: bigint,
+  user_one: string,
+  user_two: string,
+  score_one: number,
+  score_two: number,
+  winner: string,
+  looser: string,
+  createdAt: Date,
+  users: UserType[],
+}
+
+export type PartiesType = {
+  id: number;
+  login: string;
+  p1: string;
+  p2: string;
+}
+
 export type ChanType = {
   id: string,
   type: string,
@@ -50,31 +69,29 @@ export type PunishSocketType = {
   action: string,
 }
 
-/*
-export type AuthContextType = {
-  user: string,
-  isAuth: boolean,
-  isToken: boolean,
-  isTwoFa: boolean,
-  allChans: ChanType[],
-  bannedFrom: ChanType[],
-  mutedFrom: ChanType[],
-  chanFrom: ChanType[],
-  errorShow: boolean,
-  errorMsg: string,
-  errorCode: number,
-  loading: boolean,
-  userList: string[],
-  friendsList: string[],
-  updateUser: (avatar: string, username: string) => void,
-  userAuthentication: (auth: boolean) => void,
-  updateFriendsList: (usr: UserType, action: boolean) => void,
-  updateUserList: () => void,
-  updateBlockedList: (usr: UserType, action: boolean) => void,
-  updateBannedFromList: () => void,
-  updateChanFromList: () => void,
-  updateMutedFromList: () => void,
-  updateAllChans: () => void,
-  setError: (value: any) => void,
+export type AuthType = {
+  isTok: number,
 }
-*/
+
+export type AvatarType = {
+  url: string,
+  hash: number,
+}
+
+export type UsersChanMuteType = {
+  user: UserType | undefined,
+  isMute: boolean,
+}
+
+export type UsersChanBanType = {
+  user: UserType | undefined,
+  isBan: boolean,
+}
+
+export type ParamsImgType = {
+  method: string,
+  credentials: string,
+  headers: HeadersInit,
+  body: FormData,
+}
+

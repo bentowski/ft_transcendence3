@@ -34,16 +34,16 @@ export class GameGateway implements OnModuleInit
   }
 
   @SubscribeMessage('barMove')
-  onNewMessage(@MessageBody() body: any) {
+  onNewMessage(@MessageBody() body: any): void {
     // console.log(this.server.)
     this.server.to(body.room).emit('player2', {ratio: body.ratio, player: body.player, fromAdmin: body.fromAdmin, room: body.room})
 }
 
   @SubscribeMessage('joinRoom')
-  async onJoinRoom(client: Socket, body: any) {
+  async onJoinRoom(client: Socket, body: any): Promise<void> {
 	client.join(body.game.id);
   // console.log(this.server.rooms)
-  this.partiesService.addToGame(body.game.id, body.auth_id);
+  await this.partiesService.addToGame(body.game.id, body.auth_id);
 	// client.emit('joinedRoom', body.game);
   if (body.game.p1 === null)
     body.game.p1 = body.auth_id;
@@ -53,7 +53,7 @@ export class GameGateway implements OnModuleInit
   }
 
   @SubscribeMessage('moveBall')
-  onBallMove(@MessageBody() body: any) {
+  onBallMove(@MessageBody() body: any): void {
     this.server.to(body.room).emit('ballMoved', body)
   }
 //   @SubscribeMessage('leaveRoom')

@@ -7,9 +7,10 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {ChanType, UserType} from "../types";
+import {AuthType, ChanType, UserType} from "../types";
 
 export const AuthContext = createContext<any>({
+  /*
   updateUser: (avatar: string, username: string) => {},
   userAuthentication: (auth: boolean) => {},
   updateFriendsList: (usr: UserType, action: boolean) => {},
@@ -20,9 +21,10 @@ export const AuthContext = createContext<any>({
   updateChanFromList: () => {},
   updateAllChans: () => {},
   setError: (value: any) => {}
+   */
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
@@ -35,17 +37,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [blockedList, setBlockedList] = useState<string[]>([]);
   const [allChans, setAllChans] = useState<ChanType[]>([]);
-  const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
-  const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
-  const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
+  //const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
+  //const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
+  //const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
 
-  const fetchUserList = async () => {
-    let list = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user"
-    )
+  const fetchUserList = async (): Promise<void> => {
+    let list: UserType[] = [];
+    try {
+      list = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user"
+      )
+    } catch (error) {
+      setError(error);
+    }
     let array_users: string[] = [];
     for (let index = 0; index < list.length; index++) {
       array_users[index] = list[index].username;
@@ -53,12 +60,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserList(array_users);
   }
 
-  const fetchData = async () => {
+  const fetchData = async (): Promise<void> => {
     setIsToken(false);
     setUser(undefined);
     setLoading(true);
     try {
-      let res = await Request(
+      let res: AuthType = await Request(
           "GET",
           {},
           {},
@@ -74,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setLoading(false);
             return ;
           } else if (res.isTok > 1) {
-            let user = await Request(
+            let user: UserType = await Request(
                 "GET",
                 {},
                 {},
@@ -95,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //------------------
 
-                let chans = await Request(
+                let chans: ChanType[] = await Request(
                     "GET",
                     {},
                     {},
@@ -105,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //------------------
 
-                let flist = await Request(
+                let flist: UserType[] = await Request(
                     "GET",
                     {},
                     {},
@@ -119,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //-----------------
 
-                let blist = await Request(
+                let blist: UserType[] = await Request(
                     "GET",
                     {},
                     {},
@@ -133,17 +140,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 //------------------
 
-                let mlist = await Request(
+                /*
+                let mlist: ChanType[] = await Request(
                     "GET",
                     {},
                     {},
                     "http://localhost:3000/user/chan/muted"
                 )
                 setMutedFrom(mlist);
+                 */
 
                 //------------------
 
-                let banlist = await Request(
+                /*
+                let banlist: ChanType[] = await Request(
                     "GET",
                     {},
                     {},
@@ -151,15 +161,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 )
                 setBannedFrom(banlist);
 
+                 */
+
                 //------------------
 
-                let jlist = await Request(
+                /*
+                let jlist: ChanType[] = await Request(
                     "GET",
                     {},
                     {},
                     "http://localhost:3000/user/chan/joined"
                 )
                 setChanFrom(jlist);
+
+                 */
 
                 //--------------------
 
@@ -193,7 +208,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateFriendsList = useCallback(async (usr: UserType, action: boolean) => {
+  const updateFriendsList = useCallback(async (usr: UserType, action: boolean): Promise<void> => {
     const auth_id: string = usr.auth_id;
     if (action) {
       setFriendsList(prevState => [...prevState, auth_id]);
@@ -202,7 +217,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const idx: number = friendsList.findIndex(obj => {
         return obj === auth_id;
       });
-      let array = [ ...friendsList ];
+      let array: string[] = [ ...friendsList ];
       if (idx !== -1) {
         array.splice(idx, 1);
         setFriendsList(array);
@@ -211,7 +226,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [friendsList])
 
-  const updateBlockedList = useCallback((usr: UserType, action: boolean) => {
+  const updateBlockedList = useCallback((usr: UserType, action: boolean): void => {
     const auth_id: string = usr.auth_id;
     if (action) {
       setBlockedList(prevState => [...prevState, auth_id]);
@@ -220,7 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const idx: number = blockedList.findIndex(obj => {
         return obj === auth_id;
       });
-      let array = [...blockedList];
+      let array: string[] = [...blockedList];
       if (idx !== -1) {
         array.splice(idx, 1);
         setBlockedList(array);
@@ -229,8 +244,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [blockedList])
 
-  const updateUserList = useCallback(async () => {
-    let list = await Request(
+  const updateUserList = useCallback(async (): Promise<void> => {
+    let list: UserType[] = await Request(
         "GET",
         {},
         {},
@@ -267,19 +282,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
   */
 
+  /*
   const updateBannedFromList = useCallback(async () => {
-    /*
-    if (action) {
-      setBannedFrom(prevState => [...prevState, chan])
-      setTimeout(() => {
-        rmvBan(chan);
-      }, 10000)
-    }
-    if (!action) {
-      rmvBan(chan);
-    }
-     */
-    let banlist = await Request(
+
+    //if (action) {
+    //  setBannedFrom(prevState => [...prevState, chan])
+    //  setTimeout(() => {
+    //    rmvBan(chan);
+    //  }, 10000)
+    //}
+    //if (!action) {
+    //  rmvBan(chan);
+    //}
+
+    let banlist: ChanType[] = await Request(
         "GET",
         {},
         {},
@@ -287,7 +303,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     )
     setBannedFrom(banlist);
     setTimeout(async () => {
-      let banlist = await Request(
+      let banlist: ChanType[] = await Request(
           "GET",
           {},
           {},
@@ -298,19 +314,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   }, [bannedFrom])
 
+
+   */
+
+  /*
   const updateMutedFromList = useCallback( async () => {
-    /*
-    if (action) {
-      setMutedFrom(prevState => [...prevState, chan])
-      setTimeout(() => {
-        rmvMute(chan);
-      }, 10000)
-    }
-    if (!action) {
-      rmvMute(chan);
-    }
-     */
-    let mlist = await Request(
+
+    //if (action) {
+    //  setMutedFrom(prevState => [...prevState, chan])
+    //  setTimeout(() => {
+    //    rmvMute(chan);
+    //  }, 10000)
+    //}
+    //if (!action) {
+    //  rmvMute(chan);
+    //}
+
+    let mlist: ChanType[] = await Request(
         "GET",
         {},
         {},
@@ -328,24 +348,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, 100010)
 
   }, [mutedFrom])
+   */
 
+  /*
   const updateChanFromList = useCallback(async () => {
-    /*
-    if (action) {
-      setChanFrom(prevState => [...prevState, chan])
-    }
-    if (!action) {
-      const idx = chanFrom.findIndex(obj => {
-        return obj.id === chan.id;
-      })
-      const newArr: ChanType[] = chanFrom;
-      if (idx !== -1) {
-        newArr.splice(idx);
-      }
-      setChanFrom(newArr);
-    }
-    */
-    let jlist = await Request(
+
+    //if (action) {
+    //  setChanFrom(prevState => [...prevState, chan])
+    //}
+    //if (!action) {
+    //  const idx = chanFrom.findIndex(obj => {
+    //    return obj.id === chan.id;
+    //  })
+    //  const newArr: ChanType[] = chanFrom;
+    //  if (idx !== -1) {
+    //    newArr.splice(idx);
+    //  }
+    //  setChanFrom(newArr);
+    //}
+
+    let jlist: ChanType[] = await Request(
         "GET",
         {},
         {},
@@ -354,11 +376,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setChanFrom(jlist);
 
   }, [chanFrom])
+   */
 
-  const updateAllChans = useCallback(async () => {
-    console.log('updateAllChans called');
+  const updateAllChans = useCallback(async (): Promise<void> => {
     try {
-      let res = await Request(
+      let res: ChanType[] = await Request(
           "GET",
           {},
           {},
@@ -371,8 +393,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
 
-  const updateUser = useCallback((avatar: string, username: string) => {
-    //console.log('callback called');
+  const updateUser = useCallback((avatar: string, username: string): void => {
     if (avatar || username) {
       const usr: UserType = {
         user_id: user.user_id,
@@ -394,13 +415,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user])
 
-  const userAuthentication = useCallback((auth: boolean) => {
+  const userAuthentication = useCallback((auth: boolean): void => {
     if (user) {
       setIsAuth(auth);
     }
   }, [user])
 
-  const setError =  useCallback((value: any) => {
+  const setError =  useCallback((value: any): void => {
     if (value) {
       setErrorShow(true);
       setErrorMsg(value.message);
@@ -424,9 +445,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isToken,
       isTwoFa,
       allChans,
-      bannedFrom,
-      mutedFrom,
-      chanFrom,
+      //bannedFrom,
+      //mutedFrom,
+      //chanFrom,
       errorShow,
       errorMsg,
       errorCode,
@@ -439,9 +460,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
-      updateBannedFromList: () => updateBannedFromList(),
-      updateChanFromList: () => updateChanFromList(),
-      updateMutedFromList: () => updateMutedFromList(),
+      //updateBannedFromList: () => updateBannedFromList(),
+      //updateChanFromList: () => updateChanFromList(),
+      //updateMutedFromList: () => updateMutedFromList(),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),
@@ -453,14 +474,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuth,
       loading,
       allChans,
-      bannedFrom,
-      mutedFrom,
-      chanFrom,
+      //bannedFrom,
+      //mutedFrom,
+      //chanFrom,
       isToken,
       isTwoFa,
-      updateBannedFromList,
-      updateChanFromList,
-      updateMutedFromList,
+      //updateBannedFromList,
+      //updateChanFromList,
+      //updateMutedFromList,
       updateFriendsList,
       updateAllChans,
       userAuthentication,

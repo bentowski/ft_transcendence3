@@ -2,6 +2,7 @@ import { Component } from 'react';
 import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
+import {UserType} from "../../types";
 
 const socket = io("http://localhost:3000/update");
 
@@ -14,18 +15,18 @@ class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hid
 		countdown: 5,
   	}
   }
-  hidden = () => {
+  hidden = (): void => {
     let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add('hidden')
     socket.emit("askForGamedown", {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id})
   }
 
-  getCurrentUser = () => {
+  getCurrentUser = (): UserType => {
     const ctx: any = this.context;
     return ctx.user;
   };
 
-  display = () => {
+  display = (): JSX.Element => {
 	if (this.props.countdown !== undefined) {
 		return (
 			<h2>Game start in {this.props.countdown}</h2>
@@ -37,7 +38,7 @@ class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hid
 		)
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className={this.props.hidden ? "Modal hidden" : "Modal"} id='ModalMatchWaiting'>
         <div className='p-4 pb-1'>
