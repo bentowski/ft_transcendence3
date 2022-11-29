@@ -5,38 +5,15 @@ import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
+import { AuthContext } from '../contexts/AuthProviderContext';
+import { UserType } from '../types';
 // const navigate = useNavigate();
 
 let gameOver = async () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
-	socket.off('userJoinChannel')
-  socket.off('onEndGame')
-	console.log("ARRRG")
-	// if (settings.admin)
-	// {
-	// 	// Request(
-	// 	// 							'POST',
-	// 	// 							{
-	// 	// 								Accept: "application/json",
-	// 	// 								"Content-Type": "application/json",
-	// 	// 							},
-	// 	// 							{
-	// 	// 								"user_one": settings.p1Name,
-	// 	// 								"user_two": settings.p1Name,
-	// 	// 								"score_one": 10,
-	// 	// 								"score_two": 3
-	// 	// 							},
-	// 	// 							"localhost:3000/parties/histories/create"
-	// 	// 						)
-	// 	await Request(
-	// 		'DELETE',
-	// 		{},
-	// 		{},
-	// 		"localhost:3000/parties/" + settings.room
-	// 	)
-	// }
+  socket.off('userJoinChannel')
   // navigate("/history")
 	window.location.href = "http://localhost:8080/profil"
 }
@@ -189,7 +166,6 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   	}
 	}
   //! don't forget to delete this
-	console.log(settings.round)
 	if (settings.round < 3)
 	{
 		// console.log("TEST")
@@ -343,11 +319,9 @@ let setSettings = () => {
   const globale = document.getElementById('globale') as HTMLCanvasElement
   const ctx: any = globale.getContext('2d')
 
-	// let currentUser:any = sessionStorage.getItem('data');
-	// currentUser = JSON.parse(currentUser);
-  let element = document.body as HTMLDivElement,
-  winWidth: number = element.clientWidth,
-  winHeight: number = element.clientHeight
+	let element = document.body as HTMLDivElement,
+	winWidth: number = element.clientWidth,
+	winHeight: number = element.clientHeight
 	let url = document.URL
 	url = url.substring(url.lastIndexOf("/") + 1)
   if ((winWidth * 19) / 26 > winHeight)
@@ -360,11 +334,9 @@ let setSettings = () => {
     nbPlayer: settings.nbPlayer,
     playerHighStart: winHeight / 2 + (winHeight / 25),
     playerSize: (winHeight / 30) * 4,
-		p1Name: settings.p1Name,
-		p2Name: settings.p2Name,
-		player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 15)],
-    player2: [0 + winHeight / 20 - winHeight / 30, (winHeight / 2) - (winHeight / 15)],
-    playerSpeed: 10,
+    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 25)],
+    player2: [0, (winHeight / 2) - (winHeight / 25)],
+    playerSpeed: 5,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
     vector: [1, 0],
@@ -411,16 +383,14 @@ let startGame = (ctx: any, globale: any) => {
 }
 
 let joinRoom = (game: any, ctx: any, globale: any) => {
-  let currentUser:any = sessionStorage.getItem('data');
-  currentUser = JSON.parse(currentUser);
-  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
-  if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
+  let user:any = settings.currentUser;
+  socket.emit('joinRoom', {"game":game, "auth_id": user.auth_id})
+  if (game.p1 === null || game.p1 === user.auth_id) {
     settings.admin = true;
   }
-  if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
+  if ((game.p1 && game.p1 === user.auth_id) || (game.p2 && game.p2 === user.auth_id) || !game.p1 || !game.p2)
   	settings.spec = false
 	socket.on('userJoinChannel', (game:any) => {
-	  console.log(game)
 	  if (game.id === settings.room) {
 	    if (game.p1 !== null && game.p2 !== null) {
 	      startGame(ctx, globale);
@@ -487,6 +457,7 @@ const changeSize = () => {
 
 
 class Game extends Component<{},{w:number, h: number, timer: number}> {
+  static contextType = AuthContext;
   constructor(props: any)
   {
     super(props)
@@ -507,6 +478,9 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 
 //============ Settings game ===============
   componentDidMount = () => {
+    const ctx: any = this.context;
+    const user:UserType = ctx.user;
+    settings.currentUser = user;
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth
     let winHeight = element.clientHeight

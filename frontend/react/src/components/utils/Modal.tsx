@@ -15,7 +15,8 @@ class Modal extends Component<
     userChan?: any[],
     userBan?: any[],
     parentCallBack?: any,
-    chans?: any
+    chans?: any,
+    chanList?: any
   },
   {
     user: any,
@@ -58,6 +59,21 @@ class Modal extends Component<
       banned: [],
       joined: [],
     };
+  }
+
+  // componentWillReceiveProps = (props:any) => {
+  //   if (props.chanList !== this.props.chanList)
+  //     this.updateChan();
+  // }
+
+  componentDidUpdate(props:any, state:any) {
+    if (JSON.stringify(props.chanList) !== JSON.stringify(this.state.allChans)) {
+      setTimeout(() => this.updateChan(), 1000)
+      // this.updateChan();
+      console.log(props.chanList, state.allChans)
+      console.log(JSON.stringify(props.chanList) === JSON.stringify(this.state.allChans))
+      console.log("update")
+    }
   }
 
   hiddenCreate = () => {
@@ -153,7 +169,7 @@ class Modal extends Component<
    }
    */
 
-  componentDidMount = async () => {
+   updateChan = async () => {
     const ctx: any = this.context
     this.setState({ banned: ctx.banned })
     this.setState({ joined: ctx.joined })
@@ -181,6 +197,10 @@ class Modal extends Component<
     }
     this.setState({ friends: users, allChans: chans });
     this.chans();
+   }
+
+  componentDidMount = () => {
+    this.updateChan();
   };
 
   // displayUser = (id: number, user: UserType) => {
@@ -200,7 +220,33 @@ class Modal extends Component<
   //               }
   //           >
   //             ADD
-  //           </button>
+  //           </button>for(let x: number = 0; x < usersChan.length; x++)
+  //         {
+  //             if (usersChan[x].user?.username !== user.username)
+  //             {
+  //                 ret.push(
+  //                         <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+  //                          <div className="col-5 h-100 overflow-hidden buttons">
+  //                             <button type="button" onClick={ () => banUser(usersChan[x]) }>
+  //                                 {
+  //                                     usersChan[x].isBan ?
+  //                                         <p>UNBAN</p> :
+  //                                         <p>BAN</p>
+  //                                 }
+  //                             </button>
+  //                          </div>
+  //                         <div className="col-2 d-flex flex-row d-flex justify-content-center">
+  //                             <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+  //                         </div>
+  //                         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  //                             <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
+  //                             <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+  //                         </div>
+  //                     </div>
+  //                 );
+  //             }
+  //         }
+  //         setList(ret);
   //         </div>
   //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
   //           <input
@@ -436,15 +482,6 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfOwner = (chan: ChanType) => {
-    for (let index = 0; index < this.props.chans.length; index++) {
-      if (chan.id === this.props.chans[index].id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   checkIfBanned = async (chan: ChanType) => {
     let banned = await Request(
       "GET",
@@ -503,9 +540,8 @@ class Modal extends Component<
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!this.checkIfOwner(this.state.allChans[x]) &&
-          !await this.checkIfAlreadyIn(this.state.allChans[x]) &&
-          !await this.checkIfBanned(this.state.allChans[x])
+        if (!await this.checkIfAlreadyIn(this.state.allChans[x]) &&
+            !await this.checkIfBanned(this.state.allChans[x])
         ) {
           ret.push(
             <div className="row TEST" key={x}>
@@ -627,6 +663,7 @@ class Modal extends Component<
                   id="public"
                   onChange={this.hiddenPass}
                   className='mx-2'
+                  defaultChecked
                 />
                 Public
               </div>
