@@ -200,16 +200,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/banned')
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
-    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
-    if (!user) {
-      throw new NotFoundException(
-        'Error while fetching banned chans: Cant find user',
-      );
+    try {
+      return this.userService.getChannelBanned(req.user.auth_id);
+    } catch (error) {
+      throw new Error(error);
     }
-    if (!user.channelBanned) {
-      return [];
-    }
-    return user.channelBanned;
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
@@ -225,16 +220,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/joined')
   async chanPresent(@Req() req): Promise<ChanEntity[]> {
-    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
-    if (!user) {
-      throw new NotFoundException(
-        'Error while fetching joined chans: Cant find user',
-      );
+    try {
+      return this.userService.getChannelJoined(req.user.auth_id);
+    } catch (error) {
+      throw new Error(error);
     }
-    if (!user.channelJoined) {
-      return [];
-    }
-    return user.channelJoined;
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)

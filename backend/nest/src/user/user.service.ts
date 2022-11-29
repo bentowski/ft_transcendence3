@@ -385,6 +385,38 @@ export class UserService {
     }
   }
 
+  async getChannelJoined(auth_id: string) {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id },
+      relations: ['channelJoined'],
+    });
+    if (!user) {
+      throw new NotFoundException(
+          'Error while fetching joined chans: Cant find user',
+      );
+    }
+    if (!user.channelJoined) {
+      return [];
+    }
+    return user.channelJoined;
+  }
+
+  async getChannelBanned(auth_id: string) {
+      const user: UserEntity = await this.userRepository.findOne({
+        where: { auth_id: auth_id},
+        relations: ['channelBanned']
+      });
+      if (!user) {
+        throw new NotFoundException(
+            'Error while fetching banned chans: Cant find user',
+        );
+      }
+      if (!user.channelBanned) {
+        return [];
+      }
+      return user.channelBanned;
+  }
+
   async getChannelMuted(auth_id: string) {
     const user: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id},
@@ -398,7 +430,6 @@ export class UserService {
     if (!user.channelMuted) {
       return [];
     }
-    console.log('channelmuted - ', user.channelMuted);
     return user.channelMuted;
   }
 
