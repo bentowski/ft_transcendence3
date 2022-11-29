@@ -44,7 +44,7 @@ const Menu = () => {
           <p className="m-0">chat</p>
         </Link>
         <Link to={"/history"}>
-          <p className="m-0 mx-2">history</p>
+          <p className="m-0 mx-2">stats</p>
         </Link>
       </div>{" "}
       {/* homeButtonDiv */}

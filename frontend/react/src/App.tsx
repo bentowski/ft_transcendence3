@@ -3,7 +3,7 @@ import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Chat from "./components/Chat/Chat";
-import History from "./components/History";
+import Stats from "./components/Stats";
 import Page from "./pages/Page";
 import { useAuthData } from "./contexts/AuthProviderContext";
 import AskTwoFa from "./pages/AskTwoFa";
@@ -57,7 +57,7 @@ const App = (): JSX.Element => {
             <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
               <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
             </Route>
-            <Route path="/history" element={<History />} />
+            <Route path="/history" element={<Stats />} />
           </Route>
           <Route path="/game/" element={<Game />} >
             <Route path="/game/*" element={<Game />} />
