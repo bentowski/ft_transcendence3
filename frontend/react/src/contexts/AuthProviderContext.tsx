@@ -140,7 +140,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
                 //------------------
 
-                /*
                 let mlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -148,11 +147,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                     "http://localhost:3000/user/chan/muted"
                 )
                 setMutedFrom(mlist);
-                 */
 
                 //------------------
 
-                /*
                 let banlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -161,11 +158,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 )
                 setBannedFrom(banlist);
 
-                 */
-
                 //------------------
 
-                /*
                 let jlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -173,8 +167,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                     "http://localhost:3000/user/chan/joined"
                 )
                 setChanFrom(jlist);
-
-                 */
 
                 //--------------------
 
@@ -258,7 +250,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     setUserList(array_users);
   }, [])
 
-  /*
   const rmvBan = (chan: ChanType) => {
     const idx = bannedFrom.findIndex(obj => {
       return obj.id === chan.id;
@@ -280,95 +271,72 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
     setMutedFrom(newArr);
   }
-  */
 
-  const updateBannedFromList = useCallback(async () => {
-
-    //if (action) {
-    //  setBannedFrom(prevState => [...prevState, chan])
-    //  setTimeout(() => {
-    //    rmvBan(chan);
-    //  }, 10000)
-    //}
-    //if (!action) {
-    //  rmvBan(chan);
-    //}
-
-    let banlist: ChanType[] = await Request(
+  const updateBannedFromList = useCallback(async (chan_id: string, action: boolean) => {
+    let chan: ChanType = await Request(
         "GET",
         {},
         {},
-        "http://localhost:3000/user/chan/banned"
+        "http://localhost:3000/chan/" + chan_id,
     )
-    setBannedFrom(banlist);
-    setTimeout(async () => {
-      let banlist: ChanType[] = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/chan/banned"
-      )
-      setBannedFrom(banlist);
-    }, 100010)
-
+    if (action) {
+      setBannedFrom(prevState => [...prevState, chan])
+      setTimeout(() => {
+        rmvBan(chan);
+      }, 10000)
+    }
+    if (!action) {
+      rmvBan(chan);
+    }
   }, [bannedFrom])
 
-  const updateMutedFromList = useCallback( async () => {
-
-    //if (action) {
-    //  setMutedFrom(prevState => [...prevState, chan])
-    //  setTimeout(() => {
-    //    rmvMute(chan);
-    //  }, 10000)
-    //}
-    //if (!action) {
-    //  rmvMute(chan);
-    //}
-
-    let mlist: ChanType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/muted"
-    )
-    setMutedFrom(mlist);
-    setTimeout(async () => {
-      let mlist = await Request(
+  const updateMutedFromList = useCallback( async (chan_id: string, action: boolean) => {
+    try {
+      let chan: ChanType = await Request(
           "GET",
           {},
           {},
-          "http://localhost:3000/user/chan/muted"
+          "http://localhost:3000/chan/" + chan_id
       )
-      setMutedFrom(mlist);
-    }, 100010)
-
+      if (action) {
+        setMutedFrom(prevState => [...prevState, chan])
+        setTimeout(() => {
+          rmvMute(chan);
+        }, 10000)
+      }
+      if (!action) {
+        rmvMute(chan);
+      }
+    } catch (error) {
+      setError(error);
+    }
   }, [mutedFrom])
 
 
-  const updateChanFromList = useCallback(async () => {
-
-    //if (action) {
-    //  setChanFrom(prevState => [...prevState, chan])
-    //}
-    //if (!action) {
-    //  const idx = chanFrom.findIndex(obj => {
-    //    return obj.id === chan.id;
-    //  })
-    //  const newArr: ChanType[] = chanFrom;
-    //  if (idx !== -1) {
-    //    newArr.splice(idx);
-    //  }
-    //  setChanFrom(newArr);
-    //}
-
-    let jlist: ChanType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/joined"
-    )
-    setChanFrom(jlist);
-
+  const updateChanFromList = useCallback(async (chan_id: string, action: boolean) => {
+    try {
+      const chan: ChanType = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/" + chan_id
+      )
+      if (action && chan) {
+        setChanFrom(prevState => [...prevState, chan])
+      }
+      if (!action) {
+        const idx = chanFrom.findIndex(obj => {
+          return obj.id === chan.id;
+        })
+        const newArr: ChanType[] = chanFrom;
+        if (idx !== -1) {
+          newArr.splice(idx);
+        }
+        setChanFrom(newArr);
+      }
+    } catch (error) {
+      setError(error);
+    }
   }, [chanFrom])
 
 
@@ -454,9 +422,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
-      updateBannedFromList: () => updateBannedFromList(),
-      updateChanFromList: () => updateChanFromList(),
-      updateMutedFromList: () => updateMutedFromList(),
+      updateBannedFromList: (chan_id: string, action: boolean) => updateBannedFromList(chan_id, action),
+      updateChanFromList: (chan_id: string, action: boolean) => updateChanFromList(chan_id, action),
+      updateMutedFromList: (chan_id: string, action: boolean) => updateMutedFromList(chan_id, action),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),

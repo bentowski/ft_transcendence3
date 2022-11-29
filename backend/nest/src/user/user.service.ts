@@ -385,6 +385,23 @@ export class UserService {
     }
   }
 
+  async getChannelMuted(auth_id: string) {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id},
+      relations: ['channelMuted']
+    });
+    if (!user) {
+      throw new NotFoundException(
+          'Error while fetching muted chans: Cant find user',
+      );
+    }
+    if (!user.channelMuted) {
+      return [];
+    }
+    console.log('channelmuted - ', user.channelMuted);
+    return user.channelMuted;
+  }
+
   checkFolder(imagename: string): string {
     const fs = require('fs');
     const files = fs.readdirSync('./uploads/profileimages/');

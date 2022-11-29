@@ -215,16 +215,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/muted')
   async chanMuted(@Req() req): Promise<ChanEntity[]> {
-    const user: UserEntity = await this.findOnebyID(req.user.auth_id);
-    if (!user) {
-      throw new NotFoundException(
-        'Error while fetching muted chans: Cant find user',
-      );
+    try {
+      return this.userService.getChannelMuted(req.user.auth_id);
+    } catch (error) {
+      throw new Error(error);
     }
-    if (!user.channelMuted) {
-      return [];
-    }
-    return user.channelMuted;
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
