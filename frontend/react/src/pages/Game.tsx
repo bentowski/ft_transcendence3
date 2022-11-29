@@ -229,25 +229,26 @@ const printNumber = (ctx: any, globale: any) => {
 
 }
 
-const printGame = (ctx: any, globale: any) => {
+const printGame = (ctx: any) => {
 	let y = 0;
+  console.log("Settings Printable : ", settings)
   while (y < settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
   }
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.playerSize)
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.playerSize)
 	ctx.fillStyle = "white"
 	ctx.beginPath();
-	ctx.fillRect(settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
+	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
 	ctx.fill()
 	ctx.closePath();
-	window.requestAnimationFrame(() => {
-		printGame(ctx, globale)
-	})
+	// window.requestAnimationFrame(() => {
+	// 	printGame(ctx, globale)
+	// })
   // settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
 	// if (settings.ballPos[0] < 0)
   // 	settings.ballPos[0] = 1;
@@ -268,40 +269,22 @@ let movePlayer = (ctx: any, move: number, globale: any, settings: any) => {
 let movePlayer1 = (ctx: any, globale: any, position: number, settings: any) => {
   let newPos = position
   settings.player1 = [settings.player1[0], newPos]
-  ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-  ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.playerSize)
+  // ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
+  // ctx.fillStyle = "white"
+  // ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.playerSize)
 }
 
 let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
     let newPos = position
     settings.player2 = [settings.player2[0], newPos]
-    ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
-    ctx.fillStyle = "white"
-    ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.playerSize)
-}
-
-let settings = {
-  w: 0,
-  h: 0,
-	currentUser: 0,
-	room: '',
-	ballPos: [0, 0],
-	player1: [0, 0],
-	player2: [0, 0],
-	middle: 0,
-	sizeBall: 0,
-	playerSize: 0,
-	spec: true,
-	up: 0,
-	down: 0
+    // ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
+    // ctx.fillStyle = "white"
+    // ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.playerSize)
 }
 
 const start = (ctx: any, globale: any) => {
 	socket.off('Start')
-	ctx.clearRect(0, 0, globale.width, globale.height)
-	printGame(ctx, settings.ballPos[1])
-	socket.on('ballMoved', (ball, round) => {
+	socket.on('pleaseBall', (ball, round) => {
 	    if (ball.room === settings.room)
 			{
 				settings.ballPos[0] = ball.ballPos[0] * settings.w;
@@ -324,12 +307,58 @@ const start = (ctx: any, globale: any) => {
 	  })
 }
 
+
+let settings = {
+  w: 0,
+  h: 0,
+	currentUser: 0,
+	room: '',
+  spec: true,
+  up: 0,
+  down: 0,
+	ballPos: [0, 0],
+	player1: [0, 0],
+	player2: [0, 0],
+  sizeBall: 0,
+	playerSize: 0,
+  playerSpeed: 0,
+  middle: 0,
+  p1Score: 0,
+  p2Score: 0
+}
+
+
+const initSettings = (serv: any) => {
+  settings = {
+    w: settings.w,
+    h: settings.h,
+    currentUser: settings.currentUser,
+    room: settings.room,
+    spec: settings.spec,
+    up: settings.up,
+    down: settings.down,
+    ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
+    player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
+    player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
+    sizeBall: serv.sizeBall * settings.h / 100,
+    playerSize: serv.playerSize * settings.h / 100,
+    playerSpeed: serv.playerSize,
+    middle: serv.middle * settings.w / 100,
+    p1Score: serv.p1Score,
+    p2Score: serv.p2Score
+  }
+}
+
 // Change type to SettingType
-const init = (settings: any) => {
-	console.log(settings)
+const init = (servSettings: any) => {
+  console.log("Settings3: ", servSettings)
+	// console.log(settings)
 	socket.off('Init')
+  initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement
   const ctx: any = globale.getContext('2d')
+  // ctx.clearRect(0, 0, globale.width, globale.height)
+  printGame(ctx)
 	socket.on('printCountDown', (number) => {
 		printNumber(ctx, globale);
 	})
@@ -369,11 +398,12 @@ const init = (settings: any) => {
 
 const justwait = () => {
 	socket.on('Init', (body) => {
+    // console.log("Settings2: ", settings)
 		socket.off('userJoinChannel')
-		console.log("Settings: ", body.settings)
+		// console.log("Settings: ", body.settings)
 		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 		modal.classList.add("hidden")
-		if (body.room === settings.room)
+		if (body.room.id === settings.room)
 			init(body.settings);
 	})
 }
@@ -396,7 +426,19 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 //============ Settings game ===============
   componentDidMount = () => {
 		const ctx: any = this.context;
+    let element = document.body as HTMLDivElement;
+    let winWidth = element.clientWidth;
+    let winHeight = element.clientHeight;
+    if ((winWidth * 19) / 26 > winHeight)
+      winWidth = ((winHeight * 26) / 19)
+    else
+      winHeight = ((winWidth * 19) / 26)
+    settings.w = winWidth
+    settings.h = winHeight
 	  settings.currentUser = ctx.user.auth_id;
+    let url = document.URL
+  	url = url.substring(url.lastIndexOf("/") + 1)
+    settings.room = url
 		joinRoom()
 		socket.on('userJoinChannel', () => {
 			socket.off('Init')
@@ -406,9 +448,12 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 			socket.off('userJoinChannel')
 			let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 			modal.classList.add("hidden")
-			console.log("Settings: ", body.settings)
-			if (body.room === settings.room)
-				init(body.settings);
+			// console.log("Settings1: ", body.settings)
+      // console.log(body.room, " : ", settings.room)
+			if (body.room.id === settings.room)
+      {
+        init(body.settings);
+      }
 		})
   }
 
