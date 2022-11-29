@@ -23,29 +23,31 @@ let sendEndGame = async () => {
 	// 							},
 	// 							"localhost:3000/parties/histories/create"
 	// 						)
-	const test = await Request(
-		'DELETE',
-		{},
-		{},
-		"localhost:3000/parties/" + settings.room
-	)
-	console.log(test)
+
+	// )
+	// //console.log(test)
 }
 
-let gameOver = () => {
+let gameOver = async () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
 	socket.off('userJoinChannel')
   socket.off('onEndGame')
-	console.log("ARRRG")
-	if (settings.admin)
-	{
-		sendEndGame()
-	}
-	setTimeout(() => {
-
-	}, 1000)
+	//console.log("ARRRG")
+	// if (settings.admin)
+	// {
+	// 	const test = await Request(
+	// 		'DELETE',
+	// 		{},
+	// 		{},
+	// 		"localhost:3000/parties/" + settings.room
+	// 	)
+	// }
+	// //console.log("PUTE")
+	// setTimeout(() => {
+	//
+	// }, 1000)
 	window.location.href = "http://localhost:8080/profil"
 }
 
@@ -138,34 +140,34 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   }
   // ============== End Players Moves ===============
   if (settings.admin) {
-  	if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0]) {
-		if (settings.ballPos[1] >= settings.player1[1] && settings.ballPos[1] <= settings.player1[1] + settings.sizeBall * 4) {
-			let percent = Math.floor((settings.ballPos[1] - settings.player1[1]) / ((settings.player1[1] + settings.sizeBall * 4) - settings.player1[1]) * 100)
-			if (percent <= 20) {
-				settings.vector = [-0.5, -Math.sqrt(3) / 2];
-			}
-			else if (percent <= 40) {
-				settings.vector = [-Math.sqrt(3) / 2, -0.5];
-			}
-			else if (percent <= 60) {
-				settings.vector = [-1, 0];
-			}
-			else if (percent <= 80) {
-				settings.vector = [-Math.sqrt(3) / 2, 0.5];
+  	if (settings.ballPos[0] + settings.sizeBall / 2 > settings.player1[0]) {
+			if (settings.ballPos[1] >= settings.player1[1] && settings.ballPos[1] <= settings.player1[1] + settings.sizeBall * 4) {
+				let percent = Math.floor((settings.ballPos[1] - settings.player1[1]) / ((settings.player1[1] + settings.sizeBall * 4) - settings.player1[1]) * 100)
+				if (percent <= 20) {
+					settings.vector = [-0.5, -Math.sqrt(3) / 2];
+				}
+				else if (percent <= 40) {
+					settings.vector = [-Math.sqrt(3) / 2, -0.5];
+				}
+				else if (percent <= 60) {
+					settings.vector = [-1, 0];
+				}
+				else if (percent <= 80) {
+					settings.vector = [-Math.sqrt(3) / 2, 0.5];
+				}
+				else {
+					settings.vector = [-0.5, Math.sqrt(3) / 2];
+				}
 			}
 			else {
-				settings.vector = [-0.5, Math.sqrt(3) / 2];
+				settings.nextRound = 1
+				// settings.ballPos = [settings.w / 2, settings.h / 2]
+				// settings.speed = settings.baseSpeed
+				// settings.round++;
+				//! give point to p1
 			}
-		}
-		else {
-			settings.nextRound = 1
-			settings.ballPos = [settings.w / 2, settings.h / 2]
-			settings.speed = settings.baseSpeed
-			settings.round++;
-			//! give point to p1
-		}
   	}
-  	if (settings.ballPos[0] <= settings.player2[0] + settings.sizeBall * 1.5)
+  	if (settings.ballPos[0] < settings.player2[0] + settings.sizeBall * 1.5)
   	{
 		if (settings.ballPos[1] >= settings.player2[1] && settings.ballPos[1] <= settings.player2[1] + settings.sizeBall * 4) {
 			let percent = Math.floor((settings.ballPos[1] - settings.player2[1]) / ((settings.player2[1] + settings.sizeBall * 4) - settings.player2[1]) * 100)
@@ -187,9 +189,7 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 		}
 		else {
 			settings.nextRound = 1
-			settings.ballPos = [settings.w / 2, settings.h / 2]
-			settings.speed = settings.baseSpeed
-			settings.round++;
+
 			//! give point to p2
 		}
     	settings.speed++;
@@ -197,12 +197,28 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	}
 	if (settings.round < 3)
 	{
-		print(ctx, newPos, settings)
-		if (settings.admin)
-			socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
-		window.requestAnimationFrame(() => {
-			moveBall(ctx, globale, settings)
-		})
+		if (settings.nextRound == 0)
+		{
+			if (settings.admin)
+				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
+			print(ctx, newPos, settings)
+			window.requestAnimationFrame(() => {
+				moveBall(ctx, globale, settings)
+			})
+		} else {
+			settings.ballPos = [settings.w / 2, settings.h / 2]
+			settings.speed = settings.baseSpeed
+			settings.round++;
+			settings.nextRound = 0;
+			if (settings.admin)
+				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
+			print(ctx, newPos, settings)
+			setTimeout( () => {
+				window.requestAnimationFrame(() => {
+					moveBall(ctx, globale, settings)
+				})
+			}, 3000)
+		}
 	}
 	else
 	{
@@ -262,10 +278,10 @@ let init = (ctx: any, globale: any, settings: any) => {
 	socket.on('player2', (infos) => {
     if (infos.room !== settings.room)
       return ;
-			console.log("AAAAAAAAAAA")
-			console.log(infos.player, " : ", settings.currentUser.auth_id)
+			//console.log("AAAAAAAAAAA")
+			//console.log(infos.player, " : ", settings.currentUser.auth_id)
 		 if (infos.player !== settings.currentUser.auth_id) {
-			 console.log("BAsoFDNAO")
+			 //console.log("BAsoFDNAO")
       if (settings.spec && infos.fromAdmin)
         movePlayer1(ctx, globale, infos.ratio * settings.h, settings)
       else
@@ -321,7 +337,9 @@ let settings = {
   timer: 5,
   callback: (countdown: number) => {},
 	round: 0,
-	nextRound: 0
+	nextRound: 0,
+	isLoaded: false
+
 }
 
 let setSettings = () => {
@@ -367,7 +385,8 @@ let setSettings = () => {
     timer: settings.timer,
 		callback: settings.callback,
 		round: settings.round,
-		nextRound: settings.nextRound
+		nextRound: settings.nextRound,
+		isLoaded: settings.isLoaded
   }
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
@@ -376,7 +395,7 @@ let startGame = (ctx: any, globale: any) => {
   if (settings.gameStarted === false && settings.spec === false) {
     settings.gameStarted = true;
     let countdown = setInterval(() => {
-      console.log('Game start in ' + settings.timer + '...');
+      //console.log('Game start in ' + settings.timer + '...');
       settings.timer--;
 		  settings.callback(settings.timer)
       if (settings.timer === -1) {
@@ -399,14 +418,18 @@ let startGame = (ctx: any, globale: any) => {
 let joinRoom = (game: any, ctx: any, globale: any) => {
   let currentUser:any = sessionStorage.getItem('data');
   currentUser = JSON.parse(currentUser);
-  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
+	// if (settings.isLoaded === false) {
+	// 	settings.isLoaded = true
+  	socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
+	// }
+
   if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
     settings.admin = true;
   }
   if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
   	settings.spec = false
 	socket.on('userJoinChannel', (game:any) => {
-	  console.log(game)
+	  //console.log(game)
 	  if (game.id === settings.room) {
 	    if (game.p1 !== null && game.p2 !== null) {
 	      startGame(ctx, globale);
@@ -467,7 +490,8 @@ const changeSize = () => {
 		timer: settings.timer,
 		callback: settings.callback,
 		round: settings.round,
-		nextRound: settings.nextRound
+		nextRound: settings.nextRound,
+		isLoaded: settings.isLoaded
 	}
 }
 
@@ -486,11 +510,11 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
   }
 	private globale: any = createRef()
 
-  // componentWillUnmount = () => {
-	// 	console.log("OOOOOOOOOOOOOPS")
-	// 	socket.emit('endGame', settings.room)
-  //   gameOver();
-  // }
+  componentWillUnmount = () => {
+		// if (settings.round >= 3)
+			//console.log("GDSGDSFNGLDKS:NKGDSNKGD")
+    // gameOver();
+  }
 
 //============ Settings game ===============
   componentDidMount = () => {
@@ -508,8 +532,8 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 	settings.callback = this.updateState;
 	const ctx: any = this.context;
   settings.currentUser = ctx.user;
-	console.log("ICCICICICIICCICI : ", settings.currentUser)
-    setSettings()
+	//console.log("ICCICICICIICCICI : ", settings.currentUser)
+		setSettings()
   }
 
   updateState = (countdown: number) => {

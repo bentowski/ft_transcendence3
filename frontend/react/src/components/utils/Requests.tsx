@@ -45,12 +45,28 @@ const Request = async (type: string, headers: any, body: any, url: string): Prom
         throw err;
       }
 
-    } else {
+    } else if (type !== "DELETE"){
       const response: Response = await fetch(url, {
         method: type,
         headers: headers,
         credentials: "include",
         body: JSON.stringify(body),
+      });
+      if (response.ok) {
+        const res: any = await response.json();
+        return res;
+      } else {
+        const err: ErrorType = await response.json();
+        if (err.statusCode === 401) {
+          await Logout();
+        }
+        throw err;
+      }
+    } else {
+      const response: Response = await fetch(url, {
+        method: type,
+        headers: headers,
+        credentials: "include",
       });
       if (response.ok) {
         const res: any = await response.json();

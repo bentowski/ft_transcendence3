@@ -60,9 +60,8 @@ const App = (): JSX.Element => {
             </Route>
             <Route path="/history" element={<History />} />
           </Route>
-          <Route path="/game/" element={<Game />} >
-            <Route path="/game/*" element={<Game />} />
-          </Route>
+          <Route path="/game/*" element={<Game />} />
+          <Route path="/gameup/*" element={<GameUp />} />
         </Route>
       </Route>
 

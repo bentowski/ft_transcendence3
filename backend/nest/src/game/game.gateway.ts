@@ -61,6 +61,7 @@ export class GameGateway implements OnModuleInit
   onEndGame(client: Socket, room: string) {
     console.log("end game !")
     this.server.to(room).emit('onEndGame', room)
+    this.partiesService.remove(room)
   }
 //   @SubscribeMessage('leaveRoom')
 //   onLeaveRoom(client: Socket, room: string) {

@@ -342,7 +342,7 @@ let startGame = (ctx: any, globale: any) => {
 let joinRoom = (game: any, ctx: any, globale: any) => {
   let currentUser:any = sessionStorage.getItem('data');
   currentUser = JSON.parse(currentUser);
-  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
+  // socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
   if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
     settings.admin = true;
   }
