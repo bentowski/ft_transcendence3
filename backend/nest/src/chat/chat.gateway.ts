@@ -309,8 +309,8 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('chanCreated')
-  onChanCreated():  void {
-  	this.server.emit('newChan');
+  onChanCreated(): void {
+  	this.server.emit('userJoinChannel');
   }
 
   @SubscribeMessage('newParty')
