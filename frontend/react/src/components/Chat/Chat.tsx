@@ -175,8 +175,8 @@ export const WebSocket = () => {
             "http://localhost:3000/chan/create"
         );
           socket.emit('chanCreated');
-          updateAllChans();
-          updateChanFromList();
+          // updateAllChans();
+          // updateChanFromList();
           navigate('/chat/' + chanCreated.id);
           //!
           await getChan();

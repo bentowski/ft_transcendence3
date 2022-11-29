@@ -52,7 +52,7 @@ export const PrintHeaderChan = (
     }
     return (
         <div className="chatMainTitle row">
-          <h1 className="col-10">Channel Name</h1>
+          {/* <h3 className="col-10">Channel Name</h3> */}
           <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
           <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
         </div>
