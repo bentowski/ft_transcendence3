@@ -26,6 +26,8 @@ class UsersInActualchannel extends Component<{usersList: UserType[]}, {}> {
 export const PrintChannel = (
   {msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack}:
   {msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any}) => {
+  const { mutedFrom } = useAuthData();
+  const [isMute, setIsMute] = useState(false);
 
   const setModalType = (newValue: any) => {
     parentCallBack.setModalType(newValue)
@@ -43,28 +45,51 @@ export const PrintChannel = (
     parentCallBack.setChanList(newValue)
   }
 
-  const onSubmit = () => {
-    // check if array is empty or contain only whitespace
-    if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
-      if (value === "/leave") {
-        socket.emit("leaveRoom", { room: room, auth_id: user.auth_id });
-        parentCallBack.changeActiveRoom("");
-        parentCallBack.setMessage([]);
-        parentCallBack.setRoom("null");
-        parentCallBack.getChan();
-        window.location.href = "http://localhost:8080/chat"; //!
-      } else {
-        socket.emit("newMessage", {
-          chat: value,
-          sender_socket_id: user.auth_id,
-          username: user.username,
-          avatar: user.avatar,
-          auth_id: user.auth_id,
-          room: room,
-        });
+  const checkIfMuted = async () => {
+    let mutedList = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/muted"
+    )
+    console.log('muted list = ', mutedList, ', room = ', room);
+    for (let i = 0; i < mutedList.length; i++) {
+      if (mutedList[i].id === room) {
+        return true;
       }
     }
-    setValue("");
+    return false;
+  }
+
+  const onSubmit = async () => {
+    // check if array is empty or contain only whitespace
+    if (!await checkIfMuted()) {
+      if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
+        if (value === "/leave") {
+          socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+          parentCallBack.changeActiveRoom("");
+          parentCallBack.setMessage([]);
+          parentCallBack.setRoom("null");
+          parentCallBack.getChan();
+          window.location.href = "http://localhost:8080/chat"; //!
+        } else {
+          socket.emit("newMessage", {
+            chat: value,
+            sender_socket_id: user.auth_id,
+            username: user.username,
+            avatar: user.avatar,
+            auth_id: user.auth_id,
+            room: room,
+          });
+        }
+      }
+      setValue("");
+    } else {
+      setValue("Youve been muted");
+      setTimeout(() => {
+        setValue("");
+      }, 1800)
+    }
   };
 
   const pressEnter = (e: any) => {
@@ -83,8 +108,10 @@ export const PrintChannel = (
               <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{setChanList}}/>
               <div className="row">
                 <div>
-                <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-                <button className="col-1" onClick={onSubmit}>send</button>
+                      <div>
+                        <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                        <button className="col-1" onClick={onSubmit}>Send</button>
+                      </div>
                 </div>
               </div>
               </div>
