@@ -109,7 +109,7 @@ const ModalChangeUsername = (): JSX.Element => {
           updateUser(null, field);
           setField("");
           handleClose();
-          navigate("/profil/" + newName);
+          // navigate("/profil/" + newName);
         }
       } catch (error) {
         setError(error);
@@ -145,15 +145,23 @@ const ModalChangeUsername = (): JSX.Element => {
     // setAlertMsg("");
   }
 
+  const pressEnter = (e: any): void => {
+    console.log("key = ", e.key)
+    console.log(field)
+    if(e.key === 'Enter') {
+      requestChangeUsername()
+    }
+  }
+
   return (
     <div className="changeusername">
-      <Modal show={show} onHide={handleClose} backdrop='static' keyboard={false}>
+      <Modal show={show} onHide={handleClose}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
             <h2>Change Username</h2>
           </Modal.Header>
           <Modal.Body>
-            <Form className="mb-3">
+            {/* <Form className="mb-3"> */}
               <input
                 type="text"
                 placeholder="new username"
@@ -161,9 +169,10 @@ const ModalChangeUsername = (): JSX.Element => {
                 id="username"
                 name="username"
                 onChange={handleChange}
+                onKeyDown={pressEnter}
                 value={field}
               />
-            </Form>
+            {/* </Form> */}
             <div>
               {alert ?
                 <Alert onClose={closeAlert} variant="danger" dismissible>{err}</Alert> :
@@ -173,12 +182,12 @@ const ModalChangeUsername = (): JSX.Element => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="mx-1" onClick={cancelling}>
+            {<Button className="mx-1" onClick={cancelling}>
               Cancel
-            </Button>
-            <Button onClick={requestChangeUsername} className="mx-1">
+            </Button>}
+           { <Button onClick={requestChangeUsername} className="mx-1">
               Validate
-            </Button>
+            </Button>}
           </Modal.Footer>
 
         </div>
