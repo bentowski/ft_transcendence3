@@ -3,8 +3,10 @@ import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
 import {PartiesType} from "../types";
+import { AuthContext } from '../contexts/AuthProviderContext';
 
 class MatchNav extends Component {
+	static contextType = AuthContext;
 	state = {
 		allGames: [],
 		val: '',
@@ -48,7 +50,10 @@ class MatchNav extends Component {
 			return false;
 		})
 		if (availableGames.length === 0) {
-			alert("No available game joinable")
+			// alert("No available game joinable")
+			let error = {message: "No available game joinable", statusCode: 1}
+			console.log(ctx)
+			ctx.setError(error);
 			return ;
 		}
 		let randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
@@ -68,14 +73,14 @@ class MatchNav extends Component {
 			count++;
 		return (
 			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
-				<div className="">
-					<button onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
+				<div>
+					<button className="btn btn-outline-dark shadow-none" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
 				</div>
-				<div className="">
-					<p className="text-start">{login}</p>
+				<div style={{verticalAlign: "top"}}>
+					<p className="py-2">{login}</p>
 				</div>
-				<div className="" >
-					{count}/2
+				<div>
+					<p className="py-2">{count}/2</p>
 				</div>
 			</div>
 		)
