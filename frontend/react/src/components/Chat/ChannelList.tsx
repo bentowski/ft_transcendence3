@@ -70,7 +70,7 @@ export const ChannelList = (
   };
 
   const chanColor = (channel: ChanType, room: string) => {
-    if (channel.id === room)
+    if (channel.isActive)
       return ("bg-primary");
     else
       return ("bg-white")

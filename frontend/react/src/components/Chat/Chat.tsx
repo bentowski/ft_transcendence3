@@ -20,6 +20,7 @@ export const WebSocket = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [loaded, setLoaded] = useState("not ok");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
+  const [url, setUrl] = useState<string>('');
   //const [muted, setMuted] = useState({room:{},muted:false});
   //const [banned, setBanned] = useState({room:{},banned:false});
   //const [currentChan, setCurrentChan] = useState<ChanType>();
@@ -43,7 +44,7 @@ export const WebSocket = () => {
 // ================= UseEffects ===================
 
   useEffect(() => {
-    socket.on('connect', () => { });
+    socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
       getChan();
     });
@@ -65,8 +66,9 @@ export const WebSocket = () => {
   		setLoaded('ok')
     return () => {
       socket.off('connect');
-      socket.off('onMessage');
       socket.off('userJoinChannel');
+      socket.off('chanDeleted');
+      socket.off('userLeaveChannel');
     }
   });
 
@@ -111,16 +113,21 @@ export const WebSocket = () => {
       }
     }, 10)
     return () => {
-      socket.off('error', handleError);
-      socket.off('muteRoom', handleMute);
-      socket.off('banRoom', handleBan);
+      socket.off('error');
+      socket.off('mutedChannel');
+      socket.off('bannedChannel');
     }
   }, []);
 
   useEffect(() => {
-    if (loaded === 'ok')
+    if (loaded === 'ok') {
       joinUrl()
+    }
   }, [loaded])
+
+  useEffect(() => {
+    joinUrl();
+  }, [url])
 
   useEffect(() => {
     let chanUserFind:Array<UserType>|undefined = chanList.find((c:ChanType) => c.id === room)?.chanUser
@@ -165,11 +172,20 @@ export const WebSocket = () => {
             },
             "http://localhost:3000/chan/create"
         );
-        socket.emit('chanCreated');
-        updateAllChans();
-        //updateChanFromList();
-        navigate('/chat/' + chanCreated.id);
-        joinUrl();
+          socket.emit('chanCreated');
+          updateAllChans();
+          updateChanFromList();
+          navigate('/chat/' + chanCreated.id);
+          //!
+          await getChan();
+          setUrl('/chat/' + chanCreated.id);
+          // joinRoom(chanCreated);
+          // changeActiveRoom(chanCreated.id)
+          //setRoom(chanCreated.id)
+          //!
+          // joinUrl();
+          // setTimeout(joinUrl, 5000);
+        
       } catch (error) {
         setError(error);
       }
@@ -180,8 +196,11 @@ export const WebSocket = () => {
 
 
 
-  const joinUrl = () => {
+  const joinUrl = async () => {
     let url = document.URL;
+    // await getChan();
+    // changeActiveRoom('4')
+    //let chanList:ChanType[] = await Request('GET', {}, {}, "http://localhost:3000/chan/")
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
   	chanList.forEach((chan) => {
@@ -197,7 +216,7 @@ export const WebSocket = () => {
     }
     else {
       url = url.substring(url.lastIndexOf("/") + 1);
-      chan = chanList.find((c:ChanType) => c.id === url);
+      chan = chanList.find((c:ChanType) => String(c.id) === url);
       if (chan !== undefined) {
         joinRoom(chan)
       }
@@ -248,7 +267,9 @@ export const WebSocket = () => {
   };
 
   const joinRoom = async (newRoom: ChanType) => {
-    let chanToJoin = chanList.find((chan: ChanType) => chan.id === newRoom.id)
+     let chanToJoin = chanList.find((chan: ChanType) => {
+      return String(chan.id) === String(newRoom.id)
+     })
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
         setRoom(chanToJoin.id);
