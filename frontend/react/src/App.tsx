@@ -54,6 +54,7 @@ const App = (): JSX.Element => {
             <Route path="/chat/" element={<Chat />} >
               <Route path="/chat/*" element={<Chat />} />
             </Route>
+            <Route path="/" element={<Profil nav={nav} loc={loc} />} />
             <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
               <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
             </Route>
