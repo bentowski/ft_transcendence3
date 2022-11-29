@@ -186,7 +186,7 @@ let gameOver = () => {
 	window.location.href = "http://localhost:8080/profil"
 }
 
-let joinRoom = async (ctx: any, globale: any) => {
+let joinRoom = async () => {
   const games = await Request('GET', {}, {}, "http://localhost:3000/parties")
   let url = document.URL
   let index = url.lastIndexOf("/")
@@ -324,10 +324,12 @@ const start = (ctx: any, globale: any) => {
 	  })
 }
 
-const init = () => {
+// Change type to SettingType
+const init = (settings: any) => {
+	console.log(settings)
 	socket.off('Init')
 	const globale = document.getElementById('globale') as HTMLCanvasElement
-	  const ctx: any = globale.getContext('2d')
+  const ctx: any = globale.getContext('2d')
 	socket.on('printCountDown', (number) => {
 		printNumber(ctx, globale);
 	})
@@ -365,21 +367,48 @@ const init = () => {
   document.addEventListener("keyup", infosClavier2);
 }
 
+const justwait = () => {
+	socket.on('Init', (body) => {
+		socket.off('userJoinChannel')
+		console.log("Settings: ", body.settings)
+		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+		modal.classList.add("hidden")
+		if (body.room === settings.room)
+			init(body.settings);
+	})
+}
+
 class Game extends Component<{},{w:number, h: number, timer: number}> {
 	static contextType = AuthContext;
 
 	private globale: any = createRef()
 
   componentWillUnmount = () => {
-
+		socket.off('userJoinChannel')
+		socket.off('Init')
+		socket.off('Start')
+		socket.off('ballMoved')
+		socket.off('userJoinChannel')
+		socket.off('players')
+		socket.off('onEndGame')
   }
 
 //============ Settings game ===============
   componentDidMount = () => {
 		const ctx: any = this.context;
 	  settings.currentUser = ctx.user.auth_id;
-		socket.on('Init', () => {
-			init();
+		joinRoom()
+		socket.on('userJoinChannel', () => {
+			socket.off('Init')
+			justwait();
+		})
+		socket.on('Init', (body) => {
+			socket.off('userJoinChannel')
+			let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+			modal.classList.add("hidden")
+			console.log("Settings: ", body.settings)
+			if (body.room === settings.room)
+				init(body.settings);
 		})
   }
 
@@ -389,7 +418,7 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
       <div>
         <div className="canvas" id="canvas">
           <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h}></canvas>
-          <ModalMatchWaiting title="Create new game" calledBy="newGame" />
+          <ModalMatchWaiting title="In wait for player" calledBy="newGame" />
         </div>
       </div>
     );
