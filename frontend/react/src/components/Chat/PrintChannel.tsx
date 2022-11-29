@@ -76,6 +76,7 @@ export const PrintChannel = (
   if (room) {
     return (
         <div className="inChat row col-10">
+          <h3>{currentChan.name}</h3>
           <div className="chatMain col-10">
             <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{setModalType, setModalTitle}} />
             <div className="row">
