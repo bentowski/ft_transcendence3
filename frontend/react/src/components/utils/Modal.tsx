@@ -116,29 +116,42 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-  // componentDidUpdate = (
-  //     prevProps: Readonly<{
-  //         title: string;
-  //         calledBy: string;
-  //         userChan?: any[];
-  //         userBan?: any[];
-  //         parentCallBack?: any;
-  //         chans?: any }>,
-  //     prevState: Readonly<{
-  //         user: any;
-  //         users: any[];
-  //         input: string;
-  //         allChans: ChanType[];
-  //         printed: any }>,
-  //     snapshot?: any) => {
-  //     const ctx: any = this.context;
-  //     if (prevState.allChans !== ctx.allChans) {
-  //         this.setState({allChans: ctx.allChans})
-  //     }
-  //     if (prevState.user !== ctx.user) {
-  //         this.setState({user: ctx.user})
-  //     }
-  // }
+  /*
+  componentDidUpdate = (
+      prevProps: Readonly<{
+        title: string,
+        calledBy: string,
+        userChan?: any[],
+        userBan?: any[],
+        parentCallBack?: any,
+        chans?: any}>,
+       prevState: Readonly<{
+         user: any,
+         friends: any[],
+         input: string,
+         allChans: Array<ChanType>,
+         protected: boolean,
+         alertRadio: boolean,
+         fieldName: string,
+         errName: string,
+         alertName: boolean,
+         fieldPass: string,
+         errPass: string,
+         alertPass: boolean,
+         printed: any,
+         type: string
+         banned: any[],
+         joined: any[],}>,
+       snapshot?: any) => {
+       const ctx: any = this.context;
+       if (prevState.allChans !== ctx.allChans) {
+           this.setState({allChans: ctx.allChans})
+       }
+       if (prevState.user !== ctx.user) {
+           this.setState({user: ctx.user})
+       }
+   }
+   */
 
   componentDidMount = async () => {
     const ctx: any = this.context

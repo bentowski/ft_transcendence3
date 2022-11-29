@@ -142,7 +142,6 @@ export class ChanController {
         @Req() req
     ) {
         const uid: string = req.user['auth_id'];
-        // console.log('cid:', cid, ', pass:', obj, ', uid:', uid)
         try {
             return this.chanService.verifyPass(cid, obj.pass, uid)
         } catch (error) {

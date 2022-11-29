@@ -34,16 +34,16 @@ export class GameGateway implements OnModuleInit
   }
 
   @SubscribeMessage('barMove')
-  onNewMessage(@MessageBody() body: any): void {
+  onNewMessage(@MessageBody() body: any) {
     // console.log(this.server.)
     this.server.to(body.room).emit('player2', {ratio: body.ratio, player: body.player, fromAdmin: body.fromAdmin, room: body.room})
 }
 
   @SubscribeMessage('joinRoom')
-  async onJoinRoom(client: Socket, body: any): Promise<void> {
+  async onJoinRoom(client: Socket, body: any) {
 	client.join(body.game.id);
   // console.log(this.server.rooms)
-  await this.partiesService.addToGame(body.game.id, body.auth_id);
+  this.partiesService.addToGame(body.game.id, body.auth_id);
 	// client.emit('joinedRoom', body.game);
   if (body.game.p1 === null)
     body.game.p1 = body.auth_id;
@@ -53,8 +53,21 @@ export class GameGateway implements OnModuleInit
   }
 
   @SubscribeMessage('moveBall')
-  onBallMove(@MessageBody() body: any): void {
+  onBallMove(@MessageBody() body: any) {
+    console.log(body.round)
     this.server.to(body.room).emit('ballMoved', body)
+  }
+
+  @SubscribeMessage('gameover')
+  gameOver(@MessageBody() body: any) {
+    console.log("AAAAAAAAAAAAAAAAAAA")
+    this.server.to(body.room).emit('gameoverSend', body)
+  }
+
+  @SubscribeMessage('endGame')
+  onEndGame(client: Socket, room: string) {
+    console.log("end game !")
+    this.server.to(room).emit('onEndGame', room)
   }
 //   @SubscribeMessage('leaveRoom')
 //   onLeaveRoom(client: Socket, room: string) {
