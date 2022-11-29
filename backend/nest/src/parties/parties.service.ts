@@ -36,6 +36,7 @@ export class PartiesService {
 
         parties.id = createPartiesDto.id;
         parties.login = createPartiesDto.login;
+        parties.nbPlayers = createPartiesDto.nbPlayers;
 
         return this.partiesRepository.save(createPartiesDto);
     }

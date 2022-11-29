@@ -19,6 +19,13 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
     let currentUser: any = this.context;
     // console.log(currentUser.user.username)
     // try {
+      let nbPlayers = 1;
+      let choose1 = document.getElementById("choose1") as HTMLInputElement
+      let choose2 = document.getElementById("choose2") as HTMLInputElement
+      if (choose1.checked)
+        nbPlayers = 1;
+      else if (choose2.checked)
+        nbPlayers = 2;
       await Request(
         "POST",
         {
@@ -27,7 +34,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
         },
         {
           login: currentUser.user.username,
-          public: true
+          nbplayers: nbPlayers
         },
         "http://localhost:3000/parties/create"
       );
@@ -54,8 +61,8 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           </header>
           <form className='mb-3'>
             <p>
-              <input type="radio" name="playerNum" value="1" id="1" />1 player<br />
-              <input type="radio" name="playerNum" value="2" id="2" />2 players
+              <input type="radio" name="playerNum" value="1" id="choose1" defaultChecked />1 player<br />
+              <input type="radio" name="playerNum" value="2" id="choose2" />2 players
             </p>
           </form>
           <footer>

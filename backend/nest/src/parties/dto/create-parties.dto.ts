@@ -7,4 +7,8 @@ export class CreatePartiesDto {
     @IsString()
     @IsNotEmpty()
     public login: string;
+
+    @IsString()
+    @IsNotEmpty()
+    public nbPlayers: string;
 }

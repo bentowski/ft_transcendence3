@@ -14,6 +14,11 @@ export class PartiesEntity {
   public login: string;
 
   @Column({
+    nullable: false,
+  })
+  public nbPlayers: string;
+
+  @Column({
     nullable: true,
   })
   public p1: string;
