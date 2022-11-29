@@ -1,5 +1,6 @@
 import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
 import Game from "./pages/Game";
+import GameUp from "./pages/GameUp";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
 import Chat from "./components/Chat/Chat";

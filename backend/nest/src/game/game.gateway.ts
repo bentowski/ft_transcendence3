@@ -37,6 +37,7 @@ export class GameGateway implements OnModuleInit
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(client: Socket, body: any) {
+    console.log("JOINROOM")
 	client.join(body.game.id);
   this.partiesService.addToGame(body.game.id, body.auth_id);
   if (body.game.p1 === null)
