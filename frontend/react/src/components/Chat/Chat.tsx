@@ -28,12 +28,12 @@ export const WebSocket = () => {
   const {
     user,
     setError,
-    //updateBannedFromList,
-    //updateMutedFromList,
-    //updateChanFromList,
+    updateBannedFromList,
+    updateMutedFromList,
+    updateChanFromList,
     updateAllChans,
-    //mutedFrom,
-    //bannedFrom
+    mutedFrom,
+    bannedFrom
   } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -47,6 +47,7 @@ export const WebSocket = () => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
       getChan();
+      updateChanFromList();
     });
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
@@ -60,6 +61,7 @@ export const WebSocket = () => {
     socket.on("userLeaveChannel", () => {
       getChan();
       // window.location.replace("http://localhost:8080/chat");
+      updateChanFromList();
       navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -75,26 +77,26 @@ export const WebSocket = () => {
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        //updateMutedFromList()
+        updateMutedFromList()
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        //updateBannedFromList();
+        updateBannedFromList();
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
-          //updateBannedFromList();
+          updateBannedFromList();
           //navigate("/chat/");
         }
         if (error.statusCode === 451) {
-          //updateMutedFromList();
+          updateMutedFromList();
         }
         if (error.statusCode === 452) {
-          //updateChanFromList();
+          updateChanFromList();
         }
       }
     }

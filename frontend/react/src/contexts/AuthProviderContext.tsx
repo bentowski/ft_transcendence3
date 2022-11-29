@@ -37,9 +37,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [blockedList, setBlockedList] = useState<string[]>([]);
   const [allChans, setAllChans] = useState<ChanType[]>([]);
-  //const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
-  //const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
-  //const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
+  const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
+  const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
+  const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
 
   const fetchUserList = async (): Promise<void> => {
     let list: UserType[] = [];
@@ -282,7 +282,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }
   */
 
-  /*
   const updateBannedFromList = useCallback(async () => {
 
     //if (action) {
@@ -314,10 +313,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
   }, [bannedFrom])
 
-
-   */
-
-  /*
   const updateMutedFromList = useCallback( async () => {
 
     //if (action) {
@@ -336,7 +331,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         {},
         "http://localhost:3000/user/chan/muted"
     )
-    setBannedFrom(mlist);
+    setMutedFrom(mlist);
     setTimeout(async () => {
       let mlist = await Request(
           "GET",
@@ -344,13 +339,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
           {},
           "http://localhost:3000/user/chan/muted"
       )
-      setBannedFrom(mlist);
+      setMutedFrom(mlist);
     }, 100010)
 
   }, [mutedFrom])
-   */
 
-  /*
+
   const updateChanFromList = useCallback(async () => {
 
     //if (action) {
@@ -376,7 +370,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     setChanFrom(jlist);
 
   }, [chanFrom])
-   */
+
 
   const updateAllChans = useCallback(async (): Promise<void> => {
     try {
@@ -445,9 +439,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       isToken,
       isTwoFa,
       allChans,
-      //bannedFrom,
-      //mutedFrom,
-      //chanFrom,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       errorShow,
       errorMsg,
       errorCode,
@@ -460,9 +454,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
-      //updateBannedFromList: () => updateBannedFromList(),
-      //updateChanFromList: () => updateChanFromList(),
-      //updateMutedFromList: () => updateMutedFromList(),
+      updateBannedFromList: () => updateBannedFromList(),
+      updateChanFromList: () => updateChanFromList(),
+      updateMutedFromList: () => updateMutedFromList(),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),
@@ -474,14 +468,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       isAuth,
       loading,
       allChans,
-      //bannedFrom,
-      //mutedFrom,
-      //chanFrom,
+      bannedFrom,
+      mutedFrom,
+      chanFrom,
       isToken,
       isTwoFa,
-      //updateBannedFromList,
-      //updateChanFromList,
-      //updateMutedFromList,
+      updateBannedFromList,
+      updateChanFromList,
+      updateMutedFromList,
       updateFriendsList,
       updateAllChans,
       userAuthentication,
