@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #3b3c3a;
   background-image: url(http://localhost:8080/pictures/bglogin.jpeg);
   background-size: cover;

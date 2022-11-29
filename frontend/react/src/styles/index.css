@@ -39,12 +39,20 @@ a:hover {
 	text-decoration-thickness: 2px;
 }
 
-.Page {
+.App {
 	background-image: url(http://localhost:8080/pictures/bgSponge3-blur.jpg);
 	background-size: cover;
 	background-position: center;
 	/* -webkit-backdrop-filter: blur(15px); assure la compatibilité avec safari */
     /* filter: blur(7px); */
+}
+
+.Page {
+	min-height: 90vh;
+}
+
+.main {
+	min-height: 80vh;
 }
 
 a:active {
@@ -195,6 +203,7 @@ img {
 	border-radius: 20px;
 	background-size: cover;
 	background-position: center;
+	overflow: hidden;
 	z-index: 999!important;
 }
 
@@ -313,7 +322,7 @@ img {
 	padding: 30px 15px 0 25px;
 	width: 60%;
   }
-  
+
    .sent_msg p {
 	background: #05728f none repeat scroll 0 0;
 	border-radius: 3px;
@@ -339,7 +348,7 @@ img {
 		border: solid 10px black;
 	} */
 
-  
+
 	/* background-image: linear-gradient(purple 10%, transparent); */
 
 /* .Menu {
