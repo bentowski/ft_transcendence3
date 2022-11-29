@@ -15,7 +15,8 @@ class Modal extends Component<
     userChan?: any[],
     userBan?: any[],
     parentCallBack?: any,
-    chans?: any
+    chans?: any,
+    chanList?: any
   },
   {
     user: any,
@@ -58,6 +59,11 @@ class Modal extends Component<
       banned: [],
       joined: [],
     };
+  }
+
+  componentWillReceiveProps = (props:any) => {
+    if (props.chanList !== this.props.chanList)
+    this.updateChan();
   }
 
   hiddenCreate = () => {
@@ -153,7 +159,7 @@ class Modal extends Component<
    }
    */
 
-  componentDidMount = async () => {
+   updateChan = async () => {
     const ctx: any = this.context
     this.setState({ banned: ctx.banned })
     this.setState({ joined: ctx.joined })
@@ -181,6 +187,10 @@ class Modal extends Component<
     }
     this.setState({ friends: users, allChans: chans });
     this.chans();
+   }
+
+  componentDidMount = () => {
+    this.updateChan();
   };
 
   // displayUser = (id: number, user: UserType) => {
@@ -620,6 +630,7 @@ class Modal extends Component<
                   id="public"
                   onChange={this.hiddenPass}
                   className='mx-2'
+                  defaultChecked
                 />
                 Public
               </div>
