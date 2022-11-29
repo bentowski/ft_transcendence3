@@ -152,6 +152,10 @@ export class UserController {
     @Param('id') id: string,
     @Res() res,
   ): Promise<Observable<object>> {
+    const user: UserEntity = await this.userService.findOneByAuthId(id);
+    if (!user) {
+      throw new NotFoundException('Error while fetching avatar from user: User dont exists')
+    }
     try {
       let imagename: string = await this.userService.getAvatar(id);
       imagename = this.userService.checkFolder(imagename);
