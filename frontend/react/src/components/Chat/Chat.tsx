@@ -170,7 +170,7 @@ export const WebSocket = () => {
               name: name,
               type: typep,
               password: pass,
-              owner: user.username,
+              owner: user.auth_id,
             },
             "http://localhost:3000/chan/create"
         );
