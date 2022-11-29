@@ -1,29 +1,31 @@
 import { Component, createRef } from 'react';
-import { socket } from '../contexts/WebSocketContextGame';
+import { useNavigate } from "react-router-dom";
+import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
-import { AuthContext } from '../contexts/AuthProviderContext';
-
-let ball = new Image();
-let p1 = new Image();
-let p2 = new Image();
-let bubble = new Image();
+import { io } from 'socket.io-client';
+// const navigate = useNavigate();
 
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
   socket.off('userJoinChannel')
-	// window.location.href = "http://localhost:8080/profil"
+	//console.log("ARRRG")
+  // navigate("/history")
+	window.location.href = "http://localhost:8080/"
 }
+
+const updateSocket = io("http://localhost:3000/update");
 
 let movePlayer = (ctx: any, move: number, globale: any, settings: any) => {
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player1 = [settings.player1[0], newPos]
       ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-	ctx.drawImage(p1, settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+      ctx.fillStyle = "white"
+      ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
     }
 }
 
@@ -32,7 +34,8 @@ let movePlayer1 = (ctx: any, globale: any, position: number, settings: any) => {
   if (newPos > 0 && newPos < settings.h - settings.playerSize) {
     settings.player1 = [settings.player1[0], newPos]
     ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-	ctx.drawImage(p1, settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+    ctx.fillStyle = "white"
+    ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
   }
 }
 
@@ -41,26 +44,32 @@ let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
     if (newPos > 0 && newPos < settings.h - settings.playerSize) {
       settings.player2 = [settings.player2[0], newPos]
       ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
-      ctx.drawImage(p2, settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
-}
+      ctx.fillStyle = "white"
+      ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.sizeBall * 4)
+    }
 }
 
 
 let print = (ctx: any, newPos: number, settings: any) => {
   let y = 0;
+
   while (y < settings.h) {
-	ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
+    ctx.fillStyle = "white"
+    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
   }
-  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-  ctx.drawImage(p1, settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
   settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
-  if (settings.ballPos[0] < 0)
+	if (settings.ballPos[0] < 0)
   	settings.ballPos[0] = 1;
   if (settings.ballPos[0] > settings.w)
   	settings.ballPos[0] = settings.w - 1;
+	ctx.fillStyle = "white"
   ctx.beginPath();
-  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, newPos - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
+  ctx.fillRect(settings.ballPos[0] - settings.sizeBall / 2, newPos - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.fill()
   ctx.closePath();
 }
@@ -83,11 +92,11 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   // =========== Players moves ==========
   if (settings.spec === false) {
   let move = 0;
-    if (settings.up === 1)  {
+    if (settings.up == 1)  {
       movePlayer(ctx, -1, globale, settings)
       move += 1;
     }
-    if (settings.down === 1) {
+    if (settings.down == 1) {
       movePlayer(ctx, 1, globale, settings)
       move += 1;
     }
@@ -118,8 +127,10 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 			}
 		}
 		else {
+			settings.nextRound = 1
 			settings.ballPos = [settings.w / 2, settings.h / 2]
 			settings.speed = settings.baseSpeed
+			settings.round++;
 			//! give point to p1
 		}
   	}
@@ -144,49 +155,71 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 			}
 		}
 		else {
+			settings.nextRound = 1
 			settings.ballPos = [settings.w / 2, settings.h / 2]
 			settings.speed = settings.baseSpeed
+			settings.round++;
 			//! give point to p2
 		}
     	settings.speed++;
   	}
-  	if (settings.ballPos[0] + settings.sizeBall < 0) {
-	    settings.end = 1
-  	}
-  	if (settings.ballPos[0] - settings.sizeBall > globale.width) {
-	    settings.end = 1
-  	}
 	}
-  	print(ctx, newPos, settings)
-  	if (settings.admin) {
-	    socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]})
-  	}
-  	if (!settings.end) {
-	    window.requestAnimationFrame(() => {
-      	moveBall(ctx, globale, settings)
-    	})
-
-  	}
+  //! don't forget to delete this
+	console.log(settings.round)
+	if (settings.round < 3)
+	{
+		// console.log("TEST")
+		// if (settings.nextRound != 0)
+		// {
+		// 	console.log("NEXT")
+		// 	settings.ballPos = [settings.w / 2, settings.h / 2]
+		// 	settings.speed = settings.baseSpeed
+		// 	settings.nextRound = 0
+		// 	print(ctx, newPos, settings)
+		// 	if (settings.admin) {
+		// 		socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]})
+		// 	}
+		// 	setTimeout(() => {
+		// 		window.requestAnimationFrame(() => {
+		// 			moveBall(ctx, globale, settings)
+		// 		})
+		// 	}, 1000);
+		// }
+		// else
+		// {
+			print(ctx, newPos, settings)
+			if (settings.admin) {
+				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
+			}
+			window.requestAnimationFrame(() => {
+				moveBall(ctx, globale, settings)
+			})
+		// }
+	}
+	else
+	{
+    socket.emit('endGame', settings.room)
+		gameOver()
+	}
 }
 
 let init = (ctx: any, globale: any, settings: any) => {
   //======ligne centrale=========
   let y = 0;
-  p1.src = "http://localhost:8080/pictures/barre2.png";
-  p2.src = "http://localhost:8080/pictures/barre1.png";
-  ball.src = "http://localhost:8080/pictures/ball.png";
-  bubble.src = "http://localhost:8080/pictures/bubble2.png";
   while (y < settings.h) {
-    ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
+    ctx.fillStyle = "white"
+    ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
   }
   //======joueurs========
-	ctx.drawImage(p1, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-	ctx.drawImage(p2, settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
 
   //========balle========
-	  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
-
+  ctx.fillStyle = "white"
+  ctx.fillRect(settings.ballPos[0] - settings.sizeBall, settings.ballPos[1] - settings.sizeBall / 4, settings.sizeBall, settings.sizeBall)
   ctx.fill()
 
   let infosClavier = (e: KeyboardEvent) => {
@@ -228,8 +261,8 @@ let init = (ctx: any, globale: any, settings: any) => {
 			  movePlayer2(ctx, globale, infos.ratio * settings.h, settings)
      }
 	})
-  socket.on('ballMoved', (ball) => {
-    if (settings.admin || ball.room !== settings.room)
+  socket.on('ballMoved', (ball, round) => {
+    if (ball.room !== settings.room)
       return ;
     if (!settings.admin && !settings.spec) {
       settings.ballPos[0] = (1 - ball.ballPos[0]) * settings.w;
@@ -241,6 +274,12 @@ let init = (ctx: any, globale: any, settings: any) => {
     }
     ctx.clearRect(0, 0, globale.width, globale.height)
     print(ctx, settings.ballPos[1], settings)
+		if (round)
+			settings.round = round
+  })
+  socket.on('onEndGame', (room) => {
+    if (room === settings.room)
+      gameOver();
   })
 }
 
@@ -256,8 +295,8 @@ let settings = {
   sizeBall: 0,
   ballPos: [0, 0],
   vector: [0, 0],
-  baseSpeed: 5,
   speed: 0,
+  baseSpeed: 2,
   middle: 0,
   end: 0,
   move: 0,
@@ -268,48 +307,52 @@ let settings = {
   gameStarted: false,
   timer: 5,
   callback: (countdown: number) => {},
+	round: 0,
+	nextRound: 0
 }
 
 let setSettings = () => {
   //===============interaction=================
-  const globale = document.getElementById('globale') as HTMLCanvasElement
-  const ctx: any = globale.getContext('2d')
+	const globale = document.getElementById('globale') as HTMLCanvasElement
+	const ctx: any = globale.getContext('2d')
 
-	// let currentUser:any = sessionStorage.getItem('data');
-	// currentUser = JSON.parse(currentUser);
-  let element = document.body as HTMLDivElement,
-  winWidth: number = element.clientWidth,
-  winHeight: number = element.clientHeight
+	let currentUser:any = sessionStorage.getItem('data');
+	currentUser = JSON.parse(currentUser);
+	let element = document.body as HTMLDivElement,
+	winWidth: number = element.clientWidth,
+	winHeight: number = element.clientHeight
 	let url = document.URL
 	url = url.substring(url.lastIndexOf("/") + 1)
-  if ((winWidth * 19) / 26 > winHeight)
-    winWidth = ((winHeight * 26) / 19)
-  else
-    winHeight = ((winWidth * 19) / 26)
+	if ((winWidth * 19) / 26 > winHeight)
+	  winWidth = ((winHeight * 26) / 19)
+	else
+	  winHeight = ((winWidth * 19) / 26)
   settings = {
     w: winWidth,
     h: winHeight,
     nbPlayer: 1,
     playerHighStart: winHeight / 2 + (winHeight / 25),
     playerSize: (winHeight / 30) * 4,
-    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 15)],
-    player2: [0 + winHeight / 20 - winHeight / 30, (winHeight / 2) - (winHeight / 15)],
-    playerSpeed: 10,
+    player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 25)],
+    player2: [0, (winHeight / 2) - (winHeight / 25)],
+    playerSpeed: 20,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
-    vector: [1, 0],
-	baseSpeed: settings.baseSpeed,
+    vector: [1, 1],
+		baseSpeed: settings.baseSpeed,
     speed: settings.baseSpeed,
     middle: winWidth / 2,
     end: 0,
     move: 0,
-	currentUser: settings.currentUser,
+		currentUser: currentUser.user,
     spec: true,
     admin: settings.admin,
     room: url,
     gameStarted: settings.gameStarted,
     timer: settings.timer,
-	callback: settings.callback,
+		callback: settings.callback,
+		round: settings.round,
+		nextRound: settings.nextRound
   }
   setTimeout(() => {init(ctx, globale, settings)}, 1000)
 }
@@ -320,7 +363,7 @@ let startGame = (ctx: any, globale: any) => {
     let countdown = setInterval(() => {
       console.log('Game start in ' + settings.timer + '...');
       settings.timer--;
-	  settings.callback(settings.timer)
+		  settings.callback(settings.timer)
       if (settings.timer === -1) {
         let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
         modal.classList.add("hidden")
@@ -330,28 +373,30 @@ let startGame = (ctx: any, globale: any) => {
     }, 1000);
   }
   else if (settings.gameStarted === false && settings.spec === true) {
-	settings.gameStarted = true;
-	settings.timer = -1;
-	let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+		settings.gameStarted = true;
+		settings.timer = -1;
+		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add("hidden")
     moveBall(ctx, globale, settings)
   }
 }
 
 let joinRoom = (game: any, ctx: any, globale: any) => {
-  let currentUser:any = settings.currentUser;
-  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.auth_id})
-  if (game.p1 === null || game.p1 === currentUser.auth_id) {
+  let currentUser:any = sessionStorage.getItem('data');
+  currentUser = JSON.parse(currentUser);
+  socket.emit('joinRoom', {"game":game, "auth_id": currentUser.user.auth_id})
+  if (game.p1 === null || game.p1 === currentUser.user.auth_id) {
     settings.admin = true;
   }
-  if ((game.p1 && game.p1 === currentUser.auth_id) || (game.p2 && game.p2 === currentUser.auth_id) || !game.p1 || !game.p2)
-    settings.spec = false
-  socket.on('userJoinChannel', (game:any) => {
-    if (game.id === settings.room) {
-      if (game.p1 !== null && game.p2 !== null) {
-        startGame(ctx, globale);
-      }
-    }
+  if ((game.p1 && game.p1 === currentUser.user.auth_id) || (game.p2 && game.p2 === currentUser.user.auth_id) || !game.p1 || !game.p2)
+  	settings.spec = false
+	socket.on('userJoinChannel', (game:any) => {
+	  console.log(game)
+	  if (game.id === settings.room) {
+	    if (game.p1 !== null && game.p2 !== null) {
+	      startGame(ctx, globale);
+	    }
+	  }
   })
 }
 
@@ -374,23 +419,22 @@ let joinUrl = async (ctx: any, globale: any) => {
 }
 
 
-class Game extends Component<{},{ w:number, h: number, timer: number}> {
-  static contextType = AuthContext;
+class Game extends Component<{},{w:number, h: number, timer: number}> {
   constructor(props: any)
   {
     super(props)
+    // this.myRef = React.createRef();
     this.state = {
       w: 0,
       h: 0,
 	  timer: 0,
     }
-
   }
 	private globale: any = createRef()
 
-  componentWillUnmount = () => {
-    gameOver();
-  }
+  // componentWillUnmount = () => {
+  //   gameOver();
+  // }
 
 //============ Settings game ===============
   componentDidMount = () => {
@@ -406,13 +450,11 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
         h: winHeight,
       })
 	settings.callback = this.updateState;
-  const ctx: any = this.context;
-  settings.currentUser = ctx.user;
     setSettings()
   }
 
   updateState = (countdown: number) => {
-	this.setState({timer: countdown})
+		this.setState({timer: countdown})
   }
 
   modalCountDown = () => {
@@ -425,9 +467,9 @@ class Game extends Component<{},{ w:number, h: number, timer: number}> {
   render() {
     window.onresize = () => {window.location.reload()}
     return (
-	  <div>
+      <div>
         <div className="canvas" id="canvas">
-          <canvas ref={this.globale} id="globale" width={this.state.w} height={this.state.h} style={{backgroundImage: "url(http://localhost:8080/pictures/bg-pong.jpg)", backgroundPosition: "center", backgroundSize: "cover"}}></canvas>
+          <canvas ref={this.globale} id="globale" width={this.state.w} height={this.state.h}></canvas>
           <ModalMatchWaiting title="Create new game" calledBy="newGame" />
         </div>
       </div>
