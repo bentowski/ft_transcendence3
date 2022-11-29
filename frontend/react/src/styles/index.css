@@ -84,10 +84,11 @@ a:active {
 }
 
 button {
-  border: 2px solid black;
+  border: 2px solid rgb(55, 71, 104);
+	background: rgb(67, 156, 202);
   border-radius: 10px;
-  background: none;
-  color: rgb(55, 55, 55);
+  /* background: none; */
+  color: rgb(55, 71, 104);
 }
 
 /* .btn:focus,.btn:active {
@@ -254,7 +255,10 @@ img {
 .Rwon {
 	/* color: #3b3c3a; */
 	background-color: rgb(172, 230, 61);
-	/* height: 100%; */
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	/* border: 2px solid red; */
+	height: 100%;
 	/* text-align: center; */
 	/* border-left-: 10px; */
 	/* overflow: hidden; */
