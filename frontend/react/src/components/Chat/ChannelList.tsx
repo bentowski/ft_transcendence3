@@ -8,7 +8,7 @@ import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from ".
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
-
+import ModalJoinChannel from '../utils/ModalJoinChannel'
 
 class ListOfDirectMessages extends Component<{chanList: ChanType[], user: UserType, parentCallBack: any}, {}>{
   render() {
@@ -45,6 +45,11 @@ class ListOfJoinedChans extends Component<{chanList: ChanType[], user: UserType,
     return ret
   }
 }
+
+function ModalJoinChannel(props: { parentCallBack: (chan: ChanType) => void }) {
+  return null;
+}
+
 // export const WebSocket
 export const ChannelList = (
   {chanList, room, user, parentCallBack}:
@@ -91,7 +96,8 @@ export const ChannelList = (
     return (
       <div className="channels col-2">
         <button className="btn btn-outline-dark shadow-none" onClick={parentCallBack.createChan}>Create Channel</button>
-        <button className="btn btn-outline-dark shadow-none" onClick={parentCallBack.joinChan}>Join Channel</button>
+        {/*<button className="btn btn-outline-dark shadow-none" onClick={parentCallBack.joinChan}>Join Channel</button>*/}
+        <ModalJoinChannel parentCallBack={joinRoom} />
         <div className="channelsList">
           <p>{chansJoined(chanList)} Channels</p>
           <div className="list-group">

@@ -1,11 +1,11 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
 import {Link, useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
-//import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
 import { /* MessagePayload, */ ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
+//import UserCards from '../utils/UserCards'
 //import ModalBanUser from '../utils/ModalBanUser';
 //import ModalMuteUser from '../utils/ModalMuteUser';
 import { ChannelList } from './ChannelList'
@@ -28,6 +28,7 @@ export const WebSocket = () => {
   const {
     user,
     setError,
+      allChans,
     updateBannedFromList,
     updateMutedFromList,
     updateChanFromList,
@@ -45,14 +46,18 @@ export const WebSocket = () => {
 
   useEffect(() => {
     socket.on('connect', () => {});
-    socket.on("userJoinChannel", () => {
+    socket.on("userJoinChannel", (obj: any) => {
       getChan();
-      updateChanFromList();
+      console.log('something happened join create channel')
+      updateChanFromList(obj.chan, true);
+      updateAllChans(obj.chan, true);
     });
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
           getChan();
+          updateAllChans(c, false);
+          updateChanFromList(c, false);
           window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
@@ -61,7 +66,6 @@ export const WebSocket = () => {
     socket.on("userLeaveChannel", () => {
       getChan();
       // window.location.replace("http://localhost:8080/chat");
-      updateChanFromList();
       navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -72,31 +76,31 @@ export const WebSocket = () => {
       socket.off('chanDeleted');
       socket.off('userLeaveChannel');
     }
-  });
+  }, []);
 
   useEffect(() => {
-    const handleMute = async (obj: PunishSocketType) => {
+    const handleMute = (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        updateMutedFromList()
+        updateMutedFromList(obj.chan, obj.status);
       }
     }
-    const handleBan = async (obj: PunishSocketType) => {
+    const handleBan = (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        updateBannedFromList();
+        updateBannedFromList(obj.chan, obj.status);
       }
     }
-    const handleError = async (error: ErrorType, auth_id: string) => {
+    const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
-          updateBannedFromList();
+          //updateBannedFromList();
           //navigate("/chat/");
         }
         if (error.statusCode === 451) {
-          updateMutedFromList();
+          //updateMutedFromList();
         }
         if (error.statusCode === 452) {
-          updateChanFromList();
+          //updateChanFromList();
         }
       }
     }
@@ -174,9 +178,9 @@ export const WebSocket = () => {
             },
             "http://localhost:3000/chan/create"
         );
-          socket.emit('chanCreated');
-          updateAllChans();
-          updateChanFromList();
+          socket.emit('chanCreated', {chanCreated, user});
+          updateAllChans(chanCreated, true);
+          updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated.id);
           //!
           await getChan();
@@ -208,6 +212,7 @@ export const WebSocket = () => {
   	chanList.forEach((chan) => {
   		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
   			socket.emit("joinRoom", chan.id, user.auth_id);
+              updateChanFromList(chan, true);
   		}
   	})
     if (index === -1) {
@@ -280,6 +285,8 @@ export const WebSocket = () => {
         setCurrentChan(newRoom)
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+        updateAllChans(newRoom, true);
+        updateChanFromList(newRoom, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
         setCurrentChan(newRoom)

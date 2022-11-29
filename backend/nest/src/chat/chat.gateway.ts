@@ -10,6 +10,7 @@ import { ChanService } from '../chans/chan.service';
 import { UserService } from '../user/user.service';
 import UserEntity from '../user/entities/user-entity';
 import ChanEntity from '../chans/entities/chan-entity';
+import {ChanMuteBanDto} from "../chans/dto/chan.dto";
 
 @WebSocketGateway({
   cors: {
@@ -245,16 +246,16 @@ export class ChatGateway implements OnModuleInit
     @SubscribeMessage('banToChannel')
     async banUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}): Promise<void> {
         try {
-            await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
+            const chan: ChanEntity = await this.chanService.banUserToChannel(body.auth_id, body.room, body.action)
             client.emit('banRoom');
+            const sent: ChanMuteBanDto = {
+                chan: chan,
+                auth_id: body.auth_id,
+                status: body.action
+            };
             this.server
                 .to(body.room)
-                .emit("bannedChannel",
-                    {
-                        room: body.room,
-                        auth_id: body.auth_id,
-                        status: body.action
-                    });
+                .emit("bannedChannel", sent);
             if (body.action === true)
                 this.launchCounterBan(client, body.auth_id, body.room);
         } catch (error) {
@@ -273,16 +274,16 @@ export class ChatGateway implements OnModuleInit
     @SubscribeMessage('muteToChannel')
     async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}): Promise<void> {
         try {
-            await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
+            const chan: ChanEntity = await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
             client.emit('muteRoom');
+            const sent: ChanMuteBanDto = {
+                chan: chan,
+                auth_id: body.auth_id,
+                status: body.action
+            }
             this.server
                 .to(body.room)
-                .emit("mutedChannel",
-                    {
-                        room: body.room,
-                        auth_id: body.auth_id,
-                        status: body.action
-                    });
+                .emit("mutedChannel", sent);
             if (body.action === true) {
                 this.launchCounterMute(client, body.auth_id, body.room);
             }
@@ -309,8 +310,13 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('chanCreated')
-  onChanCreated(): void {
-  	this.server.emit('userJoinChannel');
+  onChanCreated(@MessageBody() obj: { chan: ChanEntity, user: UserEntity }): void {
+      const sent: ChanMuteBanDto = {
+          chan: obj.chan,
+          auth_id: obj.user.auth_id,
+          status: true,
+      }
+  	this.server.emit('userJoinChannel', sent);
   }
 
   @SubscribeMessage('newParty')

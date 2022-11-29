@@ -44,15 +44,28 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
 export const PrintHeaderChan = (
   {chanList, room, socket, user, parentCallBack}:
   {chanList: ChanType[], room: any, user: UserType, socket: any, parentCallBack: any}) => {
+    const { allChans } = useAuthData();
+
     const setModalType = (newValue: any) => {
       parentCallBack.setModalType(newValue)
     }
+
     const setModalTitle = (newValue: any) => {
       parentCallBack.setModalTitle(newValue)
     }
+
+    const getChannelName = (): string => {
+        for (let index = 0; index < allChans.length; index++) {
+            if (allChans[index].id === room) {
+                return allChans[index]. name;
+            }
+        }
+        return 'Channel'
+    }
+
     return (
         <div className="chatMainTitle row">
-          <h1 className="col-10">Channel Name</h1>
+          <h1 className="col-10">#{getChannelName()}</h1>
           <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
           <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
         </div>

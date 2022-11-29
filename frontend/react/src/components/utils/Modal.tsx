@@ -36,7 +36,7 @@ class Modal extends Component<
     joined: any[],
   }
 > {
-  static context = AuthContext;
+  static contextType = AuthContext;
   constructor(props: any) {
     super(props);
     // users: [],
@@ -140,29 +140,55 @@ class Modal extends Component<
          alertPass: boolean,
          printed: any,
          type: string
-         banned: any[],
-         joined: any[],}>,
+         banned: ChanType[],
+         joined: ChanType[],}>,
        snapshot?: any) => {
-       const ctx: any = this.context;
-       if (prevState.allChans !== ctx.allChans) {
-           this.setState({allChans: ctx.allChans})
-       }
-       if (prevState.user !== ctx.user) {
+
+       //if (prevState.allChans !== ctx.allChans) {
+       //    this.setState({allChans: ctx.allChans})
+       //}
+
+      const ctx: any = this.context;
+      if (prevState.joined !== ctx.joined) {
+        //ctx.updateChanFromList();
+        console.log('set joined new state');
+        this.setState({joined: ctx.joined});
+        this.chans();
+        //this.render();
+      }
+      else if (prevState.banned !== ctx.banned) {
+        //ctx.updateBannedFromList();
+        console.log('set banned new state');
+        this.setState({banned: ctx.banned})
+        this.chans();
+        //this.render();
+      }
+      else if (prevState.allChans !== ctx.allChans) {
+        console.log('set allchans new state');
+        this.setState({allChans: ctx.allChans});
+        this.chans();
+        //this.render();
+      }
+      else if (prevState.user !== ctx.user) {
            this.setState({user: ctx.user})
        }
-   }
-   */
 
-  componentDidMount = async () => {
+   }
+  */
+
+  componentDidMount = () => {
     const ctx: any = this.context
     this.setState({ banned: ctx.banned })
     this.setState({ joined: ctx.joined })
+    this.setState({ allChans: ctx.allChans })
     let newUser: UserType = ctx.user
     if (newUser) {
       this.setState({ user: newUser });
     }
+    /*
     let users: UserType[] = [];
-    let chans: ChanType[] = [];
+    //let chans: ChanType[] = [];
+
     try {
       users = await Request(
         "GET",
@@ -170,17 +196,20 @@ class Modal extends Component<
         {},
         "http://localhost:3000/user/"
       );
+
       chans = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/chan"
       );
+
     } catch (error) {
       ctx.setError(error);
     }
-    this.setState({ friends: users, allChans: chans });
-    this.chans();
+    */
+    this.setState({ friends: ctx.userList /*, allChans: chans */ });
+    this.chans.bind(this);
   };
 
   // displayUser = (id: number, user: UserType) => {
@@ -266,6 +295,7 @@ class Modal extends Component<
   //   // }
   // };
 
+
   verifRadio = async () => {
     const radioPub = document.querySelector("#public") as HTMLInputElement;
     const radioPri = document.querySelector("#private") as HTMLInputElement;
@@ -285,6 +315,7 @@ class Modal extends Component<
     }
     return true;
   };
+
 
   verifName = () => {
     // let users = await getUsers();
@@ -334,6 +365,7 @@ class Modal extends Component<
     }
   };
 
+
   createChan = async () => {
     // const radioPub = document.querySelector("#public") as HTMLInputElement;
     // const radioPri = document.querySelector("#private") as HTMLInputElement;
@@ -349,6 +381,7 @@ class Modal extends Component<
       this.hiddenCreate()
     }
   };
+
 
   displayUser = (id: number, user: UserType) => {
     return (
@@ -436,39 +469,18 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfOwner = (chan: ChanType) => {
-    for (let index = 0; index < this.props.chans.length; index++) {
-      if (chan.id === this.props.chans[index].id) {
+  checkIfBanned = (chan: ChanType) => {
+    for (let index = 0; index < this.state.banned.length; index++) {
+      if (chan.id === this.state.banned[index].id) {
         return true;
       }
     }
     return false;
   }
 
-  checkIfBanned = async (chan: ChanType) => {
-    let banned = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/banned",
-    )
-    for (let index = 0; index < banned.length; index++) {
-      if (chan.id === banned[index].id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  checkIfAlreadyIn = async (chan: ChanType) => {
-    let joined = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/joined",
-    )
-    for (let index = 0; index < joined.length; index++) {
-      if (chan.id === joined[index].id) {
+  checkIfAlreadyIn = (chan: ChanType) => {
+    for (let index = 0; index < this.state.joined.length; index++) {
+      if (chan.id === this.state.joined[index].id) {
         return true;
       }
     }
@@ -486,16 +498,17 @@ class Modal extends Component<
     this.props.parentCallBack.joinRoom(newRoom)
   }
 
-  chans = async () => {
+  chans = () => {
+    console.log('process chans');
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!this.checkIfOwner(this.state.allChans[x]) &&
-          !await this.checkIfAlreadyIn(this.state.allChans[x]) &&
-          !await this.checkIfBanned(this.state.allChans[x])
+        if (/* !this.checkIfOwner(this.state.allChans[x]) && */
+          !this.checkIfAlreadyIn(this.state.allChans[x]) &&
+          !this.checkIfBanned(this.state.allChans[x])
         ) {
           ret.push(
             <div className="row TEST" key={x}>
@@ -541,20 +554,26 @@ class Modal extends Component<
         }
       }
     }
+    //return ret;
     this.setState({ printed: ret })
   };
 
   joinPrivateChan = async () => {
+    const ctx: any = this.context;
     let input = document.getElementById(
       "InputJoinPrivateChan"
     ) as HTMLInputElement;
-    let chan = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/chan/" + input.value
-    );
-    if (!chan) return;
+    let chan = undefined;
+    try {
+      chan = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/" + input.value
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     this.props.parentCallBack.joinRoom(chan, true);
   };
 
@@ -724,7 +743,7 @@ class Modal extends Component<
                 ></input>
                 <button onClick={this.joinPrivateChan}>JOIN</button>
               </div>
-              {/* <div>{this.chans()}</div> */}
+              {/*<div>{this.chans()}</div>*/}
               <div>{this.state.printed}</div>
             </div>
             <footer>
@@ -738,6 +757,7 @@ class Modal extends Component<
   };
 
   render() {
+    console.log('process render');
     return (
       <div className="Modal hidden" id="Modal">
         {this.printer()}

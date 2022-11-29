@@ -147,7 +147,7 @@ const ModalChangeUsername = (): JSX.Element => {
 
   return (
     <div className="changeusername">
-      <Modal show={show} onHide={handleClose} backdrop='static' keyboard={false}>
+      <Modal show={show} onHide={handleClose} keyboard={false}>
         <div className="p-4 pb-1">
           <Modal.Header className="mb-3">
             <h2>Change Username</h2>
