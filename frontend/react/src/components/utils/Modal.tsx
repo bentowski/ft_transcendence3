@@ -484,6 +484,16 @@ class Modal extends Component<
 
   joinRoom = (newRoom: ChanType) => {
     this.props.parentCallBack.joinRoom(newRoom)
+    // console.log(join)
+    // this.hiddenJoin()
+  }
+
+  joinRoomPublic = (key: number) => {
+    this.props.parentCallBack.joinRoom(
+      this.state.allChans[key],
+      true
+    )
+    this.hiddenJoin()
   }
 
   chans = async () => {
@@ -506,10 +516,7 @@ class Modal extends Component<
                     :
                     <button
                       onClick={() =>
-                        this.props.parentCallBack.joinRoom(
-                          this.state.allChans[x],
-                          true
-                        )
+                        this.joinRoomPublic(x)
                       }
                     >
                       JOIN
