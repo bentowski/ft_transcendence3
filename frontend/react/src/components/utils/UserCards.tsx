@@ -95,7 +95,7 @@ class UserCards extends Component<
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      await Request(
+      let newChan: ChanType = await Request(
         "POST",
         {
           Accept: "application/json",
@@ -109,6 +109,7 @@ class UserCards extends Component<
         },
         "http://localhost:3000/chan/createpriv"
       );
+      // window.location.href = "http://localhost:8080/chat/"/*  + newChan.id */
     } catch (error) {
       ctx.setError(error);
     }
@@ -227,6 +228,7 @@ class UserCards extends Component<
             className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
           >
             <div className="col-5 h-100 overflow-hidden buttons">
+              {/* <Link to={"/chat"}> */}
               <button className="p-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
