@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
-import {ChanType, UserType} from "../../types"
+import {ChanType, PartiesType, UserType} from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
 
@@ -38,7 +38,7 @@ class UserCards extends Component<
     };
   }
 
-  updateUser = (user : {auth_id: number, status: number}) => {
+  updateUser = (user : {auth_id: number, status: number}): void => {
     if (user.auth_id === this.state.id) {
       let str:string;
       if (user.status === 2)
@@ -51,7 +51,7 @@ class UserCards extends Component<
     }
   }
 
-  setSocket = () => {
+  setSocket = (): void => {
     if (this.state.loaded !== 'ok') {
       socket.on(('onUpdateUser'), (user : {auth_id: number, status: number}) => {
         this.updateUser(user);
@@ -60,15 +60,15 @@ class UserCards extends Component<
     }
   }
 
-  getCurrentUser = () => {
+  getCurrentUser = (): UserType => {
     const ctx: any = this.context;
     return ctx.user;
   };
 
-  checkIfChanExists = (title: string) => {
+  checkIfChanExists = (title: string): boolean => {
     const ctx: any = this.context;
     const chans: ChanType[] = ctx.allChans;
-    for (let index = 0; index < chans.length; index++) {
+    for (let index: number = 0; index < chans.length; index++) {
       if (title === chans[index].name) {
         return true;
       }
@@ -76,9 +76,9 @@ class UserCards extends Component<
     return false;
   }
 
-  createChanName = (u1: UserType, u2: UserType) => {
+  createChanName = (u1: UserType, u2: UserType): string => {
     let title: string = u1.username.slice(0,3) + "-" + u2.username.slice(0,3);
-    let x = 0;
+    let x: number = 0;
     while (this.checkIfChanExists(title)) {
       title = title + x.toString();
       x++;
@@ -86,16 +86,16 @@ class UserCards extends Component<
     return title;
   }
 
-  createChan = async () => {
+  createChan = async (): Promise<void> => {
     const ctx: any = this.context;
     try {
-      let u2 = await Request(
+      let u2: UserType = await Request(
           "GET",
           {},
           {},
           "http://localhost:3000/user/name/" + this.state.login,
       )
-      let newChan = await Request(
+      await Request(
           "POST",
           {
             Accept: "application/json",
@@ -104,12 +104,11 @@ class UserCards extends Component<
           {
             name: this.createChanName(ctx.user, u2),
             type: "direct",
-            user_1: ctx.user.auth_id,
-            user_2: u2.auth_id,
+            user_1_id: ctx.user.auth_id,
+            user_2_id: u2.auth_id,
           },
           "http://localhost:3000/chan/createpriv"
       );
-      console.log('NEW PRIV CHAN = ', newChan);
     } catch (error) {
       ctx.setError(error);
     }
@@ -181,32 +180,45 @@ class UserCards extends Component<
      */
   };
 
-  startNewGame = async () => {
-    await Request(
-      "POST",
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      {
-        login: this.state.login,
-        public: true
-      },
-      "http://localhost:3000/parties/create"
-    );
-
+  startNewGame = async (): Promise<void> => {
+    const ctx: any = this.context;
+    try {
+      await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            login: this.state.login,
+            public: true
+          },
+          "http://localhost:3000/parties/create"
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
     socket.emit("askForGameUp", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
-    console.log("emit : ", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
-    let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+    let modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
-    let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-    let ids = parties.map((p:any) => {
+    let parties: PartiesType[] = [];
+    try {
+      parties = await Request(
+          'GET',
+          {},
+          {},
+          "http://localhost:3000/parties/"
+      )
+    } catch (error) {
+      ctx.setError(error);
+    }
+    let ids: number[] = parties.map((p:any) => {
       return p.id;
     })
     window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
   }
 
-  renderUserCards = (id: number) => {
+  renderUserCards = (id: number): JSX.Element => {
     if (!this.props.stat) {
       if (this.props.avatar) {
         return (
@@ -310,22 +322,22 @@ class UserCards extends Component<
     );
   };
 
-  openInvite = (body: {"to": string, "from": string}) => {
+  openInvite = (body: {"to": string, "from": string}): void => {
       if (body.to === this.getCurrentUser().auth_id) {
-        let modal = document.getElementById("ModalMatchInvite" + this.state.login)as HTMLDivElement;
+        let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login)as HTMLDivElement;
         modal.classList.remove('hidden')
     }
   }
 
-  closeInvite = (body: {"to": string, "from": string}) => {
+  closeInvite = (body: {"to": string, "from": string}): void => {
     console.log("close !")
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal = document.getElementById('ModalMatchInvite' + this.state.login)as HTMLDivElement;
+      let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login)as HTMLDivElement;
       modal.classList.add('hidden')
     }
   }
 
-  initSocket = () => {
+  initSocket = (): void => {
     if (this.state.socket !== "on") {
       this.setState({socket: 'on'});
       socket.on("onAskForGameUp", (body: {"to": string, "from": string}) => {
@@ -348,6 +360,7 @@ class UserCards extends Component<
     }
   }
 
+  /*
   callback = (status: string) => {
     if (status === "accepted") {
       // socket.emit
@@ -356,30 +369,36 @@ class UserCards extends Component<
 
     }
   }
+   */
 
-  componentDidMount = async () => {
-    //console.log('this.state.id = ', this.state.id);
-    let user = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/id/" + this.state.id
-    );
-    let status = "offline";
+  componentDidMount = async (): Promise<void> => {
+    const ctx: any = this.context;
+    let user: UserType | undefined = undefined;
+    try {
+      user = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/id/" + this.state.id
+      );
+    } catch (error) {
+      ctx.setError(error);
+    }
+    let status: string = "offline";
     if (user) {
-      if (user.status === 1) status = "online";
+      if (user.status === 1) {
+        status = "online";
+      }
       this.setState({ login: user.username, online: status });
     }
     this.setState({ ssid: this.getCurrentUser().auth_id });
     this.setState({ ssname: this.getCurrentUser().username });
     this.initSocket();
-    // console.log(this.getCurrentUser())
     this.setSocket();
   };
 
-  render() {
-    //console.log("avatar cest un bon film ", this.props.avatar);
-    let items: any = this.renderUserCards(1);
+  render(): JSX.Element {
+    let items: JSX.Element = this.renderUserCards(1);
     return (
       <div
         key={(this.state.id * 5) / 3}

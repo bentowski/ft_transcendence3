@@ -32,28 +32,27 @@ export class UpdateGateway implements OnModuleInit
   }
 
   @SubscribeMessage('askForGameUp')
-  onAskForGameUp(client: Socket, body: {"to": string, "from": string}) {
+  onAskForGameUp(client: Socket, body: {"to": string, "from": string}): void {
 	  this.server.emit('onAskForGameUp', body);
   }
 
   @SubscribeMessage('askForGamedown')
-  onAskForGameDown(client: Socket, body: {"to": string, "from": string}) {
+  onAskForGameDown(client: Socket, body: {"to": string, "from": string}): void {
     this.server.emit('onAskForGameDown', body);
   }
 
   @SubscribeMessage('inviteAccepted')
-  onInviteAccepted(client: Socket, body: {"to": string, "from": string, "partyID": string}) {
-    console.log(body)
+  onInviteAccepted(client: Socket, body: {"to": string, "from": string, "partyID": string}): void {
 	  this.server.emit('onInviteAccepted', body);
   }
 
   @SubscribeMessage('inviteDeclined')
-  onInviteDeclined(client: Socket, body: {"to": string, "from": string}) {
+  onInviteDeclined(client: Socket, body: {"to": string, "from": string}): void {
 	  this.server.emit('onInviteDeclined', body);
   }
 
   @SubscribeMessage('updateUser')
-  onUpdateUser(client: Socket, user: { auth_id: number; status: number }) {
+  onUpdateUser(client: Socket, user: { auth_id: number; status: number }): void {
 	this.server.emit('onUpdateUser', user);
   }
 

@@ -11,7 +11,7 @@ import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
 import {HandleError} from "./components/utils/HandleError";
 
-const RequireAuth = () => {
+const RequireAuth = (): JSX.Element => {
   let { isAuth, isToken, isTwoFa, loading } = useAuthData();
   const location = useLocation();
 
@@ -29,7 +29,7 @@ const RequireAuth = () => {
   return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
-const Layout = () => {
+const Layout = (): JSX.Element => {
   return (
     <main className="App">
       <HandleError />
@@ -38,7 +38,7 @@ const Layout = () => {
   );
 };
 
-const App = () => {
+const App = (): JSX.Element => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 

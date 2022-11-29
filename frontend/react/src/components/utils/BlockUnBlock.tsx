@@ -2,13 +2,13 @@ import {useEffect, useState} from "react";
 import {useAuthData} from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 
-const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
-    const [status, setStatus] = useState(false);
-    const [loading, setLoading] = useState(false);
+const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
+    const [status, setStatus] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const { user, blockedList, updateBlockedList, setError } = useAuthData();
 
-    useEffect(() => {
-        const updateStatus = async () => {
+    useEffect((): void => {
+        const updateStatus = async (): Promise<void> => {
             if (auth_id !== undefined) {
                 setLoading(true)
                 try {
@@ -30,7 +30,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
         updateStatus();
     }, [auth_id, blockedList])
 
-    const blockunblockUser = async () => {
+    const blockunblockUser = async (): Promise<void> => {
         try {
             await Request(
                 "PATCH",
@@ -40,7 +40,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }) => {
                 { auth_id: auth_id, action: !status},
                 "http://localhost:3000/user/update/blocked",
             )
-            setStatus((prevState: any) => !prevState);
+            setStatus((prevState: boolean) => !prevState);
             updateBlockedList(user, !status);
         } catch (error) {
             setError(error);

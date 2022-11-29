@@ -5,7 +5,7 @@ import MatchNav from "../components/MatchNav";
 import FriendsNav from "../components/FriendsNav";
 
 class Page extends Component {
-  render() {
+  render(): JSX.Element {
     return (
       <div className="Page p-4 d-flex flex-column h-100 bg-image" id="background-wrap">
 		<div id="background-wrap">

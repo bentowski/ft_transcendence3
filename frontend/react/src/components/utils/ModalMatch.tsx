@@ -3,6 +3,7 @@ import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 import io from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
+import {PartiesType} from "../../types";
 
 const socket = io("http://localhost:3000/update");
 
@@ -10,15 +11,15 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
 
   static contextType = AuthContext;
 
-  hidden = () => {
-    let modal = document.getElementById("ModalMatch") as HTMLDivElement;
+  hidden = (): void => {
+    let modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
     modal.classList.add('hidden')
   }
 
-  createParties = async () => {
+  createParties = async (): Promise<void> => {
     let currentUser: any = this.context;
     // console.log(currentUser.user.username)
-    // try {
+    try {
       await Request(
         "POST",
         {
@@ -32,20 +33,25 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
         "http://localhost:3000/parties/create"
       );
       socket.emit('newParty');
-      let parties = await Request('GET', {}, {}, "http://localhost:3000/parties/")
-      let ids = parties.map((p: any) => {
+      let parties: PartiesType[] = await Request(
+          'GET',
+          {},
+          {},
+          "http://localhost:3000/parties/"
+      )
+      let ids: number[] = parties.map((p: any) => {
         return p.id;
       })
       this.hidden()
       window.location.href = "http://localhost:8080/game/" + Math.max(...ids)//currentUser.user.username
-    // } catch (error) {
-    //   const ctx: any = this.context;
-    //   ctx.setError(error);
-    // }
+    } catch (error) {
+       const ctx: any = this.context;
+       ctx.setError(error);
+    }
   }
 
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className='Modal hidden' id='ModalMatch'>
         <div className='p-4 pb-1'>

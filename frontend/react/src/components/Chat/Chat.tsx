@@ -1,13 +1,13 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
 import {Link, useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
+//import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
+import { /* MessagePayload, */ ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
-import ModalBanUser from '../utils/ModalBanUser';
-import ModalMuteUser from '../utils/ModalMuteUser';
+//import ModalBanUser from '../utils/ModalBanUser';
+//import ModalMuteUser from '../utils/ModalMuteUser';
 import { ChannelList } from './ChannelList'
 import { PrintChannel } from './PrintChannel'
 
@@ -28,12 +28,12 @@ export const WebSocket = () => {
   const {
     user,
     setError,
-    updateBannedFromList,
-    updateMutedFromList,
-    updateChanFromList,
+    //updateBannedFromList,
+    //updateMutedFromList,
+    //updateChanFromList,
     updateAllChans,
-    mutedFrom,
-    bannedFrom
+    //mutedFrom,
+    //bannedFrom
   } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -62,8 +62,6 @@ export const WebSocket = () => {
       // window.location.replace("http://localhost:8080/chat");
       navigate("/chat/")
     });
-    if (msgInput.current)
-      msgInput.current.focus();
     if (chanList.length && user.auth_id !== undefined)
   		setLoaded('ok')
     return () => {
@@ -76,25 +74,27 @@ export const WebSocket = () => {
 
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
-      if (obj.auth_id === user.auth_id)
-        updateMutedFromList()
+      if (obj.auth_id === user.auth_id){
+        //updateMutedFromList()
+      }
     }
     const handleBan = async (obj: PunishSocketType) => {
-      if (obj.auth_id === user.auth_id)
-        updateBannedFromList();
+      if (obj.auth_id === user.auth_id){
+        //updateBannedFromList();
+      }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
-          updateBannedFromList();
+          //updateBannedFromList();
           //navigate("/chat/");
         }
         if (error.statusCode === 451) {
-          updateMutedFromList();
+          //updateMutedFromList();
         }
         if (error.statusCode === 452) {
-          updateChanFromList();
+          //updateChanFromList();
         }
       }
     }
@@ -282,6 +282,8 @@ export const WebSocket = () => {
         changeActiveRoom(chanToJoin.id);
         setCurrentChan(newRoom)
       }
+      if (msgInput.current)
+        msgInput.current.focus();
     }
   };
 
@@ -334,7 +336,7 @@ export const WebSocket = () => {
               room={room}
               usersInChan={chanUser}
               currentChan={currentChan}
-              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList}}
+              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList, changeActiveRoom, setRoom}}
                />
         </div>
       </div>

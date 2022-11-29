@@ -1,8 +1,7 @@
 import { Component } from "react";
 
-class PageNotFound extends Component<any, any> {
-
-    render() {
+class PageNotFound extends Component {
+    render(): JSX.Element {
         return (
             <div>
                 PageNotFound

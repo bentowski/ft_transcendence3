@@ -1,7 +1,6 @@
 import { Component } from 'react';
-import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContextGame';
+import { socket } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
-// import Menu from '../components/Menu'
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';

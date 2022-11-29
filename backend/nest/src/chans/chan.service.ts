@@ -39,7 +39,7 @@ export class ChanService {
 		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new Chan: Name should be alphanum')
 		}
-		const chanInDb = await this.chanRepository.findOne({
+		const chanInDb: ChanEntity = await this.chanRepository.findOne({
 			where: { name: name },
 		});
 		if (chanInDb) {
@@ -81,7 +81,7 @@ export class ChanService {
 		if (!name.match(/^[\w-]+$/)) {
 			throw new BadRequestException('Error while creating new chan: Name should be alphanum')
 		}
-		let hashed = undefined;
+		let hashed: string = undefined;
 		if ((type === 'public' || type === 'private') && (password !== null && password !== '')) {
 			throw new BadRequestException('Error while creating new Chan: Public or Private chans cant have a password');
 		}
@@ -93,7 +93,7 @@ export class ChanService {
 		} else {
 			hashed = null;
 		}
-        const chanInDb = await this.chanRepository.findOne({
+        const chanInDb: ChanEntity = await this.chanRepository.findOne({
             where: { name: name },
         });
         if (chanInDb) {
@@ -129,7 +129,7 @@ export class ChanService {
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
-        const chan = await this.chanRepository.findOne({
+        const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { name: name },
 			relations: { banUser: true, chanUser: true, muteUser: true },
 		});
@@ -137,7 +137,7 @@ export class ChanService {
     }
 
 	async findOnebyID(id?: string): Promise<ChanEntity> {
-        const chan = await this.chanRepository.findOne({
+        const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: id },
 			relations: { banUser: true, chanUser: true, muteUser: true }
 		},);
@@ -148,16 +148,16 @@ export class ChanService {
         await this.chanRepository.delete(id);
     }
 
-	async addMessage(msg: Msg) {
-		try {
-			const chan = await this.chanRepository.findOne({ where: { id: msg.room }});
-			if (!chan) {
-				const error = {
-					statusCode: 404,
-					message: 'Error while adding new message: Can find channel',
-				}
-				return error;
+	async addMessage(msg: Msg): Promise<ChanEntity> {
+		const chan: ChanEntity = await this.chanRepository.findOne({ where: { id: msg.room }});
+		if (!chan) {
+			const error = {
+				statusCode: 404,
+				message: 'Error while adding new message: Can find channel',
 			}
+			throw error;
+		}
+		try {
 			chan.messages.push(msg);
 			await this.chanRepository.save(chan);
 			return chan;
@@ -168,18 +168,18 @@ export class ChanService {
 	}
 
 	async banUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOne({
+		const chan: ChanEntity = await this.chanRepository.findOne({
 				where: { id: room },
 				relations: ['banUser', 'chanUser'],
 			});
 		if (!chan) {
 			throw new NotFoundException('Error while banning user from channel: Cant find channel');
 		}
-		const user = await this.userService.findOneByAuthId(iduser);
+		const user: UserEntity = await this.userService.findOneByAuthId(iduser);
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
 		}
-		const banning = chan.banUser.find(elem => elem === user);
+		const banning: UserEntity = chan.banUser.find(elem => elem === user);
 		if (banning) {
 			const error = {
 				statusCode: 450,
@@ -187,14 +187,6 @@ export class ChanService {
 			}
 			throw error;
 		}
-		/*
-		const user_ch = chan.chanUser.find(elem => elem === user);
-		console.log('user ch = ', user_ch);
-		if (!user_ch) {
-			throw new BadRequestException('Error while banning user from channel: User not present in this channel');
-		}
-		 */
-		//console.log('hellooooo');
 		if (action === true) {
 			const index: number = chan.chanUser.findIndex(obj => {
 				return obj.auth_id === iduser;
@@ -220,19 +212,18 @@ export class ChanService {
 	}
 
 	async muteUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOne({
+		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
 			relations: ['muteUser','chanUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while muting user from channel: Cant find channel');
 		}
-		const user = await this.userService.findOneByAuthId(iduser);
-		//console.log('user = ', user);
+		const user: UserEntity = await this.userService.findOneByAuthId(iduser);
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
 		}
-		const found = chan.muteUser.find(elem => elem === user);
+		const found: UserEntity = chan.muteUser.find(elem => elem === user);
 		if (found) {
 			const error = {
 				statusCode: 451,
@@ -240,12 +231,6 @@ export class ChanService {
 			}
 			throw error;
 		}
-		/*
-		const user_ch = chan.chanUser.find(elem => elem === user);
-		if (!user_ch) {
-			throw new BadRequestException('Error while muting user from channel: User not present in this channel');
-		}
-		 */
 		if (action === true) {
 			chan.muteUser.push(user);
 		}
@@ -265,13 +250,14 @@ export class ChanService {
 	}
 
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOne({
+		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
 			relations: ['chanUser', 'banUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while adding user to a channel: Cant find channel');
 		}
+		console.log('//// chan found')
 		if (chan.banUser.find(s => s.user_id === user.user_id)) {
 			const error = {
 				statusCode: 450,
@@ -279,6 +265,7 @@ export class ChanService {
 			}
 			throw error;
 		}
+		console.log('/////p ushing user to channel');
 		chan.chanUser.push(user);
 		try {
 			return await this.chanRepository.save(chan);
@@ -289,14 +276,13 @@ export class ChanService {
 	}
 
 	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOne({
+		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
 			relations: ['chanUser', 'banUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		// console.log("avant : ", chan.chanUser)
 		if (chan.owner === user.username) {
 			try {
 				await this.chanRepository.delete(chan.id);
@@ -308,8 +294,6 @@ export class ChanService {
 			}
 		}
 		chan.chanUser.splice(chan.chanUser.findIndex((u) => u === user))
-		// console.log("apres : ", chan.chanUser)
-		// chan.chanUser.push(user);
 		try {
 			return await this.chanRepository.save(chan);
 		} catch (error) {
@@ -318,64 +302,29 @@ export class ChanService {
 
 	}
 
-	/* async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-		const chan = await this.chanRepository.findOne({
-			where: {id: room},
-			relations: { chanUser: true },
-		});
-		if (!chan)
-			return ;
-		if (chan.chanUser && chan.chanUser.length) {
-			const index = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
-			if (index >= 0) {
-				chan.chanUser = chan.chanUser.filter((u) => u.auth_id !== user.auth_id);
-			}
-		}
-		try {
-			return await this.chanRepository.save(chan);
-		} catch (error) {
-			throw new Error();
-		}
-
-	} */
-
-	/*
-	async banUnBanUser(action: boolean, idroom: string, iduser: string) {
-		const chan = this.findOnebyID(idroom);
-		if (!chan) {
-			throw new BadRequestException('Error while banning user from chan: Cant find chan')
-		}
-		const user = await this.userService.findOneByAuthId(iduser);
-		if (!user) {
-			throw new BadRequestException('Error while banning user from channel: Cant find user');
-		}
-		if (action === true) {
-
-		}
-	}
-	 */
-
-	async getBanned(idroom: string) {
+	async getBanned(idroom: string): Promise<UserEntity[]> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where:{id: idroom},
 			relations: ['banUser']
 		});
-		if (!chan)
+		if (!chan) {
 			throw new NotFoundException('Error while fetching banned users: Cant find channel');
+		}
 		return chan.banUser;
 	}
 
-	async getMuted(idroom: string) {
+	async getMuted(idroom: string): Promise<UserEntity[]> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: {id: idroom},
 			relations: ['muteUser']
 		});
-		if (!chan)
+		if (!chan) {
 			throw new NotFoundException('Error while fetching muted users: Cant find channel');
+		}
 		return chan.muteUser;
 	}
 
-	async getUsers(idroom: string) {
+	async getUsers(idroom: string): Promise<UserEntity[]> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: {id: idroom},
 			relations: ['chanUser']
@@ -383,7 +332,37 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while fetching users: Cant find channel');
 		}
-		//console.log('list of users in chan = ', chan.chanUser);
-		return chan.chanUser; //.map((users) => users);
+		return chan.chanUser;
+	}
+
+	async verifyPass(cid: string, pass: string, uid: string) {
+		const user: UserEntity = await this.userService.findOneByAuthId(uid);
+		if (!user) {
+			throw new NotFoundException('Error while verifying channel password: User not found');
+		}
+		console.log('find user ', user)
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where: { id: cid }
+		})
+		if (!chan) {
+			throw new NotFoundException('Error while verifying channel password: Chan not found')
+		}
+		console.log('here is pass ', pass)
+		if (!pass || pass === '') {
+			throw new BadRequestException('Error while verifying channel password: Chan password is empty')
+		}
+		console.log('password is not empty ', pass)
+		if (await argon2.verify(chan.password, pass)) {
+			console.log('password is ok')
+			try {
+				await this.addUserToChannel(user, cid);
+			} catch (error) {
+				throw new Error(error);
+			}
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 }
