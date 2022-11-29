@@ -5,39 +5,47 @@ import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
+import { AuthContext } from '../contexts/AuthProviderContext';
 // const navigate = useNavigate();
 
-let gameOver = async () => {
+let sendEndGame = async () => {
+	// Request(
+	// 							'POST',
+	// 							{
+	// 								Accept: "application/json",
+	// 								"Content-Type": "application/json",
+	// 							},
+	// 							{
+	// 								"user_one": settings.p1Name,
+	// 								"user_two": settings.p1Name,
+	// 								"score_one": 10,
+	// 								"score_two": 3
+	// 							},
+	// 							"localhost:3000/parties/histories/create"
+	// 						)
+	const test = await Request(
+		'DELETE',
+		{},
+		{},
+		"localhost:3000/parties/" + settings.room
+	)
+	console.log(test)
+}
+
+let gameOver = () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
 	socket.off('userJoinChannel')
   socket.off('onEndGame')
 	console.log("ARRRG")
-	// if (settings.admin)
-	// {
-	// 	// Request(
-	// 	// 							'POST',
-	// 	// 							{
-	// 	// 								Accept: "application/json",
-	// 	// 								"Content-Type": "application/json",
-	// 	// 							},
-	// 	// 							{
-	// 	// 								"user_one": settings.p1Name,
-	// 	// 								"user_two": settings.p1Name,
-	// 	// 								"score_one": 10,
-	// 	// 								"score_two": 3
-	// 	// 							},
-	// 	// 							"localhost:3000/parties/histories/create"
-	// 	// 						)
-	// 	await Request(
-	// 		'DELETE',
-	// 		{},
-	// 		{},
-	// 		"localhost:3000/parties/" + settings.room
-	// 	)
-	// }
-  // navigate("/history")
+	if (settings.admin)
+	{
+		sendEndGame()
+	}
+	setTimeout(() => {
+
+	}, 1000)
 	window.location.href = "http://localhost:8080/profil"
 }
 
@@ -76,7 +84,6 @@ let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
 
 let print = (ctx: any, newPos: number, settings: any) => {
   let y = 0;
-
   while (y < settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
@@ -97,6 +104,7 @@ let print = (ctx: any, newPos: number, settings: any) => {
   ctx.fill()
   ctx.closePath();
 }
+
 
 let moveBall = (ctx: any, globale: any, settings: any) => {
   let newPos: number = settings.ballPos[1]
@@ -128,7 +136,6 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
     }
   }
-
   // ============== End Players Moves ===============
   if (settings.admin) {
   	if (settings.ballPos[0] + settings.sizeBall / 2 >= settings.player1[0]) {
@@ -188,43 +195,19 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
     	settings.speed++;
   	}
 	}
-  //! don't forget to delete this
-	console.log(settings.round)
 	if (settings.round < 3)
 	{
-		// console.log("TEST")
-		// if (settings.nextRound != 0)
-		// {
-		// 	console.log("NEXT")
-		// 	settings.ballPos = [settings.w / 2, settings.h / 2]
-		// 	settings.speed = settings.baseSpeed
-		// 	settings.nextRound = 0
-		// 	print(ctx, newPos, settings)
-		// 	if (settings.admin) {
-		// 		socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h]})
-		// 	}
-		// 	setTimeout(() => {
-		// 		window.requestAnimationFrame(() => {
-		// 			moveBall(ctx, globale, settings)
-		// 		})
-		// 	}, 1000);
-		// }
-		// else
-		// {
-			print(ctx, newPos, settings)
-			if (settings.admin) {
-				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
-			}
-			window.requestAnimationFrame(() => {
-				moveBall(ctx, globale, settings)
-			})
-		// }
+		print(ctx, newPos, settings)
+		if (settings.admin)
+			socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
+		window.requestAnimationFrame(() => {
+			moveBall(ctx, globale, settings)
+		})
 	}
 	else
 	{
     socket.emit('endGame', settings.room)
 		gameOver()
-		return;
 	}
 }
 
@@ -279,7 +262,10 @@ let init = (ctx: any, globale: any, settings: any) => {
 	socket.on('player2', (infos) => {
     if (infos.room !== settings.room)
       return ;
+			console.log("AAAAAAAAAAA")
+			console.log(infos.player, " : ", settings.currentUser.auth_id)
 		 if (infos.player !== settings.currentUser.auth_id) {
+			 console.log("BAsoFDNAO")
       if (settings.spec && infos.fromAdmin)
         movePlayer1(ctx, globale, infos.ratio * settings.h, settings)
       else
@@ -375,7 +361,7 @@ let setSettings = () => {
     move: 0,
 		currentUser: settings.currentUser,
     spec: true,
-    admin: settings.admin,
+    admin: false,
     room: url,
     gameStarted: settings.gameStarted,
     timer: settings.timer,
@@ -487,7 +473,8 @@ const changeSize = () => {
 
 
 class Game extends Component<{},{w:number, h: number, timer: number}> {
-  constructor(props: any)
+	static contextType = AuthContext;
+	constructor(props: any)
   {
     super(props)
     // this.myRef = React.createRef();
@@ -519,6 +506,9 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
         h: winHeight,
       })
 	settings.callback = this.updateState;
+	const ctx: any = this.context;
+  settings.currentUser = ctx.user;
+	console.log("ICCICICICIICCICI : ", settings.currentUser)
     setSettings()
   }
 

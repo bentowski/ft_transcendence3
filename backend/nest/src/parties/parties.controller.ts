@@ -8,7 +8,7 @@ import {UserAuthGuard} from "../auth/guards/user-auth.guard";
 import PartiesEntity from "./entities/parties-entity";
 
 @Controller('parties')
-@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+// @UseGuards(AuthGuard('jwt'), UserAuthGuard)
 export class PartiesController {
     constructor(private readonly partiesService: PartiesService) { }
 

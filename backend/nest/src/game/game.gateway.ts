@@ -26,25 +26,19 @@ export class GameGateway implements OnModuleInit
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      //console.log("Game : ");
-      //console.log(socket.id);
-      //console.log("Connected");
-      //console.log("======= FIN =========");
     });
   }
 
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
-    // console.log(this.server.)
+    console.log("PUTAINNNN")
     this.server.to(body.room).emit('player2', {ratio: body.ratio, player: body.player, fromAdmin: body.fromAdmin, room: body.room})
 }
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(client: Socket, body: any) {
 	client.join(body.game.id);
-  // console.log(this.server.rooms)
   this.partiesService.addToGame(body.game.id, body.auth_id);
-	// client.emit('joinedRoom', body.game);
   if (body.game.p1 === null)
     body.game.p1 = body.auth_id;
   else if (body.game.p1 !== null && body.game.p1 !== body.auth_id && body.game.p2 === null)
@@ -60,7 +54,6 @@ export class GameGateway implements OnModuleInit
 
   @SubscribeMessage('gameover')
   gameOver(@MessageBody() body: any) {
-    console.log("AAAAAAAAAAAAAAAAAAA")
     this.server.to(body.room).emit('gameoverSend', body)
   }
 
