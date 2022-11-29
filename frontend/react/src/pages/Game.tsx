@@ -9,13 +9,13 @@ import { AuthContext } from '../contexts/AuthProviderContext';
 import { UserType } from '../types';
 // const navigate = useNavigate();
 
-let gameOver = async () => {
+let gameOver = () => {
   // PRINT WIN & Redirect ==============================
 	socket.off('player2')
   socket.off('ballMoved')
   socket.off('userJoinChannel')
   // navigate("/history")
-	window.location.href = "http://localhost:8080/profil"
+	window.location.href = "http://localhost:8080/"
 }
 
 const updateSocket = io("http://localhost:3000/update");
@@ -200,7 +200,6 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
 	{
     socket.emit('endGame', settings.room)
 		gameOver()
-		return;
 	}
 }
 
@@ -290,8 +289,6 @@ let settings = {
   nbPlayer: 1,
   playerHighStart: 0,
   playerSize: 0,
-	p1Name: "",
-	p2Name: "",
   player1: [0, 0],
   player2: [0, 0],
   playerSpeed: 0,
@@ -316,22 +313,22 @@ let settings = {
 
 let setSettings = () => {
   //===============interaction=================
-  const globale = document.getElementById('globale') as HTMLCanvasElement
-  const ctx: any = globale.getContext('2d')
+	const globale = document.getElementById('globale') as HTMLCanvasElement
+	const ctx: any = globale.getContext('2d')
 
 	let element = document.body as HTMLDivElement,
 	winWidth: number = element.clientWidth,
 	winHeight: number = element.clientHeight
 	let url = document.URL
 	url = url.substring(url.lastIndexOf("/") + 1)
-  if ((winWidth * 19) / 26 > winHeight)
-    winWidth = ((winHeight * 26) / 19)
-  else
-    winHeight = ((winWidth * 19) / 26)
+	if ((winWidth * 19) / 26 > winHeight)
+	  winWidth = ((winHeight * 26) / 19)
+	else
+	  winHeight = ((winWidth * 19) / 26)
   settings = {
     w: winWidth,
     h: winHeight,
-    nbPlayer: settings.nbPlayer,
+    nbPlayer: 1,
     playerHighStart: winHeight / 2 + (winHeight / 25),
     playerSize: (winHeight / 30) * 4,
     player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 25)],
@@ -339,7 +336,7 @@ let setSettings = () => {
     playerSpeed: 5,
     sizeBall:  winHeight / 30,
     ballPos: [winWidth / 2, winHeight / 2],
-    vector: [1, 0],
+    vector: [1, 1],
 		baseSpeed: settings.baseSpeed,
     speed: settings.baseSpeed,
     middle: winWidth / 2,
@@ -417,44 +414,6 @@ let joinUrl = async (ctx: any, globale: any) => {
   }
 }
 
-const changeSize = () => {
-	let oldWidth = settings.w
-	let oldHeight = settings.h
-	let element = document.body as HTMLDivElement;
-	let newWidth = element.clientWidth
-	let newHeight = element.clientHeight
-	let newRatio = newWidth / oldWidth
-	settings = {
-		w: newWidth,
-		h: newHeight,
-		nbPlayer: settings.nbPlayer,
-		playerHighStart: newHeight / 2 + (newHeight / 25),
-		playerSize: (newHeight / 30) * 4,
-		p1Name: settings.p1Name,
-		p2Name: settings.p2Name,
-		player1: [(settings.player1[0] * newWidth) / oldWidth, (settings.player1[1] * newWidth) / oldWidth],
-		player2: [(settings.player2[0] * newWidth) / oldWidth, (settings.player2[1] * newWidth) / oldWidth],
-		playerSpeed: 10,
-		sizeBall:  newHeight / 30,
-		ballPos: [(settings.ballPos[0] * newWidth) / oldWidth, (settings.ballPos[1] * newWidth) / oldWidth],
-		vector: [1, 0],
-		baseSpeed: settings.baseSpeed,
-		speed: settings.baseSpeed,
-		middle: newWidth / 2,
-		end: 0,
-		move: 0,
-		currentUser: settings.currentUser,
-		spec: true,
-		admin: settings.admin,
-		room: settings.room,
-		gameStarted: settings.gameStarted,
-		timer: settings.timer,
-		callback: settings.callback,
-		round: settings.round,
-		nextRound: settings.nextRound
-	}
-}
-
 
 class Game extends Component<{},{w:number, h: number, timer: number}> {
   static contextType = AuthContext;
@@ -471,8 +430,6 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 	private globale: any = createRef()
 
   // componentWillUnmount = () => {
-	// 	console.log("OOOOOOOOOOOOOPS")
-	// 	socket.emit('endGame', settings.room)
   //   gameOver();
   // }
 
@@ -508,7 +465,7 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
   }
 
   render() {
-    window.onresize = () => {changeSize()}
+    window.onresize = () => {window.location.reload()}
     return (
       <div>
         <div className="canvas" id="canvas">
