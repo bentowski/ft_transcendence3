@@ -24,8 +24,10 @@ class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 }
 
 export const PrintChannel = (
-  { msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack }:
-    { msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any }) => {
+  {msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack}:
+  {msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any}) => {
+  const { mutedFrom, bannedFrom } = useAuthData();
+  const navigate = useNavigate();
 
   // const {user} = useAuthData()
   const setModalType = (newValue: any) => {
@@ -44,8 +46,50 @@ export const PrintChannel = (
     parentCallBack.setChanList(newValue)
   }
 
-  const onSubmit = () => {
+  useEffect(() => {
+    console.log('use effect ban cycle')
+    const checkIfBanned = async () => {
+      console.log('banned from = ', bannedFrom, ', room = ', room)
+      let ban = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/banned"
+      )
+      for (let i = 0; i < ban.length; i++) {
+        if (ban[i].id === room) {
+          console.log('this user is banned');
+          socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+          parentCallBack.changeActiveRoom("");
+          parentCallBack.setMessage([]);
+          parentCallBack.setRoom("null");
+          parentCallBack.getChan();
+          window.location.href = "http://localhost:8080/chat"; //!
+        }
+      }
+    }
+    checkIfBanned();
+  }, [bannedFrom])
+
+  const checkIfMuted = async () => {
+    let mutedList = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/chan/muted"
+    )
+    console.log('muted list = ', mutedList, ', room = ', room);
+    for (let i = 0; i < mutedList.length; i++) {
+      if (mutedList[i].id === room) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const onSubmit = async () => {
     // check if array is empty or contain only whitespace
+if (!await checkIfMuted()) {
     if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
       if (value === "/leave") {
         socket.emit("leaveRoom", { room: room, auth_id: user.auth_id });
@@ -63,10 +107,14 @@ export const PrintChannel = (
           auth_id: user.auth_id,
           room: room,
         });
-      }
+        }
+      setValue("");
+        } else {
+      setValue("Youve been muted");
+      setTimeout(() => {
+        setValue("");
+      }, 1800)
     }
-    setValue("");
-  };
 
   const pressEnter = (e: any) => {
     if (e.key === "Enter") {

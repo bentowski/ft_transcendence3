@@ -10,17 +10,17 @@ import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 
 class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
-  render() {
+    render() {
     let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
 	if (!chan)
 		return
     let tab: any[] = chan.admin
     if ((tab && tab.findIndex((u: any) => u === this.props.user.auth_id) > -1) || chan.owner === this.props.user.auth_id) {
       return (
-          <div className="row">
-            <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-            <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
-          </div>
+         <div className="row">
+             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
+             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
+         </div>
       )
     }
   }

@@ -25,6 +25,7 @@ export class GameGateway implements OnModuleInit
   server: Server
 
   onModuleInit() {
+
     this.server.on('connection', (socket) => {
       //console.log("Game : ");
       //console.log(socket.id);
