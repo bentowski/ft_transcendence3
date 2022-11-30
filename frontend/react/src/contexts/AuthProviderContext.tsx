@@ -273,6 +273,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }
 
   const updateBannedFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    console.log('update banned from list called  ', chan.id);
     if (action) {
       setBannedFrom(prevState => [...prevState, chan])
       setTimeout(() => {
@@ -311,7 +312,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         setChanFrom(newArr);
       }
   }, [chanFrom])
-
 
   const updateAllChans = useCallback(async (): Promise<void> => {
     try {

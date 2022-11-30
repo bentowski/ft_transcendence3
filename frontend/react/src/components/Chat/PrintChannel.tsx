@@ -26,8 +26,8 @@ class UsersInActualchannel extends Component<{usersList: UserType[]}, {}> {
 export const PrintChannel = (
   {msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack}:
   {msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any}) => {
-  const { mutedFrom } = useAuthData();
-  const [isMute, setIsMute] = useState(false);
+  const { mutedFrom, bannedFrom } = useAuthData();
+  const navigate = useNavigate();
 
   const setModalType = (newValue: any) => {
     parentCallBack.setModalType(newValue)
@@ -44,6 +44,31 @@ export const PrintChannel = (
   const setChanList = (newValue: any) => {
     parentCallBack.setChanList(newValue)
   }
+
+  useEffect(() => {
+    console.log('use effect ban cycle')
+    const checkIfBanned = async () => {
+      console.log('banned from = ', bannedFrom, ', room = ', room)
+      let ban = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/banned"
+      )
+      for (let i = 0; i < ban.length; i++) {
+        if (ban[i].id === room) {
+          console.log('this user is banned');
+          socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+          parentCallBack.changeActiveRoom("");
+          parentCallBack.setMessage([]);
+          parentCallBack.setRoom("null");
+          parentCallBack.getChan();
+          window.location.href = "http://localhost:8080/chat"; //!
+        }
+      }
+    }
+    checkIfBanned();
+  }, [bannedFrom])
 
   const checkIfMuted = async () => {
     let mutedList = await Request(

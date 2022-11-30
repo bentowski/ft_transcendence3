@@ -49,9 +49,6 @@ export const WebSocket = () => {
     socket.on("userJoinChannel", () => {
       getChan();
     });
-    socket.on("leftRoom", (room: ChanType) => {
-      updateChanFromList(room, false);
-    })
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
@@ -80,11 +77,38 @@ export const WebSocket = () => {
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateMutedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        //socket.emit('leaveRoom' , {room: obj.room, auth_id: user.auth_id})
+        console.log('updating banned from list ', obj.room)
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateBannedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
+        socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+        changeActiveRoom("");
+        setRoom("null");
+        getChan();
+        window.location.href = "http://localhost:8080/chat"; //!
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
@@ -161,7 +185,6 @@ export const WebSocket = () => {
         setError(error);
         return;
       }
-      try {
         chanCreated = await Request(
             "POST",
             {
@@ -176,23 +199,20 @@ export const WebSocket = () => {
             },
             "http://localhost:3000/chan/create"
         );
-          socket.emit('chanCreated');
-          updateAllChans();
-          updateChanFromList(chanCreated, true);
-          navigate('/chat/' + chanCreated.id);
-          //!
-          await getChan();
-          setUrl('/chat/' + chanCreated.id);
-          // joinRoom(chanCreated);
-          // changeActiveRoom(chanCreated.id)
-          //setRoom(chanCreated.id)
-          //!
-          // joinUrl();
-          // setTimeout(joinUrl, 5000);
-        
-      } catch (error) {
-        setError(error);
-      }
+        socket.emit('chanCreated');
+        updateAllChans();
+        updateChanFromList(chanCreated, true);
+
+        //!
+        await getChan();
+        setUrl('/chat/' + chanCreated.id);
+        navigate('/chat/' + chanCreated.id);
+        // joinRoom(chanCreated);
+        // changeActiveRoom(chanCreated.id)
+        //setRoom(chanCreated.id)
+        //!
+        // joinUrl();
+        // setTimeout(joinUrl, 5000);
     } catch (error) {
       setError(error);
     }
