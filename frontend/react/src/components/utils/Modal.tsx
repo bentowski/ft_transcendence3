@@ -67,12 +67,13 @@ class Modal extends Component<
   // }
 
   componentDidUpdate(props:any, state:any) {
-    if (JSON.stringify(props.chanList) !== JSON.stringify(this.state.allChans)) {
-      setTimeout(() => this.updateChan(), 1000)
+    // console.log("props", props.chanList, "state", state.allChans, "this.allchans",this.state.allChans)
+    if (props.chanList.length !== this.state.allChans.length) {
+      setTimeout(() => this.updateChan(), 10)
       // this.updateChan();
-      console.log(props.chanList, state.allChans)
-      console.log(JSON.stringify(props.chanList) === JSON.stringify(this.state.allChans))
-      console.log("update")
+      // console.log(props.chanList, this.state.allChans)
+      // console.log(JSON.stringify(props.chanList) === JSON.stringify(this.state.allChans))
+      // console.log("update")
     }
   }
 
