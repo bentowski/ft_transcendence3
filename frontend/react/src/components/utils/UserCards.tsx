@@ -54,6 +54,7 @@ class UserCards extends Component<
   setSocket = (): void => {
     if (this.state.loaded !== 'ok') {
       socket.on(('onUpdateUser'), (user : {auth_id: number, status: number}) => {
+        console.log("onUpdateUser")
         this.updateUser(user);
       })
       this.setState({loaded: 'ok'})
@@ -341,16 +342,20 @@ class UserCards extends Component<
     if (this.state.socket !== "on") {
       this.setState({socket: 'on'});
       socket.on("onAskForGameUp", (body: {"to": string, "from": string}) => {
+        console.log("onAskForGameUp")
         this.openInvite(body);
       });
       socket.on("onAskForGameDown", (body: {"to": string, "from": string}) => {
+        console.log("onAskForGameDown")
         this.closeInvite(body);
       });
       socket.on("onInviteAccepted", (body: {"to": string, "from": string, "partyID": string}) => {
+        console.log("onInviteAccepted")
         if (body.to === this.getCurrentUser().auth_id)
           window.location.href = "http://localhost:8080/game/" + body.partyID;
       });
       socket.on("onInviteDeclined", (body: {"to": string, "from": string}) => {
+        console.log("onInviteDeclined")
         if (body.to === this.getCurrentUser().auth_id) {
           let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
           modal.classList.add('hidden');

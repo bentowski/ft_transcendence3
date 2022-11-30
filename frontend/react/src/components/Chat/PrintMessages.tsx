@@ -43,6 +43,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
     const [messages, setMessage] = useState<MessagePayload[]>([]);
       useEffect(() => {
         socket.on('onMessage', (newMessage: MessagePayload) => {
+          console.log("onMessage")
           let channels: Array<ChanType> = chanList;
           let index: number = chanList.findIndex((c: ChanType) => c.id === newMessage.room);
           if (channels[index] !== undefined) {

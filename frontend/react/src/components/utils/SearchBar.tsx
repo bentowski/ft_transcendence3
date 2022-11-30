@@ -16,6 +16,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	useEffect(() => {
 		if (inputSelector === "MatchNav") {
 			socket.on('onNewParty', () => {
+				console.log("onNewParty")
 				updateUrl()
 			})
 			return () => {

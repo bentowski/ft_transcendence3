@@ -44,12 +44,17 @@ export const WebSocket = () => {
 // ================= UseEffects ===================
 
   useEffect(() => {
-    socket.on('connect', () => {});
+    socket.on('connect', () => {
+      console.log("connect")
+
+    });
     socket.on("userJoinChannel", () => {
+      console.log("userJoinChannel")
       getChan();
       updateChanFromList();
     });
     socket.on("chanDeleted", (roomId: string) => {
+      console.log("chanDeleted")
       chanList.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
           getChan();
@@ -59,6 +64,7 @@ export const WebSocket = () => {
       })
     })
     socket.on("userLeaveChannel", () => {
+      console.log("userLeaveChannel")
       getChan();
       // window.location.replace("http://localhost:8080/chat");
       updateChanFromList();
@@ -76,16 +82,19 @@ export const WebSocket = () => {
 
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
+      console.log("mutedChannel")
       if (obj.auth_id === user.auth_id){
         updateMutedFromList()
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
+      console.log("bannedChannel")
       if (obj.auth_id === user.auth_id){
         updateBannedFromList();
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
+      console.log("error")
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
@@ -187,7 +196,7 @@ export const WebSocket = () => {
           //!
           // joinUrl();
           // setTimeout(joinUrl, 5000);
-        
+
       } catch (error) {
         setError(error);
       }

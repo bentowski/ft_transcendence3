@@ -9,176 +9,6 @@ import { UserType } from "../types"
 import { AuthContext } from '../contexts/AuthProviderContext';
 const updateSocket = io("http://localhost:3000/update");
 
-// let moveBall = (ctx: any, globale: any, settings: any) => {
-//   let newPos: number = settings.ballPos[1]
-//   ctx.clearRect(0, 0, globale.width, globale.height)
-//   if (settings.admin) {
-//     if (settings.ballPos[1] + (settings.sizeBall / 2) >= globale.height) {
-//       newPos = globale.height - (settings.sizeBall / 2)
-//       settings.vector = [settings.vector[0], -settings.vector[1]]
-//       settings.ballPos = [settings.ballPos[0], newPos]
-//     }
-//     if (settings.ballPos[1] - (settings.sizeBall / 2) < 0) {
-//       newPos = (0 + (settings.sizeBall / 2))
-//       settings.vector = [settings.vector[0], -settings.vector[1]]
-//       settings.ballPos = [settings.ballPos[0], newPos]
-//     }
-//   }
-//   // =========== Players moves ==========
-//   if (settings.spec === false) {
-//   let move = 0;
-//     if (settings.up == 1)  {
-//       movePlayer(ctx, -1, globale, settings)
-//       move += 1;
-//     }
-//     if (settings.down == 1) {
-//       movePlayer(ctx, 1, globale, settings)
-//       move += 1;
-//     }
-//     if (move === 1) {
-//       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser.auth_id, "fromAdmin": settings.admin, "room": settings.room})
-//     }
-//   }
-//   // ============== End Players Moves ===============
-//   if (settings.admin) {
-//   	if (settings.ballPos[0] + settings.sizeBall / 2 > settings.player1[0]) {
-// 			if (settings.ballPos[1] >= settings.player1[1] && settings.ballPos[1] <= settings.player1[1] + settings.sizeBall * 4) {
-// 				let percent = Math.floor((settings.ballPos[1] - settings.player1[1]) / ((settings.player1[1] + settings.sizeBall * 4) - settings.player1[1]) * 100)
-// 				if (percent <= 20) {
-// 					settings.vector = [-0.5, -Math.sqrt(3) / 2];
-// 				}
-// 				else if (percent <= 40) {
-// 					settings.vector = [-Math.sqrt(3) / 2, -0.5];
-// 				}
-// 				else if (percent <= 60) {
-// 					settings.vector = [-1, 0];
-// 				}
-// 				else if (percent <= 80) {
-// 					settings.vector = [-Math.sqrt(3) / 2, 0.5];
-// 				}
-// 				else {
-// 					settings.vector = [-0.5, Math.sqrt(3) / 2];
-// 				}
-// 			}
-// 			else {
-// 				settings.nextRound = 1
-// 				// settings.ballPos = [settings.w / 2, settings.h / 2]
-// 				// settings.speed = settings.baseSpeed
-// 				// settings.round++;
-// 				//! give point to p1
-// 			}
-//   	}
-//   	if (settings.ballPos[0] < settings.player2[0] + settings.sizeBall * 1.5)
-//   	{
-// 		if (settings.ballPos[1] >= settings.player2[1] && settings.ballPos[1] <= settings.player2[1] + settings.sizeBall * 4) {
-// 			let percent = Math.floor((settings.ballPos[1] - settings.player2[1]) / ((settings.player2[1] + settings.sizeBall * 4) - settings.player2[1]) * 100)
-// 			if (percent <= 20) {
-// 				settings.vector = [0.5, -Math.sqrt(3) / 2];
-// 			}
-// 			else if (percent <= 40) {
-// 				settings.vector = [Math.sqrt(3) / 2, -0.5];
-// 			}
-// 			else if (percent <= 60) {
-// 				settings.vector = [1, 0];
-// 			}
-// 			else if (percent <= 80) {
-// 				settings.vector = [Math.sqrt(3) / 2, 0.5];
-// 			}
-// 			else {
-// 				settings.vector = [0.5, Math.sqrt(3) / 2];
-// 			}
-// 		}
-// 		else {
-// 			settings.nextRound = 1
-//
-// 			//! give point to p2
-// 		}
-//     	settings.speed++;
-//   	}
-// 	}
-// 	if (settings.round < 3)
-// 	{
-// 		if (settings.nextRound == 0)
-// 		{
-// 			if (settings.admin)
-// 				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
-// 			print(ctx, newPos, settings)
-// 			window.requestAnimationFrame(() => {
-// 				moveBall(ctx, globale, settings)
-// 			})
-// 		} else {
-// 			settings.ballPos = [settings.w / 2, settings.h / 2]
-// 			settings.speed = settings.baseSpeed
-// 			settings.round++;
-// 			settings.nextRound = 0;
-// 			if (settings.admin)
-// 				socket.emit('moveBall', {"room": settings.room, "ballPos": [settings.ballPos[0] / settings.w, settings.ballPos[1] / settings.h], "round": settings.round})
-// 			print(ctx, newPos, settings)
-// 			setTimeout( () => {
-// 				window.requestAnimationFrame(() => {
-// 					moveBall(ctx, globale, settings)
-// 				})
-// 			}, 3000)
-// 		}
-// 	}
-// 	else
-// 	{
-//     socket.emit('endGame', settings.room)
-// 		gameOver()
-// 	}
-// }
-
-
-// let setSettings = () => {
-//   //===============interaction=================
-//   const globale = document.getElementById('globale') as HTMLCanvasElement
-//   const ctx: any = globale.getContext('2d')
-//
-// 	// let currentUser:any = sessionStorage.getItem('data');
-// 	// currentUser = JSON.parse(currentUser);
-//   let element = document.body as HTMLDivElement,
-//   winWidth: number = element.clientWidth,
-//   winHeight: number = element.clientHeight
-// 	let url = document.URL
-// 	url = url.substring(url.lastIndexOf("/") + 1)
-//   if ((winWidth * 19) / 26 > winHeight)
-//     winWidth = ((winHeight * 26) / 19)
-//   else
-//     winHeight = ((winWidth * 19) / 26)
-//   settings = {
-//     w: winWidth,
-//     h: winHeight,
-//     nbPlayer: settings.nbPlayer,
-//     playerHighStart: winHeight / 2 + (winHeight / 25),
-//     playerSize: (winHeight / 30) * 4,
-// 		p1Name: settings.p1Name,
-// 		p2Name: settings.p2Name,
-// 		player1: [winWidth - winHeight / 20, (winHeight / 2) - (winHeight / 15)],
-//     player2: [0 + winHeight / 20 - winHeight / 30, (winHeight / 2) - (winHeight / 15)],
-//     playerSpeed: 10,
-//     sizeBall:  winHeight / 30,
-//     ballPos: [winWidth / 2, winHeight / 2],
-//     vector: [1, 0],
-// 		baseSpeed: settings.baseSpeed,
-//     speed: settings.baseSpeed,
-//     middle: winWidth / 2,
-//     end: 0,
-//     move: 0,
-// 		currentUser: settings.currentUser,
-//     spec: true,
-//     admin: false,
-//     room: url,
-//     gameStarted: settings.gameStarted,
-//     timer: settings.timer,
-// 		callback: settings.callback,
-// 		round: settings.round,
-// 		nextRound: settings.nextRound,
-// 		isLoaded: settings.isLoaded
-//   }
-//   setTimeout(() => {init(ctx, globale, settings)}, 1000)
-// }
-//
-
 let gameOver = () => {
   socket.off('ballMoved')
 	socket.off('players')
@@ -225,14 +55,28 @@ let joinRoom = async () => {
 // 	}
 // }
 
-const printNumber = (ctx: any, globale: any) => {
-
+const printNumber = (ctx: any, number: any) => {
+  console.log(number)
 }
 
 const printGame = (ctx: any) => {
 	let y = 0;
-  console.log("Settings Printable : ", settings)
-  while (y < settings.h) {
+  if (settings.spec === false) {
+    let move = 0;
+      if (settings.up == 1)  {
+        movePlayer(ctx, -1, settings)
+        move += 1;
+      }
+      if (settings.down == 1) {
+        movePlayer(ctx, 1, settings)
+        move += 1;
+      }
+      if (move === 1) {
+        socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
+      }
+    }
+  ctx.clearRect(0, 0, settings.w, settings.h)
+  while (y <= settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
     y += settings.sizeBall * 2
@@ -246,9 +90,10 @@ const printGame = (ctx: any) => {
 	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
 	ctx.fill()
 	ctx.closePath();
-	// window.requestAnimationFrame(() => {
-	// 	printGame(ctx, globale)
-	// })
+  socket.emit("pleaseBall", settings.room)
+	window.requestAnimationFrame(() => {
+		printGame(ctx)
+	})
   // settings.ballPos = [settings.ballPos[0] + (settings.vector[0] * settings.speed), settings.ballPos[1] + (settings.vector[1]  * settings.speed)]
 	// if (settings.ballPos[0] < 0)
   // 	settings.ballPos[0] = 1;
@@ -256,35 +101,16 @@ const printGame = (ctx: any) => {
   // 	settings.ballPos[0] = settings.w - 1;
 }
 
-let movePlayer = (ctx: any, move: number, globale: any, settings: any) => {
+let movePlayer = (ctx: any, move: number, settings: any) => {
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
-    if (newPos > 0 && newPos < settings.h - settings.playerSize) {
+    if (newPos > 0 && newPos < settings.h - settings.playerSize)
       settings.player1 = [settings.player1[0], newPos]
-      ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-      ctx.fillStyle = "white"
-      ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.sizeBall * 4)
-    }
 }
 
-let movePlayer1 = (ctx: any, globale: any, position: number, settings: any) => {
-  let newPos = position
-  settings.player1 = [settings.player1[0], newPos]
-  // ctx.clearRect(settings.player1[0] - 1, 0, settings.sizeBall + 2, globale.height);
-  // ctx.fillStyle = "white"
-  // ctx.fillRect(settings.player1[0], newPos, settings.sizeBall, settings.playerSize)
-}
-
-let movePlayer2 = (ctx: any, globale: any, position: number, settings: any) => {
-    let newPos = position
-    settings.player2 = [settings.player2[0], newPos]
-    // ctx.clearRect(settings.player2[0] - 1, 0, settings.sizeBall + 2, globale.height);
-    // ctx.fillStyle = "white"
-    // ctx.fillRect(settings.player2[0], newPos, settings.sizeBall, settings.playerSize)
-}
-
-const start = (ctx: any, globale: any) => {
+const start = (ctx: any) => {
 	socket.off('Start')
-	socket.on('pleaseBall', (ball, round) => {
+	socket.on('moveBall', (ball, round) => {
+    console.log("moveBall")
 	    if (ball.room === settings.room)
 			{
 				settings.ballPos[0] = ball.ballPos[0] * settings.w;
@@ -292,21 +118,22 @@ const start = (ctx: any, globale: any) => {
 			}
 	  })
 		socket.on('players', (infos) => {
+      console.log("players")
 	    if (infos.room !== settings.room)
 	      return ;
 			 if (infos.player !== settings.currentUser) {
 	      if (settings.spec && infos.fromAdmin)
-	        movePlayer1(ctx, globale, infos.ratio * settings.h, settings)
+          settings.player1 = [settings.player1[0], infos.ratio * settings.h]
 	      else
-				  movePlayer2(ctx, globale, infos.ratio * settings.h, settings)
+          settings.player2 = [settings.player2[0], infos.ratio * settings.h]
 	     }
 		})
 	  socket.on('onEndGame', (room) => {
+      console.log("onEndGame")
 	    if (room === settings.room)
 	      gameOver();
 	  })
 }
-
 
 let settings = {
   w: 0,
@@ -326,7 +153,6 @@ let settings = {
   p1Score: 0,
   p2Score: 0
 }
-
 
 const initSettings = (serv: any) => {
   settings = {
@@ -351,22 +177,26 @@ const initSettings = (serv: any) => {
 
 // Change type to SettingType
 const init = (servSettings: any) => {
-  console.log("Settings3: ", servSettings)
-	// console.log(settings)
 	socket.off('Init')
   initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement
   const ctx: any = globale.getContext('2d')
-  // ctx.clearRect(0, 0, globale.width, globale.height)
   printGame(ctx)
-	socket.on('printCountDown', (number) => {
-		printNumber(ctx, globale);
+	socket.on('printCountDown', (room) => {
+    if (room.room.id === settings.room)
+    {
+      if ((room.p1 && room.p1 === settings.currentUser) || (room.p2 && room.p2 === settings.currentUser) || !room.p1 || !room.p2)
+      	settings.spec = false
+      printNumber(ctx, room.number);
+    }
 	})
-	socket.on('Start', () => {
-		socket.off('printCountDown')
-		start(ctx, globale)
+	socket.on('Start', (room) => {
+    socket.off('printCountDown')
+    if (room.room.id == settings.room)
+      start(ctx)
 	})
   let infosClavier = (e: KeyboardEvent) => {
+    console.log(e)
     let number = Number(e.keyCode);
       switch (number) {
         case 38:
@@ -378,8 +208,8 @@ const init = (servSettings: any) => {
         default:
     }
   }
-
   let infosClavier2 = (e: KeyboardEvent) => {
+    console.log(e)
     let number = Number(e.keyCode);
       switch (number) {
         case 38:
@@ -391,16 +221,13 @@ const init = (servSettings: any) => {
         default:
     }
   }
-
   document.addEventListener("keydown", infosClavier);
   document.addEventListener("keyup", infosClavier2);
 }
 
 const justwait = () => {
 	socket.on('Init', (body) => {
-    // console.log("Settings2: ", settings)
 		socket.off('userJoinChannel')
-		// console.log("Settings: ", body.settings)
 		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 		modal.classList.add("hidden")
 		if (body.room.id === settings.room)
@@ -410,7 +237,6 @@ const justwait = () => {
 
 class Game extends Component<{},{w:number, h: number, timer: number}> {
 	static contextType = AuthContext;
-
 	private globale: any = createRef()
 
   componentWillUnmount = () => {
@@ -423,7 +249,6 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 		socket.off('onEndGame')
   }
 
-//============ Settings game ===============
   componentDidMount = () => {
 		const ctx: any = this.context;
     let element = document.body as HTMLDivElement;
@@ -448,12 +273,8 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
 			socket.off('userJoinChannel')
 			let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 			modal.classList.add("hidden")
-			// console.log("Settings1: ", body.settings)
-      // console.log(body.room, " : ", settings.room)
 			if (body.room.id === settings.room)
-      {
         init(body.settings);
-      }
 		})
   }
 
