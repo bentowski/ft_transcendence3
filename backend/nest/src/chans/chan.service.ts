@@ -232,6 +232,7 @@ export class ChanService {
 			throw error;
 		}
 		if (action === true) {
+			console.log('pushing ', user.auth_id, ' to mute ', chan.id)
 			chan.muteUser.push(user);
 		}
 		if (action === false) {
@@ -243,6 +244,7 @@ export class ChanService {
 			}
 		}
 		try {
+			console.log('saving ...')
 			return await this.chanRepository.save(chan);
 		} catch (error) {
 			throw new Error(error);

@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import {UsersChanBanType, UserType} from "../../types";
 
 const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
-    const { user, setError } = useAuthData();
+    const { user, setError, updateBannedFromList } = useAuthData();
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
     const [list, setList] = useState<JSX.Element[]>([]);
@@ -69,6 +69,7 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
 
     const banUser = async (obj: any): Promise<void> => {
         socket.emit('banToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isBan });
+        //updateBannedFromList(chan, !obj.isBan);
         const newArray: UsersChanBanType[] = [];
         for (let index: number = 0; index < usersChan.length; index++) {
             if (usersChan[index].user?.auth_id === obj.user.auth_id) {
