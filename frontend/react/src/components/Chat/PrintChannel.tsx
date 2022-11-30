@@ -1,5 +1,5 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
 import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
@@ -12,6 +12,7 @@ import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
 class UsersInActualchannel extends Component<{usersList: UserType[]}, {}> {
+
   render() {
     let users: any = [];
     const actualChan = this.props.usersList;
@@ -49,10 +50,10 @@ export const PrintChannel = (
       if (value === "/leave") {
         socket.emit("leaveRoom", { room: room, auth_id: user.auth_id });
         parentCallBack.changeActiveRoom("");
-        parentCallBack.setMessage([]);
+        // parentCallBack.setMessage([]);
         parentCallBack.setRoom("null");
         parentCallBack.getChan();
-        window.location.href = "http://localhost:8080/chat"; //!
+        // window.location.href = "http://localhost:8080/chat"; //!
       } else {
         socket.emit("newMessage", {
           chat: value,

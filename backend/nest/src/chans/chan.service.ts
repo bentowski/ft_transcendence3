@@ -291,7 +291,7 @@ export class ChanService {
 				throw new Error(error);
 			}
 		}
-		chan.chanUser.splice(chan.chanUser.findIndex((u) => u === user))
+		chan.chanUser.splice(chan.chanUser.findIndex((u) => u.auth_id === user.auth_id), 1)
 		try {
 			return await this.chanRepository.save(chan);
 		} catch (error) {

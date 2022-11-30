@@ -12,6 +12,8 @@ import ModalMuteUser from '../utils/ModalMuteUser';
 class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
   render() {
     let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
+	if (!chan)
+		return
     let tab: any[] = chan.admin
     if ((tab && tab.findIndex((u: any) => u === this.props.user.username) > -1) || chan.owner === this.props.user.username) {
       return (

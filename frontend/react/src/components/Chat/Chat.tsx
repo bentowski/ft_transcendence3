@@ -58,9 +58,10 @@ export const WebSocket = () => {
         }
       })
     })
-    socket.on("userLeaveChannel", () => {
+    socket.on("userLeaveChannel", (body: {room: string, auth_id: string}) => {
       getChan();
-      // window.location.replace("http://localhost:8080/chat");
+	  if (body.auth_id === user.auth_id)
+      	window.location.replace("http://localhost:8080/chat");
       updateChanFromList();
       navigate("/chat/")
     });

@@ -304,8 +304,9 @@ export class ChatGateway implements OnModuleInit
     async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
   	// client.leave(body.room);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id)
+	console.log("delete this user : ", usr)
     await this.chanService.delUserToChannel(usr, body.room)
-  	client.emit('leftRoom', body.room);
+  	this.server.emit('userLeaveChannel', body);
   }
 
   @SubscribeMessage('chanCreated')
