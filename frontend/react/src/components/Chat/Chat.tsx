@@ -171,13 +171,13 @@ export const WebSocket = () => {
               name: name,
               type: typep,
               password: pass,
-              owner: user.username,
+              owner: user.auth_id,
             },
             "http://localhost:3000/chan/create"
         );
           socket.emit('chanCreated');
-          updateAllChans();
-          updateChanFromList();
+          // updateAllChans();
+          // updateChanFromList();
           navigate('/chat/' + chanCreated.id);
           //!
           await getChan();
@@ -324,7 +324,7 @@ export const WebSocket = () => {
       <div>
         <div className="chat row">
           <h4>CHAT</h4>
-          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chanList)}/>
+          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chanList)} chanList={chanList}/>
           <ChannelList
             chanList={chanList}
             room={room}

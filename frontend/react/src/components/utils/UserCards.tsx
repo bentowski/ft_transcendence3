@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
 import { AuthContext } from "../../contexts/AuthProviderContext";
-import {ChanType, PartiesType, UserType} from "../../types"
+import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
 
@@ -38,25 +38,25 @@ class UserCards extends Component<
     };
   }
 
-  updateUser = (user : {auth_id: number, status: number}): void => {
+  updateUser = (user: { auth_id: number, status: number }): void => {
     if (user.auth_id === this.state.id) {
-      let str:string;
+      let str: string;
       if (user.status === 2)
         str = "in-game";
       else if (user.status === 1)
         str = "online";
       else
         str = "offline";
-      this.setState({online: str})
+      this.setState({ online: str })
     }
   }
 
   setSocket = (): void => {
     if (this.state.loaded !== 'ok') {
-      socket.on(('onUpdateUser'), (user : {auth_id: number, status: number}) => {
+      socket.on(('onUpdateUser'), (user: { auth_id: number, status: number }) => {
         this.updateUser(user);
       })
-      this.setState({loaded: 'ok'})
+      this.setState({ loaded: 'ok' })
     }
   }
 
@@ -77,7 +77,7 @@ class UserCards extends Component<
   }
 
   createChanName = (u1: UserType, u2: UserType): string => {
-    let title: string = u1.username.slice(0,3) + "-" + u2.username.slice(0,3);
+    let title: string = u1.username.slice(0, 3) + "-" + u2.username.slice(0, 3);
     let x: number = 0;
     while (this.checkIfChanExists(title)) {
       title = title + x.toString();
@@ -90,25 +90,26 @@ class UserCards extends Component<
     const ctx: any = this.context;
     try {
       let u2: UserType = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/name/" + this.state.login,
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/name/" + this.state.login,
       )
-      await Request(
-          "POST",
-          {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          {
-            name: this.createChanName(ctx.user, u2),
-            type: "direct",
-            user_1_id: ctx.user.auth_id,
-            user_2_id: u2.auth_id,
-          },
-          "http://localhost:3000/chan/createpriv"
+      let newChan: ChanType = await Request(
+        "POST",
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        {
+          name: this.createChanName(ctx.user, u2),
+          type: "direct",
+          user_1_id: ctx.user.auth_id,
+          user_2_id: u2.auth_id,
+        },
+        "http://localhost:3000/chan/createpriv"
       );
+      // window.location.href = "http://localhost:8080/chat/"/*  + newChan.id */
     } catch (error) {
       ctx.setError(error);
     }
@@ -184,35 +185,35 @@ class UserCards extends Component<
     const ctx: any = this.context;
     try {
       await Request(
-          "POST",
-          {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          {
-            login: this.state.login,
-            public: true
-          },
-          "http://localhost:3000/parties/create"
+        "POST",
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        {
+          login: this.state.login,
+          public: true
+        },
+        "http://localhost:3000/parties/create"
       );
     } catch (error) {
       ctx.setError(error);
     }
-    socket.emit("askForGameUp", {"to": this.state.id, "from": this.getCurrentUser().auth_id})
+    socket.emit("askForGameUp", { "to": this.state.id, "from": this.getCurrentUser().auth_id })
     let modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
     let parties: PartiesType[] = [];
     try {
       parties = await Request(
-          'GET',
-          {},
-          {},
-          "http://localhost:3000/parties/"
+        'GET',
+        {},
+        {},
+        "http://localhost:3000/parties/"
       )
     } catch (error) {
       ctx.setError(error);
     }
-    let ids: number[] = parties.map((p:any) => {
+    let ids: number[] = parties.map((p: any) => {
       return p.id;
     })
   }
@@ -226,6 +227,7 @@ class UserCards extends Component<
             className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
           >
             <div className="col-5 h-100 overflow-hidden buttons">
+              {/* <Link to={"/chat"}> */}
               <button className="p-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -261,16 +263,17 @@ class UserCards extends Component<
               <Link to={"/profil/" + this.state.login} className="mx-2">
                 {this.state.login}
               </Link>
-              <img
-                alt=""
-                src={
-                  "http://localhost:3000/user/" +
-                  this.props.user.auth_id +
-                  "/avatar"
-                }
-                className="miniAvatar"
-              />
-
+              <Link to={"/profil/" + this.state.login} className="mx-2">
+                <img
+                  alt=""
+                  src={
+                    "http://localhost:3000/user/" +
+                    this.props.user.auth_id +
+                    "/avatar"
+                  }
+                  className="miniAvatar"
+                />
+              </Link>
             </div>
           </div>
         );
@@ -294,24 +297,26 @@ class UserCards extends Component<
         className="friendsDiv col-11 mr-2 d-flex flex-row align-items-center"
       >
         <div className="col-3 d-flex flex-row justify-content-start align-items-center">
-          <img
-            alt=""
-            src={
-              "http://localhost:3000/user/" +
-              this.props.user.auth_id +
-              "/avatar"
-            }
-            className="miniAvatar"
-          />
+          <Link to={"/profil/" + this.state.login} className="mx-2">
+            <img
+              alt=""
+              src={
+                "http://localhost:3000/user/" +
+                this.props.user.auth_id +
+                "/avatar"
+              }
+              className="miniAvatar"
+            />
+          </Link>
           <Link to={"/profil/" + this.state.login} className="mx-2">
             {this.state.login}
           </Link>
         </div>
         <div className="Score col-9 d-flex justify-content-between align-items-center">
           <div className="">won</div>
-          <div className="Ratio mx-2 d-flex flex-row justify-content-between align-items-center">
-            <div className="Rwon col-6">{this.props.user.game_won}</div>
-            <div className="col-6">{this.props.user.game_lost}</div>
+          <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
+            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>
+            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost}</div>
           </div>
           <div className="">lost</div>
         </div>
@@ -319,40 +324,40 @@ class UserCards extends Component<
     );
   };
 
-  openInvite = (body: {"to": string, "from": string}): void => {
-      if (body.to === this.getCurrentUser().auth_id) {
-        let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login)as HTMLDivElement;
-        modal.classList.remove('hidden')
+  openInvite = (body: { "to": string, "from": string }): void => {
+    if (body.to === this.getCurrentUser().auth_id) {
+      let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
+      modal.classList.remove('hidden')
     }
   }
 
-  closeInvite = (body: {"to": string, "from": string}): void => {
+  closeInvite = (body: { "to": string, "from": string }): void => {
     console.log("close !")
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login)as HTMLDivElement;
+      let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
       modal.classList.add('hidden')
     }
   }
 
   initSocket = (): void => {
     if (this.state.socket !== "on") {
-      this.setState({socket: 'on'});
-      socket.on("onAskForGameUp", (body: {"to": string, "from": string}) => {
+      this.setState({ socket: 'on' });
+      socket.on("onAskForGameUp", (body: { "to": string, "from": string }) => {
         this.openInvite(body);
       });
-      socket.on("onAskForGameDown", (body: {"to": string, "from": string}) => {
+      socket.on("onAskForGameDown", (body: { "to": string, "from": string }) => {
         this.closeInvite(body);
       });
-      socket.on("onInviteAccepted", (body: {"to": string, "from": string, "partyID": string}) => {
+      socket.on("onInviteAccepted", (body: { "to": string, "from": string, "partyID": string }) => {
         if (body.to === this.getCurrentUser().auth_id)
           window.location.href = "http://localhost:8080/game/" + body.partyID;
       });
-      socket.on("onInviteDeclined", (body: {"to": string, "from": string}) => {
+      socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
           let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
           modal.classList.add('hidden');
         }
-          // console.log("LETS NOT CONNECT !") ///////////////
+        // console.log("LETS NOT CONNECT !") ///////////////
       });
     }
   }
@@ -373,10 +378,10 @@ class UserCards extends Component<
     let user: UserType | undefined = undefined;
     try {
       user = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/id/" + this.state.id
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/id/" + this.state.id
       );
     } catch (error) {
       ctx.setError(error);
@@ -401,8 +406,8 @@ class UserCards extends Component<
         key={(this.state.id * 5) / 3}
         className="col-12 my-2 d-flex flex-row justify-content-between"
       >
-        <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user}/>
-        <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user}/>
+        <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user} />
+        <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user} />
         {items}
       </div>
     );

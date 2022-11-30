@@ -82,33 +82,33 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
     const listUserCards = (): void => {
         let ret: JSX.Element[] = [];
 
-        for(let x: number = 0; x < usersChan.length; x++)
-        {
-            if (usersChan[x].user?.username !== user.username)
+            for(let x: number = 0; x < usersChan.length; x++)
             {
-                ret.push(
+                if (usersChan[x].user && usersChan[x].user?.username !== user.username)
+                {
+                    ret.push(
                         <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-                         <div className="col-5 h-100 overflow-hidden buttons">
-                            <button type="button" onClick={ () => banUser(usersChan[x]) }>
-                                {
-                                    usersChan[x].isBan ?
-                                        <p>UNBAN</p> :
-                                        <p>BAN</p>
-                                }
-                            </button>
-                         </div>
-                        <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                            <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+                            <div className="col-5 h-100 overflow-hidden buttons">
+                                <button type="button" onClick={ () => banUser(usersChan[x]) }>
+                                    {
+                                        usersChan[x].isBan ?
+                                            <p>UNBAN</p> :
+                                            <p>BAN</p>
+                                    }
+                                </button>
+                            </div>
+                            <div className="col-2 d-flex flex-row d-flex justify-content-center">
+                                <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+                            </div>
+                            <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+                                <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
+                                <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+                            </div>
                         </div>
-                        <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                            <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
-                            <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
-                        </div>
-                    </div>
-                );
+                    );
+                }
             }
-        }
-        setList(ret);
+            setList(ret);
     }
 
     return (
