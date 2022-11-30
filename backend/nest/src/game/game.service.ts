@@ -13,8 +13,8 @@ export class GameService {
    // Ajouter fonction random vecteur
    return {
       nbPlayer: 2,
-      p1Name: p1,
-      p2Name: p2,
+      p1: p1,
+      p2: p2,
       ballPos: [50 - (sizeBall / 2), 50],
       player1: [100 - sizeBall, 50],
       player2: [0, 50],

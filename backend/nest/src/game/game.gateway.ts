@@ -55,6 +55,7 @@ export class GameGateway implements OnModuleInit
     }
     if (body.game.p1 !== null && body.game.p1 !== body.auth_id && body.game.p2 !== null && body.game.p1 !== body.auth_id)
     {
+      const settings = await this.gameService.initGame(body.game.p1, body.game.p2)
       this.server.to(body.game.id).emit("Init", {room: body.game, settings: settings});
       this.server.to(body.game.id).emit("Start", {room: body.game});
     }
@@ -62,7 +63,13 @@ export class GameGateway implements OnModuleInit
 
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
-    this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, fromAdmin: body.fromAdmin, room: body.room})
+    console.log("AAAAAAA", body)
+    let admin: boolean
+    if (body.player === body.p1)
+      admin = true
+    else if (body.player === body.p2)
+      admin = false
+    this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
   }
 
   @SubscribeMessage('pleaseBall')

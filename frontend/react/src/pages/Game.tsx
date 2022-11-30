@@ -72,7 +72,7 @@ const printGame = (ctx: any) => {
         move += 1;
       }
       if (move === 1) {
-        socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
+        socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "p1": settings.p1, "p2": settings.p2, "player": settings.currentUser, "room": settings.room})
       }
     }
   ctx.clearRect(0, 0, settings.w, settings.h)
@@ -121,8 +121,10 @@ const start = (ctx: any) => {
       console.log("players")
 	    if (infos.room !== settings.room)
 	      return ;
+      console.log(settings.currentUser, infos.player)
 			 if (infos.player !== settings.currentUser) {
-	      if (settings.spec && infos.fromAdmin)
+         console.log(settings.spec, infos.admin)
+	      if (settings.spec && infos.admin)
           settings.player1 = [settings.player1[0], infos.ratio * settings.h]
 	      else
           settings.player2 = [settings.player2[0], infos.ratio * settings.h]
@@ -143,6 +145,8 @@ let settings = {
   spec: true,
   up: 0,
   down: 0,
+  p1: {},
+  p2: {},
 	ballPos: [0, 0],
 	player1: [0, 0],
 	player2: [0, 0],
@@ -163,6 +167,8 @@ const initSettings = (serv: any) => {
     spec: settings.spec,
     up: settings.up,
     down: settings.down,
+    p1: serv.p1,
+    p2: serv.p2,
     ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
     player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
     player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
@@ -196,7 +202,6 @@ const init = (servSettings: any) => {
       start(ctx)
 	})
   let infosClavier = (e: KeyboardEvent) => {
-    console.log(e)
     let number = Number(e.keyCode);
       switch (number) {
         case 38:
@@ -209,7 +214,6 @@ const init = (servSettings: any) => {
     }
   }
   let infosClavier2 = (e: KeyboardEvent) => {
-    console.log(e)
     let number = Number(e.keyCode);
       switch (number) {
         case 38:
