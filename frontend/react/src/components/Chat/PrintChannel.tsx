@@ -1,17 +1,17 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "../utils/Modal";
 import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
+import { MessagePayload, ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
-class UsersInActualchannel extends Component<{usersList: UserType[]}, {}> {
+class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
   render() {
     let users: any = [];
     const actualChan = this.props.usersList;
@@ -29,6 +29,7 @@ export const PrintChannel = (
   const { mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
+  // const {user} = useAuthData()
   const setModalType = (newValue: any) => {
     parentCallBack.setModalType(newValue)
   }
@@ -123,30 +124,50 @@ export const PrintChannel = (
     }
   };
 
+  const printName = () => {
+    if (currentChan.type === "direct") {
+      if (user.auth_id === currentChan.chanUser[0].auth_id) {
+        return (
+          <h3>{currentChan.chanUser[1].username}</h3>
+        )
+      }
+      else {
+        return (
+          <h3>{currentChan.chanUser[0].username}</h3>
+        )
+      }
+    }
+    // console.log("name",currentChan.chanUser[0].auth_id)
+    return (
+      <h3>{currentChan.name}</h3>
+    )
+  };
+
   if (room) {
     return (
-        <div className="inChat row col-10">
-          <div className="chatMain col-10">
-            <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{setModalType, setModalTitle}} />
-            <div className="row">
-              <div>
-              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{setChanList}}/>
+      <div className="inChat row col-10">
+        <div>
+          {printName()}
+        </div>
+        <div className="chatMain col-10">
+          <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{ setModalType, setModalTitle }} />
+          <div className="row">
+            <div>
+              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{ setChanList }} />
               <div className="row">
                 <div>
-                      <div>
-                        <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-                        <button className="col-1" onClick={onSubmit}>Send</button>
-                      </div>
+                  <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                  <button className="col-1" onClick={onSubmit}>send</button>
                 </div>
               </div>
-              </div>
             </div>
-          </div> {/*fin chatMain*/}
-          <div className="chatMembers col-2">
-            <p> Channel's members ({usersInChan.length}) </p>
-            <UsersInActualchannel usersList={usersInChan}/>
           </div>
+        </div> {/*fin chatMain*/}
+        <div className="chatMembers col-2">
+          <p> Channel's members ({usersInChan.length}) </p>
+          <UsersInActualchannel usersList={usersInChan} />
         </div>
+      </div>
     )
   } else {
     return (
@@ -156,4 +177,4 @@ export const PrintChannel = (
   }
 }
 
-  export default PrintChannel;
+export default PrintChannel;
