@@ -56,7 +56,7 @@ export class ChanService {
 		const chan: ChanEntity = this.chanRepository.create({
 			type: type,
 			name: name,
-			owner: user1.username,
+			owner: user1.auth_id,
 			password: '',
 			messages: [],
 			chanUser: [],
@@ -99,7 +99,7 @@ export class ChanService {
         if (chanInDb) {
             throw new BadRequestException('Error while creating new Chan: Chan already exists');
         }
-		const user: UserEntity = await this.userService.findOnebyUsername(owner);
+		const user: UserEntity = await this.userService.findOneByAuthId(owner);
 		if (!user) {
 			throw new NotFoundException('Error while creating new Chan: Cant find user');
 		}
@@ -112,9 +112,12 @@ export class ChanService {
 			chanUser: [],
 			banUser: [],
 			muteUser: [],
+			adminUser: [],
         })
 		chan.chanUser.push(user);
+		chan.adminUser.push(user);
 		try {
+			console.log('saving chan to db');
 			await this.chanRepository.save(chan);
 			return chan;
 		} catch (error) {
@@ -124,14 +127,14 @@ export class ChanService {
 
     findAll(): Promise<ChanEntity[]> {
         return this.chanRepository.find({
-			relations: { banUser: true, chanUser: true, muteUser: true }
+			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true }
 		});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { name: name },
-			relations: { banUser: true, chanUser: true, muteUser: true },
+			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true },
 		});
         return chan;
     }
@@ -139,8 +142,9 @@ export class ChanService {
 	async findOnebyID(id?: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: id },
-			relations: { banUser: true, chanUser: true, muteUser: true }
-		},);
+			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true }
+		});
+		console.log('chan = ', chan.id)
         return chan;
     }
 
@@ -179,15 +183,15 @@ export class ChanService {
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
 		}
-		const banning: UserEntity = chan.banUser.find(elem => elem === user);
-		if (banning) {
-			const error = {
-				statusCode: 450,
-				message: 'Error while banning user from channel: User already banned',
-			}
-			throw error;
-		}
 		if (action === true) {
+			const banning: UserEntity = chan.banUser.find(elem => elem === user);
+			if (banning) {
+				const error = {
+					statusCode: 450,
+					message: 'Error while banning user from channel: User already banned',
+				}
+				throw error;
+			}
 			const index: number = chan.chanUser.findIndex(obj => {
 				return obj.auth_id === iduser;
 			});
@@ -211,6 +215,59 @@ export class ChanService {
 		}
 	}
 
+	async adminUserToChannel(iduser: string, idroom: string, action: boolean): Promise<ChanEntity> {
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where: { id: idroom },
+			relations: ['adminUser', 'chanUser'],
+		});
+		if (!chan) {
+			throw new NotFoundException('Error while (un)setting admin in channel: Cant find channel')
+		}
+		const user: UserEntity = await this.userService.findOneByAuthId(iduser);
+		if (!user) {
+			throw new BadRequestException('Error while (un)setting admin in channel: Cant find user')
+		}
+		if (action === true) {
+			const found: UserEntity = chan.adminUser.find(elem => elem === user);
+			if (found) {
+				const error = {
+					statusCode: 451,
+					message: 'Error while (un)setting admin in channel: User already admin',
+				}
+				throw error;
+			}
+			chan.adminUser.push(user);
+		}
+		if (action === false) {
+			if (chan.owner === user.auth_id) {
+				throw new BadRequestException('Error while (un)setting admin in channel: Cant unset owner')
+			}
+			/*
+			const found: UserEntity = chan.adminUser.find(elem => elem === user);
+			console.log('found = ', found);
+			if (!found) {
+				const error = {
+					statusCode: 451,
+					message: 'Error while (un)setting admin in channel: User is not admin',
+				}
+				throw error;
+			}
+			 */
+			const index: number = chan.adminUser.findIndex(obj => {
+				return obj.auth_id === iduser;
+			});
+			if (index !== -1) {
+				chan.adminUser.splice(index);
+			}
+		}
+		try {
+			return await this.chanRepository.save(chan);
+		} catch (error) {
+			throw new Error(error);
+		}
+
+	}
+
 	async muteUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
@@ -223,15 +280,16 @@ export class ChanService {
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
 		}
-		const found: UserEntity = chan.muteUser.find(elem => elem === user);
-		if (found) {
-			const error = {
-				statusCode: 451,
-				message: 'Error while muting user from channel: User already muted',
-			}
-			throw error;
-		}
 		if (action === true) {
+			const found: UserEntity = chan.muteUser.find(elem => elem === user);
+			if (found) {
+				const error = {
+					statusCode: 451,
+					message: 'Error while muting user from channel: User already muted',
+				}
+				throw error;
+			}
+			console.log('pushing ', user.auth_id, ' to mute ', chan.id)
 			chan.muteUser.push(user);
 		}
 		if (action === false) {
@@ -281,7 +339,7 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		if (chan.owner === user.username) {
+		if (chan.owner === user.auth_id) {
 			try {
 				await this.chanRepository.delete(chan.id);
 				//! socket emit reload for room's user
@@ -309,6 +367,17 @@ export class ChanService {
 			throw new NotFoundException('Error while fetching banned users: Cant find channel');
 		}
 		return chan.banUser;
+	}
+
+	async getAdmins(idroom: string): Promise<UserEntity[]> {
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where: {id: idroom},
+			relations: ['adminUser']
+		});
+		if (!chan) {
+			throw new NotFoundException('Error while fetching admin users: Cant find channel')
+		}
+		return chan.adminUser;
 	}
 
 	async getMuted(idroom: string): Promise<UserEntity[]> {

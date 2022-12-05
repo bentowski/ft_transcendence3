@@ -1,10 +1,10 @@
-import {Component, Context} from "react";
-import {Link, NavigateFunction} from "react-router-dom";
+import { Component, Context } from "react";
+import { Link, NavigateFunction } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import {HistoryType, UserType} from "../types"
+import { HistoryType, UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
@@ -12,18 +12,18 @@ import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
 
 class Profil extends Component<
-    {
-      nav: NavigateFunction,
-      loc: any
-    },
-    {
-      user: any;
-      current_username: string;
-      histories: Array<any>;
-      rank: number;
-      local: string,
-    }
-    > {
+  {
+    nav: NavigateFunction,
+    loc: any
+  },
+  {
+    user: any;
+    current_username: string;
+    histories: Array<any>;
+    rank: number;
+    local: string,
+  }
+> {
   static contextType = AuthContext;
   constructor(props: any) {
     super(props);
@@ -42,10 +42,10 @@ class Profil extends Component<
     }
     try {
       let newUser: UserType = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/name/" + username
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/name/" + username
       );
       this.setState({ user: newUser });
     } catch (error) {
@@ -59,10 +59,10 @@ class Profil extends Component<
     let histories: HistoryType[] = [];
     try {
       histories = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/parties/histories/all"
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/parties/histories/all"
       );
     } catch (error) {
       ctx.setError(error);
@@ -75,10 +75,10 @@ class Profil extends Component<
     let users: UserType[] = [];
     try {
       users = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user"
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user"
       );
     } catch (error) {
       ctx.setError(error);
@@ -90,24 +90,25 @@ class Profil extends Component<
       return b.game_won - a.game_won;
     });
     let x: number = 0;
-    while (x < users.length && users[x].auth_id !== this.state.user.auth_id){
+    while (x < users.length && users[x].auth_id !== this.state.user.auth_id) {
       x++;
     }
     this.setState({ rank: x + 1 });
   };
 
   async componentDidUpdate(
-      prevProps: Readonly<{
-          nav: NavigateFunction,
-          loc: any,
-      }>,
-      prevState: Readonly<{
-        user: any;
-        current_username: string;
-        histories: Array<any>;
-        rank: number;
-        local: string }>,
-      snapshot?: any) {
+    prevProps: Readonly<{
+      nav: NavigateFunction,
+      loc: any,
+    }>,
+    prevState: Readonly<{
+      user: any;
+      current_username: string;
+      histories: Array<any>;
+      rank: number;
+      local: string
+    }>,
+    snapshot?: any) {
     let url: string = document.URL;
     if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
       window.location.href = "http://localhost:8080/profil/" + this.state.user.username
@@ -145,42 +146,42 @@ class Profil extends Component<
     const user: UserType = ctx.user;
     if (this.state.user.auth_id === user.auth_id) {
       return (
-          <div className="ProfilHeader">
-            <div className="Avatar d-flex flex-row justify-content-start">
-              <div className="avatar">
-                <ModalChangeAvatar />
-              </div>
-              <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-pencil-fill mx-2"
-                  viewBox="0 0 16 16"
-              >
-                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-              </svg>
+        <div className="ProfilHeader col-6">
+          <div className="Avatar d-flex flex-row justify-content-start">
+            <div className="avatar">
+              <ModalChangeAvatar />
             </div>
-            <ModalChangeUsername />
-            <div className="twoFASwitch d-flex flex-row justify-content-start">
-              <Switch />
-            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-pencil-fill mx-2"
+              viewBox="0 0 16 16"
+            >
+              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+            </svg>
           </div>
+          <ModalChangeUsername />
+          <div className="twoFASwitch d-flex flex-row justify-content-start">
+            <Switch />
+          </div>
+        </div>
       );
     } else {
       if (this.state.user.auth_id !== undefined) {
         return (
-            <div className="ProfilHeader">
-              <img
-                  className="modifAvatar mb-2"
-                  alt="prout"
-                  width={100}
-                  height={100}
-                  src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
-              <h3>{this.state.user.username}</h3>
-              <BlockUnBlock auth_id={this.state.user.auth_id}/>
-              <FriendUnFriend auth_id={this.state.user.auth_id}/>
-            </div>
+          <div className="ProfilHeader col-6">
+            <img
+              className="modifAvatar mb-2"
+              alt="prout"
+              width={100}
+              height={100}
+              src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
+            <h3>{this.state.user.username}</h3>
+            <BlockUnBlock auth_id={this.state.user.auth_id} />
+            <FriendUnFriend auth_id={this.state.user.auth_id} />
+          </div>
         );
       } else {
         return <p>caca</p>
@@ -193,42 +194,48 @@ class Profil extends Component<
     let i: number = this.state.histories.length - 1;
     while (i >= 0) {
       if (
-          this.state.histories[i].user_one === this.state.user.username ||
-          this.state.histories[i].user_two === this.state.user.username
+        this.state.histories[i].user_one === this.state.user.username ||
+        this.state.histories[i].user_two === this.state.user.username
       )
         histories.push(
-            <HistoryCards
-                history={this.state.histories[i]}
-                profil={this.state.user.username}
-            />
+          <HistoryCards
+            history={this.state.histories[i]}
+            profil={this.state.user.username}
+          />
         );
       i--;
     }
     return (
-        <div className="Profil">
+      <div className="Profil">
+        <div className="divProfilStats col-12 d-flex flex-row">
           {this.printHeader()}
-          <div className="Stats mt-5">
-            <h3>Stats</h3>
-            <div className="Score col-9 d-flex justify-content-between align-items-center">
-              <div className="">won</div>
-              <div className="Ratio mx-2 d-flex flex-row justify-content-between align-items-center">
-                <div className="Rwon col-6">{this.state.user.game_won}</div>
-                <div className="col-6">{this.state.user.game_lost}</div>
+          <div className="StatsRank col-6">
+            <div className="Stats">
+              <h3 className="d-flex justify-content-start">Stats</h3>
+              <div className="Score">
+                <div className="scoreHeader col-12 d-flex flex-row">
+                  <div className="col-6 d-flex justify-content-start">won</div>
+                  <div className="col-6 d-flex justify-content-end">lost</div>
+                </div>
+                <div className="Ratio p-1 d-flex flex-row align-items-center">
+                  <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.state.user.game_won}</div>
+                  <div className="col-6 px-2 d-flex justify-content-end">{this.state.user.game_lost}</div>
+                </div>
               </div>
-              <div className="">lost</div>
+            </div>
+            <div className="Rank mt-4 d-flex flex-row">
+              <h3>Rank</h3>
+              <Link to={"/history"}>
+                <h3 className="rankNumber mx-3">{this.state.rank}</h3>
+              </Link>
             </div>
           </div>
-          <div className="Rank">
-            <h3>Rank </h3>
-            <Link to={"/history"}>
-              <h3>{this.state.rank}</h3>
-            </Link>
-          </div>
-          <div className=" mt-5">
-            <h3>History</h3>
-            {histories}
-          </div>
         </div>
+        <div className=" mt-5">
+          <h3 className="d-flex justify-content-start">History</h3>
+          {histories}
+        </div>
+      </div>
     );
   }
 }

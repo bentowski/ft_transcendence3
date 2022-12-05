@@ -1,5 +1,5 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
 //import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
@@ -31,6 +31,7 @@ export const WebSocket = () => {
     updateBannedFromList,
     updateMutedFromList,
     updateChanFromList,
+    updateAdminFromList,
     updateAllChans,
     mutedFrom,
     bannedFrom
@@ -38,6 +39,7 @@ export const WebSocket = () => {
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate();
+  //const location = useLocation();
   let location = ""
 
 
@@ -47,12 +49,12 @@ export const WebSocket = () => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
       getChan();
-      updateChanFromList();
     });
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
         if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
           getChan();
+          updateAllChans();
           window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
@@ -61,7 +63,6 @@ export const WebSocket = () => {
     socket.on("userLeaveChannel", () => {
       getChan();
       // window.location.replace("http://localhost:8080/chat");
-      updateChanFromList();
       navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -77,32 +78,75 @@ export const WebSocket = () => {
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        updateMutedFromList()
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateMutedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        updateBannedFromList();
+        console.log('updating banned from list ', obj.room)
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateBannedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
+        socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+        changeActiveRoom("");
+        setRoom("null");
+        getChan();
+        window.location.href = "http://localhost:8080/chat"; //!
+      }
+    }
+    const handleAdmin = async (obj: PunishSocketType) => {
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          console.log('obj = ', obj)
+          updateAdminFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
-          updateBannedFromList();
+          //updateBannedFromList();
           //navigate("/chat/");
         }
         if (error.statusCode === 451) {
-          updateMutedFromList();
+          //updateMutedFromList();
         }
         if (error.statusCode === 452) {
-          updateChanFromList();
+          //updateChanFromList();
         }
       }
     }
     getChan();
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
+    socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     let checkUrl = setInterval(() => {
       let url = document.URL
@@ -118,6 +162,7 @@ export const WebSocket = () => {
       socket.off('error');
       socket.off('mutedChannel');
       socket.off('bannedChannel');
+      socket.off('adminChannel');
     }
   }, []);
 
@@ -159,7 +204,6 @@ export const WebSocket = () => {
         setError(error);
         return;
       }
-      try {
         chanCreated = await Request(
             "POST",
             {
@@ -170,13 +214,14 @@ export const WebSocket = () => {
               name: name,
               type: typep,
               password: pass,
-              owner: user.username,
+              owner: user.auth_id,
             },
             "http://localhost:3000/chan/create"
         );
           socket.emit('chanCreated');
           updateAllChans();
-          updateChanFromList();
+          updateAdminFromList(chanCreated, true);
+          updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated.id);
           //!
           await getChan();
@@ -187,16 +232,10 @@ export const WebSocket = () => {
           //!
           // joinUrl();
           // setTimeout(joinUrl, 5000);
-        
       } catch (error) {
         setError(error);
       }
-    } catch (error) {
-      setError(error);
-    }
-  };
-
-
+    };
 
   const joinUrl = async () => {
     let url = document.URL;

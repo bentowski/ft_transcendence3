@@ -13,6 +13,7 @@ import {
   UpdateUserDto,
   UpdateAvatarDto,
 } from './dto/update-user.dto';
+import ChanEntity from "../chans/entities/chan-entity";
 
 @Injectable()
 export class UserService {
@@ -383,6 +384,69 @@ export class UserService {
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  async getChannelJoined(auth_id: string): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id },
+      relations: ['channelJoined'],
+    });
+    if (!user) {
+      throw new NotFoundException(
+          'Error while fetching joined chans: Cant find user',
+      );
+    }
+    if (!user.channelJoined) {
+      return [];
+    }
+    return user.channelJoined;
+  }
+
+
+  async getChannelAdmin(auth_id: string): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id },
+      relations: ['channelAdmin'],
+    })
+    if (!user) {
+      throw new NotFoundException('Error while getting admin user list: Failed requesting user in database');
+    }
+    if (!user.channelAdmin) {
+      return [];
+    }
+    return user.channelAdmin;
+  }
+
+  async getChannelBanned(auth_id: string): Promise<ChanEntity[]> {
+      const user: UserEntity = await this.userRepository.findOne({
+        where: { auth_id: auth_id},
+        relations: ['channelBanned']
+      });
+      if (!user) {
+        throw new NotFoundException(
+            'Error while fetching banned chans: Cant find user',
+        );
+      }
+      if (!user.channelBanned) {
+        return [];
+      }
+      return user.channelBanned;
+  }
+
+  async getChannelMuted(auth_id: string) {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id},
+      relations: ['channelMuted']
+    });
+    if (!user) {
+      throw new NotFoundException(
+          'Error while fetching muted chans: Cant find user',
+      );
+    }
+    if (!user.channelMuted) {
+      return [];
+    }
+    return user.channelMuted;
   }
 
   checkFolder(imagename: string): string {

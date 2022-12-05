@@ -88,6 +88,11 @@ export type UsersChanBanType = {
   isBan: boolean,
 }
 
+export type UsersChanAdminType = {
+  user: UserType | undefined,
+  isAdmin: boolean,
+}
+
 export type ParamsImgType = {
   method: string,
   credentials: string,

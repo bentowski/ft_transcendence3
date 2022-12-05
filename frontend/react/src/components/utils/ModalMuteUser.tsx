@@ -64,6 +64,7 @@ const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Ele
 
     const muteUser = (obj: any): void => {
         socket.emit('muteToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isMute });
+        //updateMutedFromList(chan, !obj.isMute)
         const newArray: UsersChanMuteType[] = [];
         for (let index: number = 0; index < usersChan.length; index++) {
             if (usersChan[index].user?.auth_id === obj.user.auth_id) {

@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
   const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
   const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
+  const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
 
   const fetchUserList = async (): Promise<void> => {
     let list: UserType[] = [];
@@ -140,7 +141,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
                 //------------------
 
-                /*
                 let mlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -148,11 +148,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                     "http://localhost:3000/user/chan/muted"
                 )
                 setMutedFrom(mlist);
-                 */
 
                 //------------------
 
-                /*
                 let banlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -161,11 +159,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 )
                 setBannedFrom(banlist);
 
-                 */
-
                 //------------------
 
-                /*
                 let jlist: ChanType[] = await Request(
                     "GET",
                     {},
@@ -174,7 +169,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 )
                 setChanFrom(jlist);
 
-                 */
+                //--------------------
+
+                let alist: ChanType[] = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/admin"
+                )
+                setAdminFrom(alist);
 
                 //--------------------
 
@@ -258,7 +261,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     setUserList(array_users);
   }, [])
 
-  /*
   const rmvBan = (chan: ChanType) => {
     const idx = bannedFrom.findIndex(obj => {
       return obj.id === chan.id;
@@ -271,7 +273,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }
 
   const rmvMute = (chan: ChanType) => {
-    const idx = bannedFrom.findIndex(obj => {
+    const idx: number = bannedFrom.findIndex(obj => {
       return obj.id === chan.id;
     })
     const newArr: ChanType[] = mutedFrom;
@@ -280,97 +282,70 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
     setMutedFrom(newArr);
   }
-  */
 
-  const updateBannedFromList = useCallback(async () => {
 
-    //if (action) {
-    //  setBannedFrom(prevState => [...prevState, chan])
-    //  setTimeout(() => {
-    //    rmvBan(chan);
-    //  }, 10000)
-    //}
-    //if (!action) {
-    //  rmvBan(chan);
-    //}
-
-    let banlist: ChanType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/banned"
-    )
-    setBannedFrom(banlist);
-    setTimeout(async () => {
-      let banlist: ChanType[] = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/chan/banned"
-      )
-      setBannedFrom(banlist);
-    }, 100010)
-
+  const updateBannedFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    console.log('update banned from list called  ', chan.id);
+    if (action) {
+      setBannedFrom(prevState => [...prevState, chan])
+      setTimeout(() => {
+        rmvBan(chan);
+      }, 10000)
+    }
+    if (!action) {
+      rmvBan(chan);
+    }
   }, [bannedFrom])
 
-  const updateMutedFromList = useCallback( async () => {
+  const updateAdminFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    console.log('callin update admin from list ', adminFrom, ', chan = ', chan, ', action = ', action);
+    if (action) {
+      setAdminFrom(prevState => [...prevState, chan])
+    }
+    if (!action) {
+      const i: number = adminFrom.findIndex(obj => {
+        return obj.id === chan.id;
+      })
+      const newArr: ChanType[] = adminFrom;
+      if (i !== -1) {
+        newArr.splice(i);
+      }
+      setAdminFrom(newArr);
+    }
+  }, [])
 
-    //if (action) {
-    //  setMutedFrom(prevState => [...prevState, chan])
-    //  setTimeout(() => {
-    //    rmvMute(chan);
-    //  }, 10000)
-    //}
-    //if (!action) {
-    //  rmvMute(chan);
-    //}
 
-    let mlist: ChanType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/muted"
-    )
-    setMutedFrom(mlist);
-    setTimeout(async () => {
-      let mlist = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/chan/muted"
-      )
-      setMutedFrom(mlist);
-    }, 100010)
-
+  const updateMutedFromList = useCallback( async (chan: ChanType, action: boolean) => {
+      if (action) {
+        setMutedFrom(prevState => [...prevState, chan])
+        setTimeout(() => {
+          rmvMute(chan);
+        }, 10000)
+      }
+      if (!action) {
+        rmvMute(chan);
+      }
   }, [mutedFrom])
 
-
-  const updateChanFromList = useCallback(async () => {
-
-    //if (action) {
-    //  setChanFrom(prevState => [...prevState, chan])
-    //}
-    //if (!action) {
-    //  const idx = chanFrom.findIndex(obj => {
-    //    return obj.id === chan.id;
-    //  })
-    //  const newArr: ChanType[] = chanFrom;
-    //  if (idx !== -1) {
-    //    newArr.splice(idx);
-    //  }
-    //  setChanFrom(newArr);
-    //}
-
-    let jlist: ChanType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/joined"
-    )
-    setChanFrom(jlist);
-
+  const updateChanFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    try {
+      if (action) {
+        setChanFrom(prevState => [...prevState, chan])
+      }
+      if (!action) {
+        const idx = chanFrom.findIndex(obj => {
+          return obj.id === chan.id;
+        })
+        const newArr: ChanType[] = chanFrom;
+        if (idx !== -1) {
+          newArr.splice(idx);
+        }
+        setChanFrom(newArr);
+      }
+    } catch (error) {
+      setError(error);
+    }
   }, [chanFrom])
-
 
   const updateAllChans = useCallback(async (): Promise<void> => {
     try {
@@ -441,6 +416,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       allChans,
       bannedFrom,
       mutedFrom,
+      adminFrom,
       chanFrom,
       errorShow,
       errorMsg,
@@ -454,9 +430,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
-      updateBannedFromList: () => updateBannedFromList(),
-      updateChanFromList: () => updateChanFromList(),
-      updateMutedFromList: () => updateMutedFromList(),
+      updateBannedFromList: (chan: ChanType, action: boolean) => updateBannedFromList(chan, action),
+      updateChanFromList: (chan: ChanType, action: boolean) => updateChanFromList(chan, action),
+      updateMutedFromList: (chan: ChanType, action: boolean) => updateMutedFromList(chan, action),
+      updateAdminFromList: (chan: ChanType, action: boolean) => updateAdminFromList(chan, action),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),
@@ -471,6 +448,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       bannedFrom,
       mutedFrom,
       chanFrom,
+      adminFrom,
       isToken,
       isTwoFa,
       updateBannedFromList,

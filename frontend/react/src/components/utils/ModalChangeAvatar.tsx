@@ -109,7 +109,7 @@ const ModalChangeAvatar = (): JSX.Element => {
           </Modal.Footer>
         </div>
       </Modal>
-      <button onClick={() => handleShow()}>
+      <a onClick={() => handleShow()}>
         <img
             className="modifAvatar mb-2"
             width={100}
@@ -119,7 +119,7 @@ const ModalChangeAvatar = (): JSX.Element => {
             //data-bs-toggle="modal"
             //data-bs-target="#changeAvatar"
         />
-      </button>
+      </a>
     </div>
   );
 };

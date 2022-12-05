@@ -61,11 +61,6 @@ class Modal extends Component<
     };
   }
 
-  // componentWillReceiveProps = (props:any) => {
-  //   if (props.chanList !== this.props.chanList)
-  //     this.updateChan();
-  // }
-
   componentDidUpdate(props:any, state:any) {
     // console.log("props", props.chanList, "state", state.allChans, "this.allchans",this.state.allChans)
     if (props.chanList.length !== this.state.allChans.length) {
@@ -221,7 +216,33 @@ class Modal extends Component<
   //               }
   //           >
   //             ADD
-  //           </button>
+  //           </button>for(let x: number = 0; x < usersChan.length; x++)
+  //         {
+  //             if (usersChan[x].user?.username !== user.username)
+  //             {
+  //                 ret.push(
+  //                         <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+  //                          <div className="col-5 h-100 overflow-hidden buttons">
+  //                             <button type="button" onClick={ () => banUser(usersChan[x]) }>
+  //                                 {
+  //                                     usersChan[x].isBan ?
+  //                                         <p>UNBAN</p> :
+  //                                         <p>BAN</p>
+  //                                 }
+  //                             </button>
+  //                          </div>
+  //                         <div className="col-2 d-flex flex-row d-flex justify-content-center">
+  //                             <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+  //                         </div>
+  //                         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
+  //                             <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
+  //                             <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+  //                         </div>
+  //                     </div>
+  //                 );
+  //             }
+  //         }
+  //         setList(ret);
   //         </div>
   //         <div className="col-2 d-flex flex-row d-flex justify-content-center">
   //           <input
@@ -457,15 +478,6 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfOwner = (chan: ChanType) => {
-    for (let index = 0; index < this.props.chans.length; index++) {
-      if (chan.id === this.props.chans[index].id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   checkIfBanned = async (chan: ChanType) => {
     let banned = await Request(
       "GET",
@@ -505,6 +517,16 @@ class Modal extends Component<
 
   joinRoom = (newRoom: ChanType) => {
     this.props.parentCallBack.joinRoom(newRoom)
+    // console.log(join)
+    // this.hiddenJoin()
+  }
+
+  joinRoomPublic = (key: number) => {
+    this.props.parentCallBack.joinRoom(
+      this.state.allChans[key],
+      true
+    )
+    this.hiddenJoin()
   }
 
   chans = async () => {
@@ -514,9 +536,8 @@ class Modal extends Component<
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!this.checkIfOwner(this.state.allChans[x]) &&
-          !await this.checkIfAlreadyIn(this.state.allChans[x]) &&
-          !await this.checkIfBanned(this.state.allChans[x])
+        if (!await this.checkIfAlreadyIn(this.state.allChans[x]) &&
+            !await this.checkIfBanned(this.state.allChans[x])
         ) {
           ret.push(
             <div className="row TEST" key={x}>
@@ -527,10 +548,7 @@ class Modal extends Component<
                     :
                     <button
                       onClick={() =>
-                        this.props.parentCallBack.joinRoom(
-                          this.state.allChans[x],
-                          true
-                        )
+                        this.joinRoomPublic(x)
                       }
                     >
                       JOIN

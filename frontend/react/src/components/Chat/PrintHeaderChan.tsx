@@ -5,20 +5,79 @@ import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
 import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
+import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
+import ModalAdminUser from "../utils/ModalAdminUser";
 
-class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
-  render() {
+class AdminButtons extends Component<
+    {
+        room: any,
+        socket: any,
+        user: UserType,
+        chanList: ChanType[]
+    },
+    {
+        adminList: UserType[],
+    }> {
+    static contextType = AuthContext;
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            adminList: [],
+        }
+    }
+    componentDidMount = async () => {
+        const ctx: any = this.context;
+        console.log('component did mout = ', ctx.adminFrom);
+        this.setState({adminList: ctx.adminList})
+    }
+
+    componentDidUpdate(
+        prevProps: Readonly<{
+            room: any;
+            socket: any;
+            user: UserType;
+            chanList: ChanType[]
+        }>,
+        prevState: Readonly<{
+            adminList: UserType[],
+        }>,
+        snapshot?: any) {
+        const ctx: any = this.context;
+        console.log('updatin admin list ', ctx.adminFrom);
+        /*
+        let users: UserType[] = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + prevProps.room + "/user"
+        )
+         */
+        if (prevState.adminList !== ctx.adminFrom) {
+            console.log('settin nu state')
+            this.setState({adminList: ctx.adminFrom});
+        }
+        this.render();
+
+    }
+
+    isUserAdmin = () => {
+        return this.state.adminList && this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
+    }
+
+    render() {
     let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
-    let tab: any[] = chan.admin
-    if ((tab && tab.findIndex((u: any) => u === this.props.user.username) > -1) || chan.owner === this.props.user.username) {
+    if (!chan) {
+        return ;
+    }
+    if (this.isUserAdmin()) {
       return (
-          <div className="row">
-            <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-            <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
-          </div>
+         <div className="row">
+             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
+             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
+             <ModalAdminUser chan={this.props.room} socket={this.props.socket} />
+         </div>
       )
     }
   }
@@ -52,7 +111,7 @@ export const PrintHeaderChan = (
     }
     return (
         <div className="chatMainTitle row">
-          <h1 className="col-10">Channel Name</h1>
+          {/* <h3 className="col-10">Channel Name</h3> */}
           <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
           <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
         </div>
