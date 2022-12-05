@@ -351,6 +351,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [chanFrom])
 
   const updateAllChans = useCallback(async (): Promise<void> => {
+    console.log('updateallchans called');
     try {
       let res: ChanType[] = await Request(
           "GET",

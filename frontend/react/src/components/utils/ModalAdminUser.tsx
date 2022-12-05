@@ -34,7 +34,6 @@ const ModalAdminUser = ({chan, socket}:{chan:string, socket: Socket}) => {
             )
             const newArray: UsersChanAdminType[] = [];
             for (let index = 0; index < users.length; index++) {
-                console.log('user', index, ' name = ', users[index].username);
                 let result: boolean = await Request(
                     "GET",
                     {},

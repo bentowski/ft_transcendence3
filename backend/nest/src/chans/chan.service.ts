@@ -117,7 +117,6 @@ export class ChanService {
 		chan.chanUser.push(user);
 		chan.adminUser.push(user);
 		try {
-			console.log('saving chan to db');
 			await this.chanRepository.save(chan);
 			return chan;
 		} catch (error) {
@@ -144,7 +143,6 @@ export class ChanService {
 			where: { id: id },
 			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true }
 		});
-		console.log('chan = ', chan.id)
         return chan;
     }
 
@@ -244,7 +242,6 @@ export class ChanService {
 			}
 			/*
 			const found: UserEntity = chan.adminUser.find(elem => elem === user);
-			console.log('found = ', found);
 			if (!found) {
 				const error = {
 					statusCode: 451,

@@ -76,7 +76,6 @@ export const PrintChannel = (
         {},
         "http://localhost:3000/user/chan/muted"
     )
-    console.log('muted list = ', mutedList, ', room = ', room);
     for (let i = 0; i < mutedList.length; i++) {
       if (mutedList[i].id === room) {
         return true;
@@ -135,7 +134,6 @@ export const PrintChannel = (
         )
       }
     }
-    // console.log("name",currentChan.chanUser[0].auth_id)
     return (
       <h3>{currentChan.name}</h3>
     )

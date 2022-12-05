@@ -62,13 +62,11 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
-    // console.log("props", props.chanList, "state", state.allChans, "this.allchans",this.state.allChans)
     if (props.chanList.length !== this.state.allChans.length) {
-      setTimeout(() => this.updateChan(), 10)
+      setTimeout(() => {
+        this.updateChan()
+      }, 10)
       // this.updateChan();
-      // console.log(props.chanList, this.state.allChans)
-      // console.log(JSON.stringify(props.chanList) === JSON.stringify(this.state.allChans))
-      // console.log("update")
     }
   }
 
@@ -194,7 +192,6 @@ class Modal extends Component<
     this.setState({ friends: users, allChans: chans });
     this.chans();
    }
-
   componentDidMount = () => {
     this.updateChan();
   };
@@ -454,7 +451,6 @@ class Modal extends Component<
             this.state.input.length === 0 ||
             friend.username.includes(this.state.input)
           )
-            // console.log('hello ', this.state.friends[x]);
           friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
@@ -478,7 +474,7 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfBanned = async (chan: ChanType) => {
+  checkIfBanned = (chan: ChanType) => {
     /*
     let banned = await Request(
       "GET",
@@ -497,7 +493,7 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn = async (chan: ChanType) => {
+  checkIfAlreadyIn = (chan: ChanType) => {
     /*
     let joined = await Request(
       "GET",
@@ -525,7 +521,6 @@ class Modal extends Component<
 
   joinRoom = (newRoom: ChanType) => {
     this.props.parentCallBack.joinRoom(newRoom)
-    // console.log(join)
     // this.hiddenJoin()
   }
 
@@ -537,15 +532,15 @@ class Modal extends Component<
     this.hiddenJoin()
   }
 
-  chans = async () => {
+  chans = () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!await this.checkIfAlreadyIn(this.state.allChans[x]) &&
-            !await this.checkIfBanned(this.state.allChans[x])
+        if (!this.checkIfAlreadyIn(this.state.allChans[x]) &&
+            !this.checkIfBanned(this.state.allChans[x])
         ) {
           ret.push(
             <div className="row TEST" key={x}>

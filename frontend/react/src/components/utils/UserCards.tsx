@@ -335,7 +335,6 @@ class UserCards extends Component<
   }
 
   closeInvite = (body: { "to": string, "from": string }): void => {
-    console.log("close !")
     if (body.to === this.getCurrentUser().auth_id) {
       let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
       modal.classList.add('hidden')
@@ -360,7 +359,6 @@ class UserCards extends Component<
           let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
           modal.classList.add('hidden');
         }
-        // console.log("LETS NOT CONNECT !") ///////////////
       });
     }
   }

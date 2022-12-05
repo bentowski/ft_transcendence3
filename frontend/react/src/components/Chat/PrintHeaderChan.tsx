@@ -29,7 +29,6 @@ class AdminButtons extends Component<
     }
     componentDidMount = async () => {
         const ctx: any = this.context;
-        console.log('component did mout = ', ctx.adminFrom);
         this.setState({adminList: ctx.adminList})
     }
 
@@ -45,7 +44,6 @@ class AdminButtons extends Component<
         }>,
         snapshot?: any) {
         const ctx: any = this.context;
-        console.log('updatin admin list ', ctx.adminFrom);
         /*
         let users: UserType[] = await Request(
             "GET",
@@ -55,7 +53,6 @@ class AdminButtons extends Component<
         )
          */
         if (prevState.adminList !== ctx.adminFrom) {
-            console.log('settin nu state')
             this.setState({adminList: ctx.adminFrom});
         }
         this.render();

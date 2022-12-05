@@ -93,7 +93,6 @@ export const WebSocket = () => {
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        console.log('updating banned from list ', obj.room)
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -121,7 +120,6 @@ export const WebSocket = () => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('obj = ', obj)
           updateAdminFromList(chan, obj.action)
         } catch (error) {
           setError(error);
@@ -313,12 +311,14 @@ export const WebSocket = () => {
      })
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
+        //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
         setCurrentChan(newRoom)
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+        //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
         setCurrentChan(newRoom)

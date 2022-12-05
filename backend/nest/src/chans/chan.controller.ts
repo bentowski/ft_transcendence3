@@ -84,7 +84,6 @@ export class ChanController {
         if (!chan) {
             throw new NotFoundException('Error while checking user status: Cant find chan');
         }
-        console.log('chan owner = ', chan.owner, ', id user = ', req.user.auth_id);
         return chan.owner === req.user.auth_id;
     }
 
@@ -156,7 +155,6 @@ export class ChanController {
 
     @Get(':id/admin')
     getAdmins(@Param('id') idroom: string): Promise<UserEntity[]> {
-        console.log('getadmins');
         try {
             return this.chanService.getAdmins(idroom);
         } catch (error) {
