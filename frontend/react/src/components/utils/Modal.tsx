@@ -37,9 +37,9 @@ class Modal extends Component<
     joined: any[],
   }
 > {
-  static context = AuthContext;
-  constructor(props: any) {
-    super(props);
+  static contextType = AuthContext;
+  constructor(props: any, context: any) {
+    super(props, context);
     // users: [],
     this.state = {
       user: {},
@@ -479,12 +479,16 @@ class Modal extends Component<
   };
 
   checkIfBanned = async (chan: ChanType) => {
+    /*
     let banned = await Request(
       "GET",
       {},
       {},
       "http://localhost:3000/user/chan/banned",
     )
+     */
+    const ctx: any = this.context;
+    const banned: ChanType[] = ctx.bannedFrom;
     for (let index = 0; index < banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
@@ -494,12 +498,16 @@ class Modal extends Component<
   }
 
   checkIfAlreadyIn = async (chan: ChanType) => {
+    /*
     let joined = await Request(
       "GET",
       {},
       {},
       "http://localhost:3000/user/chan/joined",
     )
+     */
+    const ctx: any = this.context;
+    const joined: ChanType[] = ctx.chanFrom;
     for (let index = 0; index < joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;

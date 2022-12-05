@@ -8,6 +8,7 @@ import {
 } from "react";
 import Request from "../components/utils/Requests";
 import {AuthType, ChanType, UserType} from "../types";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export const AuthContext = createContext<any>({
   /*
@@ -41,6 +42,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
   const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchUserList = async (): Promise<void> => {
     let list: UserType[] = [];
@@ -436,6 +439,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateAdminFromList: (chan: ChanType, action: boolean) => updateAdminFromList(chan, action),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
+      navigate,
+      location,
     }),
     [
       errorShow,
@@ -464,6 +469,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       userList,
       friendsList,
       blockedList,
+      navigate,
+      location,
     ]
   );
 

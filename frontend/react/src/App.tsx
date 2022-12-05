@@ -56,9 +56,9 @@ const App = (): JSX.Element => {
         {/* private route */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
-            <Route path="chat/" element={<Chat />} >
+            {/* <Route path="chat/" element={<Chat />} > */}
               <Route path="chat/*" element={<Chat />} />
-            </Route>
+            {/* </Route> */}
             <Route path="/" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />
             {/* <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}> */}
               <Route path="profil/*" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />

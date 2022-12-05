@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
