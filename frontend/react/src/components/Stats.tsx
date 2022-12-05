@@ -3,7 +3,7 @@ import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
 
-class History extends Component<
+class Stats extends Component<
   {},
   { users: Array<UserType>; histories: Array<any> }
 > {
@@ -59,8 +59,13 @@ class History extends Component<
       );
       y++;
     }
-    return <div className="History">{user}</div>;
+    return (
+      <div className="Stats">
+        <h1>Rank</h1>
+        {user}
+      </div>
+    );
   }
 }
 
-export default History;
+export default Stats;

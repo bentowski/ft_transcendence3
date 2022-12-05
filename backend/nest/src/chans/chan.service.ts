@@ -56,7 +56,7 @@ export class ChanService {
 		const chan: ChanEntity = this.chanRepository.create({
 			type: type,
 			name: name,
-			owner: user1.username,
+			owner: user1.auth_id,
 			password: '',
 			messages: [],
 			chanUser: [],
@@ -99,7 +99,7 @@ export class ChanService {
         if (chanInDb) {
             throw new BadRequestException('Error while creating new Chan: Chan already exists');
         }
-		const user: UserEntity = await this.userService.findOnebyUsername(owner);
+		const user: UserEntity = await this.userService.findOneByAuthId(owner);
 		if (!user) {
 			throw new NotFoundException('Error while creating new Chan: Cant find user');
 		}
@@ -232,6 +232,7 @@ export class ChanService {
 			throw error;
 		}
 		if (action === true) {
+			console.log('pushing ', user.auth_id, ' to mute ', chan.id)
 			chan.muteUser.push(user);
 		}
 		if (action === false) {
@@ -243,6 +244,7 @@ export class ChanService {
 			}
 		}
 		try {
+			console.log('saving ...')
 			return await this.chanRepository.save(chan);
 		} catch (error) {
 			throw new Error(error);
@@ -281,7 +283,7 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		if (chan.owner === user.username) {
+		if (chan.owner === user.auth_id) {
 			try {
 				await this.chanRepository.delete(chan.id);
 				//! socket emit reload for room's user
