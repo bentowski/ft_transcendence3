@@ -42,6 +42,11 @@ const App = (): JSX.Element => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 
+  const setNewLoc = (newurl: string) => {
+    console.log('set new location');
+    loc.pathname = newurl;
+  }
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -51,17 +56,17 @@ const App = (): JSX.Element => {
         {/* private route */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
-            <Route path="/chat/" element={<Chat />} >
-              <Route path="/chat/*" element={<Chat />} />
+            <Route path="chat/" element={<Chat />} >
+              <Route path="chat/*" element={<Chat />} />
             </Route>
-            <Route path="/" element={<Profil nav={nav} loc={loc} />} />
-            <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
-              <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
-            </Route>
-            <Route path="/history" element={<Stats />} />
-          </Route>
-          <Route path="/game/" element={<Game />} >
-            <Route path="/game/*" element={<Game />} />
+            <Route path="/" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />
+            {/* <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}> */}
+              <Route path="profil/*" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />
+            {/* </Route> */}
+            <Route path="history" element={<Stats />} />
+            {/* <Route path="game/" element={<Game />} > */}
+              <Route path="game/*" element={<Game />} />
+            {/* </Route> */}
           </Route>
         </Route>
       </Route>
