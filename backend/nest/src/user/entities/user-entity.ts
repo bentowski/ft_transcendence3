@@ -126,6 +126,12 @@ export class UserEntity {
   })
   channelMuted: ChanEntity[];
 
+  @ManyToMany(() => ChanEntity, (chan) => chan.adminUser, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  channelAdmin: ChanEntity[];
+
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }

@@ -69,6 +69,7 @@ export class ChanEntity {
 	@ManyToMany(() => UserEntity, (user) => user.channelJoined, {
         //cascade: true,
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     })
 	@JoinTable()
 	chanUser: UserEntity[];
@@ -76,6 +77,7 @@ export class ChanEntity {
 	@ManyToMany(() => UserEntity, (user) => user.channelBanned, {
         //cascade: true,
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     })
 	@JoinTable()
 	banUser: UserEntity[];
@@ -83,8 +85,16 @@ export class ChanEntity {
     @ManyToMany(() => UserEntity, (user) => user.channelMuted, {
         //cascade: true,
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     })
     @JoinTable()
     muteUser: UserEntity[];
+
+    @ManyToMany(() => UserEntity, (user) => user.channelAdmin, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
+    @JoinTable()
+    adminUser: UserEntity[];
 }
 export default ChanEntity;
