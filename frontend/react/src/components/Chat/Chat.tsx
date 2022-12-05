@@ -212,14 +212,10 @@ export const WebSocket = () => {
           //!
           // joinUrl();
           // setTimeout(joinUrl, 5000);
-        
       } catch (error) {
         setError(error);
       }
-    } catch (error) {
-      setError(error);
-    }
-  };
+    };
 
   const joinUrl = async () => {
     let url = document.URL;
