@@ -29,6 +29,7 @@ export const PrintChannel = (
   const { mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
+
   // const {user} = useAuthData()
   const setModalType = (newValue: any) => {
     parentCallBack.setModalType(newValue)
@@ -156,8 +157,8 @@ export const PrintChannel = (
               <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{ setChanList }} />
               <div className="row">
                 <div>
-                  <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
-                  <button className="col-1" onClick={onSubmit}>send</button>
+                   <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                   <button className="col-1" onClick={onSubmit}>Send</button>
                 </div>
               </div>
             </div>

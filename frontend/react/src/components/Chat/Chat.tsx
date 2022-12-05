@@ -199,20 +199,23 @@ export const WebSocket = () => {
             },
             "http://localhost:3000/chan/create"
         );
-        socket.emit('chanCreated');
-        updateAllChans();
-        updateChanFromList(chanCreated, true);
-
-        //!
-        await getChan();
-        setUrl('/chat/' + chanCreated.id);
-        navigate('/chat/' + chanCreated.id);
-        // joinRoom(chanCreated);
-        // changeActiveRoom(chanCreated.id)
-        //setRoom(chanCreated.id)
-        //!
-        // joinUrl();
-        // setTimeout(joinUrl, 5000);
+          socket.emit('chanCreated');
+          updateAllChans();
+          updateChanFromList(chanCreated, true);
+          navigate('/chat/' + chanCreated.id);
+          //!
+          await getChan();
+          setUrl('/chat/' + chanCreated.id);
+          // joinRoom(chanCreated);
+          // changeActiveRoom(chanCreated.id)
+          //setRoom(chanCreated.id)
+          //!
+          // joinUrl();
+          // setTimeout(joinUrl, 5000);
+        
+      } catch (error) {
+        setError(error);
+      }
     } catch (error) {
       setError(error);
     }

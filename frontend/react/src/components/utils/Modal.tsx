@@ -61,19 +61,9 @@ class Modal extends Component<
     };
   }
 
-  // componentWillReceiveProps = (props:any) => {
-  //   if (props.chanList !== this.props.chanList)
-  //     this.updateChan();
-  // }
-
-  componentDidUpdate(props:any, state:any) {
-    if (JSON.stringify(props.chanList) !== JSON.stringify(this.state.allChans)) {
-      setTimeout(() => this.updateChan(), 1000)
-      // this.updateChan();
-      console.log(props.chanList, state.allChans)
-      console.log(JSON.stringify(props.chanList) === JSON.stringify(this.state.allChans))
-      console.log("update")
-    }
+  componentWillReceiveProps = (props:any) => {
+    if (props.chanList !== this.props.chanList)
+    this.updateChan();
   }
 
   hiddenCreate = () => {
