@@ -92,6 +92,11 @@ export const WebSocket = () => {
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
+      let idx: number = chanUser.findIndex(elem => elem.auth_id === user.auth_id);
+      console.log('idx ban = ', idx);
+      if (idx !== -1) {
+        chanUser.splice(idx);
+      }
       if (obj.auth_id === user.auth_id){
         try {
           const chan: ChanType = await Request(
