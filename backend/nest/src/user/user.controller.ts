@@ -208,6 +208,16 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('chan/admin')
+  async chanAdmin(@Req() req): Promise<ChanEntity[]> {
+    try {
+      return this.userService.getChannelAdmin(req.user.auth_id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('chan/muted')
   async chanMuted(@Req() req): Promise<ChanEntity[]> {
     try {

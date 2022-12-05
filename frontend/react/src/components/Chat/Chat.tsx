@@ -31,6 +31,7 @@ export const WebSocket = () => {
     updateBannedFromList,
     updateMutedFromList,
     updateChanFromList,
+    updateAdminFromList,
     updateAllChans,
     mutedFrom,
     bannedFrom
@@ -111,6 +112,22 @@ export const WebSocket = () => {
         window.location.href = "http://localhost:8080/chat"; //!
       }
     }
+    const handleAdmin = async (obj: PunishSocketType) => {
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          console.log('obj = ', obj)
+          updateAdminFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
+      }
+    }
     const handleError = async (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
@@ -129,6 +146,7 @@ export const WebSocket = () => {
     getChan();
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
+    socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     let checkUrl = setInterval(() => {
       let url = document.URL
@@ -144,6 +162,7 @@ export const WebSocket = () => {
       socket.off('error');
       socket.off('mutedChannel');
       socket.off('bannedChannel');
+      socket.off('adminChannel');
     }
   }, []);
 
@@ -201,6 +220,7 @@ export const WebSocket = () => {
         );
           socket.emit('chanCreated');
           updateAllChans();
+          updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated.id);
           //!

@@ -48,9 +48,7 @@ export const PrintChannel = (
   }
 
   useEffect(() => {
-    console.log('use effect ban cycle')
     const checkIfBanned = async () => {
-      console.log('banned from = ', bannedFrom, ', room = ', room)
       let ban = await Request(
           "GET",
           {},
@@ -59,7 +57,6 @@ export const PrintChannel = (
       )
       for (let i = 0; i < ban.length; i++) {
         if (ban[i].id === room) {
-          console.log('this user is banned');
           socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
           parentCallBack.changeActiveRoom("");
           parentCallBack.setMessage([]);
