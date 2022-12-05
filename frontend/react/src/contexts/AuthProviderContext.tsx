@@ -272,13 +272,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     setMutedFrom(newArr);
   }
 
-  const updateBannedFromList = useCallback(async (chan_id: string, action: boolean) => {
-    let chan: ChanType = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/chan/" + chan_id,
-    )
+
+  const updateBannedFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    console.log('update banned from list called  ', chan.id);
     if (action) {
       setBannedFrom(prevState => [...prevState, chan])
       setTimeout(() => {
@@ -290,14 +286,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
   }, [bannedFrom])
 
-  const updateMutedFromList = useCallback( async (chan_id: string, action: boolean) => {
-    try {
-      let chan: ChanType = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/chan/" + chan_id
-      )
+
+  const updateMutedFromList = useCallback( async (chan: ChanType, action: boolean) => {
       if (action) {
         setMutedFrom(prevState => [...prevState, chan])
         setTimeout(() => {
@@ -307,21 +297,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       if (!action) {
         rmvMute(chan);
       }
-    } catch (error) {
-      setError(error);
-    }
   }, [mutedFrom])
 
-
-  const updateChanFromList = useCallback(async (chan_id: string, action: boolean) => {
+  const updateChanFromList = useCallback(async (chan: ChanType, action: boolean) => {
     try {
-      const chan: ChanType = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/chan/" + chan_id
-      )
-      if (action && chan) {
+      if (action) {
         setChanFrom(prevState => [...prevState, chan])
       }
       if (!action) {
@@ -338,7 +318,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       setError(error);
     }
   }, [chanFrom])
-
 
   const updateAllChans = useCallback(async (): Promise<void> => {
     try {
@@ -422,9 +401,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
-      updateBannedFromList: (chan_id: string, action: boolean) => updateBannedFromList(chan_id, action),
-      updateChanFromList: (chan_id: string, action: boolean) => updateChanFromList(chan_id, action),
-      updateMutedFromList: (chan_id: string, action: boolean) => updateMutedFromList(chan_id, action),
+      updateBannedFromList: (chan: ChanType, action: boolean) => updateBannedFromList(chan, action),
+      updateChanFromList: (chan: ChanType, action: boolean) => updateChanFromList(chan, action),
+      updateMutedFromList: (chan: ChanType, action: boolean) => updateMutedFromList(chan, action),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
     }),

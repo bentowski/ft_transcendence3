@@ -1,5 +1,5 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
 //import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
@@ -38,6 +38,7 @@ export const WebSocket = () => {
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate();
+  //const location = useLocation();
   let location = ""
 
 
@@ -76,14 +77,38 @@ export const WebSocket = () => {
   useEffect(() => {
     const handleMute = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        console.log('Youve been MUTATED')
-        updateMutedFromList(obj.room, obj.action)
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateMutedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        updateBannedFromList(obj.room, obj.action);
-        socket.emit('leaveRoom' , {room: obj.room, auth_id: user.auth_id})
+        console.log('updating banned from list ', obj.room)
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateBannedFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
+        socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+        changeActiveRoom("");
+        setRoom("null");
+        getChan();
+        window.location.href = "http://localhost:8080/chat"; //!
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
@@ -160,7 +185,6 @@ export const WebSocket = () => {
         setError(error);
         return;
       }
-      try {
         chanCreated = await Request(
             "POST",
             {
@@ -196,8 +220,6 @@ export const WebSocket = () => {
       setError(error);
     }
   };
-
-
 
   const joinUrl = async () => {
     let url = document.URL;

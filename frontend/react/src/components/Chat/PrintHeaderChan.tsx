@@ -10,15 +10,18 @@ import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 
 class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
-  render() {
+    render() {
     let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
+    if (!chan) {
+        return ;
+    }
     let tab: any[] = chan.admin
     if ((tab && tab.findIndex((u: any) => u === this.props.user.auth_id) > -1) || chan.owner === this.props.user.auth_id) {
       return (
-          <div className="row">
-            <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-            <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
-          </div>
+         <div className="row">
+             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
+             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
+         </div>
       )
     }
   }
@@ -52,7 +55,7 @@ export const PrintHeaderChan = (
     }
     return (
         <div className="chatMainTitle row">
-          <h1 className="col-10">Channel Name</h1>
+          {/* <h3 className="col-10">Channel Name</h3> */}
           <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
           <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
         </div>

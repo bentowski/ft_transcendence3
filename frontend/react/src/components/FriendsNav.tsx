@@ -1,38 +1,41 @@
 import { Component } from "react";
 import Request from "./utils/Requests";
 import { UserType } from "../types"
-import {AuthContext} from "../contexts/AuthProviderContext";
+import { AuthContext } from "../contexts/AuthProviderContext";
 import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
+import { Alert } from "react-bootstrap";
 
-class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Array<string>, friends: Array<UserType> }> {
+class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Array<string>, friends: Array<UserType>, alert: boolean }> {
   static contextType = AuthContext;
+
   constructor(props: any) {
     super(props)
     this.state = {
       friends: [],
       filteredList: [],
       uslist: [],
+      alert: false
     };
   }
 
-  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{ ctx: any; uslist: Array<string>; filteredList: Array<string>; friends: Array<UserType> }>, snapshot?: any): void {
+  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{ ctx: any; uslist: Array<string>; filteredList: Array<string>; friends: Array<UserType>; alert: boolean }>, snapshot?: any): void {
     const ctx: any = this.context;
     const frnds: UserType[] = ctx.friendsList;
     if (prevState.friends !== frnds) {
-      this.setState({friends: frnds })
+      this.setState({ friends: frnds })
     }
   }
 
   componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;
     const frnds: UserType[] = ctx.friendsList;
-    this.setState({friends: frnds})
+    this.setState({ friends: frnds })
     //let ctx: any = this.context;
     //let currentUser = this.state.ctx.user;
     //let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + this.state.user.username)
     //if (!user.friends.length)
-      //return ;
+    //return ;
     //this.setState({ friends: user.friends })
   }
 
@@ -52,16 +55,26 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     let input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
-      return ;
+      return;
     }
     try {
-      let userToAdd: UserType = await Request(
+      // let allUsers: <Array
+      const ctx: any = this.context;
+      // ctx.userList;
+      let exist: boolean = false;
+      for (let x = 0; x < ctx.userList.length; x++) {
+        if (ctx.userList[x] === input.value)
+          exist = true;
+      }
+      if (exist) {
+        this.setState({alert: false})
+        let userToAdd: UserType = await Request(
           'GET',
           {},
           {},
           "http://localhost:3000/user/name/" + input.value
-      )
-      await Request('PATCH',
+        )
+        await Request('PATCH',
           {
             Accept: 'application/json',
             'Content-Type': 'application/json'
@@ -71,16 +84,20 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
             auth_id: userToAdd.auth_id
           },
           "http://localhost:3000/user/update/friends"
-      )
-      ctx.updateFriendsList(userToAdd, true);
-      let newFriendsArray = await Request(
+        )
+        ctx.updateFriendsList(userToAdd, true);
+        let newFriendsArray = await Request(
           "GET",
           {},
           {},
           "http://localhost:3000/user/" + currentUser.auth_id + "/getfriends",
-      )
-      this.setState({friends: newFriendsArray})
-      input.value = '';
+        )
+        this.setState({ friends: newFriendsArray })
+        input.value = '';
+      }
+      else {
+        this.setState({ alert: true })
+      }
     } catch (error) {
       ctx.setError(error);
     }
@@ -114,11 +131,15 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     }
   }
 
+  closeAlert = (): void => {
+    // console.log('closing alert');
+    this.setState({ alert: false });
+  }
+
   render(): JSX.Element {
 
     let onlines: number = 0;
-    if (this.state.friends.length > 0)
-    {
+    if (this.state.friends.length > 0) {
       onlines = 0;
       let x: number = 0;
       while (x < this.state.friends.length) {
@@ -131,14 +152,21 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online": 'You are friendless'} </p>
+          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online" : 'You are friendless'} </p>
         </div>
         <div className="addFriends my-3">
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
+          <div>
+            {this.state.alert ?
+              <Alert onClose={this.closeAlert} variant="danger" dismissible>{"This user don't exist"}</Alert> :
+              // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+              <div />
+            }
+          </div>
           <div className="item-list">
             <ol>
               {this.state.filteredList.map((item: any, key: any) => (
-                  <li key={key}>{item}</li>
+                <li key={key}>{item}</li>
               ))}
             </ol>
           </div>
