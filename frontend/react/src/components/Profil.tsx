@@ -12,21 +12,22 @@ import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
 
 class Profil extends Component<
-  {
-    nav: NavigateFunction,
-    loc: any
-  },
-  {
-    user: any;
-    current_username: string;
-    histories: Array<any>;
-    rank: number;
-    local: string,
-  }
-> {
-  static contextType = AuthContext;
-  constructor(props: any) {
-    super(props);
+    {
+      nav: NavigateFunction,
+      loc: any,
+      parentCallback: (newurl: string) => void
+    },
+    {
+      user: any;
+      current_username: string;
+      histories: Array<any>;
+      rank: number;
+      local: string,
+    }
+    > {
+  static contextType = AuthContext
+  constructor(props: any, context: any) {
+    super(props, context);
     this.state = {
       user: {},
       current_username: "",
@@ -40,6 +41,9 @@ class Profil extends Component<
     if (!username) {
       username = this.state.current_username;
     }
+    if (username === undefined) {
+      return ;
+    }
     try {
       let newUser: UserType = await Request(
         "GET",
@@ -48,8 +52,11 @@ class Profil extends Component<
         "http://localhost:3000/user/name/" + username
       );
       this.setState({ user: newUser });
+      this.setState({ current_username: username })
     } catch (error) {
       const ctx: any = this.context;
+      const usr: UserType = ctx.user
+      this.props.nav("/profil/" + usr.username)
       ctx.setError(error);
     }
   };
@@ -97,43 +104,46 @@ class Profil extends Component<
   };
 
   async componentDidUpdate(
-    prevProps: Readonly<{
-      nav: NavigateFunction,
-      loc: any,
-    }>,
-    prevState: Readonly<{
-      user: any;
-      current_username: string;
-      histories: Array<any>;
-      rank: number;
-      local: string
-    }>,
-    snapshot?: any) {
-    let url: string = document.URL;
-    if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
-      window.location.href = "http://localhost:8080/profil/" + this.state.user.username
-    }
+      prevProps: Readonly<{
+          nav: NavigateFunction,
+          loc: any,
+          parentCallback: (newurl: string) => void,
+      }>,
+      prevState: Readonly<{
+        user: any;
+        current_username: string;
+        histories: Array<any>;
+        rank: number;
+        local: string }>,
+      snapshot?: any) {
+    const ctx: any = this.context;
+    let url: string = this.props.loc.pathname;
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
-    if (newLoc !== this.state.local || prevState.local !== newLoc) {
-      await this.getUser(newLoc);
-      await this.getHistory();
-      await this.getRank();
+    if (newLoc !== 'undefined' && (newLoc !== this.state.local || prevState.local !== newLoc)) {
+      this.getUser(newLoc);
+      this.getHistory();
+      this.getRank();
       this.setState({ local: newLoc });
     }
+    /*
+    if (prevState.current_username !== ctx.user.username) {
+      this.setState({current_username: ctx.user.username});
+      this.props.nav("/profil/" + ctx.user.username)
+    }
+     */
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const cxt: any = this.context;
     const usr: UserType = cxt.user;
-    this.setState({ user: JSON.stringify(usr) });
+    this.setState({ user: usr });
     this.setState({ current_username: usr.username });
-    this.setState({ local: this.props.loc });
-    let url: string = document.URL;
     if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
-      window.location.href = "http://localhost:8080/profil/" + cxt.user.username
+      this.props.nav("/profil/" + usr.username);
     }
+    let url: string = this.props.loc.pathname;
     const newUrl: string = url.substring(url.lastIndexOf("/") + 1);
-    if (url !== this.state.local) {
+    if (newUrl !== this.state.local) {
       this.getUser(newUrl);
       this.getHistory();
       this.getRank();
