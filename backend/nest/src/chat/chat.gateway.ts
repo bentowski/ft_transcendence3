@@ -224,6 +224,7 @@ export class ChatGateway implements OnModuleInit
 
     launchCounterMute(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
+            console.log('unmute');
             try {
                 await this.chanService.muteUserToChannel(auth_id, room, false)
             } catch (error) {
