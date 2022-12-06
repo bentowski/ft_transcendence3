@@ -20,10 +20,10 @@ class Stats extends Component<
     let users: UserType[] = [];
     try {
       users = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user"
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user"
       );
     } catch (error) {
       ctx.setError(error);
@@ -46,15 +46,19 @@ class Stats extends Component<
     while (y < this.state.users.length) {
       // console.log("avatar est un bon film = ", this.state.users[y]);
       user.push(
-        <div key={y} className="d-flex flex-row d-flex align-items-center">
-          <div className="nb col-1 mr-2 d-flex flex-row justify-content-start">
+        <div key={y} className="col-12 d-flex flex-row d-flex align-items-center">
+          {/* <div className="nb col-1 mr-2 d-flex flex-row justify-content-start"> */}
+          <div className="col-1 d-flex justify-content-start">
             {y + 1}
           </div>
-          <UserCards
-            user={this.state.users[y]}
-            avatar={true}
-            stat={true}
-          />
+          <div className="col-11 d-flex justify-content-between">
+            <UserCards
+              user={this.state.users[y]}
+              avatar={true}
+              stat={true}
+            // key={y}
+            />
+          </div>
         </div>
       );
       y++;

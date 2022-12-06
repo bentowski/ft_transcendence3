@@ -94,6 +94,7 @@ class HistoryCards extends Component<{ history: HistoryType, profil: string }, {
     let items: JSX.Element = this.renderHistoryCards();
     return (
       <div>
+        {/* {this.props.key} */}
         {items}
       </div>
     );
