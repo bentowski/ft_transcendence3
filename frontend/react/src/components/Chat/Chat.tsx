@@ -171,7 +171,7 @@ export const WebSocket = () => {
         location = url
         joinUrl()
       }
-    }, 10)
+    }, 10000)
   }, [])
 
   useEffect(() => {
