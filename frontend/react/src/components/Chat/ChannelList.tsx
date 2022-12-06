@@ -10,14 +10,21 @@ import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 
 
-class ListOfDirectMessages extends Component<{chanList: ChanType[], user: UserType, parentCallBack: any}, {}>{
+class ListOfDirectMessages extends Component<{
+  chanList: ChanType[],
+  user: UserType,
+  parentCallBack: any}, {}>{
   render() {
     let ret: any[] = []
     this.props.chanList.map((chan) => {
           if (chan.type === "direct")
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
-                  <li onClick={() => this.props.parentCallBack.joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (this.props.parentCallBack.chanColor(chan))}>
+                  <li
+                      onClick={() => this.props.parentCallBack.joinRoom(chan)}
+                      className={
+                    "d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item "
+                          + (this.props.parentCallBack.chanColor(chan))}>
                     {this.props.parentCallBack.printName(chan, this.props.user)}
                   </li>
                 </Link>
@@ -28,14 +35,21 @@ class ListOfDirectMessages extends Component<{chanList: ChanType[], user: UserTy
   }
 }
 
-class ListOfJoinedChans extends Component<{chanList: ChanType[], user: UserType, parentCallBack: any}, {}> {
+class ListOfJoinedChans extends Component<{
+  chanList: ChanType[],
+  user: UserType,
+  parentCallBack: any}, {}> {
   render() {
     let ret: any[] = []
     this.props.chanList.map((chan: ChanType) => {
           if (chan.type !== "direct" && this.props.parentCallBack.inChan(chan))
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
-                  <li onClick={() => this.props.parentCallBack.joinRoom(chan)} className={"d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item " + (this.props.parentCallBack.chanColor(chan))}>
+                  <li
+                      onClick={() => this.props.parentCallBack.joinRoom(chan)}
+                      className={
+                    "d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item "
+                          + (this.props.parentCallBack.chanColor(chan))}>
                     {this.props.parentCallBack.printName(chan, this.props.user)}
                   </li>
                 </Link>
@@ -90,8 +104,16 @@ export const ChannelList = (
 
     return (
       <div className="channels col-2">
-        <button className="btn btn-outline-dark shadow-none" onClick={parentCallBack.createChan}>Create Channel</button>
-        <button className="btn btn-outline-dark shadow-none" onClick={parentCallBack.joinChan}>Join Channel</button>
+        <button
+            className="btn btn-outline-dark shadow-none"
+            onClick={parentCallBack.createChan}>
+          Create Channel
+        </button>
+        <button
+            className="btn btn-outline-dark shadow-none"
+            onClick={parentCallBack.joinChan}>
+          Join Channel
+        </button>
         <div className="channelsList">
           <p>{chansJoined(chanList)} Channels</p>
           <div className="list-group">

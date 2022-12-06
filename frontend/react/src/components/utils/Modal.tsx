@@ -62,12 +62,33 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
-    if (props.chanList.length !== this.state.allChans.length) {
+    //const ctx: any = this.context;
+    if (props.chanList.length !== this.state.allChans.length
+    ) {
       setTimeout(() => {
         this.updateChan()
       }, 10)
       // this.updateChan();
     }
+    /*
+    const ctx: any = this.context;
+    if (state.allChans !== ctx.allChans) {
+      console.log('setting allchans new state')
+      this.setState({allChans: ctx.allChans})
+    }
+    if (state.banned !== ctx.bannedFrom) {
+      console.log('setting banned new state')
+      this.setState({banned: ctx.bannedFrom})
+    }
+    if (state.joined !== ctx.chanFrom) {
+      console.log('setting joined new state')
+      this.setState({joined: ctx.chanFrom})
+    }
+    if (state.user !== ctx.user) {
+      console.log('setting user new state')
+      this.setState({user: ctx.user})
+    }
+     */
   }
 
   hiddenCreate = () => {
@@ -125,43 +146,6 @@ class Modal extends Component<
     });
     modal.classList.add("hidden");
   };
-
-  /*
-  componentDidUpdate = (
-      prevProps: Readonly<{
-        title: string,
-        calledBy: string,
-        userChan?: any[],
-        userBan?: any[],
-        parentCallBack?: any,
-        chans?: any}>,
-       prevState: Readonly<{
-         user: any,
-         friends: any[],
-         input: string,
-         allChans: Array<ChanType>,
-         protected: boolean,
-         alertRadio: boolean,
-         fieldName: string,
-         errName: string,
-         alertName: boolean,
-         fieldPass: string,
-         errPass: string,
-         alertPass: boolean,
-         printed: any,
-         type: string
-         banned: any[],
-         joined: any[],}>,
-       snapshot?: any) => {
-       const ctx: any = this.context;
-       if (prevState.allChans !== ctx.allChans) {
-           this.setState({allChans: ctx.allChans})
-       }
-       if (prevState.user !== ctx.user) {
-           this.setState({user: ctx.user})
-       }
-   }
-   */
 
    updateChan = async () => {
     const ctx: any = this.context

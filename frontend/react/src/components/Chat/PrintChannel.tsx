@@ -5,27 +5,78 @@ import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
 import { MessagePayload, ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
+import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
-class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
+class UsersInActualchannel extends Component<{
+  room: string,
+  usersList: UserType[]
+}, {
+  usersChan: UserType[]
+}> {
+  /*
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      usersChan: [],
+    }
+  }
+
+  componentDidMount() {
+    this.setState({usersChan: this.props.usersList})
+  }
+
+  async componentDidUpdate(
+      prevProps: Readonly<{
+        usersList: UserType[] }>,
+      prevState: Readonly<{
+        usersChan: UserType[]
+      }>,
+      snapshot?: any) {
+    if (prevState.usersChan !== this.props.usersList) {
+      this.setState({usersChan: this.props.usersList});
+    }
+  }
+   */
+
   render() {
     let users: any = [];
     const actualChan = this.props.usersList;
     if (actualChan.length)
       actualChan.map((u: UserType) => {
-        users.push(<div key={u.user_id}><UserCards user={u} avatar={false} stat={false} /></div>)
+        users.push(
+            <div key={u.user_id}>
+              <UserCards user={u} avatar={false} stat={false} />
+            </div>)
       })
     return users;
   }
 }
 
 export const PrintChannel = (
-  {msgInput, value, chanList, user, room, usersInChan, currentChan, parentCallBack}:
-  {msgInput: any, value: any, chanList: ChanType[], user: UserType, room: any, usersInChan: UserType[], currentChan: any, parentCallBack: any}) => {
+  {
+    msgInput,
+    value,
+    chanList,
+    user,
+    room,
+    usersInChan,
+    currentChan,
+    parentCallBack
+  }:
+  {
+    msgInput: any,
+    value: any,
+    chanList: ChanType[],
+    user: UserType,
+    room: any,
+    usersInChan: UserType[],
+    currentChan: any,
+    parentCallBack: any
+  }) => {
   const { mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
@@ -146,13 +197,32 @@ export const PrintChannel = (
           {printName()}
         </div>
         <div className="chatMain col-10">
-          <PrintHeaderChan chanList={chanList} room={room} socket={socket} user={user} parentCallBack={{ setModalType, setModalTitle }} />
+          <PrintHeaderChan
+              chanList={chanList}
+              usersInChan={usersInChan}
+              room={room}
+              socket={socket}
+              user={user}
+              parentCallBack={{ setModalType, setModalTitle }} />
           <div className="row">
             <div>
-              <PrintMessages user={user} currentChan={currentChan} chanList={chanList} parentCallBack={{ setChanList }} />
+              <PrintMessages
+                  user={user}
+                  currentChan={currentChan}
+                  chanList={chanList}
+                  parentCallBack={{ setChanList }} />
               <div className="row">
                 <div>
-                   <input id="message" ref={msgInput} className="col-10" type="text" placeholder="type your message" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={pressEnter} />
+                   <input
+                       id="message"
+                       ref={msgInput}
+                       className="col-10"
+                       type="text"
+                       placeholder="type your message"
+                       value={value}
+                       onChange={(e) => setValue(e.target.value)}
+                       onKeyDown={pressEnter}
+                   />
                    <button className="col-1" onClick={onSubmit}>Send</button>
                 </div>
               </div>
@@ -161,7 +231,7 @@ export const PrintChannel = (
         </div> {/*fin chatMain*/}
         <div className="chatMembers col-2">
           <p> Channel's members ({usersInChan.length}) </p>
-          <UsersInActualchannel usersList={usersInChan} />
+          <UsersInActualchannel room={room} usersList={usersInChan} />
         </div>
       </div>
     )

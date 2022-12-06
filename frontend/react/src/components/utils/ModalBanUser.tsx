@@ -3,9 +3,10 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-import {UsersChanBanType, UserType} from "../../types";
+import {ChanType, UsersChanBanType, UserType} from "../../types";
+import {Socket} from "socket.io-client";
 
-const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
+const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
     const { user, setError, updateBannedFromList } = useAuthData();
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
@@ -51,13 +52,13 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
             }
             fetchUsersChan();
         }
-    }, [show])
+    }, [usersInChan, show])
 
     useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
-    }, [usersChan])
+    }, [usersInChan, usersChan])
 
     const handleClose = (): void => {
         setShow(false);

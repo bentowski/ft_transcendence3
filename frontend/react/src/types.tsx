@@ -66,7 +66,7 @@ export type ErrorType = {
 export type PunishSocketType = {
   room: string,
   auth_id: string,
-  action: string,
+  action: boolean,
 }
 
 export type AuthType = {
