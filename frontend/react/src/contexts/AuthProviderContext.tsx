@@ -288,10 +288,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
 
   const updateBannedFromList = useCallback(async (chan: ChanType, action: boolean) => {
-    console.log('update banned from list called  ', chan.id);
     if (action) {
       setBannedFrom(prevState => [...prevState, chan])
       setTimeout(() => {
+        console.log('ban is over :)')
         rmvBan(chan);
       }, 10000)
     }
@@ -301,7 +301,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [bannedFrom])
 
   const updateAdminFromList = useCallback(async (chan: ChanType, action: boolean) => {
-    console.log('callin update admin from list ', adminFrom, ', chan = ', chan, ', action = ', action);
     if (action) {
       setAdminFrom(prevState => [...prevState, chan])
     }

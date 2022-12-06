@@ -48,11 +48,13 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
+      updateAllChans();
       getChan();
     });
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
-        if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
+        if (c.chanUser.find((u) =>
+          u.auth_id === user.auth_id) !== undefined) {
           getChan();
           updateAllChans();
           window.location.href = "http://localhost:8080/chat"; //!
@@ -92,18 +94,6 @@ export const WebSocket = () => {
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
-      /*
-      if (obj.action) {
-        console.log('chanuser = ', chanUser);
-        let idx: number = chanUser.findIndex((elem : any) => elem.auth_id === user.auth_id);
-        console.log('idx ban = ', idx);
-        if (idx !== -1) {
-          chanUser.splice(idx);
-        }
-      } else if (!obj.action) {
-
-      }
-       */
       if (obj.auth_id === user.auth_id){
         try {
           const chan: ChanType = await Request(
@@ -112,16 +102,20 @@ export const WebSocket = () => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          updateBannedFromList(chan, obj.action)
+          updateBannedFromList(chan, obj.action);
         } catch (error) {
           setError(error);
         }
-        socket.emit('chanCreated');
-        socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
-        changeActiveRoom("");
-        setRoom("null");
-        getChan();
-        window.location.href = "http://localhost:8080/chat"; //!
+        if (obj.action) {
+          socket.emit("leaveRoom",
+              {room: room, auth_id: user.auth_id}
+          );
+          changeActiveRoom("");
+          setRoom("null");
+          await getChan();
+          socket.emit('chanCreated');
+          window.location.href = "http://localhost:8080/chat"; //!
+        }
       }
     }
     const handleAdmin = async (obj: PunishSocketType) => {
@@ -200,7 +194,10 @@ export const WebSocket = () => {
 
 // ================= Fin UseEffects ===================
 
-  const createChannel = async (name: string, typep: string, pass: string) => {
+  const createChannel = async (
+      name: string,
+      typep: string,
+      pass: string) => {
     let chans:Array<ChanType>;
     let chanCreated:ChanType;
     try {
@@ -237,7 +234,7 @@ export const WebSocket = () => {
           updateAllChans();
           updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
-          navigate('/chat/' + chanCreated.id);
+          //navigate('/chat/' + chanCreated.id);
           //!
           await getChan();
           setUrl('/chat/' + chanCreated.id);
@@ -260,12 +257,15 @@ export const WebSocket = () => {
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
   	chanList.forEach((chan) => {
-  		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
+  		if (chan.chanUser.find((u) =>
+            u.auth_id === user.auth_id)) {
   			socket.emit("joinRoom", chan.id, user.auth_id);
   		}
   	})
     if (index === -1) {
-      chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+      chan = chanList.find((c:ChanType) => {
+        c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+      });
       if (chan !== undefined) {
         joinRoom(chan)
       }
@@ -277,7 +277,9 @@ export const WebSocket = () => {
         joinRoom(chan)
       }
       else {
-        chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+        chan = chanList.find((c:ChanType) => {
+          c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+        });
         if (chan !== undefined) {
           joinRoom(chan)
         }
@@ -379,7 +381,17 @@ export const WebSocket = () => {
       <div>
         <div className="chat row">
           <h4>CHAT</h4>
-          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chanList)} chanList={chanList}/>
+          <Modal
+              title={modalTitle}
+              calledBy={modalType}
+              userChan={arrayUserInActualchannel()}
+              parentCallBack={{
+                "socket": socket,
+                "room": room,
+                joinRoom,
+                createChannel}}
+              chans={listChansJoined(chanList)}
+              chanList={chanList}/>
           <ChannelList
             chanList={chanList}
             room={room}
@@ -394,7 +406,14 @@ export const WebSocket = () => {
               room={room}
               usersInChan={chanUser}
               currentChan={currentChan}
-              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList, changeActiveRoom, setRoom}}
+              parentCallBack={{
+                setModalType,
+                setModalTitle,
+                setValue,
+                getChan,
+                setChanList,
+                changeActiveRoom,
+                setRoom}}
                />
         </div>
       </div>

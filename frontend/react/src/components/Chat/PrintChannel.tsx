@@ -98,6 +98,7 @@ export const PrintChannel = (
     parentCallBack.setChanList(newValue)
   }
 
+  /*
   useEffect(() => {
     const checkIfBanned = async () => {
       let ban = await Request(
@@ -119,6 +120,7 @@ export const PrintChannel = (
     }
     checkIfBanned();
   }, [bannedFrom])
+  */
 
   const checkIfMuted = async () => {
     let mutedList = await Request(
@@ -142,7 +144,7 @@ export const PrintChannel = (
         if (value === "/leave") {
           socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
           parentCallBack.changeActiveRoom("");
-          parentCallBack.setMessage([]);
+          //parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
           parentCallBack.getChan();
           window.location.href = "http://localhost:8080/chat"; //!
