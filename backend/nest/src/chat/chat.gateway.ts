@@ -32,6 +32,37 @@ export class ChatGateway implements OnModuleInit
     });
   }
 
+    checkIfUserIsBlocking(sender: UserEntity, chan: ChanEntity): boolean {
+      for (let i = 0; i < sender.blocked.length; i++) {
+          console.log('checkifuserisblocking sender blocked = ', sender.blocked[i])
+          for (let j = 0; j < chan.chanUser.length; j++) {
+              console.log('checkifuserisblocking chan user = ', chan.chanUser[j].auth_id)
+              if (sender.blocked[i] === chan.chanUser[j].auth_id) {
+                  console.log('checkifuserisblocking user blocked');
+                  return true
+              }
+          }
+      }
+      return false;
+    }
+
+    checkIfUserIsBlocked(sender: UserEntity, chan: ChanEntity) {
+      for (let i = 0; i < chan.chanUser.length; i++) {
+          console.log('checkifuserisblocked chan user = ', chan.chanUser.length);
+          for (let j = 0; j < chan.chanUser[i].blocked.length; j++) {
+              console.log('checkifuserisblocked blocked = ', chan.chanUser[i].blocked[j])
+              for (let k = 0; k < chan.chanUser.length; k++) {
+                  console.log('checkifuserisblocked chan user = ', chan.chanUser[k].auth_id);
+                  if (chan.chanUser[k].auth_id === chan.chanUser[i].blocked[j]) {
+                      console.log('checkifuserisblocked user blocked');
+                      return true;
+                  }
+              }
+          }
+      }
+      return false;
+    }
+
   @SubscribeMessage('newMessage')
   async onNewMessage(client: Socket, @MessageBody() body: any): Promise<void> {
       const sender: UserEntity = await this.userService.findOnebyUsername(body.username);
@@ -101,6 +132,31 @@ export class ChatGateway implements OnModuleInit
                   body.auth_id
               );
           return ;
+      }
+      if (chan.type === 'direct') {
+          if (chan.chanUser.length !== 2) {
+              this.server
+                  .to(body.room)
+                  .emit(
+                      'error',
+                      {
+                          statusCode: 400,
+                          message: 'Message not sent: Wrong number of users for direct conversation'},
+                      body.auth_id
+                  );
+          }
+          if (this.checkIfUserIsBlocking(sender, chan) || this.checkIfUserIsBlocked(sender, chan)) {
+              this.server
+                  .to(body.room)
+                  .emit(
+                      'error',
+                      {
+                          statusCode: 400,
+                          message: 'Message not sent: User blocked/blocking'},
+                      body.auth_id
+                  );
+              return ;
+          }
       }
 
     this.server
