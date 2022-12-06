@@ -66,7 +66,7 @@ export type ErrorType = {
 export type PunishSocketType = {
   room: string,
   auth_id: string,
-  action: string,
+  action: boolean,
 }
 
 export type AuthType = {
@@ -86,6 +86,11 @@ export type UsersChanMuteType = {
 export type UsersChanBanType = {
   user: UserType | undefined,
   isBan: boolean,
+}
+
+export type UsersChanAdminType = {
+  user: UserType | undefined,
+  isAdmin: boolean,
 }
 
 export type ParamsImgType = {

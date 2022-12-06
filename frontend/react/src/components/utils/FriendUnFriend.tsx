@@ -20,7 +20,6 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
                     setStatus(res);
                     return ;
                 } catch (error) {
-                    //console.log(error);
                     setError(error);
                 }
             }

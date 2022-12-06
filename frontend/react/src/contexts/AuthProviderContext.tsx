@@ -8,6 +8,7 @@ import {
 } from "react";
 import Request from "../components/utils/Requests";
 import {AuthType, ChanType, UserType} from "../types";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export const AuthContext = createContext<any>({
   /*
@@ -40,6 +41,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
   const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
   const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
+  const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchUserList = async (): Promise<void> => {
     let list: UserType[] = [];
@@ -170,6 +174,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
                 //--------------------
 
+                let alist: ChanType[] = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/chan/admin"
+                )
+                setAdminFrom(alist);
+
+                //--------------------
+
                 setIsAuth(true);
                 setLoading(false);
                 return ;
@@ -262,7 +276,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }
 
   const rmvMute = (chan: ChanType) => {
-    const idx = bannedFrom.findIndex(obj => {
+    const idx: number = bannedFrom.findIndex(obj => {
       return obj.id === chan.id;
     })
     const newArr: ChanType[] = mutedFrom;
@@ -274,10 +288,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
 
   const updateBannedFromList = useCallback(async (chan: ChanType, action: boolean) => {
-    console.log('update banned from list called  ', chan.id);
     if (action) {
       setBannedFrom(prevState => [...prevState, chan])
       setTimeout(() => {
+        console.log('ban is over :)')
         rmvBan(chan);
       }, 10000)
     }
@@ -285,6 +299,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       rmvBan(chan);
     }
   }, [bannedFrom])
+
+  const updateAdminFromList = useCallback(async (chan: ChanType, action: boolean) => {
+    if (action) {
+      setAdminFrom(prevState => [...prevState, chan])
+    }
+    if (!action) {
+      const i: number = adminFrom.findIndex(obj => {
+        return obj.id === chan.id;
+      })
+      const newArr: ChanType[] = adminFrom;
+      if (i !== -1) {
+        newArr.splice(i);
+      }
+      setAdminFrom(newArr);
+    }
+  }, [])
 
 
   const updateMutedFromList = useCallback( async (chan: ChanType, action: boolean) => {
@@ -320,6 +350,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [chanFrom])
 
   const updateAllChans = useCallback(async (): Promise<void> => {
+    console.log('updateallchans called');
     try {
       let res: ChanType[] = await Request(
           "GET",
@@ -388,6 +419,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       allChans,
       bannedFrom,
       mutedFrom,
+      adminFrom,
       chanFrom,
       errorShow,
       errorMsg,
@@ -404,8 +436,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateBannedFromList: (chan: ChanType, action: boolean) => updateBannedFromList(chan, action),
       updateChanFromList: (chan: ChanType, action: boolean) => updateChanFromList(chan, action),
       updateMutedFromList: (chan: ChanType, action: boolean) => updateMutedFromList(chan, action),
+      updateAdminFromList: (chan: ChanType, action: boolean) => updateAdminFromList(chan, action),
       updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
+      navigate,
+      location,
     }),
     [
       errorShow,
@@ -418,6 +453,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       bannedFrom,
       mutedFrom,
       chanFrom,
+      adminFrom,
       isToken,
       isTwoFa,
       updateBannedFromList,
@@ -433,6 +469,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       userList,
       friendsList,
       blockedList,
+      navigate,
+      location,
     ]
   );
 

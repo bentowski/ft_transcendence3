@@ -37,9 +37,9 @@ class Modal extends Component<
     joined: any[],
   }
 > {
-  static context = AuthContext;
-  constructor(props: any) {
-    super(props);
+  static contextType = AuthContext;
+  constructor(props: any, context: any) {
+    super(props, context);
     // users: [],
     this.state = {
       user: {},
@@ -61,9 +61,13 @@ class Modal extends Component<
     };
   }
 
-  componentWillReceiveProps = (props:any) => {
-    if (props.chanList !== this.props.chanList)
-    this.updateChan();
+  componentDidUpdate(props:any, state:any) {
+    if (props.chanList.length !== this.state.allChans.length
+    ) {
+      setTimeout(() => {
+        this.updateChan()
+      }, 10)
+    }
   }
 
   hiddenCreate = () => {
@@ -122,43 +126,6 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-  /*
-  componentDidUpdate = (
-      prevProps: Readonly<{
-        title: string,
-        calledBy: string,
-        userChan?: any[],
-        userBan?: any[],
-        parentCallBack?: any,
-        chans?: any}>,
-       prevState: Readonly<{
-         user: any,
-         friends: any[],
-         input: string,
-         allChans: Array<ChanType>,
-         protected: boolean,
-         alertRadio: boolean,
-         fieldName: string,
-         errName: string,
-         alertName: boolean,
-         fieldPass: string,
-         errPass: string,
-         alertPass: boolean,
-         printed: any,
-         type: string
-         banned: any[],
-         joined: any[],}>,
-       snapshot?: any) => {
-       const ctx: any = this.context;
-       if (prevState.allChans !== ctx.allChans) {
-           this.setState({allChans: ctx.allChans})
-       }
-       if (prevState.user !== ctx.user) {
-           this.setState({user: ctx.user})
-       }
-   }
-   */
-
    updateChan = async () => {
     const ctx: any = this.context
     this.setState({ banned: ctx.banned })
@@ -188,7 +155,6 @@ class Modal extends Component<
     this.setState({ friends: users, allChans: chans });
     this.chans();
    }
-
   componentDidMount = () => {
     this.updateChan();
   };
@@ -448,7 +414,6 @@ class Modal extends Component<
             this.state.input.length === 0 ||
             friend.username.includes(this.state.input)
           )
-            // console.log('hello ', this.state.friends[x]);
           friends.push(this.displayUser(x, this.state.friends[x]));
         }
         x++;
@@ -472,13 +437,9 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfBanned = async (chan: ChanType) => {
-    let banned = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/banned",
-    )
+  checkIfBanned = (chan: ChanType) => {
+    const ctx: any = this.context;
+    const banned: ChanType[] = ctx.bannedFrom;
     for (let index = 0; index < banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
@@ -487,13 +448,9 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn = async (chan: ChanType) => {
-    let joined = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/joined",
-    )
+  checkIfAlreadyIn = (chan: ChanType) => {
+    const ctx: any = this.context;
+    const joined: ChanType[] = ctx.chanFrom;
     for (let index = 0; index < joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;
@@ -511,7 +468,6 @@ class Modal extends Component<
 
   joinRoom = (newRoom: ChanType) => {
     this.props.parentCallBack.joinRoom(newRoom)
-    // console.log(join)
     // this.hiddenJoin()
   }
 
@@ -523,15 +479,15 @@ class Modal extends Component<
     this.hiddenJoin()
   }
 
-  chans = async () => {
+  chans = () => {
     let ret: any[] = [];
     for (let x = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
       ) {
-        if (!await this.checkIfAlreadyIn(this.state.allChans[x]) &&
-            !await this.checkIfBanned(this.state.allChans[x])
+        if (!this.checkIfAlreadyIn(this.state.allChans[x]) &&
+            !this.checkIfBanned(this.state.allChans[x])
         ) {
           ret.push(
             <div className="row TEST" key={x}>

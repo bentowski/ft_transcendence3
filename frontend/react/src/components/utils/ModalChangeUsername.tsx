@@ -109,7 +109,7 @@ const ModalChangeUsername = (): JSX.Element => {
           updateUser(null, field);
           setField("");
           handleClose();
-          // navigate("/profil/" + newName);
+          navigate("/profil/" + newName);
         }
       } catch (error) {
         setError(error);

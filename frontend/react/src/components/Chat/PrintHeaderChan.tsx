@@ -5,22 +5,89 @@ import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
 import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
+import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
+import ModalAdminUser from "../utils/ModalAdminUser";
 
-class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
+class AdminButtons extends Component<
+    {
+        room: any,
+        socket: any,
+        user: UserType,
+        chanList: ChanType[]
+        usersInChan: UserType[],
+    },
+    {
+        adminList: UserType[],
+    }> {
+    static contextType = AuthContext;
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            adminList: [],
+        }
+    }
+    componentDidMount = async () => {
+        const ctx: any = this.context;
+        this.setState({adminList: ctx.adminList})
+    }
+
+    componentDidUpdate(
+        prevProps: Readonly<{
+            room: any;
+            socket: any;
+            user: UserType;
+            chanList: ChanType[],
+            usersInChan: UserType[],
+        }>,
+        prevState: Readonly<{
+            adminList: UserType[],
+        }>,
+        snapshot?: any) {
+        const ctx: any = this.context;
+        /*
+        let users: UserType[] = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + prevProps.room + "/user"
+        )
+         */
+        if (prevState.adminList !== ctx.adminFrom) {
+            this.setState({adminList: ctx.adminFrom});
+        }
+        this.render();
+
+    }
+
+    isUserAdmin = () => {
+        return this.state.adminList &&
+            this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
+    }
+
     render() {
-    let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
+    let chan = this.props.chanList[
+        this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)
+        ]
     if (!chan) {
         return ;
     }
-    let tab: any[] = chan.admin
-    if ((tab && tab.findIndex((u: any) => u === this.props.user.auth_id) > -1) || chan.owner === this.props.user.auth_id) {
+    if (this.isUserAdmin()) {
       return (
          <div className="row">
-             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
+             <ModalBanUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalMuteUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalAdminUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan}/>
          </div>
       )
     }
@@ -38,15 +105,34 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
     let url: string = document.URL
     url = url.substring(url.lastIndexOf("/") + 1);
     let id = parseInt(url)
-    if (id && id > 0 && this.props.chanList[id - 1] && !(this.props.chanList[id - 1].type === "direct")) {
-      return (<button id="addPeople" className="col-2" onClick={this.promptAddUser}>Add Peoples</button>)
+    if (id && id > 0 && this.props.chanList[id - 1] &&
+        !(this.props.chanList[id - 1].type === "direct")) {
+      return (<button
+          id="addPeople"
+          className="col-2"
+          onClick={this.promptAddUser}>
+          Add Peoples
+      </button>)
     }
   }
 }
 
 export const PrintHeaderChan = (
-  {chanList, room, socket, user, parentCallBack}:
-  {chanList: ChanType[], room: any, user: UserType, socket: any, parentCallBack: any}) => {
+  {
+      chanList,
+      usersInChan,
+      room,
+      socket,
+      user,
+      parentCallBack}:
+  {
+      chanList: ChanType[],
+      usersInChan: UserType[],
+      room: any,
+      user: UserType,
+      socket: any,
+      parentCallBack: any
+  }) => {
     const setModalType = (newValue: any) => {
       parentCallBack.setModalType(newValue)
     }
@@ -56,8 +142,17 @@ export const PrintHeaderChan = (
     return (
         <div className="chatMainTitle row">
           {/* <h3 className="col-10">Channel Name</h3> */}
-          <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
-          <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
+          <PrintAddUserButton
+              chanList={chanList}
+              parentCallBack={{setModalType, setModalTitle}}
+          />
+          <AdminButtons
+              room={room}
+              socket={socket}
+              user={user}
+              chanList={chanList}
+              usersInChan={usersInChan}
+          />
         </div>
     )
 }

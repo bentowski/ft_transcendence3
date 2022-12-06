@@ -60,9 +60,36 @@ export class ChanController {
         }
     }
 
+    @Get(':idroom/isadmin/:iduser')
+    async isAdmin(@Param('idroom') idroom: string,
+                  @Param('iduser') iduser: string,
+    ): Promise<boolean> {
+        const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
+        if (!chan) {
+            throw new NotFoundException('Error while checking user status: Cant find chan');
+        }
+        for (let i = 0; i < chan.adminUser.length; i++) {
+            if (chan.adminUser[i].auth_id === iduser) {
+                return true
+            }
+        }
+        return false;
+    }
+
+    @Get(':idroom/isowner')
+    async isOwner(@Param('idroom') idroom: string,
+                  @Req() req
+    ): Promise<boolean> {
+        const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
+        if (!chan) {
+            throw new NotFoundException('Error while checking user status: Cant find chan');
+        }
+        return chan.owner === req.user.auth_id;
+    }
+
     @Get(':idroom/isbanned/:iduser')
     async isBanned(@Param('idroom') idroom: string,
-                   @Param('iduser') iduser: string
+                   @Param('iduser') iduser: string,
     ): Promise<boolean> {
         const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
@@ -78,7 +105,7 @@ export class ChanController {
 
     @Get(':idroom/ismuted/:iduser')
     async isMuted(@Param('idroom') idroom: string,
-                  @Param('iduser') iduser: string
+                  @Param('iduser') iduser: string,
     ): Promise<boolean> {
         const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
@@ -94,7 +121,7 @@ export class ChanController {
 
     @Get(':idroom/ispresent/:iduser')
     async isPresent(@Param('idroom') idroom: string,
-                    @Param('iduser') iduser: string
+                    @Param('iduser') iduser: string,
     ): Promise<boolean> {
         const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
@@ -126,10 +153,19 @@ export class ChanController {
         }
     }
 
-    @Delete(':id')
-    async remove(@Param('id') username: string): Promise<void> {
+    @Get(':id/admin')
+    getAdmins(@Param('id') idroom: string): Promise<UserEntity[]> {
         try {
-            await this.chanService.remove(username);
+            return this.chanService.getAdmins(idroom);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    @Delete(':id')
+    async remove(@Param('id') name: string): Promise<void> {
+        try {
+            await this.chanService.remove(name);
         } catch (error) {
             throw new Error(error);
         }

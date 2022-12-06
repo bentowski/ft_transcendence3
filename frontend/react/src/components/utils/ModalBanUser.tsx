@@ -3,9 +3,10 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-import {UsersChanBanType, UserType} from "../../types";
+import {ChanType, UsersChanBanType, UserType} from "../../types";
+import {Socket} from "socket.io-client";
 
-const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
+const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
     const { user, setError, updateBannedFromList } = useAuthData();
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
@@ -51,13 +52,13 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
             }
             fetchUsersChan();
         }
-    }, [show])
+    }, [usersInChan, show])
 
     useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
-    }, [usersChan])
+    }, [usersInChan, usersChan])
 
     const handleClose = (): void => {
         setShow(false);
@@ -67,7 +68,30 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
         setShow(true);
     }
 
+    const checkIfAdmin = async (id: string) => {
+        let res = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + chan + "/admin"
+        )
+        for (let i = 0; i < res.length; i++) {
+            if (id === res[i].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     const banUser = async (obj: any): Promise<void> => {
+        if (await checkIfAdmin(obj.user.auth_id)) {
+            const error = {
+                statusCode: 400,
+                message: 'Cant ban user: User is admin'
+            }
+            setError(error);
+            return ;
+        }
         socket.emit('banToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isBan });
         //updateBannedFromList(chan, !obj.isBan);
         const newArray: UsersChanBanType[] = [];
@@ -117,7 +141,7 @@ const ModalBanUser = ({chan, socket}:{chan: any, socket: any}): JSX.Element => {
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
-                        <h2>Ban/Unban user from chan for 100 seconds</h2>
+                        <h2>Ban/Unban user from chan for 10 seconds</h2>
                     </Modal.Header>
                     <Modal.Body>
                         <form className="mb-3">

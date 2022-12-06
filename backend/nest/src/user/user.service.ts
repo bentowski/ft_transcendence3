@@ -13,6 +13,7 @@ import {
   UpdateUserDto,
   UpdateAvatarDto,
 } from './dto/update-user.dto';
+import ChanEntity from "../chans/entities/chan-entity";
 
 @Injectable()
 export class UserService {
@@ -385,7 +386,7 @@ export class UserService {
     }
   }
 
-  async getChannelJoined(auth_id: string) {
+  async getChannelJoined(auth_id: string): Promise<ChanEntity[]> {
     const user: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
       relations: ['channelJoined'],
@@ -401,7 +402,22 @@ export class UserService {
     return user.channelJoined;
   }
 
-  async getChannelBanned(auth_id: string) {
+
+  async getChannelAdmin(auth_id: string): Promise<ChanEntity[]> {
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { auth_id: auth_id },
+      relations: ['channelAdmin'],
+    })
+    if (!user) {
+      throw new NotFoundException('Error while getting admin user list: Failed requesting user in database');
+    }
+    if (!user.channelAdmin) {
+      return [];
+    }
+    return user.channelAdmin;
+  }
+
+  async getChannelBanned(auth_id: string): Promise<ChanEntity[]> {
       const user: UserEntity = await this.userRepository.findOne({
         where: { auth_id: auth_id},
         relations: ['channelBanned']

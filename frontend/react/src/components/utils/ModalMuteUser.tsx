@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import {ChanType, UsersChanMuteType, UserType} from "../../types";
 import {Socket} from "socket.io-client";
 
-const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Element => {
-    const { user, setError, updateMutedFromList } = useAuthData();
+const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
+    const { user, setError } = useAuthData();
     const [ show, setShow ] = useState<boolean>(false);
     const [ usersChan, setUsersChan ] = useState<UsersChanMuteType[]>([{user: undefined, isMute:false}]);
     const [ loading, setLoading ] = useState<boolean>(false);
@@ -46,13 +46,13 @@ const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Ele
             }
             fetchUsersChan();
         }
-    }, [show])
+    }, [usersInChan, show])
 
     useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
-    }, [usersChan])
+    }, [usersInChan, usersChan])
 
     const handleClose = (): void => {
         setShow(false);
@@ -62,7 +62,30 @@ const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Ele
         setShow(true);
     }
 
-    const muteUser = (obj: any): void => {
+    const checkIfAdmin = async (id: string) => {
+        let res = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + chan + "/admin"
+        )
+        for (let i = 0; i < res.length; i++) {
+            if (id === res[i].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const muteUser = async (obj: any): Promise<void> => {
+        if (await checkIfAdmin(obj.user.auth_id)) {
+            const error = {
+                statusCode: 400,
+                message: 'Cant mute user: User is admin'
+            }
+            setError(error);
+            return ;
+        }
         socket.emit('muteToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isMute });
         //updateMutedFromList(chan, !obj.isMute)
         const newArray: UsersChanMuteType[] = [];
@@ -112,7 +135,7 @@ const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Ele
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
-                        <h2>Mute/Unmute user from channel for 100 seconds</h2>
+                        <h2>Mute/Unmute user from channel for 10 seconds</h2>
                     </Modal.Header>
                     <Modal.Body>
                         <form className="mb-3">

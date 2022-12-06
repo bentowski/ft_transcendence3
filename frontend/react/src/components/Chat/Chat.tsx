@@ -31,6 +31,7 @@ export const WebSocket = () => {
     updateBannedFromList,
     updateMutedFromList,
     updateChanFromList,
+    updateAdminFromList,
     updateAllChans,
     mutedFrom,
     bannedFrom
@@ -47,13 +48,15 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
+      //updateAllChans();
       getChan();
     });
     socket.on("chanDeleted", (roomId: string) => {
       chanList.forEach((c) => {
-        if (c.chanUser.find((u) => u.auth_id === user.auth_id) !== undefined) {
+        if (c.chanUser.find((u) =>
+          u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          updateAllChans();
+          //updateAllChans();
           window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
@@ -62,7 +65,7 @@ export const WebSocket = () => {
     socket.on("userLeaveChannel", () => {
       getChan();
       // window.location.replace("http://localhost:8080/chat");
-      navigate("/chat/")
+      //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
   		setLoaded('ok')
@@ -92,7 +95,6 @@ export const WebSocket = () => {
     }
     const handleBan = async (obj: PunishSocketType) => {
       if (obj.auth_id === user.auth_id){
-        console.log('updating banned from list ', obj.room)
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -100,15 +102,35 @@ export const WebSocket = () => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          updateBannedFromList(chan, obj.action)
+          updateBannedFromList(chan, obj.action);
         } catch (error) {
           setError(error);
         }
-        socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
-        changeActiveRoom("");
-        setRoom("null");
-        getChan();
-        window.location.href = "http://localhost:8080/chat"; //!
+        if (obj.action) {
+          socket.emit("leaveRoom",
+              {room: room, auth_id: user.auth_id}
+          );
+          changeActiveRoom("");
+          setRoom("null");
+          await getChan();
+          socket.emit('chanCreated');
+          window.location.href = "http://localhost:8080/chat"; //!
+        }
+      }
+    }
+    const handleAdmin = async (obj: PunishSocketType) => {
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateAdminFromList(chan, obj.action)
+        } catch (error) {
+          setError(error);
+        }
       }
     }
     const handleError = async (error: ErrorType, auth_id: string) => {
@@ -126,10 +148,20 @@ export const WebSocket = () => {
         }
       }
     }
-    getChan();
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
+    socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
+    return () => {
+      socket.off('error');
+      socket.off('mutedChannel');
+      socket.off('bannedChannel');
+      socket.off('adminChannel');
+    }
+  }, [chanUser]);
+
+  useEffect(() => {
+    getChan();
     let checkUrl = setInterval(() => {
       let url = document.URL
       if (!document.URL.includes("localhost:8080/chat"))
@@ -140,12 +172,7 @@ export const WebSocket = () => {
         joinUrl()
       }
     }, 10)
-    return () => {
-      socket.off('error');
-      socket.off('mutedChannel');
-      socket.off('bannedChannel');
-    }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (loaded === 'ok') {
@@ -160,13 +187,17 @@ export const WebSocket = () => {
   useEffect(() => {
     let chanUserFind:Array<UserType>|undefined = chanList.find((c:ChanType) => c.id === room)?.chanUser
     if (chanUserFind !== undefined) {
+      //console.log('chanuserfind = ', chanUserFind);
       setChanUser(chanUserFind)
     }
   }, [room, chanList])
 
 // ================= Fin UseEffects ===================
 
-  const createChannel = async (name: string, typep: string, pass: string) => {
+  const createChannel = async (
+      name: string,
+      typep: string,
+      pass: string) => {
     let chans:Array<ChanType>;
     let chanCreated:ChanType;
     try {
@@ -201,6 +232,7 @@ export const WebSocket = () => {
         );
           socket.emit('chanCreated');
           updateAllChans();
+          updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated.id);
           //!
@@ -225,12 +257,15 @@ export const WebSocket = () => {
     let chan:ChanType|undefined;
     let index = url.lastIndexOf("/");
   	chanList.forEach((chan) => {
-  		if (chan.chanUser.find((u) => u.auth_id === user.auth_id)) {
+  		if (chan.chanUser.find((u) =>
+            u.auth_id === user.auth_id)) {
   			socket.emit("joinRoom", chan.id, user.auth_id);
   		}
   	})
     if (index === -1) {
-      chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+      chan = chanList.find((c:ChanType) => {
+        c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+      });
       if (chan !== undefined) {
         joinRoom(chan)
       }
@@ -242,7 +277,9 @@ export const WebSocket = () => {
         joinRoom(chan)
       }
       else {
-        chan = chanList.find((c:ChanType) => c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id));
+        chan = chanList.find((c:ChanType) => {
+          c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+        });
         if (chan !== undefined) {
           joinRoom(chan)
         }
@@ -293,12 +330,14 @@ export const WebSocket = () => {
      })
     if (chanToJoin !== undefined) {
       if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
+        //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
         setCurrentChan(newRoom)
       } else {
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+        //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
         setCurrentChan(newRoom)
@@ -342,7 +381,17 @@ export const WebSocket = () => {
       <div>
         <div className="chat row">
           <h4>CHAT</h4>
-          <Modal title={modalTitle} calledBy={modalType} /* userBan={userBan} */ userChan={arrayUserInActualchannel()} parentCallBack={{"socket": socket, "room": room, joinRoom, createChannel}} chans={listChansJoined(chanList)} chanList={chanList}/>
+          <Modal
+              title={modalTitle}
+              calledBy={modalType}
+              userChan={arrayUserInActualchannel()}
+              parentCallBack={{
+                "socket": socket,
+                "room": room,
+                joinRoom,
+                createChannel}}
+              chans={listChansJoined(chanList)}
+              chanList={chanList}/>
           <ChannelList
             chanList={chanList}
             room={room}
@@ -357,7 +406,14 @@ export const WebSocket = () => {
               room={room}
               usersInChan={chanUser}
               currentChan={currentChan}
-              parentCallBack={{setModalType, setModalTitle, setValue, getChan, setChanList, changeActiveRoom, setRoom}}
+              parentCallBack={{
+                setModalType,
+                setModalTitle,
+                setValue,
+                getChan,
+                setChanList,
+                changeActiveRoom,
+                setRoom}}
                />
         </div>
       </div>
