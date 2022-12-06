@@ -63,7 +63,7 @@ export const WebSocket = () => {
     socket.on("userLeaveChannel", () => {
       getChan();
       // window.location.replace("http://localhost:8080/chat");
-      navigate("/chat/")
+      //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
   		setLoaded('ok')
@@ -92,11 +92,18 @@ export const WebSocket = () => {
       }
     }
     const handleBan = async (obj: PunishSocketType) => {
-      let idx: number = chanUser.findIndex(elem => elem.auth_id === user.auth_id);
-      console.log('idx ban = ', idx);
-      if (idx !== -1) {
-        chanUser.splice(idx);
+      /*
+      if (obj.action) {
+        console.log('chanuser = ', chanUser);
+        let idx: number = chanUser.findIndex((elem : any) => elem.auth_id === user.auth_id);
+        console.log('idx ban = ', idx);
+        if (idx !== -1) {
+          chanUser.splice(idx);
+        }
+      } else if (!obj.action) {
+
       }
+       */
       if (obj.auth_id === user.auth_id){
         try {
           const chan: ChanType = await Request(
@@ -109,6 +116,7 @@ export const WebSocket = () => {
         } catch (error) {
           setError(error);
         }
+        socket.emit('chanCreated');
         socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
         changeActiveRoom("");
         setRoom("null");
@@ -146,11 +154,20 @@ export const WebSocket = () => {
         }
       }
     }
-    getChan();
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
+    return () => {
+      socket.off('error');
+      socket.off('mutedChannel');
+      socket.off('bannedChannel');
+      socket.off('adminChannel');
+    }
+  }, [chanUser]);
+
+  useEffect(() => {
+    getChan();
     let checkUrl = setInterval(() => {
       let url = document.URL
       if (!document.URL.includes("localhost:8080/chat"))
@@ -161,13 +178,7 @@ export const WebSocket = () => {
         joinUrl()
       }
     }, 10)
-    return () => {
-      socket.off('error');
-      socket.off('mutedChannel');
-      socket.off('bannedChannel');
-      socket.off('adminChannel');
-    }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (loaded === 'ok') {
@@ -182,6 +193,7 @@ export const WebSocket = () => {
   useEffect(() => {
     let chanUserFind:Array<UserType>|undefined = chanList.find((c:ChanType) => c.id === room)?.chanUser
     if (chanUserFind !== undefined) {
+      //console.log('chanuserfind = ', chanUserFind);
       setChanUser(chanUserFind)
     }
   }, [room, chanList])

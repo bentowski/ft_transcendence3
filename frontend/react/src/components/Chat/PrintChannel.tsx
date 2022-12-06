@@ -12,9 +12,35 @@ import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
 class UsersInActualchannel extends Component<{
+  room: string,
   usersList: UserType[]
 }, {
+  usersChan: UserType[]
 }> {
+  /*
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      usersChan: [],
+    }
+  }
+
+  componentDidMount() {
+    this.setState({usersChan: this.props.usersList})
+  }
+
+  async componentDidUpdate(
+      prevProps: Readonly<{
+        usersList: UserType[] }>,
+      prevState: Readonly<{
+        usersChan: UserType[]
+      }>,
+      snapshot?: any) {
+    if (prevState.usersChan !== this.props.usersList) {
+      this.setState({usersChan: this.props.usersList});
+    }
+  }
+   */
 
   render() {
     let users: any = [];
@@ -82,12 +108,12 @@ export const PrintChannel = (
       )
       for (let i = 0; i < ban.length; i++) {
         if (ban[i].id === room) {
-          //socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
-          //parentCallBack.changeActiveRoom("");
-          //parentCallBack.setMessage([]);
-          //parentCallBack.setRoom("null");
-          //parentCallBack.getChan();
-          //window.location.href = "http://localhost:8080/chat"; //!
+          socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+          parentCallBack.changeActiveRoom("");
+          parentCallBack.setMessage([]);
+          parentCallBack.setRoom("null");
+          parentCallBack.getChan();
+          window.location.href = "http://localhost:8080/chat"; //!
         }
       }
     }
@@ -173,6 +199,7 @@ export const PrintChannel = (
         <div className="chatMain col-10">
           <PrintHeaderChan
               chanList={chanList}
+              usersInChan={usersInChan}
               room={room}
               socket={socket}
               user={user}
@@ -204,7 +231,7 @@ export const PrintChannel = (
         </div> {/*fin chatMain*/}
         <div className="chatMembers col-2">
           <p> Channel's members ({usersInChan.length}) </p>
-          <UsersInActualchannel usersList={usersInChan} />
+          <UsersInActualchannel room={room} usersList={usersInChan} />
         </div>
       </div>
     )

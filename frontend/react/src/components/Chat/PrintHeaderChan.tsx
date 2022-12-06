@@ -16,6 +16,7 @@ class AdminButtons extends Component<
         socket: any,
         user: UserType,
         chanList: ChanType[]
+        usersInChan: UserType[],
     },
     {
         adminList: UserType[],
@@ -37,7 +38,8 @@ class AdminButtons extends Component<
             room: any;
             socket: any;
             user: UserType;
-            chanList: ChanType[]
+            chanList: ChanType[],
+            usersInChan: UserType[],
         }>,
         prevState: Readonly<{
             adminList: UserType[],
@@ -60,20 +62,32 @@ class AdminButtons extends Component<
     }
 
     isUserAdmin = () => {
-        return this.state.adminList && this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
+        return this.state.adminList &&
+            this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
     }
 
     render() {
-    let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
+    let chan = this.props.chanList[
+        this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)
+        ]
     if (!chan) {
         return ;
     }
     if (this.isUserAdmin()) {
       return (
          <div className="row">
-             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
-             <ModalAdminUser chan={this.props.room} socket={this.props.socket} />
+             <ModalBanUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalMuteUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalAdminUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan}/>
          </div>
       )
     }
@@ -91,15 +105,34 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
     let url: string = document.URL
     url = url.substring(url.lastIndexOf("/") + 1);
     let id = parseInt(url)
-    if (id && id > 0 && this.props.chanList[id - 1] && !(this.props.chanList[id - 1].type === "direct")) {
-      return (<button id="addPeople" className="col-2" onClick={this.promptAddUser}>Add Peoples</button>)
+    if (id && id > 0 && this.props.chanList[id - 1] &&
+        !(this.props.chanList[id - 1].type === "direct")) {
+      return (<button
+          id="addPeople"
+          className="col-2"
+          onClick={this.promptAddUser}>
+          Add Peoples
+      </button>)
     }
   }
 }
 
 export const PrintHeaderChan = (
-  {chanList, room, socket, user, parentCallBack}:
-  {chanList: ChanType[], room: any, user: UserType, socket: any, parentCallBack: any}) => {
+  {
+      chanList,
+      usersInChan,
+      room,
+      socket,
+      user,
+      parentCallBack}:
+  {
+      chanList: ChanType[],
+      usersInChan: UserType[],
+      room: any,
+      user: UserType,
+      socket: any,
+      parentCallBack: any
+  }) => {
     const setModalType = (newValue: any) => {
       parentCallBack.setModalType(newValue)
     }
@@ -109,8 +142,17 @@ export const PrintHeaderChan = (
     return (
         <div className="chatMainTitle row">
           {/* <h3 className="col-10">Channel Name</h3> */}
-          <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
-          <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
+          <PrintAddUserButton
+              chanList={chanList}
+              parentCallBack={{setModalType, setModalTitle}}
+          />
+          <AdminButtons
+              room={room}
+              socket={socket}
+              user={user}
+              chanList={chanList}
+              usersInChan={usersInChan}
+          />
         </div>
     )
 }

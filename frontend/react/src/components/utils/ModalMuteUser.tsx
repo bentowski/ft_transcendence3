@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {ChanType, UsersChanMuteType, UserType} from "../../types";
 import {Socket} from "socket.io-client";
 
-const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Element => {
+const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
     const { user, setError } = useAuthData();
     const [ show, setShow ] = useState<boolean>(false);
     const [ usersChan, setUsersChan ] = useState<UsersChanMuteType[]>([{user: undefined, isMute:false}]);
@@ -46,13 +46,13 @@ const ModalMuteUser = ({chan, socket}:{chan: ChanType, socket: Socket}): JSX.Ele
             }
             fetchUsersChan();
         }
-    }, [show])
+    }, [usersInChan, show])
 
     useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
-    }, [usersChan])
+    }, [usersInChan, usersChan])
 
     const handleClose = (): void => {
         setShow(false);

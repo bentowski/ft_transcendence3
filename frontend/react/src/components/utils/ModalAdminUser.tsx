@@ -6,7 +6,7 @@ import {Modal} from 'react-bootstrap';
 import {UsersChanAdminType, UsersChanBanType, UsersChanMuteType, UserType} from "../../types";
 import {Link} from "react-router-dom";
 
-const ModalAdminUser = ({chan, socket}:{chan:string, socket: Socket}) => {
+const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket, usersInChan: UserType[]}) => {
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -52,13 +52,13 @@ const ModalAdminUser = ({chan, socket}:{chan:string, socket: Socket}) => {
         if (show) {
             fetchUsersChan();
         }
-    }, [adminFrom, show])
+    }, [usersInChan, adminFrom, show])
 
     useEffect((): void => {
         if (usersChan) {
             listUserCards();
         }
-    }, [usersChan])
+    }, [usersInChan, usersChan])
 
     const adminUser = (obj: any) => {
         socket.emit('adminToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isAdmin });
