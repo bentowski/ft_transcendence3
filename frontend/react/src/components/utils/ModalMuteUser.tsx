@@ -112,7 +112,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
-                        <h2>Mute/Unmute user from channel for 100 seconds</h2>
+                        <h2>Mute/Unmute user from channel for 10 seconds</h2>
                     </Modal.Header>
                     <Modal.Body>
                         <form className="mb-3">

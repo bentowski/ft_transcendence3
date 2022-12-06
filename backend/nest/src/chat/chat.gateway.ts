@@ -203,6 +203,7 @@ export class ChatGateway implements OnModuleInit
 
   launchCounterBan(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
+            this.server.emit('userJoinChannel');
             try {
                 await this.chanService.banUserToChannel(auth_id, room, false)
             } catch (error) {
@@ -217,11 +218,13 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-        }, 100000)
+
+        }, 10000)
   }
 
     launchCounterMute(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
+            this.server.emit('userJoinChannel');
             try {
                 await this.chanService.muteUserToChannel(auth_id, room, false)
             } catch (error) {
@@ -237,7 +240,8 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-        }, 100000)
+
+        }, 10000)
     }
 
     @SubscribeMessage('banToChannel')

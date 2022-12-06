@@ -62,33 +62,12 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
-    //const ctx: any = this.context;
     if (props.chanList.length !== this.state.allChans.length
     ) {
       setTimeout(() => {
         this.updateChan()
       }, 10)
-      // this.updateChan();
     }
-    /*
-    const ctx: any = this.context;
-    if (state.allChans !== ctx.allChans) {
-      console.log('setting allchans new state')
-      this.setState({allChans: ctx.allChans})
-    }
-    if (state.banned !== ctx.bannedFrom) {
-      console.log('setting banned new state')
-      this.setState({banned: ctx.bannedFrom})
-    }
-    if (state.joined !== ctx.chanFrom) {
-      console.log('setting joined new state')
-      this.setState({joined: ctx.chanFrom})
-    }
-    if (state.user !== ctx.user) {
-      console.log('setting user new state')
-      this.setState({user: ctx.user})
-    }
-     */
   }
 
   hiddenCreate = () => {
@@ -459,14 +438,6 @@ class Modal extends Component<
   };
 
   checkIfBanned = (chan: ChanType) => {
-    /*
-    let banned = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/banned",
-    )
-     */
     const ctx: any = this.context;
     const banned: ChanType[] = ctx.bannedFrom;
     for (let index = 0; index < banned.length; index++) {
@@ -478,14 +449,6 @@ class Modal extends Component<
   }
 
   checkIfAlreadyIn = (chan: ChanType) => {
-    /*
-    let joined = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/user/chan/joined",
-    )
-     */
     const ctx: any = this.context;
     const joined: ChanType[] = ctx.chanFrom;
     for (let index = 0; index < joined.length; index++) {
