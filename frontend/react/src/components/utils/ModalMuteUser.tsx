@@ -62,7 +62,30 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
         setShow(true);
     }
 
-    const muteUser = (obj: any): void => {
+    const checkIfAdmin = async (id: string) => {
+        let res = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + chan + "/admin"
+        )
+        for (let i = 0; i < res.length; i++) {
+            if (id === res[i].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const muteUser = async (obj: any): Promise<void> => {
+        if (await checkIfAdmin(obj.user.auth_id)) {
+            const error = {
+                statusCode: 400,
+                message: 'Cant mute user: User is admin'
+            }
+            setError(error);
+            return ;
+        }
         socket.emit('muteToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isMute });
         //updateMutedFromList(chan, !obj.isMute)
         const newArray: UsersChanMuteType[] = [];

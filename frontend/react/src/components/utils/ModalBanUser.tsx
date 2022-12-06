@@ -68,7 +68,30 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
         setShow(true);
     }
 
+    const checkIfAdmin = async (id: string) => {
+        let res = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/chan/" + chan + "/admin"
+        )
+        for (let i = 0; i < res.length; i++) {
+            if (id === res[i].auth_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     const banUser = async (obj: any): Promise<void> => {
+        if (await checkIfAdmin(obj.user.auth_id)) {
+            const error = {
+                statusCode: 400,
+                message: 'Cant ban user: User is admin'
+            }
+            setError(error);
+            return ;
+        }
         socket.emit('banToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isBan });
         //updateBannedFromList(chan, !obj.isBan);
         const newArray: UsersChanBanType[] = [];
