@@ -48,7 +48,7 @@ export const WebSocket = () => {
   useEffect(() => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
-      updateAllChans();
+      //updateAllChans();
       getChan();
     });
     socket.on("chanDeleted", (roomId: string) => {
@@ -56,7 +56,7 @@ export const WebSocket = () => {
         if (c.chanUser.find((u) =>
           u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          updateAllChans();
+          //updateAllChans();
           window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
@@ -171,7 +171,7 @@ export const WebSocket = () => {
         location = url
         joinUrl()
       }
-    }, 10000)
+    }, 10)
   }, [])
 
   useEffect(() => {
@@ -234,7 +234,7 @@ export const WebSocket = () => {
           updateAllChans();
           updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
-          //navigate('/chat/' + chanCreated.id);
+          navigate('/chat/' + chanCreated.id);
           //!
           await getChan();
           setUrl('/chat/' + chanCreated.id);

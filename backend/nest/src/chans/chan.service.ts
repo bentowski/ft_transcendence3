@@ -172,7 +172,7 @@ export class ChanService {
 	async banUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 				where: { id: room },
-				relations: ['banUser', 'chanUser'],
+				relations: ['adminUser', 'banUser', 'chanUser'],
 			});
 		if (!chan) {
 			throw new NotFoundException('Error while banning user from channel: Cant find channel');
@@ -180,6 +180,11 @@ export class ChanService {
 		const user: UserEntity = await this.userService.findOneByAuthId(iduser);
 		if (!user) {
 			throw new BadRequestException('Error while banning user from channel: Cant find user');
+		}
+		for (let i = 0; i < chan.adminUser.length; i++) {
+			if (chan.adminUser[i].auth_id === user.auth_id) {
+				throw new BadRequestException('Error while banning user from channel: Cant ban admin');
+			}
 		}
 		if (action === true) {
 			const banning: UserEntity = chan.banUser.find(elem => elem === user);
@@ -275,7 +280,12 @@ export class ChanService {
 		}
 		const user: UserEntity = await this.userService.findOneByAuthId(iduser);
 		if (!user) {
-			throw new BadRequestException('Error while banning user from channel: Cant find user');
+			throw new BadRequestException('Error while muting user from channel: Cant find user');
+		}
+		for (let i = 0; i < chan.adminUser.length; i++) {
+			if (chan.adminUser[i] === user) {
+				throw new BadRequestException('Error while muting user from channel: Cant mute admin');
+			}
 		}
 		if (action === true) {
 			const found: UserEntity = chan.muteUser.find(elem => elem === user);
