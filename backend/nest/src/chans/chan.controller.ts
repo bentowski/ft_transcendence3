@@ -76,15 +76,15 @@ export class ChanController {
         return false;
     }
 
-    @Get(':idroom/isowner')
+    @Get(':idroom/isowner/:iduser')
     async isOwner(@Param('idroom') idroom: string,
-                  @Req() req
+                  @Param('iduser') iduser: string,
     ): Promise<boolean> {
         const chan: ChanEntity = await this.chanService.findOnebyID(idroom);
         if (!chan) {
             throw new NotFoundException('Error while checking user status: Cant find chan');
         }
-        return chan.owner === req.user.auth_id;
+        return chan.owner === iduser;
     }
 
     @Get(':idroom/isbanned/:iduser')

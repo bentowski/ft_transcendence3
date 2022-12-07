@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useEffect, useState } from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import UserCards from "./UserCards";
 import {UserType} from "../../types";
@@ -10,7 +10,7 @@ const DisplayFriendsList = (): JSX.Element => {
 
     const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
         try {
-            let usr: UserType = await Request(
+            const usr: UserType = await Request(
                 "GET",
                 {},
                 {},

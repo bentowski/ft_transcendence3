@@ -9,7 +9,7 @@ const AskTwoFa = (): JSX.Element => {
   const [validate, setValidate] = useState<boolean>(false);
 
   const validateTwoFa = async (): Promise<void> => {
-      let res: Response = await fetch("http://localhost:3000/auth/2fa/authenticate",
+      const res: Response = await fetch("http://localhost:3000/auth/2fa/authenticate",
           {
             method: "POST",
             credentials: 'include',
@@ -21,7 +21,7 @@ const AskTwoFa = (): JSX.Element => {
       if (res.ok) {
         userAuthentication(true);
       } else {
-          let err: ErrorType = await res.json();
+          const err: ErrorType = await res.json();
           setError(err);
       }
   };
