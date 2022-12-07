@@ -116,7 +116,7 @@ class Profil extends Component<
         rank: number;
         local: string }>,
       snapshot?: any) {
-    const ctx: any = this.context;
+    //const ctx: any = this.context;
     const url: string = this.props.loc.pathname;
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
     if (newLoc !== 'undefined' && (newLoc !== this.state.local || prevState.local !== newLoc)) {

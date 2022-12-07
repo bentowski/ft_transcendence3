@@ -8,21 +8,22 @@ const DisplayFriendsList = (): JSX.Element => {
     const { friendsList, setError } = useAuthData();
     const [result, setResult] = useState<JSX.Element[]>([]);
 
-    const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
-        try {
-            const usr: UserType = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/user/id/" + auth_id,
-            );
-            return usr;
-        } catch (error) {
-            setError(error);
-        }
-    }
+
 
     useEffect((): void => {
+        const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
+            try {
+                const usr: UserType = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/id/" + auth_id,
+                );
+                return usr;
+            } catch (error) {
+                setError(error);
+            }
+        }
         setResult([]);
         const getresults = async (): Promise<void> => {
             let cards: JSX.Element[] = [];
@@ -36,7 +37,7 @@ const DisplayFriendsList = (): JSX.Element => {
             return ;
         }
         getresults();
-    }, [friendsList])
+    }, [setError, friendsList])
 
     return <div>
                 {result}

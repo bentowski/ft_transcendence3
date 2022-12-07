@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { useNavigate } from "react-router-dom";
 import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket } from '../../contexts/WebSocketContext';
@@ -43,7 +42,7 @@ class UsersInActualchannel extends Component<{
     const users: JSX.Element[] = [];
     const actualChan = this.props.usersList;
     if (actualChan.length)
-      actualChan.map((u: UserType) => {
+      actualChan.forEach((u: UserType) => {
         users.push(
             <div key={u.user_id}>
               <UserCards user={u} avatar={false} stat={false} />
@@ -74,11 +73,8 @@ export const PrintChannel = (
     currentChan: any,
     parentCallBack: any
   }): JSX.Element => {
-  const { setError, mutedFrom, bannedFrom } = useAuthData();
-  const navigate = useNavigate();
+  const { setError } = useAuthData();
 
-
-  // const {user} = useAuthData()
   const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
   }

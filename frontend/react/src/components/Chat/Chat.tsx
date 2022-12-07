@@ -34,7 +34,7 @@ export const WebSocket = (): JSX.Element => {
 
 // ================= UseEffects ===================
 
-  useEffect(() /*: () => void */ => {
+  useEffect((): () => void => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
       getChan();
@@ -145,7 +145,15 @@ export const WebSocket = (): JSX.Element => {
       socket.off('bannedChannel');
       socket.off('adminChannel');
     }
-  }, []);
+  }, [
+      navigate,
+    room,
+    setError,
+    socket,
+    updateAdminFromList,
+    updateBannedFromList,
+    updateMutedFromList,
+    user]);
 
   useEffect((): void => {
     getChan();
@@ -250,7 +258,7 @@ export const WebSocket = (): JSX.Element => {
   	})
     if (index === -1) {
       chan = chanList.find((c:ChanType) => {
-        c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+        return c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
       });
       if (chan !== undefined) {
         joinRoom(chan)
@@ -264,7 +272,7 @@ export const WebSocket = (): JSX.Element => {
       }
       else {
         chan = chanList.find((c:ChanType) => {
-          c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+          return c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
         });
         if (chan !== undefined) {
           joinRoom(chan)
@@ -281,11 +289,11 @@ export const WebSocket = (): JSX.Element => {
           {},
           {},
           "http://localhost:3000/chan/")
-      channels.map((c:ChanType, idx:number) => {
+      channels.forEach((c:ChanType, idx:number) => {
         if (c.id === room)
           c.isActive = true;
         if (c.messages) {
-          c.messages.map((m:any, index:number) => {
+          c.messages.forEach((m:any, index:number) => {
             c.messages[index] = JSON.parse(String(m));
           })
         }
@@ -299,7 +307,7 @@ export const WebSocket = (): JSX.Element => {
 
   const changeActiveRoom = (id: string): void => {
     const tmp: Array<ChanType> = chanList;
-    tmp.map((chan) => {
+    tmp.forEach((chan) => {
       if (chan.id === id) {
         chan.isActive = true;
         setRoom(chan.id);

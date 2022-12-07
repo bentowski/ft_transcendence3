@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import { AuthType, ChanType, UserType } from "../types";
+import {AuthType, ChanType, UserType} from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext<any>({
@@ -45,175 +45,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
-
-  const fetchUserList = async (): Promise<void> => {
-    let list: UserType[] = [];
-    try {
-      list = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user"
-      )
-    } catch (error) {
-      setError(error);
-    }
-    const array_users: string[] = [];
-    for (let index = 0; index < list.length; index++) {
-      array_users[index] = list[index].username;
-    }
-    setUserList(array_users);
-  }
-
-  const fetchData = async (): Promise<void> => {
-    setIsToken(false);
-    setUser(undefined);
-    setLoading(true);
-    try {
-      const res: AuthType = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/auth/istoken"
-      )
-      if (res) {
-        if (res.isTok === 0) {
-          setLoading(false);
-          return ;
-        } else if (res.isTok > 0) {
-          setIsToken(true);
-          if (res.isTok === 1) {
-            setLoading(false);
-            return ;
-          } else if (res.isTok > 1) {
-            const user: UserType = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/user/current"
-            )
-            if (user) {
-              setUser(user);
-              if (res.isTok === 2) {
-                setIsTwoFa(true);
-                setLoading(false);
-                return ;
-              } else if (res.isTok === 3) {
-                setIsTwoFa(true);
-                setIsAuth(true);
-                setLoading(false);
-                return ;
-              } else if (res.isTok === 4) {
-
-                //------------------
-
-                const chans: ChanType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/chan"
-                )
-                setAllChans(chans);
-
-                //------------------
-
-                const flist: UserType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/" + user.auth_id + "/getfriends",
-                )
-                const array_friends: string[] = [];
-                for (let index = 0; index < flist.length; index++) {
-                  array_friends[index] = flist[index].auth_id;
-                }
-                setFriendsList(array_friends);
-
-                //-----------------
-
-                const blist: UserType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/" + user.auth_id + "/getblocked"
-                )
-                const array_blocked: string[] = [];
-                for (let index = 0; index < blist.length; index++) {
-                  array_blocked[index] = blist[index].auth_id;
-                }
-                setBlockedList(array_blocked);
-
-                //------------------
-
-                const mlist: ChanType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/chan/muted"
-                )
-                setMutedFrom(mlist);
-
-                //------------------
-
-                const banlist: ChanType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/chan/banned"
-                )
-                setBannedFrom(banlist);
-
-                //------------------
-
-                const jlist: ChanType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/chan/joined"
-                )
-                setChanFrom(jlist);
-
-                //--------------------
-
-                const alist: ChanType[] = await Request(
-                    "GET",
-                    {},
-                    {},
-                    "http://localhost:3000/user/chan/admin"
-                )
-                setAdminFrom(alist);
-
-                //--------------------
-
-                setIsAuth(true);
-                setLoading(false);
-                return ;
-              }
-            } else {
-              setLoading(false);
-              return ;
-            }
-          } else {
-            setLoading(false);
-            return ;
-          }
-        } else {
-          setLoading(false);
-          return ;
-        }
-      } else {
-        setLoading(false);
-      }
-    } catch (error) {
-      if (typeof error === "object" && error !== null) {
-        setError(error);
-        setLoading(false);
-      } else {
-        setError(error);
-        setLoading(false);
-      }
-    }
-  };
 
   const updateFriendsList = useCallback(async (
       usr: UserType,
@@ -256,6 +87,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [blockedList])
 
   const updateUserList = useCallback(async (): Promise<void> => {
+    const setErr = (value: any) => {
+      if (value) {
+        setErrorShow(true);
+        setErrorMsg(value.message);
+        setErrorCode(value.statusCode);
+      } else {
+        setErrorShow(false);
+        setErrorMsg('');
+        setErrorCode(0);
+      }
+    }
     let list: UserType[] = [];
     try {
       list = await Request(
@@ -265,7 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
           "http://localhost:3000/user"
       )
     } catch (error) {
-      setError(error);
+      setErr(error);
     }
     const array_users: string[] = [];
     for (let index = 0; index < list.length; index++) {
@@ -274,36 +116,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     setUserList(array_users);
   }, [])
 
-  const rmvBan = (chan: ChanType): void => {
-    const idx: number = bannedFrom.findIndex(obj => {
-      return obj.id === chan.id;
-    })
-    const newArr: ChanType[] = bannedFrom;
-    if (idx !== -1) {
-      newArr.splice(idx);
-    }
-    setBannedFrom(newArr);
-  }
-
-  const rmvMute = (chan: ChanType): void => {
-    const idx: number = bannedFrom.findIndex(obj => {
-      return obj.id === chan.id;
-    })
-    const newArr: ChanType[] = mutedFrom;
-    if (idx !== -1) {
-      newArr.splice(idx);
-    }
-    setMutedFrom(newArr);
-  }
-
-
   const updateBannedFromList = useCallback( (
       chan: ChanType,
       action: boolean): void => {
+    const rmvBan = (chan: ChanType): void => {
+      const idx: number = bannedFrom.findIndex(obj => {
+        return obj.id === chan.id;
+      })
+      const newArr: ChanType[] = bannedFrom;
+      if (idx !== -1) {
+        newArr.splice(idx);
+      }
+      setBannedFrom(newArr);
+    }
     if (action) {
       setBannedFrom(prevState => [...prevState, chan])
       setTimeout(() => {
-        console.log('ban is over :)')
         rmvBan(chan);
       }, 10000)
     }
@@ -328,11 +156,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       }
       setAdminFrom(newArr);
     }
-  }, [])
+  }, [adminFrom])
 
 
   const updateMutedFromList = useCallback(  (
       chan: ChanType, action: boolean): void => {
+    const rmvMute = (chan: ChanType): void => {
+      const idx: number = mutedFrom.findIndex(obj => {
+        return obj.id === chan.id;
+      })
+      const newArr: ChanType[] = mutedFrom;
+      if (idx !== -1) {
+        newArr.splice(idx);
+      }
+      setMutedFrom(newArr);
+    }
       if (action) {
         setMutedFrom(prevState => [...prevState, chan])
         setTimeout(() => {
@@ -363,6 +201,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [chanFrom])
 
   const updateAllChans = useCallback(async (): Promise<void> => {
+    const setErr = (value: any) => {
+      if (value) {
+        setErrorShow(true);
+        setErrorMsg(value.message);
+        setErrorCode(value.statusCode);
+      } else {
+        setErrorShow(false);
+        setErrorMsg('');
+        setErrorCode(0);
+      }
+    }
     try {
       const res: ChanType[] = await Request(
           "GET",
@@ -371,11 +220,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
           "http://localhost:3000/chan"
       )
       setAllChans(res);
-    } catch (error) {
-      setError(error);
+    } catch (error: unknown) {
+      setErr(error);
     }
   }, [])
-
 
   const updateUser = useCallback((avatar: string, username: string): void => {
     if (avatar || username) {
@@ -418,9 +266,177 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   },[])
 
   useEffect((): void => {
+    const fetchUserList = async (): Promise<void> => {
+      let list: UserType[] = [];
+      try {
+        list = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/user"
+        )
+      } catch (error) {
+        setError(error);
+      }
+      const array_users: string[] = [];
+      for (let index = 0; index < list.length; index++) {
+        array_users[index] = list[index].username;
+      }
+      setUserList(array_users);
+    }
+
+    const fetchData = async (): Promise<void> => {
+      setIsToken(false);
+      setUser(undefined);
+      setLoading(true);
+      try {
+        const res: AuthType = await Request(
+            "GET",
+            {},
+            {},
+            "http://localhost:3000/auth/istoken"
+        )
+        if (res) {
+          if (res.isTok === 0) {
+            setLoading(false);
+            return ;
+          } else if (res.isTok > 0) {
+            setIsToken(true);
+            if (res.isTok === 1) {
+              setLoading(false);
+              return ;
+            } else if (res.isTok > 1) {
+              const user: UserType = await Request(
+                  "GET",
+                  {},
+                  {},
+                  "http://localhost:3000/user/current"
+              )
+              if (user) {
+                setUser(user);
+                if (res.isTok === 2) {
+                  setIsTwoFa(true);
+                  setLoading(false);
+                  return ;
+                } else if (res.isTok === 3) {
+                  setIsTwoFa(true);
+                  setIsAuth(true);
+                  setLoading(false);
+                  return ;
+                } else if (res.isTok === 4) {
+
+                  //------------------
+
+                  const chans: ChanType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/chan"
+                  )
+                  setAllChans(chans);
+
+                  //------------------
+
+                  const flist: UserType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/" + user.auth_id + "/getfriends",
+                  )
+                  const array_friends: string[] = [];
+                  for (let index = 0; index < flist.length; index++) {
+                    array_friends[index] = flist[index].auth_id;
+                  }
+                  setFriendsList(array_friends);
+
+                  //-----------------
+
+                  const blist: UserType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/" + user.auth_id + "/getblocked"
+                  )
+                  const array_blocked: string[] = [];
+                  for (let index = 0; index < blist.length; index++) {
+                    array_blocked[index] = blist[index].auth_id;
+                  }
+                  setBlockedList(array_blocked);
+
+                  //------------------
+
+                  const mlist: ChanType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/chan/muted"
+                  )
+                  setMutedFrom(mlist);
+
+                  //------------------
+
+                  const banlist: ChanType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/chan/banned"
+                  )
+                  setBannedFrom(banlist);
+
+                  //------------------
+
+                  const jlist: ChanType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/chan/joined"
+                  )
+                  setChanFrom(jlist);
+
+                  //--------------------
+
+                  const alist: ChanType[] = await Request(
+                      "GET",
+                      {},
+                      {},
+                      "http://localhost:3000/user/chan/admin"
+                  )
+                  setAdminFrom(alist);
+
+                  //--------------------
+
+                  setIsAuth(true);
+                  setLoading(false);
+                  return ;
+                }
+              } else {
+                setLoading(false);
+                return ;
+              }
+            } else {
+              setLoading(false);
+              return ;
+            }
+          } else {
+            setLoading(false);
+            return ;
+          }
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        if (typeof error === "object" && error !== null) {
+          setError(error);
+          setLoading(false);
+        } else {
+          setError(error);
+          setLoading(false);
+        }
+      }
+    };
     fetchData();
     fetchUserList();
-  }, []);
+  }, [setError]);
 
   const memoedValue = useMemo(
     () => ({
@@ -473,6 +489,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateMutedFromList,
       updateFriendsList,
       updateAllChans,
+      updateAdminFromList,
       userAuthentication,
       updateUserList,
       updateUser,
