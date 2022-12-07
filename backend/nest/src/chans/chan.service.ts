@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {CreateChanDto, CreatePrivChanDto} from "./dto/create-chan.dto";
-import ChanEntity from "./entities/chan-entity";
+import ChanEntity, {ErrorType} from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
 import { UserService} from "../user/user.service";
@@ -166,7 +166,7 @@ export class ChanService {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: msg.room }});
 		if (!chan) {
-			const error = {
+			const error: ErrorType = {
 				statusCode: 404,
 				message: 'Error while adding new message: Can find channel',
 			}
@@ -231,10 +231,28 @@ export class ChanService {
 		}
 	}
 
+	checkIfUserIsBanned(chan: ChanEntity, user: UserEntity) {
+		for (let i: number = 0; i < chan.banUser.length; i++) {
+			if (chan.banUser[i] === user) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	checkIfUserIsMuted(chan: ChanEntity, user: UserEntity) {
+		for (let i: number = 0; i < chan.muteUser.length; i++) {
+			if (chan.muteUser[i] === user) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	async adminUserToChannel(iduser: string, idroom: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: idroom },
-			relations: ['adminUser', 'chanUser'],
+			relations: ['banUser', 'muteUser', 'adminUser', 'chanUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while (un)setting admin in channel: Cant find channel')
@@ -243,10 +261,13 @@ export class ChanService {
 		if (!user) {
 			throw new BadRequestException('Error while (un)setting admin in channel: Cant find user')
 		}
+		if (this.checkIfUserIsBanned(chan, user) || this.checkIfUserIsMuted(chan, user)) {
+			throw new BadRequestException('Error while (un)setting admin in channel: Cant set user that is banned or muted')
+		}
 		if (action === true) {
 			const found: UserEntity = chan.adminUser.find(elem => elem === user);
 			if (found) {
-				const error = {
+				const error: ErrorType = {
 					statusCode: 451,
 					message: 'Error while (un)setting admin in channel: User already admin',
 				}

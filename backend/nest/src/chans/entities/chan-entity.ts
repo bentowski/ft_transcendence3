@@ -16,6 +16,11 @@ type Msg = {
 	room: string;
 };
 
+export type ErrorType = {
+    statusCode: number;
+    message: string;
+}
+
 @Entity('chan')
 export class ChanEntity {
     @PrimaryGeneratedColumn()
