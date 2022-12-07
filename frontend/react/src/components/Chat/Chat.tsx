@@ -75,7 +75,7 @@ export const WebSocket = (): JSX.Element => {
       socket.off('chanDeleted');
       socket.off('userLeaveChannel');
     }
-  }, []);
+  });
 
   useEffect((): () => void => {
     const handleMute = async (obj: PunishSocketType): Promise<void> => {
