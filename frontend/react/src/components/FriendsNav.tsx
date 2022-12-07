@@ -158,7 +158,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
           <div>
             {this.state.alert ?
-              <Alert onClose={this.closeAlert} variant="danger" dismissible>{"This user don't exist"}</Alert> :
+              <Alert onClose={this.closeAlert} variant="danger" dismissible>{"This user doesn't exist"}</Alert> :
               // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
               <div />
             }
