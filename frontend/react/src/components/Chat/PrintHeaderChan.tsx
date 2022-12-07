@@ -1,63 +1,147 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
+import { Component } from "react";
+import { ChanType, UserType } from "../../types"
+import { AuthContext } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
+import ModalAdminUser from "../utils/ModalAdminUser";
+import { Socket } from "socket.io-client";
 
-class AdminButtons extends Component<{room: any, socket: any, user: UserType, chanList: ChanType[]}, {}> {
-    render() {
-    let chan = this.props.chanList[this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)]
-    if (!chan) {
-        return ;
+class AdminButtons extends Component<
+    {
+        room: any,
+        socket: any,
+        user: UserType,
+        chanList: ChanType[]
+        usersInChan: UserType[],
+    },
+    {
+        adminList: UserType[],
+    }> {
+    static contextType = AuthContext;
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            adminList: [],
+        }
     }
-    let tab: any[] = chan.admin
-    if ((tab && tab.findIndex((u: any) => u === this.props.user.auth_id) > -1) || chan.owner === this.props.user.auth_id) {
+    componentDidMount = (): void => {
+        const ctx: any = this.context;
+        this.setState({adminList: ctx.adminList})
+    }
+
+    componentDidUpdate(
+        prevProps: Readonly<{
+            room: any;
+            socket: any;
+            user: UserType;
+            chanList: ChanType[],
+            usersInChan: UserType[],
+        }>,
+        prevState: Readonly<{
+            adminList: UserType[],
+        }>,
+        snapshot?: any): void {
+        const ctx: any = this.context;
+        if (prevState.adminList !== ctx.adminFrom) {
+            this.setState({adminList: ctx.adminFrom});
+            this.render();
+        }
+    }
+
+    isUserAdmin = (): boolean => {
+        return this.state.adminList &&
+            this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
+    }
+
+    render(): JSX.Element {
+    const chan: ChanType = this.props.chanList[
+        this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)
+        ]
+    if (!chan) {
+        return <p></p>;
+    }
+    if (this.isUserAdmin()) {
       return (
          <div className="row">
-             <ModalBanUser chan={this.props.room} socket={this.props.socket}/>
-             <ModalMuteUser chan={this.props.room} socket={this.props.socket} />
+             <ModalBanUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalMuteUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan} />
+             <ModalAdminUser
+                 chan={this.props.room}
+                 socket={this.props.socket}
+                 usersInChan={this.props.usersInChan}/>
          </div>
       )
     }
+    return <p></p>
   }
 }
 
 class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
-  promptAddUser = () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
+  promptAddUser = (): void => {
+    const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove("hidden");
     this.props.parentCallBack.setModalType("addUser");
     this.props.parentCallBack.setModalTitle("Add a user");
   };
-  render() {
+  render(): JSX.Element {
     let url: string = document.URL
     url = url.substring(url.lastIndexOf("/") + 1);
-    let id = parseInt(url)
-    if (id && id > 0 && this.props.chanList[id - 1] && !(this.props.chanList[id - 1].type === "direct")) {
-      return (<button id="addPeople" className="col-2" onClick={this.promptAddUser}>Add Peoples</button>)
+    const id: number = parseInt(url)
+    if (id && id > 0 && this.props.chanList[id - 1] &&
+        !(this.props.chanList[id - 1].type === "direct")) {
+      return (<button
+          id="addPeople"
+          className="col-2"
+          onClick={this.promptAddUser}>
+          Add Peoples
+      </button>)
     }
+    return <p></p>
   }
 }
 
 export const PrintHeaderChan = (
-  {chanList, room, socket, user, parentCallBack}:
-  {chanList: ChanType[], room: any, user: UserType, socket: any, parentCallBack: any}) => {
-    const setModalType = (newValue: any) => {
+  {
+      chanList,
+      usersInChan,
+      room,
+      socket,
+      user,
+      parentCallBack}:
+  {
+      chanList: ChanType[],
+      usersInChan: UserType[],
+      room: string,
+      user: UserType,
+      socket: Socket,
+      parentCallBack: any
+  }): JSX.Element => {
+    const setModalType = (newValue: any): void => {
       parentCallBack.setModalType(newValue)
     }
-    const setModalTitle = (newValue: any) => {
+    const setModalTitle = (newValue: any): void => {
       parentCallBack.setModalTitle(newValue)
     }
     return (
         <div className="chatMainTitle row">
           {/* <h3 className="col-10">Channel Name</h3> */}
-          <PrintAddUserButton chanList={chanList} parentCallBack={{setModalType, setModalTitle}} />
-          <AdminButtons room={room} socket={socket} user={user} chanList={chanList} />
+          <PrintAddUserButton
+              chanList={chanList}
+              parentCallBack={{setModalType, setModalTitle}}
+          />
+          <AdminButtons
+              room={room}
+              socket={socket}
+              user={user}
+              chanList={chanList}
+              usersInChan={usersInChan}
+          />
         </div>
     )
 }

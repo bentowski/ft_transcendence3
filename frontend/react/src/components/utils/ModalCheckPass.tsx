@@ -7,39 +7,36 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 const ModalCheckPass = (
   { chanToJoin, clef, parentCallBack }:
     { chanToJoin: ChanType | undefined, clef: number, parentCallBack: any }
-) => {
-  const [show, setShow] = useState(false)
-  const [field, setField] = useState("");
-  const [alert, setAlert] = useState(false);
+): JSX.Element => {
+  const [show, setShow] = useState<boolean>(false)
+  const [field, setField] = useState<string>("");
+  const [alert, setAlert] = useState<boolean>(false);
   const { setError } = useAuthData();
 
-  const handleShow = () => {
-    // console.log("chan[x].name = ", chanToJoin?.password)
+  const handleShow = (): void => {
     setShow(true);
   }
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setShow(false)
   }
 
-  const cancelling = () => {
+  const cancelling = (): void => {
     setAlert(false);
     setField("");
     handleClose();
   };
 
-  const closeAlert = () => {
-    // console.log('closing alert');
+  const closeAlert = (): void => {
     setAlert(false);
-    // setAlertMsg("");
   }
 
-  const handlePassword = (evt: any) => {
+  const handlePassword = (evt: any): void => {
     evt.preventDefault();
     setField(evt.target.value);
   };
 
-  const checkPassword = async () => {
+  const checkPassword = async (): Promise<void> => {
     const id: string | undefined = chanToJoin?.id; 
     let res: boolean = false;
     try {
@@ -57,7 +54,7 @@ const ModalCheckPass = (
       setField("");
       parentCallBack(chanToJoin)
       handleClose();
-      let modal = document.getElementById("Modal") as HTMLDivElement
+      const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement
       modal.classList.add("hidden")
     }
     else {
@@ -86,16 +83,25 @@ const ModalCheckPass = (
             </Form>
             <div>
               {alert ?
-                <Alert onClose={closeAlert} variant="danger" dismissible>{"The password is not valid"}</Alert> :
+                <Alert
+                    onClose={closeAlert}
+                    variant="danger"
+                    dismissible>
+                  {"The password is not valid"}
+                </Alert> :
                 <div />
               }
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="mx-1" onClick={cancelling}>
+            <Button
+                className="mx-1"
+                onClick={cancelling}>
               Cancel
             </Button>
-            <Button onClick={checkPassword} className="mx-1">
+            <Button
+                onClick={checkPassword}
+                className="mx-1">
               Validate
             </Button>
           </Modal.Footer>

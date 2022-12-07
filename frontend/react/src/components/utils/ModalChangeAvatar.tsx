@@ -1,26 +1,21 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
-import {useEffect, useState} from "react";
-import {AvatarType, ErrorType, ParamsImgType} from "../../types";
+import { useEffect, useState } from "react";
+import { AvatarType, ErrorType } from "../../types";
 
 const ModalChangeAvatar = (): JSX.Element => {
   const { updateUser, setError, user } = useAuthData();
   const [show, setShow] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  //const [avatar, setAvatar] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState<AvatarType>({url:"", hash: 0});
 
   useEffect((): void => {
     if (user.avatar) {
-      setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
+      setAvatarUrl({
+        url: "http://localhost:3000/user/" + user.auth_id + "/avatar",
+        hash: Date.now()});
     }
   }, [user])
-
-  /*
-  useEffect(() => {
-    setAvatar(user.avatar);
-  }, [user])
-   */
 
   const requestChangeAvatar = async (): Promise<void> => {
     const formData: FormData = new FormData();
@@ -37,7 +32,8 @@ const ModalChangeAvatar = (): JSX.Element => {
       body: formData,
     };
     delete params.headers["Content-Type"];
-    let res: Response = await fetch("http://localhost:3000/user/upload", params);
+    const res: Response = await fetch("http://localhost:3000/user/upload",
+        params);
     if (res.ok) {
       //console.log("upload success!");
       const str: any = await res.json();
@@ -62,7 +58,6 @@ const ModalChangeAvatar = (): JSX.Element => {
 
   const handleImage = (evt: any): void => {
     if (evt.target) {
-      //console.log(evt.target.files[0]);
       setSelectedImage(evt.target.files[0]);
     }
   };
@@ -86,7 +81,10 @@ const ModalChangeAvatar = (): JSX.Element => {
                   src={URL.createObjectURL(selectedImage)}
                 />
                 <br />
-                <Button onClick={() => setSelectedImage(null)}>Remove</Button>
+                <Button
+                    onClick={() => setSelectedImage(null)}>
+                  Remove
+                </Button>
               </div>
             )}
             <Form className="mb-3">
@@ -116,8 +114,6 @@ const ModalChangeAvatar = (): JSX.Element => {
             height={100}
             src={`${avatarUrl.url}?${avatarUrl.hash}`}
             alt="prout"
-            //data-bs-toggle="modal"
-            //data-bs-target="#changeAvatar"
         />
       </a>
     </div>

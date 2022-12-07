@@ -78,7 +78,7 @@ export class UserController {
 
   //@UseGuards(UserAuthGuard)
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: string) {
+  async remove(@Param('id') id: string) {
     try {
       return this.userService.remove(id);
     } catch (error) {
@@ -202,6 +202,16 @@ export class UserController {
   async chanBanned(@Req() req): Promise<ChanEntity[]> {
     try {
       return this.userService.getChannelBanned(req.user.auth_id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @Get('chan/admin')
+  async chanAdmin(@Req() req): Promise<ChanEntity[]> {
+    try {
+      return this.userService.getChannelAdmin(req.user.auth_id);
     } catch (error) {
       throw new Error(error);
     }

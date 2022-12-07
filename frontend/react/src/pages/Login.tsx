@@ -1,6 +1,6 @@
 import "../styles/pages/login.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
-import {Link, Navigate, useLocation} from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
 
 const Login = (): JSX.Element => {

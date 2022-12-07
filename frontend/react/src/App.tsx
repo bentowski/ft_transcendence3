@@ -1,4 +1,4 @@
-import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction } from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
@@ -9,10 +9,10 @@ import { useAuthData } from "./contexts/AuthProviderContext";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
-import {HandleError} from "./components/utils/HandleError";
+import { HandleError } from "./components/utils/HandleError";
 
 const RequireAuth = (): JSX.Element => {
-  let { isAuth, isToken, isTwoFa, loading } = useAuthData();
+  const { isAuth, isToken, isTwoFa, loading } = useAuthData();
   const location = useLocation();
 
   if (loading) {
@@ -42,6 +42,11 @@ const App = (): JSX.Element => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 
+  const setNewLoc = (newurl: string): void => {
+    console.log('set new location');
+    loc.pathname = newurl;
+  }
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -51,17 +56,17 @@ const App = (): JSX.Element => {
         {/* private route */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Page />}>
-            <Route path="/chat/" element={<Chat />} >
-              <Route path="/chat/*" element={<Chat />} />
-            </Route>
-            <Route path="/" element={<Profil nav={nav} loc={loc} />} />
-            <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}>
-              <Route path="/profil/*" element={<Profil nav={nav} loc={loc} />} />
-            </Route>
-            <Route path="/history" element={<Stats />} />
-          </Route>
-          <Route path="/game/" element={<Game />} >
-            <Route path="/game/*" element={<Game />} />
+            {/* <Route path="chat/" element={<Chat />} > */}
+              <Route path="chat/*" element={<Chat />} />
+            {/* </Route> */}
+            <Route path="/" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />
+            {/* <Route path="/profil/" element={<Profil nav={nav} loc={loc} />}> */}
+              <Route path="profil/*" element={<Profil nav={nav} loc={loc} parentCallback={setNewLoc} />} />
+            {/* </Route> */}
+            <Route path="history" element={<Stats />} />
+            {/* <Route path="game/" element={<Game />} > */}
+              <Route path="game/*" element={<Game />} />
+            {/* </Route> */}
           </Route>
         </Route>
       </Route>

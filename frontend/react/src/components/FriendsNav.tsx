@@ -31,36 +31,18 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     const ctx: any = this.context;
     const frnds: UserType[] = ctx.friendsList;
     this.setState({ friends: frnds })
-    //let ctx: any = this.context;
-    //let currentUser = this.state.ctx.user;
-    //let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + this.state.user.username)
-    //if (!user.friends.length)
-    //return ;
-    //this.setState({ friends: user.friends })
   }
-
-  /*
-  promptError = () => {
-    let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    input.value = "This user not exist"
-    setTimeout(() => {
-      input.value = ""
-    }, 1000);
-  }
-   */
 
   addFriends = async (): Promise<void> => {
     const ctx: any = this.context;
-    let currentUser: UserType = ctx.user;
-    let input = document.getElementById("InputAddFriends") as HTMLInputElement
+    const currentUser: UserType = ctx.user;
+    const input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
       return;
     }
     try {
-      // let allUsers: <Array
       const ctx: any = this.context;
-      // ctx.userList;
       let exist: boolean = false;
       for (let x = 0; x < ctx.userList.length; x++) {
         if (ctx.userList[x] === input.value)
@@ -68,7 +50,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       }
       if (exist) {
         this.setState({alert: false})
-        let userToAdd: UserType = await Request(
+        const userToAdd: UserType = await Request(
           'GET',
           {},
           {},
@@ -86,7 +68,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           "http://localhost:3000/user/update/friends"
         )
         ctx.updateFriendsList(userToAdd, true);
-        let newFriendsArray = await Request(
+        const newFriendsArray = await Request(
           "GET",
           {},
           {},
@@ -132,7 +114,6 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
   }
 
   closeAlert = (): void => {
-    // console.log('closing alert');
     this.setState({ alert: false });
   }
 
@@ -152,13 +133,25 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online" : 'You are friendless'} </p>
+          <p>
+            {onlines ? onlines + '/' +
+                this.state.friends.length +
+                " friends online" : 'You are friendless'}
+          </p>
         </div>
         <div className="addFriends my-3">
-          <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
+          <input
+              id="InputAddFriends"
+              className="col-8"
+              type="text"
+              placeholder="login"
+              onKeyDown={this.pressEnter}></input>
           <div>
             {this.state.alert ?
-              <Alert onClose={this.closeAlert} variant="danger" dismissible>{"This user doesn't exist"}</Alert> :
+              <Alert
+                  onClose={this.closeAlert}
+                  variant="danger"
+                  dismissible>{"This user doesn't exist"}</Alert> :
               // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
               <div />
             }
@@ -170,7 +163,9 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
               ))}
             </ol>
           </div>
-          <button className="col-2 mx-2 btn btn-outline-dark shadow-none" onClick={this.addFriends}>ADD</button>
+          <button
+              className="col-2 mx-2 btn btn-outline-dark shadow-none"
+              onClick={this.addFriends}>ADD</button>
           <div>
             <DisplayFriendsList />
           </div>

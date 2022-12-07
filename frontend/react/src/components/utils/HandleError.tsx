@@ -1,6 +1,6 @@
-import {useAuthData} from "../../contexts/AuthProviderContext";
-import {Alert} from "react-bootstrap";
-import {useEffect} from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
+import { Alert } from "react-bootstrap";
+import { useEffect } from "react";
 
 const HandleError = (): JSX.Element => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();

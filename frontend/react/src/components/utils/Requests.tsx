@@ -26,7 +26,12 @@ const Logout = async (): Promise<void> => {
       });
 }
 
-const Request = async (type: string, headers: any, body: any, url: string): Promise<any> => {
+const Request = async (
+    type: string,
+    headers: any,
+    body: any,
+    url: string): Promise<any> =>
+{
     console.log(url);
     if (type === "GET") {
       const response: Response = await fetch(url, {

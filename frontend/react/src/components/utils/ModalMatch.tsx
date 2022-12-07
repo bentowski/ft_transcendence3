@@ -3,7 +3,7 @@ import Request from "./Requests"
 import "../../styles/components/utils/modal.css";
 import io from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
-import {PartiesType} from "../../types";
+import { PartiesType } from "../../types";
 
 const socket = io("http://localhost:3000/update");
 
@@ -12,13 +12,12 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
   static contextType = AuthContext;
 
   hidden = (): void => {
-    let modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
     modal.classList.add('hidden')
   }
 
   createParties = async (isClassic: number): Promise<void> => {
-    let currentUser: any = this.context;
-    // console.log(currentUser.user.username)
+    const currentUser: any = this.context;
     try {
       await Request(
         "POST",
@@ -33,13 +32,13 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
         "http://localhost:3000/parties/create"
       );
       socket.emit('newParty');
-      let parties: PartiesType[] = await Request(
+      const parties: PartiesType[] = await Request(
           'GET',
           {},
           {},
           "http://localhost:3000/parties/"
       )
-      let ids: number[] = parties.map((p: any) => {
+      const ids: number[] = parties.map((p: any) => {
         return p.id;
       })
       this.hidden()

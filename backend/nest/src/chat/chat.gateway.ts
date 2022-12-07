@@ -29,10 +29,32 @@ export class ChatGateway implements OnModuleInit
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      //console.log(socket.id);
-      //console.log("Connected");
     });
   }
+
+    checkIfUserIsBlocking(sender: UserEntity, chan: ChanEntity): boolean {
+      for (let i: number = 0; i < sender.blocked.length; i++) {
+          for (let j: number = 0; j < chan.chanUser.length; j++) {
+              if (sender.blocked[i] === chan.chanUser[j].auth_id) {
+                  return true
+              }
+          }
+      }
+      return false;
+    }
+
+    checkIfUserIsBlocked(sender: UserEntity, chan: ChanEntity): boolean {
+      for (let i: number = 0; i < chan.chanUser.length; i++) {
+          for (let j: number = 0; j < chan.chanUser[i].blocked.length; j++) {
+              for (let k: number = 0; k < chan.chanUser.length; k++) {
+                  if (chan.chanUser[k].auth_id === chan.chanUser[i].blocked[j]) {
+                      return true;
+                  }
+              }
+          }
+      }
+      return false;
+    }
 
   @SubscribeMessage('newMessage')
   async onNewMessage(client: Socket, @MessageBody() body: any): Promise<void> {
@@ -103,6 +125,31 @@ export class ChatGateway implements OnModuleInit
                   body.auth_id
               );
           return ;
+      }
+      if (chan.type === 'direct') {
+          if (chan.chanUser.length !== 2) {
+              this.server
+                  .to(body.room)
+                  .emit(
+                      'error',
+                      {
+                          statusCode: 400,
+                          message: 'Message not sent: Wrong number of users for direct conversation'},
+                      body.auth_id
+                  );
+          }
+          if (this.checkIfUserIsBlocking(sender, chan) || this.checkIfUserIsBlocked(sender, chan)) {
+              this.server
+                  .to(body.room)
+                  .emit(
+                      'error',
+                      {
+                          statusCode: 400,
+                          message: 'Message not sent: User blocked/blocking'},
+                      body.auth_id
+                  );
+              return ;
+          }
       }
 
     this.server
@@ -205,6 +252,7 @@ export class ChatGateway implements OnModuleInit
 
   launchCounterBan(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
+            this.server.emit('userJoinChannel');
             try {
                 await this.chanService.banUserToChannel(auth_id, room, false)
             } catch (error) {
@@ -219,12 +267,13 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-        }, 100000)
+
+        }, 10000)
   }
 
     launchCounterMute(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
-            console.log('unmute');
+            this.server.emit('userJoinChannel');
             try {
                 await this.chanService.muteUserToChannel(auth_id, room, false)
             } catch (error) {
@@ -240,7 +289,8 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-        }, 100000)
+
+        }, 10000)
     }
 
     @SubscribeMessage('banToChannel')
@@ -254,7 +304,7 @@ export class ChatGateway implements OnModuleInit
                     {
                         room: body.room,
                         auth_id: body.auth_id,
-                        status: body.action
+                        action: body.action
                     });
             if (body.action === true)
                 this.launchCounterBan(client, body.auth_id, body.room);
@@ -269,6 +319,33 @@ export class ChatGateway implements OnModuleInit
                     body.auth_id
                 );
         }
+    }
+
+    @SubscribeMessage('adminToChannel')
+    async adminUserToChannel(client: Socket, body: {room:string, auth_id: string, action: boolean}): Promise<void> {
+      try {
+          await this.chanService.adminUserToChannel(body.auth_id, body.room, body.action)
+          client.emit('adminRoom');
+          this.server
+              .to(body.room)
+              .emit("adminChannel",
+                  {
+                      room: body.room,
+                      auth_id: body.auth_id,
+                      action: body.action
+                  })
+      } catch (error) {
+          this.server
+              .to(body.room)
+              .emit('error',
+                  {
+                      statusCode: error.statusCode,
+                      message: error.message
+                  },
+                  body.auth_id
+              );
+          return ;
+      }
     }
 
     @SubscribeMessage('muteToChannel')
@@ -305,7 +382,7 @@ export class ChatGateway implements OnModuleInit
     async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
   	// client.leave(body.room);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
-    const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
+    //const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
     await this.chanService.delUserToChannel(usr, body.room)
   	client.emit('leftRoom', {room: ChanEntity});
   }
