@@ -63,12 +63,17 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
     }
 
     const checkIfAdmin = async (id: string) => {
-        let res = await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/chan/" + chan + "/admin"
-        )
+        let res: UserType[] = [];
+        try {
+            res = await Request(
+                "GET",
+                {},
+                {},
+                "http://localhost:3000/chan/" + chan + "/admin"
+            )
+        } catch (error) {
+            setError(error);
+        }
         for (let i = 0; i < res.length; i++) {
             if (id === res[i].auth_id) {
                 return true;
@@ -86,7 +91,10 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
             setError(error);
             return ;
         }
-        socket.emit('muteToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isMute });
+        socket.emit('muteToChannel', {
+            "room": chan,
+            "auth_id": obj.user.auth_id,
+            "action": !obj.isMute });
         //updateMutedFromList(chan, !obj.isMute)
         const newArray: UsersChanMuteType[] = [];
         for (let index: number = 0; index < usersChan.length; index++) {
@@ -106,9 +114,14 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
             if (usersChan[x].user?.username !== user.username)
             {
                 ret.push(
-                    <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-                        <div className="col-5 h-100 overflow-hidden buttons">
-                            <button type="button" onClick={() => muteUser(usersChan[x])}>
+                    <div
+                        key={x}
+                        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+                        <div
+                            className="col-5 h-100 overflow-hidden buttons">
+                            <button
+                                type="button"
+                                onClick={() => muteUser(usersChan[x])}>
                                 {
                                  usersChan[x].isMute ?
                                  <p>UNMUTE</p> :
@@ -116,12 +129,24 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
                                 }
                             </button>
                         </div>
-                        <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                            <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+                        <div
+                            className="col-2 d-flex flex-row d-flex justify-content-center">
+                            <input
+                                className={usersChan[x].user?.status ? "online" : "offline"}
+                                type="radio"></input>
                         </div>
-                        <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                            <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
-                            <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+                        <div
+                            className="col-5 d-flex flex-row justify-content-end align-items-center">
+                            <Link
+                                to={"/profil/" + usersChan[x].user?.username}
+                                className="mx-2">{usersChan[x].user?.username}
+                            </Link>
+                            <img
+                                alt=""
+                                src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'}
+                                className="miniAvatar"
+                                width={150}
+                                height={150}/>
                         </div>
                     </div>
                 );

@@ -40,6 +40,9 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
             setStatus((prevState: any) => !prevState);
             const obj: UserType = await res.json();
             updateFriendsList(obj, !status);
+        } else {
+            const err = await res.json();
+            setError(err);
         }
     }
 

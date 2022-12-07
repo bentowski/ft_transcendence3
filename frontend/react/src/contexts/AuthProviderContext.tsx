@@ -251,12 +251,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [blockedList])
 
   const updateUserList = useCallback(async (): Promise<void> => {
-    let list: UserType[] = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user"
-    )
+    let list: UserType[] = [];
+    try {
+      list = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user"
+      )
+    } catch (error) {
+      setError(error);
+    }
     let array_users: string[] = [];
     for (let index = 0; index < list.length; index++) {
       array_users[index] = list[index].username;
@@ -350,7 +355,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [chanFrom])
 
   const updateAllChans = useCallback(async (): Promise<void> => {
-    console.log('updateallchans called');
     try {
       let res: ChanType[] = await Request(
           "GET",

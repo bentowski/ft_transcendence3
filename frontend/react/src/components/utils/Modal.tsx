@@ -537,14 +537,21 @@ class Modal extends Component<
     let input = document.getElementById(
       "InputJoinPrivateChan"
     ) as HTMLInputElement;
-    let chan = await Request(
-      "GET",
-      {},
-      {},
-      "http://localhost:3000/chan/" + input.value
-    );
-    if (!chan) return;
-    this.props.parentCallBack.joinRoom(chan, true);
+    try {
+      let chan = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/" + input.value
+      );
+      if (!chan) {
+        return;
+      }
+      this.props.parentCallBack.joinRoom(chan, true);
+    } catch (error) {
+      const ctx: any = this.context;
+      ctx.setError(error);
+    }
   };
 
   pressEnter = (e: any) => {

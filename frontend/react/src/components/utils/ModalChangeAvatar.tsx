@@ -12,7 +12,9 @@ const ModalChangeAvatar = (): JSX.Element => {
 
   useEffect((): void => {
     if (user.avatar) {
-      setAvatarUrl({ url: "http://localhost:3000/user/" + user.auth_id + "/avatar", hash: Date.now()});
+      setAvatarUrl({
+        url: "http://localhost:3000/user/" + user.auth_id + "/avatar",
+        hash: Date.now()});
     }
   }, [user])
 
@@ -37,7 +39,8 @@ const ModalChangeAvatar = (): JSX.Element => {
       body: formData,
     };
     delete params.headers["Content-Type"];
-    let res: Response = await fetch("http://localhost:3000/user/upload", params);
+    let res: Response = await fetch("http://localhost:3000/user/upload",
+        params);
     if (res.ok) {
       //console.log("upload success!");
       const str: any = await res.json();
@@ -86,7 +89,10 @@ const ModalChangeAvatar = (): JSX.Element => {
                   src={URL.createObjectURL(selectedImage)}
                 />
                 <br />
-                <Button onClick={() => setSelectedImage(null)}>Remove</Button>
+                <Button
+                    onClick={() => setSelectedImage(null)}>
+                  Remove
+                </Button>
               </div>
             )}
             <Form className="mb-3">

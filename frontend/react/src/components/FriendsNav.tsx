@@ -152,13 +152,25 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     return (
       <div className="FriendsNav">
         <div className="numberFriendsOnline">
-          <p>{onlines ? onlines + '/' + this.state.friends.length + " friends online" : 'You are friendless'} </p>
+          <p>
+            {onlines ? onlines + '/' +
+                this.state.friends.length +
+                " friends online" : 'You are friendless'}
+          </p>
         </div>
         <div className="addFriends my-3">
-          <input id="InputAddFriends" className="col-8" type="text" placeholder="login" onKeyDown={this.pressEnter}></input>
+          <input
+              id="InputAddFriends"
+              className="col-8"
+              type="text"
+              placeholder="login"
+              onKeyDown={this.pressEnter}></input>
           <div>
             {this.state.alert ?
-              <Alert onClose={this.closeAlert} variant="danger" dismissible>{"This user don't exist"}</Alert> :
+              <Alert
+                  onClose={this.closeAlert}
+                  variant="danger"
+                  dismissible>{"This user don't exist"}</Alert> :
               // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
               <div />
             }
@@ -170,7 +182,9 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
               ))}
             </ol>
           </div>
-          <button className="col-2 mx-2 btn btn-outline-dark shadow-none" onClick={this.addFriends}>ADD</button>
+          <button
+              className="col-2 mx-2 btn btn-outline-dark shadow-none"
+              onClick={this.addFriends}>ADD</button>
           <div>
             <DisplayFriendsList />
           </div>

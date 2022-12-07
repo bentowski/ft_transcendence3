@@ -86,16 +86,25 @@ const ModalCheckPass = (
             </Form>
             <div>
               {alert ?
-                <Alert onClose={closeAlert} variant="danger" dismissible>{"The password is not valid"}</Alert> :
+                <Alert
+                    onClose={closeAlert}
+                    variant="danger"
+                    dismissible>
+                  {"The password is not valid"}
+                </Alert> :
                 <div />
               }
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="mx-1" onClick={cancelling}>
+            <Button
+                className="mx-1"
+                onClick={cancelling}>
               Cancel
             </Button>
-            <Button onClick={checkPassword} className="mx-1">
+            <Button
+                onClick={checkPassword}
+                className="mx-1">
               Validate
             </Button>
           </Modal.Footer>

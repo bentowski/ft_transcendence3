@@ -10,6 +10,7 @@ import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
+import ChannelList from "./ChannelList";
 
 class UsersInActualchannel extends Component<{
   room: string,
@@ -77,7 +78,7 @@ export const PrintChannel = (
     currentChan: any,
     parentCallBack: any
   }) => {
-  const { mutedFrom, bannedFrom } = useAuthData();
+  const { setError, mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
 
@@ -123,12 +124,17 @@ export const PrintChannel = (
   */
 
   const checkIfMuted = async () => {
-    let mutedList = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/muted"
-    )
+    let mutedList: ChanType[] = [];
+    try {
+      mutedList = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/muted"
+      )
+    } catch (error) {
+      setError(error);
+    }
     for (let i = 0; i < mutedList.length; i++) {
       if (mutedList[i].id === room) {
         return true;

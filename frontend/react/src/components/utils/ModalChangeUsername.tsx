@@ -175,7 +175,10 @@ const ModalChangeUsername = (): JSX.Element => {
             {/* </Form> */}
             <div>
               {alert ?
-                <Alert onClose={closeAlert} variant="danger" dismissible>{err}</Alert> :
+                <Alert
+                    onClose={closeAlert}
+                    variant="danger"
+                    dismissible>{err}</Alert> :
                 // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
                 <div />
               }
