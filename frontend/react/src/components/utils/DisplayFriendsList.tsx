@@ -10,7 +10,7 @@ const DisplayFriendsList = (): JSX.Element => {
 
     const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
         try {
-            let usr: UserType = await Request(
+            const usr: UserType = await Request(
                 "GET",
                 {},
                 {},

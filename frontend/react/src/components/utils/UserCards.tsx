@@ -89,13 +89,13 @@ class UserCards extends Component<
   createChan = async (): Promise<void> => {
     const ctx: any = this.context;
     try {
-      let u2: UserType = await Request(
+      const u2: UserType = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      let newChan: ChanType = await Request(
+      const newChan: ChanType = await Request(
         "POST",
         {
           Accept: "application/json",
@@ -200,7 +200,7 @@ class UserCards extends Component<
       ctx.setError(error);
     }
     socket.emit("askForGameUp", { "to": this.state.id, "from": this.getCurrentUser().auth_id })
-    let modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
     let parties: PartiesType[] = [];
     try {
@@ -213,7 +213,7 @@ class UserCards extends Component<
     } catch (error) {
       ctx.setError(error);
     }
-    let ids: number[] = parties.map((p: any) => {
+    const ids: number[] = parties.map((p: any) => {
       return p.id;
     })
     window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
@@ -329,14 +329,14 @@ class UserCards extends Component<
 
   openInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
+      const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
       modal.classList.remove('hidden')
     }
   }
 
   closeInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
+      const modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
       modal.classList.add('hidden')
     }
   }
@@ -356,7 +356,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
-          let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+          const modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
           modal.classList.add('hidden');
         }
       });
@@ -401,7 +401,7 @@ class UserCards extends Component<
   };
 
   render(): JSX.Element {
-    let items: JSX.Element = this.renderUserCards(1);
+    const items: JSX.Element = this.renderUserCards(1);
     return (
       <div
         key={(this.state.id * 5) / 3}

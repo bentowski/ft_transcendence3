@@ -18,7 +18,7 @@ const Switch = (): JSX.Element => {
   }, [isTwoFa]);
 
   const generateTwoFA = async (): Promise<void> => {
-    let res: Response = await fetch("http://localhost:3000/auth/2fa/generate", {
+    const res: Response = await fetch("http://localhost:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
       headers: {
@@ -40,7 +40,7 @@ const Switch = (): JSX.Element => {
        */
       handleShow();
     } else {
-      const err = await res.json();
+      const err: ErrorType = await res.json();
       setError(err);
     }
   };
@@ -58,7 +58,7 @@ const Switch = (): JSX.Element => {
     if (!checkVal(code) && code.length !== 6) {
       return;
     }
-    let res: Response = await fetch("http://localhost:3000/auth/2fa/activate", {
+    const res: Response = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -82,7 +82,7 @@ const Switch = (): JSX.Element => {
   };
 
   const deactivateTwoFA = async (): Promise<void> => {
-      let res: Response = await fetch(
+      const res: Response = await fetch(
           "http://localhost:3000/auth/2fa/deactivate",
           {
         method: "POST",
@@ -101,34 +101,34 @@ const Switch = (): JSX.Element => {
       }
   };
 
-  const handleTick = () => setTick(true);
-  const handleUnTick = () => setTick(false);
+  const handleTick = (): void => setTick(true);
+  const handleUnTick = (): void => setTick(false);
 
-  const handleToggle = () => {
+  const handleToggle = (): void => {
     if (tick) {
-      return deactivateTwoFA();
+      deactivateTwoFA();
     }
     if (!tick) {
-      return generateTwoFA();
+      generateTwoFA();
     }
   };
 
-  const handleSubmit = (evt: any) => {
+  const handleSubmit = (evt: any): void => {
     evt.preventDefault();
   };
 
-  const handleChange = (evt: any) => {
+  const handleChange = (evt: any): void => {
     evt.preventDefault();
     setCode(evt.target.value);
   };
 
-  const cancelling = () => {
+  const cancelling = (): void => {
     setCode("");
     handleClose();
   };
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = (): void => setShow(false);
+  const handleShow = (): void => setShow(true);
 
   return (
     <div className="activation">

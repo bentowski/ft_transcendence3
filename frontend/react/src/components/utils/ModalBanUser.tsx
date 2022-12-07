@@ -3,13 +3,14 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import {Modal} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-import {ChanType, UsersChanBanType, UserType} from "../../types";
+import {ChanType, ErrorType, UsersChanBanType, UserType} from "../../types";
 import {Socket} from "socket.io-client";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{
     chan: ChanType,
     socket: Socket,
-    usersInChan: UserType[]}): JSX.Element => {
+    usersInChan: UserType[]
+}): JSX.Element => {
     const { user, setError, updateBannedFromList } = useAuthData();
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
@@ -21,20 +22,20 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
             setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
-                    let users: UserType[] = await Request(
+                    const users: UserType[] = await Request(
                         "GET",
                         {},
                         {},
                         "http://localhost:3000/chan/" + chan + "/user"
                     )
                     const newArr: UsersChanBanType[] = [];
-                    for (let index = 0; index < users.length; index++) {
+                    for (let index: number = 0; index < users.length; index++) {
                         newArr.push({
                             user: users[index],
                             isBan: false,
                         });
                     }
-                    let banned: UserType[] = await Request(
+                    const banned: UserType[] = await Request(
                         "GET",
                         {},
                         {},
@@ -71,7 +72,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         setShow(true);
     }
 
-    const checkIfAdmin = async (id: string) => {
+    const checkIfAdmin = async (id: string): Promise<boolean> => {
         let res: UserType[] = [];
         try {
             res = await Request(
@@ -83,7 +84,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         } catch (error) {
             setError(error);
         }
-        for (let i = 0; i < res.length; i++) {
+        for (let i: number = 0; i < res.length; i++) {
             if (id === res[i].auth_id) {
                 return true;
             }
@@ -93,7 +94,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
 
     const banUser = async (obj: any): Promise<void> => {
         if (await checkIfAdmin(obj.user.auth_id)) {
-            const error = {
+            const error: ErrorType = {
                 statusCode: 400,
                 message: 'Cant ban user: User is admin'
             }
@@ -116,7 +117,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
     }
 
     const listUserCards = (): void => {
-        let ret: JSX.Element[] = [];
+        const ret: JSX.Element[] = [];
 
             for(let x: number = 0; x < usersChan.length; x++)
             {

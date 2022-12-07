@@ -3,10 +3,13 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import {ChanType, UsersChanMuteType, UserType} from "../../types";
+import {ChanType, ErrorType, UsersChanMuteType, UserType} from "../../types";
 import {Socket} from "socket.io-client";
 
-const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
+const ModalMuteUser = ({chan, socket, usersInChan}:{
+    chan: ChanType,
+    socket: Socket,
+    usersInChan: UserType[]}): JSX.Element => {
     const { user, setError } = useAuthData();
     const [ show, setShow ] = useState<boolean>(false);
     const [ usersChan, setUsersChan ] = useState<UsersChanMuteType[]>([{user: undefined, isMute:false}]);
@@ -18,7 +21,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
             setLoading(false);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
-                    let users: UserType[] = await Request(
+                    const users: UserType[] = await Request(
                         "GET",
                         {},
                         {},
@@ -26,7 +29,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
                     )
                     const newArray: UsersChanMuteType[] = [];
                     for (let index = 0; index < users.length; index++) {
-                        let result: boolean = await Request(
+                        const result: boolean = await Request(
                             "GET",
                             {},
                             {},
@@ -62,7 +65,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
         setShow(true);
     }
 
-    const checkIfAdmin = async (id: string) => {
+    const checkIfAdmin = async (id: string): Promise<boolean> => {
         let res: UserType[] = [];
         try {
             res = await Request(
@@ -84,7 +87,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
 
     const muteUser = async (obj: any): Promise<void> => {
         if (await checkIfAdmin(obj.user.auth_id)) {
-            const error = {
+            const error: ErrorType = {
                 statusCode: 400,
                 message: 'Cant mute user: User is admin'
             }
@@ -107,7 +110,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Sock
     }
 
     const listUserCards = async (): Promise<void> => {
-        let ret: ReactNode[] = []
+        const ret: ReactNode[] = []
 
         for(let x: number = 0; x < usersChan.length; x++)
         {

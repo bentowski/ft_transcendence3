@@ -18,7 +18,7 @@ const ModalChangeUsername = (): JSX.Element => {
 
   const getUsers = async (): Promise<UserType[]|undefined> => {
     try {
-      let users: UserType[] = await Request(
+      const users: UserType[] = await Request(
           "GET",
           {},
           {},
@@ -60,7 +60,7 @@ const ModalChangeUsername = (): JSX.Element => {
   // }
 
   const verifField = async (): Promise<boolean> => {
-    let users: any = await getUsers();
+    const users: UserType[] | undefined = await getUsers();
     var regex: RegExp = /^[\w-]+$/
     var minmax: RegExp = /^.{3,10}$/
 
@@ -80,7 +80,7 @@ const ModalChangeUsername = (): JSX.Element => {
       // }, 1800)
       return false;
     }
-    else if (users.findIndex((u: UserType) => u.username === field) > -1) {
+    else if (users !== undefined && users.findIndex((u: UserType) => u.username === field) > -1) {
       setErr("This username already exists")
       setAlert(true);
       // setTimeout(() => {
@@ -92,10 +92,10 @@ const ModalChangeUsername = (): JSX.Element => {
   }
 
   const requestChangeUsername = async (): Promise<void> => {
-    let ret: boolean = await verifField();
+    const ret: boolean = await verifField();
     if (ret) {
       try {
-        let res: UserType = await Request(
+        const res: UserType = await Request(
             "PATCH",
             {
               "Content-Type": "application/json",
@@ -105,7 +105,7 @@ const ModalChangeUsername = (): JSX.Element => {
         )
         //console.log('result = ', res);
         if (res) {
-          const newName = field;
+          const newName: string = field;
           updateUser(null, field);
           setField("");
           handleClose();

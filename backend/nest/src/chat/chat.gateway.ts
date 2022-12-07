@@ -33,8 +33,8 @@ export class ChatGateway implements OnModuleInit
   }
 
     checkIfUserIsBlocking(sender: UserEntity, chan: ChanEntity): boolean {
-      for (let i = 0; i < sender.blocked.length; i++) {
-          for (let j = 0; j < chan.chanUser.length; j++) {
+      for (let i: number = 0; i < sender.blocked.length; i++) {
+          for (let j: number = 0; j < chan.chanUser.length; j++) {
               if (sender.blocked[i] === chan.chanUser[j].auth_id) {
                   return true
               }
@@ -43,10 +43,10 @@ export class ChatGateway implements OnModuleInit
       return false;
     }
 
-    checkIfUserIsBlocked(sender: UserEntity, chan: ChanEntity) {
-      for (let i = 0; i < chan.chanUser.length; i++) {
-          for (let j = 0; j < chan.chanUser[i].blocked.length; j++) {
-              for (let k = 0; k < chan.chanUser.length; k++) {
+    checkIfUserIsBlocked(sender: UserEntity, chan: ChanEntity): boolean {
+      for (let i: number = 0; i < chan.chanUser.length; i++) {
+          for (let j: number = 0; j < chan.chanUser[i].blocked.length; j++) {
+              for (let k: number = 0; k < chan.chanUser.length; k++) {
                   if (chan.chanUser[k].auth_id === chan.chanUser[i].blocked[j]) {
                       return true;
                   }
@@ -382,7 +382,7 @@ export class ChatGateway implements OnModuleInit
     async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
   	// client.leave(body.room);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
-    const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
+    //const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
     await this.chanService.delUserToChannel(usr, body.room)
   	client.emit('leftRoom', {room: ChanEntity});
   }

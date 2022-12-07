@@ -43,8 +43,8 @@ class UsersInActualchannel extends Component<{
   }
    */
 
-  render() {
-    let users: any = [];
+  render(): JSX.Element[] {
+    const users: JSX.Element[] = [];
     const actualChan = this.props.usersList;
     if (actualChan.length)
       actualChan.map((u: UserType) => {
@@ -77,25 +77,25 @@ export const PrintChannel = (
     usersInChan: UserType[],
     currentChan: any,
     parentCallBack: any
-  }) => {
+  }): JSX.Element => {
   const { setError, mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
 
   // const {user} = useAuthData()
-  const setModalType = (newValue: any) => {
+  const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
   }
 
-  const setModalTitle = (newValue: any) => {
+  const setModalTitle = (newValue: any): void => {
     parentCallBack.setModalTitle(newValue)
   }
 
-  const setValue = (newValue: any) => {
+  const setValue = (newValue: any): void => {
     parentCallBack.setValue(newValue)
   }
 
-  const setChanList = (newValue: any) => {
+  const setChanList = (newValue: any): void => {
     parentCallBack.setChanList(newValue)
   }
 
@@ -123,7 +123,7 @@ export const PrintChannel = (
   }, [bannedFrom])
   */
 
-  const checkIfMuted = async () => {
+  const checkIfMuted = async (): Promise<boolean> => {
     let mutedList: ChanType[] = [];
     try {
       mutedList = await Request(
@@ -135,7 +135,7 @@ export const PrintChannel = (
     } catch (error) {
       setError(error);
     }
-    for (let i = 0; i < mutedList.length; i++) {
+    for (let i: number = 0; i < mutedList.length; i++) {
       if (mutedList[i].id === room) {
         return true;
       }
@@ -143,7 +143,7 @@ export const PrintChannel = (
     return false;
   }
 
-  const onSubmit = async () => {
+  const onSubmit = async (): Promise<void> => {
     // check if array is empty or contain only whitespace
     if (!await checkIfMuted()) {
       if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
@@ -174,13 +174,13 @@ export const PrintChannel = (
     }
   };
 
-  const pressEnter = (e: any) => {
+  const pressEnter = (e: any): void => {
     if (e.key === "Enter") {
       onSubmit();
     }
   };
 
-  const printName = () => {
+  const printName = (): JSX.Element => {
     if (currentChan.type === "direct") {
       if (user.auth_id === currentChan.chanUser[0].auth_id) {
         return (

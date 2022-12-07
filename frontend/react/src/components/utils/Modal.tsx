@@ -12,15 +12,15 @@ class Modal extends Component<
   {
     title: string,
     calledBy: string,
-    userChan?: any[],
-    userBan?: any[],
+    userChan?: UserType[],
+    userBan?: UserType[],
     parentCallBack?: any,
-    chans?: any,
-    chanList?: any
+    chans?: ChanType[],
+    chanList?: ChanType[]
   },
   {
-    user: any,
-    friends: any[],
+    user: UserType | undefined,
+    friends: UserType[],
     input: string,
     allChans: Array<ChanType>,
     protected: boolean,
@@ -31,10 +31,10 @@ class Modal extends Component<
     fieldPass: string,
     errPass: string,
     alertPass: boolean,
-    printed: any,
+    printed: JSX.Element[],
     type: string
-    banned: any[],
-    joined: any[],
+    banned: ChanType[],
+    joined: ChanType[],
   }
 > {
   static contextType = AuthContext;
@@ -42,7 +42,7 @@ class Modal extends Component<
     super(props, context);
     // users: [],
     this.state = {
-      user: {},
+      user: undefined,
       friends: [],
       input: "",
       allChans: [],
@@ -70,13 +70,13 @@ class Modal extends Component<
     }
   }
 
-  hiddenCreate = () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    const chanName = document.querySelector("#chanName") as HTMLInputElement;
-    const chanPassword = document.querySelector("#chanPassword") as HTMLInputElement;
+  hiddenCreate = (): void => {
+    let modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
+    const radioPub: HTMLInputElement | null = document.querySelector("#public") as HTMLInputElement;
+    const radioPri: HTMLInputElement | null = document.querySelector("#private") as HTMLInputElement;
+    const radioPro: HTMLInputElement | null = document.querySelector("#protected") as HTMLInputElement;
+    const chanName: HTMLInputElement | null = document.querySelector("#chanName") as HTMLInputElement;
+    const chanPassword: HTMLInputElement | null = document.querySelector("#chanPassword") as HTMLInputElement;
     radioPub.checked = false;
     radioPri.checked = false;
     radioPro.checked = false;
@@ -96,8 +96,8 @@ class Modal extends Component<
     chanPassword.classList.add("hidden");
   };
 
-  hiddenJoin = () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
+  hiddenJoin = (): void => {
+    const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     this.setState({
       protected: false,
       alertRadio: false,
@@ -111,8 +111,8 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-  hiddenAddUser = () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
+  hiddenAddUser = (): void => {
+    const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     this.setState({
       protected: false,
       alertRadio: false,
@@ -126,11 +126,11 @@ class Modal extends Component<
     modal.classList.add("hidden");
   };
 
-   updateChan = async () => {
+   updateChan = async (): Promise<void> => {
     const ctx: any = this.context
     this.setState({ banned: ctx.banned })
     this.setState({ joined: ctx.joined })
-    let newUser: UserType = ctx.user
+    const newUser: UserType = ctx.user
     if (newUser) {
       this.setState({ user: newUser });
     }
@@ -268,10 +268,10 @@ class Modal extends Component<
   //   // }
   // };
 
-  verifRadio = async () => {
-    const radioPub = document.querySelector("#public") as HTMLInputElement;
-    const radioPri = document.querySelector("#private") as HTMLInputElement;
-    const radioPro = document.querySelector("#protected") as HTMLInputElement;
+  verifRadio = async (): Promise<boolean> => {
+    const radioPub: HTMLInputElement | null = document.querySelector("#public") as HTMLInputElement;
+    const radioPri: HTMLInputElement | null = document.querySelector("#private") as HTMLInputElement;
+    const radioPro: HTMLInputElement | null = document.querySelector("#protected") as HTMLInputElement;
     if (radioPub.checked === false && radioPri.checked === false && radioPro.checked === false) {
       this.setState({ alertRadio: true });
       return false;
@@ -288,10 +288,10 @@ class Modal extends Component<
     return true;
   };
 
-  verifName = () => {
+  verifName = (): boolean => {
     // let users = await getUsers();
-    var regex = /^[\w-]+$/
-    var minmax = /^.{3,10}$/
+    const regex: RegExp = /^[\w-]+$/
+    const minmax: RegExp = /^.{3,10}$/
 
     // let retPass = true;
     // if (this.state.protected)
@@ -320,7 +320,7 @@ class Modal extends Component<
     return true;
   };
 
-  verifPass = () => {
+  verifPass = (): boolean => {
     var minmax = /^.{8,30}$/
 
     if (!minmax.test(this.state.fieldPass)) {
@@ -336,23 +336,26 @@ class Modal extends Component<
     }
   };
 
-  createChan = async () => {
+  createChan = async (): Promise<void> => {
     // const radioPub = document.querySelector("#public") as HTMLInputElement;
     // const radioPri = document.querySelector("#private") as HTMLInputElement;
     // const radioPro = document.querySelector("#protected") as HTMLInputElement;
-    let retRadio = await this.verifRadio();
-    let retName = await this.verifName();
-    let retPass = true;
+    const retRadio: boolean = await this.verifRadio();
+    const retName: boolean = this.verifName();
+    let retPass: boolean = true;
     if (this.state.protected) {
-      retPass = await this.verifPass();
+      retPass = this.verifPass();
     }
     if (retRadio && retName && retPass) {
-      this.props.parentCallBack.createChannel(this.state.fieldName, this.state.type, this.state.fieldPass)
+      this.props.parentCallBack.createChannel(
+          this.state.fieldName,
+          this.state.type,
+          this.state.fieldPass)
       this.hiddenCreate()
     }
   };
 
-  displayUser = (id: number, user: UserType) => {
+  displayUser = (id: number, user: UserType): JSX.Element => {
     return (
       <div
         key={id}
@@ -396,18 +399,18 @@ class Modal extends Component<
     );
   };
 
-  users = () => {
-    let friends: Array<any> = [];
+  users = (): JSX.Element[] => {
+    const friends: Array<JSX.Element> = [];
     let isUsers: boolean = false;
     let x: number = 0;
     if (this.state.friends.length > 0) {
-      let chanUser: Array<UserType> | undefined = this.props.userChan;
+      const chanUser: Array<UserType> | undefined = this.props.userChan;
       while (
         chanUser?.length &&
         chanUser?.length > 0 &&
         x < this.state.friends.length
       ) {
-        let friend: UserType = this.state.friends[x];
+        const friend: UserType = this.state.friends[x];
         if (!chanUser.find((user) => user.auth_id === friend.auth_id)) {
           isUsers = true;
           if (
@@ -437,10 +440,10 @@ class Modal extends Component<
     return friends;
   };
 
-  checkIfBanned = (chan: ChanType) => {
+  checkIfBanned = (chan: ChanType): boolean => {
     const ctx: any = this.context;
     const banned: ChanType[] = ctx.bannedFrom;
-    for (let index = 0; index < banned.length; index++) {
+    for (let index: number = 0; index < banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
       }
@@ -448,10 +451,10 @@ class Modal extends Component<
     return false;
   }
 
-  checkIfAlreadyIn = (chan: ChanType) => {
+  checkIfAlreadyIn = (chan: ChanType): boolean => {
     const ctx: any = this.context;
     const joined: ChanType[] = ctx.chanFrom;
-    for (let index = 0; index < joined.length; index++) {
+    for (let index: number = 0; index < joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;
       }
@@ -466,12 +469,12 @@ class Modal extends Component<
   //   modalCheckPass.classList.remove("hidden");
   // }
 
-  joinRoom = (newRoom: ChanType) => {
+  joinRoom = (newRoom: ChanType): void => {
     this.props.parentCallBack.joinRoom(newRoom)
     // this.hiddenJoin()
   }
 
-  joinRoomPublic = (key: number) => {
+  joinRoomPublic = (key: number): void => {
     this.props.parentCallBack.joinRoom(
       this.state.allChans[key],
       true
@@ -479,9 +482,9 @@ class Modal extends Component<
     this.hiddenJoin()
   }
 
-  chans = () => {
-    let ret: any[] = [];
-    for (let x = 0; x < this.state.allChans.length; x++) {
+  chans = (): void => {
+    const ret: JSX.Element[] = [];
+    for (let x: number = 0; x < this.state.allChans.length; x++) {
       if (
         this.state.allChans[x].type !== "private" &&
         this.state.allChans[x].type !== "direct"
@@ -533,12 +536,12 @@ class Modal extends Component<
     this.setState({ printed: ret })
   };
 
-  joinPrivateChan = async () => {
-    let input = document.getElementById(
+  joinPrivateChan = async (): Promise<void> => {
+    const input = document.getElementById(
       "InputJoinPrivateChan"
     ) as HTMLInputElement;
     try {
-      let chan = await Request(
+      const chan: ChanType = await Request(
           "GET",
           {},
           {},
@@ -554,52 +557,52 @@ class Modal extends Component<
     }
   };
 
-  pressEnter = (e: any) => {
+  pressEnter = (e: any): void => {
     if (e.key === "Enter") {
       this.joinPrivateChan();
     }
   };
 
 
-  showPass = () => {
-    let intput = document.getElementById("chanPassword") as HTMLDivElement;
+  showPass = (): void => {
+    const intput: HTMLElement | null = document.getElementById("chanPassword") as HTMLDivElement;
     intput.classList.remove("hidden");
     this.setState({ protected: true });
     // login.value = "";
   };
 
-  hiddenPass = () => {
-    let intput = document.getElementById("chanPassword") as HTMLDivElement;
+  hiddenPass = (): void => {
+    const intput: HTMLElement | null = document.getElementById("chanPassword") as HTMLDivElement;
     intput.classList.add("hidden");
     this.setState({ protected: false });
     // login.value = "";
   };
 
-  closeAlertRadio = () => {
+  closeAlertRadio = (): void => {
     this.setState({ alertRadio: false });
   }
 
-  handleName = (evt: any) => {
+  handleName = (evt: any): void => {
     evt.preventDefault();
     this.setState({ fieldName: evt.target.value });
   };
 
-  closeAlertName = () => {
+  closeAlertName = (): void => {
     this.setState({ alertName: false });
     this.setState({ errName: "" })
   }
 
-  handlePass = (evt: any) => {
+  handlePass = (evt: any): void => {
     evt.preventDefault();
     this.setState({ fieldPass: evt.target.value });
   };
 
-  closeAlertPass = () => {
+  closeAlertPass = (): void => {
     this.setState({ alertPass: false });
     this.setState({ errPass: "" })
   }
 
-  printer = () => {
+  printer = (): JSX.Element | undefined => {
     switch (this.props.calledBy) {
       case "newChan":
         return (
@@ -734,7 +737,7 @@ class Modal extends Component<
     }
   };
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="Modal hidden" id="Modal">
         {this.printer()}

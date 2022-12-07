@@ -6,7 +6,14 @@ import {Modal} from 'react-bootstrap';
 import {UsersChanAdminType, UsersChanBanType, UsersChanMuteType, UserType} from "../../types";
 import {Link} from "react-router-dom";
 
-const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket, usersInChan: UserType[]}) => {
+const ModalAdminUser = ({
+                            chan,
+                            socket,
+                            usersInChan}:{
+    chan:string,
+    socket: Socket,
+    usersInChan: UserType[]
+}): JSX.Element => {
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -16,9 +23,9 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
 
     useEffect(() => {
         setLoading(true);
-        const fetchOwner = async () => {
+        const fetchOwner = async (): Promise<void> => {
             try {
-                let res: boolean = await Request(
+                const res: boolean = await Request(
                     "GET",
                     {},
                     {},
@@ -30,7 +37,7 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
                 setError(error);
             }
         }
-        const fetchUsersChan = async () => {
+        const fetchUsersChan = async (): Promise<void> => {
             let users: UserType[] = [];
             try {
                 users = await Request(
@@ -44,7 +51,7 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
                 setError(error);
             }
             const newArray: UsersChanAdminType[] = [];
-            for (let index = 0; index < users.length; index++) {
+            for (let index: number = 0; index < users.length; index++) {
                 try {
                     const result: boolean = await Request(
                         "GET",
@@ -76,7 +83,7 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
         }
     }, [usersInChan, usersChan])
 
-    const adminUser = (obj: any) => {
+    const adminUser = (obj: any): void => {
         socket.emit('adminToChannel', {
             "room": chan,
             "auth_id": obj.user.auth_id,
@@ -93,7 +100,7 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
     }
 
     const listUserCards = async (): Promise<void> => {
-        let ret: ReactNode[] = []
+        const ret: ReactNode[] = []
 
         for(let x: number = 0; x < usersChan.length; x++)
         {
@@ -144,8 +151,8 @@ const ModalAdminUser = ({chan, socket, usersInChan}:{chan:string, socket: Socket
         setList(ret);
     }
 
-    const handleOpen = () => setShow(true);
-    const handleClose = () => setShow(false);
+    const handleOpen = (): void => setShow(true);
+    const handleClose = (): void => setShow(false);
 
     return (
         <div className="col-13">

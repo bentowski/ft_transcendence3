@@ -3,7 +3,9 @@ import '../../styles/components/utils/historyCards.css'
 import {HistoryType} from "../../types";
 import {Link} from "react-router-dom";
 
-class HistoryCards extends Component<{ history: HistoryType, profil: string }, {}> {
+class HistoryCards extends Component<{
+    history: HistoryType,
+    profil: string }, {}> {
 
   renderStatus = (user: boolean): JSX.Element => {
     if (!user) {
@@ -32,8 +34,8 @@ class HistoryCards extends Component<{ history: HistoryType, profil: string }, {
   }
 
   renderHistoryCards = (): JSX.Element => {
-    let status_one: JSX.Element = this.renderStatus(false);
-    let status_two: JSX.Element = this.renderStatus(true);
+    const status_one: JSX.Element = this.renderStatus(false);
+    const status_two: JSX.Element = this.renderStatus(true);
     if (this.props.profil) {
       if (this.props.profil === this.props.history.user_one)
         return (

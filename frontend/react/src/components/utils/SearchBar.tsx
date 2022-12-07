@@ -27,7 +27,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	const updateUrl = async (): Promise<void> => {
 		// let input = document.querySelector("#MatchNav input") as HTMLInputElement;
 		// let value = input.value;
-		let url: string = "http://localhost:3000/" + routeForRequest + value;
+		const url: string = "http://localhost:3000/" + routeForRequest + value;
 		let parties: PartiesType[] = []
 		try {
 			parties = await Request(
@@ -44,7 +44,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 
 	const requestUrl = async (event: any): Promise<void> => {
 		setValue(event.target.value)
-		let url: string = "http://localhost:3000/" + routeForRequest + event.target.value;
+		const url: string = "http://localhost:3000/" + routeForRequest + event.target.value;
 		let parties: PartiesType[] = [];
 		try {
 			parties = await Request(
@@ -60,7 +60,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	}
 
 	const onloadFct = async (): Promise<void> => {
-		let url: string = "http://localhost:3000/" + routeForRequest;
+		const url: string = "http://localhost:3000/" + routeForRequest;
 		let parties: PartiesType[] = [];
 		try {
 			parties = await Request(

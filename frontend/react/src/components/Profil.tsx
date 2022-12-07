@@ -45,7 +45,7 @@ class Profil extends Component<
       return ;
     }
     try {
-      let newUser: UserType = await Request(
+      const newUser: UserType = await Request(
         "GET",
         {},
         {},
@@ -117,7 +117,7 @@ class Profil extends Component<
         local: string }>,
       snapshot?: any) {
     const ctx: any = this.context;
-    let url: string = this.props.loc.pathname;
+    const url: string = this.props.loc.pathname;
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
     if (newLoc !== 'undefined' && (newLoc !== this.state.local || prevState.local !== newLoc)) {
       this.getUser(newLoc);
@@ -141,7 +141,7 @@ class Profil extends Component<
     if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
       this.props.nav("/profil/" + usr.username);
     }
-    let url: string = this.props.loc.pathname;
+    const url: string = this.props.loc.pathname;
     const newUrl: string = url.substring(url.lastIndexOf("/") + 1);
     if (newUrl !== this.state.local) {
       this.getUser(newUrl);
@@ -200,7 +200,7 @@ class Profil extends Component<
   };
 
   render(): JSX.Element {
-    let histories: JSX.Element[] = [];
+    const histories: JSX.Element[] = [];
     let i: number = this.state.histories.length - 1;
     while (i >= 0) {
       if (

@@ -12,7 +12,7 @@ import PageNotFound from "./pages/PageNotFound";
 import {HandleError} from "./components/utils/HandleError";
 
 const RequireAuth = (): JSX.Element => {
-  let { isAuth, isToken, isTwoFa, loading } = useAuthData();
+  const { isAuth, isToken, isTwoFa, loading } = useAuthData();
   const location = useLocation();
 
   if (loading) {
@@ -42,7 +42,7 @@ const App = (): JSX.Element => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 
-  const setNewLoc = (newurl: string) => {
+  const setNewLoc = (newurl: string): void => {
     console.log('set new location');
     loc.pathname = newurl;
   }

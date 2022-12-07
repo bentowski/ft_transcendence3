@@ -51,8 +51,8 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
 
   addFriends = async (): Promise<void> => {
     const ctx: any = this.context;
-    let currentUser: UserType = ctx.user;
-    let input = document.getElementById("InputAddFriends") as HTMLInputElement
+    const currentUser: UserType = ctx.user;
+    const input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" || input.value === currentUser.username || this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
       return;
@@ -68,7 +68,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       }
       if (exist) {
         this.setState({alert: false})
-        let userToAdd: UserType = await Request(
+        const userToAdd: UserType = await Request(
           'GET',
           {},
           {},
@@ -86,7 +86,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           "http://localhost:3000/user/update/friends"
         )
         ctx.updateFriendsList(userToAdd, true);
-        let newFriendsArray = await Request(
+        const newFriendsArray = await Request(
           "GET",
           {},
           {},

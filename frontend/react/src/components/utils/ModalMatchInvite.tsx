@@ -41,7 +41,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
     } catch (error) {
       ctx.setError(error);
     }
-    let party: PartiesType | undefined = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
+    const party: PartiesType | undefined = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
     socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party?.id})
     window.location.href = "http://localhost:8080/game/" + party?.id;
   }
@@ -53,7 +53,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
   }
 
   hidden = (): void => {
-    let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.props.user.username) as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.props.user.username) as HTMLDivElement;
     modal.classList.add('hidden')
   }
 

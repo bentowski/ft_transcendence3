@@ -12,7 +12,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
             if (auth_id !== undefined) {
                 setLoading(true)
                 try {
-                    let res = await Request(
+                    const res: boolean = await Request(
                         "GET",
                         {},
                         {},

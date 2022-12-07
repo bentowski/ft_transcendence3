@@ -39,7 +39,7 @@ const ModalChangeAvatar = (): JSX.Element => {
       body: formData,
     };
     delete params.headers["Content-Type"];
-    let res: Response = await fetch("http://localhost:3000/user/upload",
+    const res: Response = await fetch("http://localhost:3000/user/upload",
         params);
     if (res.ok) {
       //console.log("upload success!");
