@@ -1,17 +1,13 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import Request from "./Requests"
 import { socket } from '../../contexts/WebSocketContextUpdate';
-import {PartiesType} from "../../types";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { PartiesType } from "../../types";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 
 function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}): JSX.Element {
 	const [onload, setOnload] = useState<number>(0);
 	const [value, setValue] = useState<string>('');
 	const { setError } = useAuthData();
-	// const [input]
-	// state = {
-	// 	onload: 0
-	// }
 
 	useEffect(() => {
 		if (inputSelector === "MatchNav") {

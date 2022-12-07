@@ -49,7 +49,6 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
   decline = (): void => {
     socket.emit('inviteDeclined', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id})
     this.hidden();
-    console.log("LETS NOT CONNECT !") ///////////////
   }
 
   hidden = (): void => {

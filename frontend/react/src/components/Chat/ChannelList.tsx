@@ -1,14 +1,6 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
-import ModalBanUser from '../utils/ModalBanUser';
-import ModalMuteUser from '../utils/ModalMuteUser';
-
+import { Component } from "react";
+import { Link } from "react-router-dom";
+import { ChanType, UserType } from "../../types"
 
 class ListOfDirectMessages extends Component<{
   chanList: ChanType[],

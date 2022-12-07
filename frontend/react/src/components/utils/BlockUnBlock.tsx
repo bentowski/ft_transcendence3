@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useEffect, useState } from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {

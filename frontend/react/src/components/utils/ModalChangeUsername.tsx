@@ -1,10 +1,10 @@
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { Alert } from 'react-bootstrap';
-import {UserType} from "../../types";
+import { UserType } from "../../types";
 
 const ModalChangeUsername = (): JSX.Element => {
   const { user, updateUser, setError } = useAuthData();
@@ -14,7 +14,6 @@ const ModalChangeUsername = (): JSX.Element => {
   const [alert, setAlert] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false)
   const [username, setUsername] = useState<string>('');
-  // const [alertMsg, setAlertMsg] = useState("");
 
   const getUsers = async (): Promise<UserType[]|undefined> => {
     try {
@@ -35,29 +34,6 @@ const ModalChangeUsername = (): JSX.Element => {
       setUsername(user.username)
     }
   }, [user])
-
-  // const requestChangeUsername = async () => {
-  //   try {
-  //     let res = await Request(
-  //         "PATCH",
-  //         {
-  //           "Content-Type": "application/json",
-  //         },
-  //         { username: field },
-  //         "http://localhost:3000/user/update/username"
-  //     )
-  //     if (res) {
-  //       const newName = field;
-  //       updateUser(null, field);
-  //       setField("");
-  //       handleClose();
-  //       navigate("/profil/" + newName);
-  //     }
-  //   } catch (error) {
-  //     setError(error);
-  //     setField("");
-  //   }
-  // }
 
   const verifField = async (): Promise<boolean> => {
     const users: UserType[] | undefined = await getUsers();
@@ -139,15 +115,11 @@ const ModalChangeUsername = (): JSX.Element => {
   }
 
   const closeAlert = (): void => {
-    // console.log('closing alert');
     setAlert(false);
     setErr("");
-    // setAlertMsg("");
   }
 
   const pressEnter = (e: any): void => {
-    console.log("key = ", e.key)
-    console.log(field)
     if(e.key === 'Enter') {
       requestChangeUsername()
     }
@@ -198,8 +170,6 @@ const ModalChangeUsername = (): JSX.Element => {
       <a
           onClick={handleShow}
           className="d-flex flex-row justify-content-start align-items-center"
-          //data-bs-toggle="modal"
-          //data-bs-target="#changeName"
       >
         <h3>{username}</h3>
         <svg

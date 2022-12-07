@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
-import {ErrorType} from "../../types";
+import { ErrorType } from "../../types";
 
 const Switch = (): JSX.Element => {
   const [code, setCode] = useState<string>("");

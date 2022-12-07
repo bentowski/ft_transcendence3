@@ -1,4 +1,4 @@
-import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction } from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
@@ -9,7 +9,7 @@ import { useAuthData } from "./contexts/AuthProviderContext";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
-import {HandleError} from "./components/utils/HandleError";
+import { HandleError } from "./components/utils/HandleError";
 
 const RequireAuth = (): JSX.Element => {
   const { isAuth, isToken, isTwoFa, loading } = useAuthData();

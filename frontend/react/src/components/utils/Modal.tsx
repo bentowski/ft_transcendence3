@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
 import { Alert } from 'react-bootstrap';
 import ModalCheckPass from './ModalCheckPass';
-import { createImportSpecifier } from 'typescript';
 
 class Modal extends Component<
   {
@@ -40,7 +39,6 @@ class Modal extends Component<
   static contextType = AuthContext;
   constructor(props: any, context: any) {
     super(props, context);
-    // users: [],
     this.state = {
       user: undefined,
       friends: [],
@@ -507,16 +505,6 @@ class Modal extends Component<
                       JOIN
                     </button>
                 }
-                {/* <button
-                  onClick={() =>
-                    this.props.parentCallBack.joinRoom(
-                      this.state.allChans[x],
-                      true
-                    )
-                  }
-                >
-                  JOIN
-                </button> */}
                 <p className="col-6">{this.state.allChans[x].name}</p>
                 <div>
                   {

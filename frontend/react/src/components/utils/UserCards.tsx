@@ -1,5 +1,5 @@
 import { Component } from "react";
-import {Link, Navigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
@@ -362,17 +362,6 @@ class UserCards extends Component<
       });
     }
   }
-
-  /*
-  callback = (status: string) => {
-    if (status === "accepted") {
-      // socket.emit
-    }
-    else if (status === "declined") {
-
-    }
-  }
-   */
 
   componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;

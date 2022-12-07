@@ -1,13 +1,11 @@
 import { Component, createRef } from 'react';
-import { useNavigate } from "react-router-dom";
-import { socket, WebsocketProvider, WebsocketContext } from '../contexts/WebSocketContextGame';
+import { socket } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../contexts/AuthProviderContext';
 import { UserType } from '../types';
-// const navigate = useNavigate();
 
 let gameOver = () => {
   // PRINT WIN & Redirect ==============================

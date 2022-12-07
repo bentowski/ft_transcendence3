@@ -1,10 +1,10 @@
-import {Socket} from "socket.io-client";
-import React, {ReactNode, useEffect, useState} from "react";
+import { Socket } from "socket.io-client";
+import React, { ReactNode, useEffect, useState } from "react";
 import Request from "./Requests";
-import {useAuthData} from "../../contexts/AuthProviderContext";
-import {Modal} from 'react-bootstrap';
-import {UsersChanAdminType, UsersChanBanType, UsersChanMuteType, UserType} from "../../types";
-import {Link} from "react-router-dom";
+import { useAuthData } from "../../contexts/AuthProviderContext";
+import { Modal } from 'react-bootstrap';
+import { UsersChanAdminType, UserType } from "../../types";
+import { Link } from "react-router-dom";
 
 const ModalAdminUser = ({
                             chan,
@@ -88,7 +88,6 @@ const ModalAdminUser = ({
             "room": chan,
             "auth_id": obj.user.auth_id,
             "action": !obj.isAdmin });
-        //updateBannedFromList(chan, !obj.isBan);
         const newArray: UsersChanAdminType[] = [];
         for (let index: number = 0; index < usersChan.length; index++) {
             if (usersChan[index].user?.auth_id === obj.user.auth_id) {

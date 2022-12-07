@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuthData } from "../contexts/AuthProviderContext";
-import {useEffect, useState} from "react";
-import {AvatarType} from "../types";
+import { useEffect, useState } from "react";
+import { AvatarType } from "../types";
 
 const Menu = () => {
   const { setError, user, userAuthentication } = useAuthData();

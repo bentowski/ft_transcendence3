@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
-import {HistoryType} from "../../types";
-import {Link} from "react-router-dom";
+import { HistoryType } from "../../types";
+import { Link } from "react-router-dom";
 
 class HistoryCards extends Component<{
     history: HistoryType,

@@ -1,4 +1,4 @@
-import { Component, Context } from "react";
+import { Component } from "react";
 import { Link, NavigateFunction } from "react-router-dom";
 import Request from "./utils/Requests";
 import HistoryCards from "./utils/HistoryCards";
@@ -125,12 +125,6 @@ class Profil extends Component<
       this.getRank();
       this.setState({ local: newLoc });
     }
-    /*
-    if (prevState.current_username !== ctx.user.username) {
-      this.setState({current_username: ctx.user.username});
-      this.props.nav("/profil/" + ctx.user.username)
-    }
-     */
   }
 
   componentDidMount = async () => {

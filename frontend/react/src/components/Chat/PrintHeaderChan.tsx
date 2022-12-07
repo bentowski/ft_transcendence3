@@ -1,15 +1,10 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
+import { Component } from "react";
+import { ChanType, UserType } from "../../types"
+import { AuthContext } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import ModalAdminUser from "../utils/ModalAdminUser";
-import {Socket} from "socket.io-client";
+import { Socket } from "socket.io-client";
 
 class AdminButtons extends Component<
     {
@@ -47,14 +42,6 @@ class AdminButtons extends Component<
         }>,
         snapshot?: any): void {
         const ctx: any = this.context;
-        /*
-        let users: UserType[] = await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/chan/" + prevProps.room + "/user"
-        )
-         */
         if (prevState.adminList !== ctx.adminFrom) {
             this.setState({adminList: ctx.adminFrom});
             this.render();

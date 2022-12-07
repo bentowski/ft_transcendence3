@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useEffect, useState } from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import {ErrorType, UserType} from "../../types";
+import { ErrorType, UserType } from "../../types";
 
 const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);

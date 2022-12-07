@@ -14,7 +14,6 @@ const ModalCheckPass = (
   const { setError } = useAuthData();
 
   const handleShow = (): void => {
-    // console.log("chan[x].name = ", chanToJoin?.password)
     setShow(true);
   }
 
@@ -29,9 +28,7 @@ const ModalCheckPass = (
   };
 
   const closeAlert = (): void => {
-    // console.log('closing alert');
     setAlert(false);
-    // setAlertMsg("");
   }
 
   const handlePassword = (evt: any): void => {

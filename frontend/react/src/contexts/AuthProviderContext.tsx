@@ -1,14 +1,15 @@
 import {
   createContext,
-  ReactNode, useCallback,
+  ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {AuthType, ChanType, UserType} from "../types";
-import {NavigateFunction, useLocation, useNavigate} from "react-router-dom";
+import { AuthType, ChanType, UserType } from "../types";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext<any>({
   /*

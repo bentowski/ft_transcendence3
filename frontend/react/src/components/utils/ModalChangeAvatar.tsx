@@ -1,13 +1,12 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Button, Form, Modal } from "react-bootstrap";
-import {useEffect, useState} from "react";
-import {AvatarType, ErrorType, ParamsImgType} from "../../types";
+import { useEffect, useState } from "react";
+import { AvatarType, ErrorType } from "../../types";
 
 const ModalChangeAvatar = (): JSX.Element => {
   const { updateUser, setError, user } = useAuthData();
   const [show, setShow] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  //const [avatar, setAvatar] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState<AvatarType>({url:"", hash: 0});
 
   useEffect((): void => {
@@ -17,12 +16,6 @@ const ModalChangeAvatar = (): JSX.Element => {
         hash: Date.now()});
     }
   }, [user])
-
-  /*
-  useEffect(() => {
-    setAvatar(user.avatar);
-  }, [user])
-   */
 
   const requestChangeAvatar = async (): Promise<void> => {
     const formData: FormData = new FormData();
@@ -65,7 +58,6 @@ const ModalChangeAvatar = (): JSX.Element => {
 
   const handleImage = (evt: any): void => {
     if (evt.target) {
-      //console.log(evt.target.files[0]);
       setSelectedImage(evt.target.files[0]);
     }
   };
@@ -122,8 +114,6 @@ const ModalChangeAvatar = (): JSX.Element => {
             height={100}
             src={`${avatarUrl.url}?${avatarUrl.hash}`}
             alt="prout"
-            //data-bs-toggle="modal"
-            //data-bs-target="#changeAvatar"
         />
       </a>
     </div>

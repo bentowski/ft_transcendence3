@@ -1,16 +1,12 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Modal from "../utils/Modal";
+import { Component } from "react";
+import { useNavigate } from "react-router-dom";
 import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import { MessagePayload, ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
-import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
-import ModalBanUser from '../utils/ModalBanUser';
-import ModalMuteUser from '../utils/ModalMuteUser';
+import { socket } from '../../contexts/WebSocketContext';
+import { ChanType, UserType } from "../../types"
+import { useAuthData} from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
-import ChannelList from "./ChannelList";
 
 class UsersInActualchannel extends Component<{
   room: string,

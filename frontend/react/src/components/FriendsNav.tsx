@@ -31,23 +31,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
     const ctx: any = this.context;
     const frnds: UserType[] = ctx.friendsList;
     this.setState({ friends: frnds })
-    //let ctx: any = this.context;
-    //let currentUser = this.state.ctx.user;
-    //let user = await Request('GET', {}, {}, "http://localhost:3000/user/name/" + this.state.user.username)
-    //if (!user.friends.length)
-    //return ;
-    //this.setState({ friends: user.friends })
   }
-
-  /*
-  promptError = () => {
-    let input = document.getElementById("InputAddFriends") as HTMLInputElement
-    input.value = "This user not exist"
-    setTimeout(() => {
-      input.value = ""
-    }, 1000);
-  }
-   */
 
   addFriends = async (): Promise<void> => {
     const ctx: any = this.context;
@@ -58,9 +42,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
       return;
     }
     try {
-      // let allUsers: <Array
       const ctx: any = this.context;
-      // ctx.userList;
       let exist: boolean = false;
       for (let x = 0; x < ctx.userList.length; x++) {
         if (ctx.userList[x] === input.value)
@@ -132,7 +114,6 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
   }
 
   closeAlert = (): void => {
-    // console.log('closing alert');
     this.setState({ alert: false });
   }
 

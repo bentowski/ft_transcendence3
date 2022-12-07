@@ -1,8 +1,8 @@
-import React, {Component } from 'react';
+import React, { Component } from 'react';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
-import {ErrorType, PartiesType} from "../types";
+import { ErrorType, PartiesType } from "../types";
 import { AuthContext } from '../contexts/AuthProviderContext';
 
 class MatchNav extends Component {

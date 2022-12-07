@@ -1,13 +1,10 @@
 import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
-//import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import { /* MessagePayload, */ ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
+import { ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
-//import ModalBanUser from '../utils/ModalBanUser';
-//import ModalMuteUser from '../utils/ModalMuteUser';
 import { ChannelList } from './ChannelList'
 import { PrintChannel } from './PrintChannel'
 
@@ -21,10 +18,6 @@ export const WebSocket = (): JSX.Element => {
   const [loaded, setLoaded] = useState("not ok");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
   const [url, setUrl] = useState<string>('');
-  //const [muted, setMuted] = useState({room:{},muted:false});
-  //const [banned, setBanned] = useState({room:{},banned:false});
-  //const [currentChan, setCurrentChan] = useState<ChanType>();
-  //const [userBan, setBanUser] = useState<Array<UserType>>([]);
   const {
     user,
     setError,
@@ -33,30 +26,24 @@ export const WebSocket = (): JSX.Element => {
     updateChanFromList,
     updateAdminFromList,
     updateAllChans,
-    mutedFrom,
-    bannedFrom
   } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate();
-  //const location = useLocation();
   let location = ""
-
 
 // ================= UseEffects ===================
 
-  useEffect((): () => void => {
+  useEffect(() /*: () => void */ => {
     socket.on('connect', () => {});
     socket.on("userJoinChannel", () => {
-      //updateAllChans();
       getChan();
     });
-    socket.on("chanDeleted", (roomId: string) => {
-      chanList.forEach((c) => {
-        if (c.chanUser.find((u) =>
+    socket.on("chanDeleted", (/* roomId: string */) => {
+      chanList.forEach((c: ChanType) => {
+        if (c.chanUser.find((u: UserType) =>
           u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          //updateAllChans();
           window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
@@ -64,7 +51,7 @@ export const WebSocket = (): JSX.Element => {
     })
     socket.on("userLeaveChannel", () => {
       getChan();
-      // window.location.replace("http://localhost:8080/chat");
+      //window.location.replace("http://localhost:8080/chat");
       //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -138,7 +125,7 @@ export const WebSocket = (): JSX.Element => {
         setError(error);
         if (error.statusCode === 450) {
           //updateBannedFromList();
-          //navigate("/chat/");
+          navigate("/chat/");
         }
         if (error.statusCode === 451) {
           //updateMutedFromList();
@@ -187,7 +174,6 @@ export const WebSocket = (): JSX.Element => {
   useEffect((): void => {
     const chanUserFind: Array<UserType>|undefined = chanList.find((c:ChanType) => c.id === room)?.chanUser
     if (chanUserFind !== undefined) {
-      //console.log('chanuserfind = ', chanUserFind);
       setChanUser(chanUserFind)
     }
   }, [room, chanList])
@@ -253,7 +239,7 @@ export const WebSocket = (): JSX.Element => {
     let url: string = document.URL;
     // await getChan();
     // changeActiveRoom('4')
-    //let chanList:ChanType[] = await Request('GET', {}, {}, "http://localhost:3000/chan/")
+    // let chanList:ChanType[] = await Request('GET', {}, {}, "http://localhost:3000/chan/")
     let chan: ChanType | undefined = undefined;
     const index: number = url.lastIndexOf("/");
   	chanList.forEach((chan: ChanType) => {
