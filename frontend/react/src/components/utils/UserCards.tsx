@@ -95,21 +95,35 @@ class UserCards extends Component<
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      const newChan: ChanType = await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: this.createChanName(ctx.user, u2),
-          type: "direct",
-          user_1_id: ctx.user.auth_id,
-          user_2_id: u2.auth_id,
-        },
-        "http://localhost:3000/chan/createpriv"
-      );
-      // window.location.href = "http://localhost:8080/chat/"/*  + newChan.id */
+      const chans: ChanType[] = ctx.allChans;
+	  let doesChanExist:boolean = false;
+	  let newChan: ChanType | undefined = undefined;
+	  chans.forEach((chan:ChanType) => {
+		if (chan.type === "direct" &&
+			(chan.chanUser[0].auth_id === ctx.user.auth_id || chan.chanUser[1].auth_id === ctx.user.auth_id) &&
+			(chan.chanUser[0].auth_id === u2.auth_id || chan.chanUser[1].auth_id === u2.auth_id)) {
+			doesChanExist = true;
+			newChan = chan;
+		}
+	  })
+	  if (doesChanExist === false) {
+      	newChan = await Request(
+        	"POST",
+        	{
+          	Accept: "application/json",
+          	"Content-Type": "application/json",
+        	},
+        	{
+          	name: this.createChanName(ctx.user, u2),
+          	type: "direct",
+          	user_1_id: ctx.user.auth_id,
+          	user_2_id: u2.auth_id,
+        	},
+        	"http://localhost:3000/chan/createpriv"
+      	);
+	  }
+	  if (newChan !== undefined)
+       	window.location.href = "http://localhost:8080/chat/" + newChan.id
     } catch (error) {
       ctx.setError(error);
     }

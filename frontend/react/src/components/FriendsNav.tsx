@@ -151,7 +151,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
               <Alert
                   onClose={this.closeAlert}
                   variant="danger"
-                  dismissible>{"This user don't exist"}</Alert> :
+                  dismissible>{"This user doesn't exist"}</Alert> :
               // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
               <div />
             }
