@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useEffect, useState } from "react";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import {UserType} from "../../types";
+import { ErrorType, UserType } from "../../types";
 
 const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
@@ -11,7 +11,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
         const updateStatus = async (): Promise<void> => {
             if (auth_id !== undefined) {
                 try {
-                    let res: boolean = await Request(
+                    const res: boolean = await Request(
                         "GET",
                         {},
                         {},
@@ -28,7 +28,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
     }, [auth_id, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        let res: Response = await fetch("http://localhost:3000/user/update/friends", {
+        const res: Response = await fetch("http://localhost:3000/user/update/friends", {
             method: "PATCH",
             credentials: 'include',
             headers: {
@@ -40,6 +40,9 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
             setStatus((prevState: any) => !prevState);
             const obj: UserType = await res.json();
             updateFriendsList(obj, !status);
+        } else {
+            const err: ErrorType = await res.json();
+            setError(err);
         }
     }
 

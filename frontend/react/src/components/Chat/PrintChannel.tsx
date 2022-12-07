@@ -1,13 +1,10 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Modal from "../utils/Modal";
+import { Component } from "react";
+import { useNavigate } from "react-router-dom";
 import UserCards from '../utils/UserCards'
 import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import { MessagePayload, ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
-import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
-import ModalBanUser from '../utils/ModalBanUser';
-import ModalMuteUser from '../utils/ModalMuteUser';
+import { socket } from '../../contexts/WebSocketContext';
+import { ChanType, UserType } from "../../types"
+import { useAuthData} from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
@@ -42,8 +39,8 @@ class UsersInActualchannel extends Component<{
   }
    */
 
-  render() {
-    let users: any = [];
+  render(): JSX.Element[] {
+    const users: JSX.Element[] = [];
     const actualChan = this.props.usersList;
     if (actualChan.length)
       actualChan.map((u: UserType) => {
@@ -76,25 +73,25 @@ export const PrintChannel = (
     usersInChan: UserType[],
     currentChan: any,
     parentCallBack: any
-  }) => {
-  const { mutedFrom, bannedFrom } = useAuthData();
+  }): JSX.Element => {
+  const { setError, mutedFrom, bannedFrom } = useAuthData();
   const navigate = useNavigate();
 
 
   // const {user} = useAuthData()
-  const setModalType = (newValue: any) => {
+  const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
   }
 
-  const setModalTitle = (newValue: any) => {
+  const setModalTitle = (newValue: any): void => {
     parentCallBack.setModalTitle(newValue)
   }
 
-  const setValue = (newValue: any) => {
+  const setValue = (newValue: any): void => {
     parentCallBack.setValue(newValue)
   }
 
-  const setChanList = (newValue: any) => {
+  const setChanList = (newValue: any): void => {
     parentCallBack.setChanList(newValue)
   }
 
@@ -122,14 +119,19 @@ export const PrintChannel = (
   }, [bannedFrom])
   */
 
-  const checkIfMuted = async () => {
-    let mutedList = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/muted"
-    )
-    for (let i = 0; i < mutedList.length; i++) {
+  const checkIfMuted = async (): Promise<boolean> => {
+    let mutedList: ChanType[] = [];
+    try {
+      mutedList = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/muted"
+      )
+    } catch (error) {
+      setError(error);
+    }
+    for (let i: number = 0; i < mutedList.length; i++) {
       if (mutedList[i].id === room) {
         return true;
       }
@@ -137,7 +139,7 @@ export const PrintChannel = (
     return false;
   }
 
-  const onSubmit = async () => {
+  const onSubmit = async (): Promise<void> => {
     // check if array is empty or contain only whitespace
     if (!await checkIfMuted()) {
       if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
@@ -168,13 +170,13 @@ export const PrintChannel = (
     }
   };
 
-  const pressEnter = (e: any) => {
+  const pressEnter = (e: any): void => {
     if (e.key === "Enter") {
       onSubmit();
     }
   };
 
-  const printName = () => {
+  const printName = (): JSX.Element => {
     if (currentChan.type === "direct") {
       if (user.auth_id === currentChan.chanUser[0].auth_id) {
         return (

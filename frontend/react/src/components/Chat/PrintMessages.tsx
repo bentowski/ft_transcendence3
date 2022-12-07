@@ -1,17 +1,10 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import { useAuthData } from "../../contexts/AuthProviderContext";
-import ModalBanUser from '../utils/ModalBanUser';
-import ModalMuteUser from '../utils/ModalMuteUser';
+import { Component, useEffect, useState } from "react";
+import { socket } from '../../contexts/WebSocketContext';
+import {MessagePayload, ChanType, UserType } from "../../types"
 
 class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
-  render() {
-    let ret: any[] = []
+  render(): JSX.Element[] {
+    const ret: JSX.Element[] = []
     this.props.messages.map((msg: MessagePayload, index: number) => {
       if (msg.sender_socket_id === this.props.user.auth_id)
         ret.push(
@@ -38,16 +31,27 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
   }
 }
 
-  export const PrintMessages = ({user, currentChan, chanList, parentCallBack}: {user: UserType, currentChan: ChanType, chanList: ChanType[], parentCallBack: any}) => {
-
+  export const PrintMessages = ({
+                                  user,
+                                  currentChan,
+                                  chanList,
+                                  parentCallBack}: {
+    user: UserType,
+    currentChan: ChanType,
+    chanList: ChanType[],
+    parentCallBack: any
+  }): JSX.Element => {
     const [messages, setMessage] = useState<MessagePayload[]>([]);
-      useEffect(() => {
+
+      useEffect((): () => void => {
         socket.on('onMessage', (newMessage: MessagePayload) => {
-          let channels: Array<ChanType> = chanList;
-          let index: number = chanList.findIndex((c: ChanType) => c.id === newMessage.room);
+          const channels: Array<ChanType> = chanList;
+          const index: number =
+              chanList.findIndex((c: ChanType) => c.id === newMessage.room);
           if (channels[index] !== undefined) {
             if (channels[index].messages)
-              channels[index].messages = [...channels[index].messages, newMessage];
+              channels[index].messages =
+                  [...channels[index].messages, newMessage];
             else
               channels[index].messages = [newMessage];
             if (channels[index].isActive) {
@@ -64,7 +68,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
         }
       });
 
-      useEffect(() => {
+      useEffect((): void => {
         if (currentChan && currentChan.messages) {
           setMessage(currentChan.messages);
         }

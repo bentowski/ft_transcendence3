@@ -16,7 +16,7 @@ class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hid
   	}
   }
   hidden = (): void => {
-    let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
     modal.classList.add('hidden')
     socket.emit("askForGamedown", {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id})
   }

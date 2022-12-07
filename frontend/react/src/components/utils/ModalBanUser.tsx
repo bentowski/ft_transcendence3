@@ -1,13 +1,17 @@
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import React, { useEffect, useState } from "react";
-import {Modal} from 'react-bootstrap';
-import {Link} from "react-router-dom";
-import {ChanType, UsersChanBanType, UserType} from "../../types";
-import {Socket} from "socket.io-client";
+import { Modal } from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import { ChanType, ErrorType, UsersChanBanType, UserType } from "../../types";
+import { Socket } from "socket.io-client";
 
-const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socket, usersInChan: UserType[]}): JSX.Element => {
-    const { user, setError, updateBannedFromList } = useAuthData();
+const ModalBanUser = ({chan, socket, usersInChan}:{
+    chan: ChanType,
+    socket: Socket,
+    usersInChan: UserType[]
+}): JSX.Element => {
+    const { user, setError } = useAuthData();
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
     const [list, setList] = useState<JSX.Element[]>([]);
@@ -18,20 +22,20 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
             setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
-                    let users: UserType[] = await Request(
+                    const users: UserType[] = await Request(
                         "GET",
                         {},
                         {},
                         "http://localhost:3000/chan/" + chan + "/user"
                     )
                     const newArr: UsersChanBanType[] = [];
-                    for (let index = 0; index < users.length; index++) {
+                    for (let index: number = 0; index < users.length; index++) {
                         newArr.push({
                             user: users[index],
                             isBan: false,
                         });
                     }
-                    let banned: UserType[] = await Request(
+                    const banned: UserType[] = await Request(
                         "GET",
                         {},
                         {},
@@ -68,14 +72,19 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
         setShow(true);
     }
 
-    const checkIfAdmin = async (id: string) => {
-        let res = await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/chan/" + chan + "/admin"
-        )
-        for (let i = 0; i < res.length; i++) {
+    const checkIfAdmin = async (id: string): Promise<boolean> => {
+        let res: UserType[] = [];
+        try {
+            res = await Request(
+                "GET",
+                {},
+                {},
+                "http://localhost:3000/chan/" + chan + "/admin"
+            )
+        } catch (error) {
+            setError(error);
+        }
+        for (let i: number = 0; i < res.length; i++) {
             if (id === res[i].auth_id) {
                 return true;
             }
@@ -85,15 +94,17 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
 
     const banUser = async (obj: any): Promise<void> => {
         if (await checkIfAdmin(obj.user.auth_id)) {
-            const error = {
+            const error: ErrorType = {
                 statusCode: 400,
                 message: 'Cant ban user: User is admin'
             }
             setError(error);
             return ;
         }
-        socket.emit('banToChannel', { "room": chan, "auth_id": obj.user.auth_id, "action": !obj.isBan });
-        //updateBannedFromList(chan, !obj.isBan);
+        socket.emit('banToChannel', {
+            "room": chan,
+            "auth_id": obj.user.auth_id,
+            "action": !obj.isBan });
         const newArray: UsersChanBanType[] = [];
         for (let index: number = 0; index < usersChan.length; index++) {
             if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -105,16 +116,21 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
     }
 
     const listUserCards = (): void => {
-        let ret: JSX.Element[] = [];
+        const ret: JSX.Element[] = [];
 
             for(let x: number = 0; x < usersChan.length; x++)
             {
                 if (usersChan[x].user && usersChan[x].user?.username !== user.username)
                 {
                     ret.push(
-                        <div key={x} className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-                            <div className="col-5 h-100 overflow-hidden buttons">
-                                <button type="button" onClick={ () => banUser(usersChan[x]) }>
+                        <div
+                            key={x}
+                            className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+                            <div
+                                className="col-5 h-100 overflow-hidden buttons">
+                                <button
+                                    type="button"
+                                    onClick={ () => banUser(usersChan[x]) }>
                                     {
                                         usersChan[x].isBan ?
                                             <p>UNBAN</p> :
@@ -122,12 +138,26 @@ const ModalBanUser = ({chan, socket, usersInChan}:{chan: ChanType, socket: Socke
                                     }
                                 </button>
                             </div>
-                            <div className="col-2 d-flex flex-row d-flex justify-content-center">
-                                <input className={usersChan[x].user?.status ? "online" : "offline"} type="radio"></input>
+                            <div
+                                className="col-2 d-flex flex-row d-flex justify-content-center">
+                                <input
+                                    className={usersChan[x].user?.status ? "online" : "offline"}
+                                    type="radio"></input>
                             </div>
-                            <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-                                <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
-                                <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+                            <div
+                                className="col-5 d-flex flex-row justify-content-end align-items-center">
+                                <Link
+                                    to={"/profil/" + usersChan[x].user?.username}
+                                    className="mx-2">
+                                    {usersChan[x].user?.username}
+                                </Link>
+                                <img
+                                    alt=""
+                                    src={'http://localhost:3000/user/' +
+                                        usersChan[x].user?.auth_id + '/avatar'}
+                                    className="miniAvatar"
+                                    width={150}
+                                    height={150}/>
                             </div>
                         </div>
                     );

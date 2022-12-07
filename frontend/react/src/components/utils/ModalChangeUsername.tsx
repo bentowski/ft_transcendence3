@@ -1,10 +1,10 @@
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { Alert } from 'react-bootstrap';
-import {UserType} from "../../types";
+import { UserType } from "../../types";
 
 const ModalChangeUsername = (): JSX.Element => {
   const { user, updateUser, setError } = useAuthData();
@@ -14,11 +14,10 @@ const ModalChangeUsername = (): JSX.Element => {
   const [alert, setAlert] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false)
   const [username, setUsername] = useState<string>('');
-  // const [alertMsg, setAlertMsg] = useState("");
 
   const getUsers = async (): Promise<UserType[]|undefined> => {
     try {
-      let users: UserType[] = await Request(
+      const users: UserType[] = await Request(
           "GET",
           {},
           {},
@@ -36,31 +35,8 @@ const ModalChangeUsername = (): JSX.Element => {
     }
   }, [user])
 
-  // const requestChangeUsername = async () => {
-  //   try {
-  //     let res = await Request(
-  //         "PATCH",
-  //         {
-  //           "Content-Type": "application/json",
-  //         },
-  //         { username: field },
-  //         "http://localhost:3000/user/update/username"
-  //     )
-  //     if (res) {
-  //       const newName = field;
-  //       updateUser(null, field);
-  //       setField("");
-  //       handleClose();
-  //       navigate("/profil/" + newName);
-  //     }
-  //   } catch (error) {
-  //     setError(error);
-  //     setField("");
-  //   }
-  // }
-
   const verifField = async (): Promise<boolean> => {
-    let users: any = await getUsers();
+    const users: UserType[] | undefined = await getUsers();
     var regex: RegExp = /^[\w-]+$/
     var minmax: RegExp = /^.{3,10}$/
 
@@ -80,7 +56,7 @@ const ModalChangeUsername = (): JSX.Element => {
       // }, 1800)
       return false;
     }
-    else if (users.findIndex((u: UserType) => u.username === field) > -1) {
+    else if (users !== undefined && users.findIndex((u: UserType) => u.username === field) > -1) {
       setErr("This username already exists")
       setAlert(true);
       // setTimeout(() => {
@@ -92,10 +68,10 @@ const ModalChangeUsername = (): JSX.Element => {
   }
 
   const requestChangeUsername = async (): Promise<void> => {
-    let ret: boolean = await verifField();
+    const ret: boolean = await verifField();
     if (ret) {
       try {
-        let res: UserType = await Request(
+        const res: UserType = await Request(
             "PATCH",
             {
               "Content-Type": "application/json",
@@ -105,7 +81,7 @@ const ModalChangeUsername = (): JSX.Element => {
         )
         //console.log('result = ', res);
         if (res) {
-          const newName = field;
+          const newName: string = field;
           updateUser(null, field);
           setField("");
           handleClose();
@@ -139,15 +115,11 @@ const ModalChangeUsername = (): JSX.Element => {
   }
 
   const closeAlert = (): void => {
-    // console.log('closing alert');
     setAlert(false);
     setErr("");
-    // setAlertMsg("");
   }
 
   const pressEnter = (e: any): void => {
-    console.log("key = ", e.key)
-    console.log(field)
     if(e.key === 'Enter') {
       requestChangeUsername()
     }
@@ -175,7 +147,10 @@ const ModalChangeUsername = (): JSX.Element => {
             {/* </Form> */}
             <div>
               {alert ?
-                <Alert onClose={closeAlert} variant="danger" dismissible>{err}</Alert> :
+                <Alert
+                    onClose={closeAlert}
+                    variant="danger"
+                    dismissible>{err}</Alert> :
                 // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
                 <div />
               }
@@ -195,8 +170,6 @@ const ModalChangeUsername = (): JSX.Element => {
       <a
           onClick={handleShow}
           className="d-flex flex-row justify-content-start align-items-center"
-          //data-bs-toggle="modal"
-          //data-bs-target="#changeName"
       >
         <h3>{username}</h3>
         <svg

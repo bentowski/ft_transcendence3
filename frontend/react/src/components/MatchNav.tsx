@@ -1,8 +1,8 @@
-import React, {Component } from 'react';
+import React, { Component } from 'react';
 import ModalMatch from "./utils/ModalMatch";
 import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
-import {PartiesType} from "../types";
+import { ErrorType, PartiesType } from "../types";
 import { AuthContext } from '../contexts/AuthProviderContext';
 
 class MatchNav extends Component {
@@ -43,25 +43,26 @@ class MatchNav extends Component {
 		} catch (error) {
 			ctx.setError(error);
 		}
-
-		let availableGames: PartiesType[] = games.filter((game: PartiesType) => {
+		const availableGames: PartiesType[] = games.filter((game: PartiesType) => {
 			if (game.p1 === null || game.p2 === null)
 				return true;
 			return false;
 		})
 		if (availableGames.length === 0) {
 			// alert("No available game joinable")
-			let error = {message: "No available game joinable", statusCode: 1}
+			const error: ErrorType = {
+				statusCode: 400,
+				message: "Error while trying to join game: No available game joinable"}
 			console.log(ctx)
 			ctx.setError(error);
 			return ;
 		}
-		let randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
+		const randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
 		window.location.href = "http://localhost:8080/game/" + randomGame.id
 	}
 
 	prompt = (): void => {
-		let modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
+		const modal: HTMLElement | null = document.getElementById("ModalMatch") as HTMLDivElement;
 		modal.classList.remove('hidden');
 	}
 
@@ -87,7 +88,7 @@ class MatchNav extends Component {
 	}
 	renderItem = (): JSX.Element[] => {
 		let x: number = 0;
-		let item: JSX.Element[] = [];
+		const item: JSX.Element[] = [];
 		const games: PartiesType[] = this.state.allGames;
 		while (x < this.state.allGames.length) {
 			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))

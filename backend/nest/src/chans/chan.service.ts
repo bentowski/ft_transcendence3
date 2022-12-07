@@ -126,14 +126,22 @@ export class ChanService {
 
     findAll(): Promise<ChanEntity[]> {
         return this.chanRepository.find({
-			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true }
+			relations: {
+				adminUser: true,
+				banUser: true,
+				chanUser: true,
+				muteUser: true }
 		});
     }
 
     async findOne(name?: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { name: name },
-			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true },
+			relations: {
+				adminUser: true,
+				banUser: true,
+				chanUser: true,
+				muteUser: true },
 		});
         return chan;
     }
@@ -141,7 +149,11 @@ export class ChanService {
 	async findOnebyID(id?: string): Promise<ChanEntity> {
         const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: id },
-			relations: { adminUser: true, banUser: true, chanUser: true, muteUser: true }
+			relations: {
+				adminUser: true,
+				banUser: true,
+				chanUser: true,
+				muteUser: true }
 		});
         return chan;
     }
@@ -151,7 +163,8 @@ export class ChanService {
     }
 
 	async addMessage(msg: Msg): Promise<ChanEntity> {
-		const chan: ChanEntity = await this.chanRepository.findOne({ where: { id: msg.room }});
+		const chan: ChanEntity = await this.chanRepository.findOne({
+			where: { id: msg.room }});
 		if (!chan) {
 			const error = {
 				statusCode: 404,
@@ -346,7 +359,7 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		if (chan.owner === user.auth_id) {
+		if (chan.owner === user.auth_id || chan.type === "direct") {
 			try {
 				await this.chanRepository.delete(chan.id);
 				//! socket emit reload for room's user

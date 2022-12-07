@@ -1,17 +1,13 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import Request from "./Requests"
 import { socket } from '../../contexts/WebSocketContextUpdate';
-import {PartiesType} from "../../types";
-import {useAuthData} from "../../contexts/AuthProviderContext";
+import { PartiesType } from "../../types";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 
 function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}): JSX.Element {
 	const [onload, setOnload] = useState<number>(0);
 	const [value, setValue] = useState<string>('');
 	const { setError } = useAuthData();
-	// const [input]
-	// state = {
-	// 	onload: 0
-	// }
 
 	useEffect(() => {
 		if (inputSelector === "MatchNav") {
@@ -27,7 +23,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	const updateUrl = async (): Promise<void> => {
 		// let input = document.querySelector("#MatchNav input") as HTMLInputElement;
 		// let value = input.value;
-		let url: string = "http://localhost:3000/" + routeForRequest + value;
+		const url: string = "http://localhost:3000/" + routeForRequest + value;
 		let parties: PartiesType[] = []
 		try {
 			parties = await Request(
@@ -44,7 +40,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 
 	const requestUrl = async (event: any): Promise<void> => {
 		setValue(event.target.value)
-		let url: string = "http://localhost:3000/" + routeForRequest + event.target.value;
+		const url: string = "http://localhost:3000/" + routeForRequest + event.target.value;
 		let parties: PartiesType[] = [];
 		try {
 			parties = await Request(
@@ -60,7 +56,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	}
 
 	const onloadFct = async (): Promise<void> => {
-		let url: string = "http://localhost:3000/" + routeForRequest;
+		const url: string = "http://localhost:3000/" + routeForRequest;
 		let parties: PartiesType[] = [];
 		try {
 			parties = await Request(

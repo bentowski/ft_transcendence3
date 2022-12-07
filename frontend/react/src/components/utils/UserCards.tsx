@@ -1,5 +1,5 @@
 import { Component } from "react";
-import {Link, Navigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
@@ -89,27 +89,41 @@ class UserCards extends Component<
   createChan = async (): Promise<void> => {
     const ctx: any = this.context;
     try {
-      let u2: UserType = await Request(
+      const u2: UserType = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      let newChan: ChanType = await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          name: this.createChanName(ctx.user, u2),
-          type: "direct",
-          user_1_id: ctx.user.auth_id,
-          user_2_id: u2.auth_id,
-        },
-        "http://localhost:3000/chan/createpriv"
-      );
-      // window.location.href = "http://localhost:8080/chat/"/*  + newChan.id */
+      const chans: ChanType[] = ctx.allChans;
+	  let doesChanExist:boolean = false;
+	  let newChan: ChanType | undefined = undefined;
+	  chans.forEach((chan:ChanType) => {
+		if (chan.type === "direct" &&
+			(chan.chanUser[0].auth_id === ctx.user.auth_id || chan.chanUser[1].auth_id === ctx.user.auth_id) &&
+			(chan.chanUser[0].auth_id === u2.auth_id || chan.chanUser[1].auth_id === u2.auth_id)) {
+			doesChanExist = true;
+			newChan = chan;
+		}
+	  })
+	  if (doesChanExist === false) {
+      	newChan = await Request(
+        	"POST",
+        	{
+          	Accept: "application/json",
+          	"Content-Type": "application/json",
+        	},
+        	{
+          	name: this.createChanName(ctx.user, u2),
+          	type: "direct",
+          	user_1_id: ctx.user.auth_id,
+          	user_2_id: u2.auth_id,
+        	},
+        	"http://localhost:3000/chan/createpriv"
+      	);
+	  }
+	  if (newChan !== undefined)
+       	window.location.href = "http://localhost:8080/chat/" + newChan.id
     } catch (error) {
       ctx.setError(error);
     }
@@ -200,7 +214,7 @@ class UserCards extends Component<
       ctx.setError(error);
     }
     socket.emit("askForGameUp", { "to": this.state.id, "from": this.getCurrentUser().auth_id })
-    let modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
     let parties: PartiesType[] = [];
     try {
@@ -213,7 +227,7 @@ class UserCards extends Component<
     } catch (error) {
       ctx.setError(error);
     }
-    let ids: number[] = parties.map((p: any) => {
+    const ids: number[] = parties.map((p: any) => {
       return p.id;
     })
     window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
@@ -329,14 +343,14 @@ class UserCards extends Component<
 
   openInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
+      const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
       modal.classList.remove('hidden')
     }
   }
 
   closeInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      let modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
+      const modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
       modal.classList.add('hidden')
     }
   }
@@ -356,23 +370,12 @@ class UserCards extends Component<
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
-          let modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
+          const modal = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
           modal.classList.add('hidden');
         }
       });
     }
   }
-
-  /*
-  callback = (status: string) => {
-    if (status === "accepted") {
-      // socket.emit
-    }
-    else if (status === "declined") {
-
-    }
-  }
-   */
 
   componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;
@@ -401,7 +404,7 @@ class UserCards extends Component<
   };
 
   render(): JSX.Element {
-    let items: JSX.Element = this.renderUserCards(1);
+    const items: JSX.Element = this.renderUserCards(1);
     return (
       <div
         key={(this.state.id * 5) / 3}

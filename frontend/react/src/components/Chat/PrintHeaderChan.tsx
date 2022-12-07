@@ -1,14 +1,10 @@
-import { Component, useContext, useEffect, useState, useRef } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Modal from "../utils/Modal";
-import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
-import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType, PunishSocketType, ErrorType} from "../../types"
-import {AuthContext, useAuthData} from "../../contexts/AuthProviderContext";
+import { Component } from "react";
+import { ChanType, UserType } from "../../types"
+import { AuthContext } from "../../contexts/AuthProviderContext";
 import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import ModalAdminUser from "../utils/ModalAdminUser";
+import { Socket } from "socket.io-client";
 
 class AdminButtons extends Component<
     {
@@ -28,7 +24,7 @@ class AdminButtons extends Component<
             adminList: [],
         }
     }
-    componentDidMount = async () => {
+    componentDidMount = (): void => {
         const ctx: any = this.context;
         this.setState({adminList: ctx.adminList})
     }
@@ -44,34 +40,25 @@ class AdminButtons extends Component<
         prevState: Readonly<{
             adminList: UserType[],
         }>,
-        snapshot?: any) {
+        snapshot?: any): void {
         const ctx: any = this.context;
-        /*
-        let users: UserType[] = await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/chan/" + prevProps.room + "/user"
-        )
-         */
         if (prevState.adminList !== ctx.adminFrom) {
             this.setState({adminList: ctx.adminFrom});
+            this.render();
         }
-        this.render();
-
     }
 
-    isUserAdmin = () => {
+    isUserAdmin = (): boolean => {
         return this.state.adminList &&
             this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
     }
 
-    render() {
-    let chan = this.props.chanList[
+    render(): JSX.Element {
+    const chan: ChanType = this.props.chanList[
         this.props.chanList.findIndex((c: ChanType) => c.id === this.props.room)
         ]
     if (!chan) {
-        return ;
+        return <p></p>;
     }
     if (this.isUserAdmin()) {
       return (
@@ -91,20 +78,21 @@ class AdminButtons extends Component<
          </div>
       )
     }
+    return <p></p>
   }
 }
 
 class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
-  promptAddUser = () => {
-    let modal = document.getElementById("Modal") as HTMLDivElement;
+  promptAddUser = (): void => {
+    const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove("hidden");
     this.props.parentCallBack.setModalType("addUser");
     this.props.parentCallBack.setModalTitle("Add a user");
   };
-  render() {
+  render(): JSX.Element {
     let url: string = document.URL
     url = url.substring(url.lastIndexOf("/") + 1);
-    let id = parseInt(url)
+    const id: number = parseInt(url)
     if (id && id > 0 && this.props.chanList[id - 1] &&
         !(this.props.chanList[id - 1].type === "direct")) {
       return (<button
@@ -114,6 +102,7 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
           Add Peoples
       </button>)
     }
+    return <p></p>
   }
 }
 
@@ -128,15 +117,15 @@ export const PrintHeaderChan = (
   {
       chanList: ChanType[],
       usersInChan: UserType[],
-      room: any,
+      room: string,
       user: UserType,
-      socket: any,
+      socket: Socket,
       parentCallBack: any
-  }) => {
-    const setModalType = (newValue: any) => {
+  }): JSX.Element => {
+    const setModalType = (newValue: any): void => {
       parentCallBack.setModalType(newValue)
     }
-    const setModalTitle = (newValue: any) => {
+    const setModalTitle = (newValue: any): void => {
       parentCallBack.setModalTitle(newValue)
     }
     return (

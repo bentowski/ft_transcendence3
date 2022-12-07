@@ -1,4 +1,4 @@
-import {Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, NavigateFunction } from "react-router-dom";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Profil from "./components/Profil";
@@ -9,10 +9,10 @@ import { useAuthData } from "./contexts/AuthProviderContext";
 import AskTwoFa from "./pages/AskTwoFa";
 import "./styles/App.css";
 import PageNotFound from "./pages/PageNotFound";
-import {HandleError} from "./components/utils/HandleError";
+import { HandleError } from "./components/utils/HandleError";
 
 const RequireAuth = (): JSX.Element => {
-  let { isAuth, isToken, isTwoFa, loading } = useAuthData();
+  const { isAuth, isToken, isTwoFa, loading } = useAuthData();
   const location = useLocation();
 
   if (loading) {
@@ -42,7 +42,7 @@ const App = (): JSX.Element => {
   const nav: NavigateFunction = useNavigate();
   const loc: any = useLocation();
 
-  const setNewLoc = (newurl: string) => {
+  const setNewLoc = (newurl: string): void => {
     console.log('set new location');
     loc.pathname = newurl;
   }
