@@ -25,7 +25,7 @@ export const WebSocket = (): JSX.Element => {
     updateMutedFromList,
     updateChanFromList,
     updateAdminFromList,
-    updateAllChans,
+    //updateAllChans,
   } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -225,7 +225,7 @@ export const WebSocket = (): JSX.Element => {
             "http://localhost:3000/chan/create"
         );
           socket.emit('chanCreated');
-          updateAllChans();
+          //updateAllChans();
           updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated?.id);

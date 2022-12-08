@@ -10,8 +10,11 @@ const HandleError = (): JSX.Element => {
     const { errorShow, errorMsg, errorCode, setError } = useAuthData();
 
     useEffect((): void => {
-        setInterval(handleClose, 1800);
-    })
+        const close = (): void => {
+            setError(null);
+        }
+        setInterval(close, 1800);
+    }, [setError])
 
     useEffect(() => {
         const handleError = (error: ErrorType, auth_id: string) => {
@@ -21,7 +24,7 @@ const HandleError = (): JSX.Element => {
         return () => {
             socket.off('error', handleError);
         }
-    }, [])
+    }, [setError])
 
     const handleClose = (): void => {
         setError(null);

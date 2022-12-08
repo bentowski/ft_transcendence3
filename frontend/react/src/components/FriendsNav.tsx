@@ -32,6 +32,7 @@ class FriendsNav extends Component<{}, {
         alert: boolean }>, snapshot?: any): void {
     const ctx: any = this.context;
     if (prevState.friends !== ctx.friendsList) {
+      console.log('updating friend list...')
       this.setState({ friends: ctx.friendsList })
     }
     if (prevState.uslist !== ctx.userList) {
@@ -139,7 +140,7 @@ class FriendsNav extends Component<{}, {
           <p>
             {onlines ? onlines + '/' +
               this.state.friends.length +
-              " friends online" : 'You are friendless'}
+              " friends online" : 'No friends online'}
           </p>
         </div>
         <div className="addFriends my-3 col-12">

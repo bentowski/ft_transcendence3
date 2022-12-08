@@ -20,7 +20,6 @@ const Logout = async (): Promise<void> => {
         }
       })
       .catch((error) => {
-        console.log("some shit happened");
         userAuthentication(false);
         return ;
       });

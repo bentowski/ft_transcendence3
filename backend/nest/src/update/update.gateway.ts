@@ -2,12 +2,9 @@ import { OnModuleInit } from '@nestjs/common';
 import {
  SubscribeMessage,
  WebSocketGateway,
- WebSocketServer,
- MessageBody,
+ WebSocketServer
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { PartiesService } from '../parties/parties.service';
-// import { ChanService } from '../chans/chan.service';
 import { UserService } from '../user/user.service';
 import UserEntity from "../user/entities/user-entity";
 
@@ -18,7 +15,6 @@ import UserEntity from "../user/entities/user-entity";
   namespace: '/update',
 })
 export class UpdateGateway implements OnModuleInit
- //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(
       private readonly userService: UserService,
@@ -66,6 +62,7 @@ export class UpdateGateway implements OnModuleInit
     console.log('on update friend received');
     try {
       const user: UserEntity = await this.userService.updateFriends(obj.action, obj.curid, obj.frid);
+      console.log('onUpdateFriend emitting request ', user, obj.action);
       this.server.emit('onUpdateFriend', {
         "user": user,
         "action": obj.action

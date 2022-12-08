@@ -7,12 +7,7 @@ import { useAuthData} from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
-class UsersInActualchannel extends Component<{
-  room: string,
-  usersList: UserType[]
-}, {
-  usersChan: UserType[]
-}> {
+class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
   /*
   constructor(props: any) {
     super(props);
@@ -73,7 +68,7 @@ export const PrintChannel = (
     currentChan: any,
     parentCallBack: any
   }): JSX.Element => {
-  const { setError } = useAuthData();
+  const { mutedFrom, bannedFrom, setError } = useAuthData();
 
   const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
@@ -115,7 +110,8 @@ export const PrintChannel = (
   }, [bannedFrom])
   */
 
-  const checkIfMuted = async (): Promise<boolean> => {
+  const checkIfMuted = (): boolean => {
+    /*
     let mutedList: ChanType[] = [];
     try {
       mutedList = await Request(
@@ -127,17 +123,18 @@ export const PrintChannel = (
     } catch (error) {
       setError(error);
     }
-    for (let i: number = 0; i < mutedList.length; i++) {
-      if (mutedList[i].id === room) {
+     */
+    for (let i: number = 0; i < mutedFrom.length; i++) {
+      if (mutedFrom[i].id === room) {
         return true;
       }
     }
     return false;
   }
 
-  const onSubmit = async (): Promise<void> => {
+  const onSubmit = (): void => {
     // check if array is empty or contain only whitespace
-    if (!await checkIfMuted()) {
+    if (!checkIfMuted()) {
       if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
         if (value === "/leave") {
           socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
@@ -231,7 +228,7 @@ export const PrintChannel = (
         </div> {/*fin chatMain*/}
         <div className="chatMembers col-2 p-0">
           <p> Channel's members ({usersInChan.length}) </p>
-          <UsersInActualchannel room={room} usersList={usersInChan} />
+          <UsersInActualchannel usersList={usersInChan} />
         </div>
       </div>
     )

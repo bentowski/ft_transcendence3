@@ -7,7 +7,7 @@ import { ChanType, ErrorType, UsersChanMuteType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalMuteUser = ({chan, socket, usersInChan}:{
-    chan: ChanType,
+    chan: string,
     socket: Socket,
     usersInChan: UserType[]}): JSX.Element => {
     const { user, setError } = useAuthData();

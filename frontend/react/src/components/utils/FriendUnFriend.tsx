@@ -1,9 +1,11 @@
 import { useEffect, useState} from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
-const FriendUnFriend = ({socket, auth_id}:{socket: Socket, auth_id:string}): JSX.Element => {
+const sock = io("http://localhost:3000/update");
+
+const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
     const { user, friendsList, updateFriendsList, setError } = useAuthData();
 
@@ -25,41 +27,23 @@ const FriendUnFriend = ({socket, auth_id}:{socket: Socket, auth_id:string}): JSX
             }
         }
         updateStatus();
-    }, [setError, auth_id, friendsList])
+    }, [setError, auth_id])
 
     useEffect(() => {
         const handleUpdateFriends = (obj: any) => {
-            console.log('handle update friends, ', obj)
+            console.log('handle update friends socket received');
             setStatus((prevState: boolean) => !prevState);
             updateFriendsList(obj.user, obj.action);
         }
-        socket.on('onUpdateFriend', handleUpdateFriends);
+        sock.on('onUpdateFriend', handleUpdateFriends);
         return () => {
-            socket.off('onUpdateFriend');
+            sock.off('onUpdateFriend');
         }
-    },[friendsList])
+    }, [updateFriendsList, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        /*
-        const res: Response = await fetch("http://localhost:3000/user/update/friends", {
-            method: "PATCH",
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: !status, auth_id: auth_id }),
-        })
-        if (res.ok) {
-            setStatus((prevState: any) => !prevState);
-            const obj: UserType = await res.json();
-            updateFriendsList(obj, !status);
-        } else {
-            const err: ErrorType = await res.json();
-            setError(err);
-        }
-         */
-        console.log('user ', user.auth_id, ' friending ', !status, ' user ', auth_id);
-        socket.emit('updateFriend', {
+        console.log('emiting updateFriend socket request');
+        sock.emit('updateFriend', {
             "curid": user.auth_id,
             "frid": auth_id,
             "action": !status,

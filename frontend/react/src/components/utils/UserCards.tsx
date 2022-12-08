@@ -388,16 +388,16 @@ class UserCards extends Component<
   componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;
     let user: UserType | undefined = undefined;
-    try {
-      user = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/id/" + this.state.id
-      );
-    } catch (error) {
-      ctx.setError(error);
-    }
+     try {
+       user = await Request(
+         "GET",
+         {},
+         {},
+         "http://localhost:3000/user/id/" + this.state.id
+       );
+     } catch (error) {
+       ctx.setError(error);
+     }
     let status: string = "offline";
     if (user) {
       if (user.status === 1) {

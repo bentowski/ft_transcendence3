@@ -10,9 +10,6 @@ import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
 import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
-import {io} from "socket.io-client";
-
-const socket = io("http://localhost:3000/update");
 
 class Profil extends Component<
     {
@@ -21,18 +18,18 @@ class Profil extends Component<
       parentCallback: (newurl: string) => void
     },
     {
-      user: any;
+      user: UserType | undefined;
       current_username: string;
       histories: Array<any>;
       rank: number;
       local: string,
     }
     > {
-  static contextType = AuthContext
+  static contextType = AuthContext;
   constructor(props: any, context: any) {
     super(props, context);
     this.state = {
-      user: {},
+      user: undefined,
       current_username: "",
       histories: [],
       rank: 0,
@@ -82,17 +79,19 @@ class Profil extends Component<
 
   getRank = async () => {
     const ctx: any = this.context;
-    let users: UserType[] = [];
-    try {
-      users = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user"
-      );
-    } catch (error) {
-      ctx.setError(error);
-    }
+    const users: UserType[] = ctx.userList;
+    /*
+   try {
+     users = await Request(
+       "GET",
+       {},
+       {},
+       "http://localhost:3000/user"
+     );
+   } catch (error) {
+     ctx.setError(error);
+   }
+    */
     users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
@@ -100,26 +99,25 @@ class Profil extends Component<
       return b.game_won - a.game_won;
     });
     let x: number = 0;
-    while (x < users.length && users[x].auth_id !== this.state.user.auth_id) {
+    while (x < users.length && users[x].auth_id !== this.state.user?.auth_id) {
       x++;
     }
     this.setState({ rank: x + 1 });
   };
 
-  async componentDidUpdate(
+  componentDidUpdate(
       prevProps: Readonly<{
           nav: NavigateFunction,
           loc: any,
           parentCallback: (newurl: string) => void,
       }>,
       prevState: Readonly<{
-        user: any;
+        user: UserType | undefined;
         current_username: string;
         histories: Array<any>;
         rank: number;
         local: string }>,
       snapshot?: any) {
-    //const ctx: any = this.context;
     const url: string = this.props.loc.pathname;
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
     if (newLoc !== 'undefined' && (newLoc !== this.state.local || prevState.local !== newLoc)) {
@@ -130,7 +128,7 @@ class Profil extends Component<
     }
   }
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
     const cxt: any = this.context;
     const usr: UserType = cxt.user;
     this.setState({ user: usr });
@@ -151,7 +149,7 @@ class Profil extends Component<
   printHeader = () => {
     const ctx: any = this.context;
     const user: UserType = ctx.user;
-    if (this.state.user.auth_id === user.auth_id) {
+    if (this.state.user?.auth_id === user.auth_id) {
       return (
         <div className="ProfilHeader col-6">
           <div className="Avatar d-flex flex-row justify-content-start">
@@ -176,7 +174,7 @@ class Profil extends Component<
         </div>
       );
     } else {
-      if (this.state.user.auth_id !== undefined) {
+      if (this.state.user?.auth_id !== undefined) {
         return (
           <div className="ProfilHeader col-6">
             <img
@@ -184,10 +182,10 @@ class Profil extends Component<
               alt="prout"
               width={100}
               height={100}
-              src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
-            <h3>{this.state.user.username}</h3>
-            <BlockUnBlock socket={socket} auth_id={this.state.user.auth_id} />
-            <FriendUnFriend socket={socket} auth_id={this.state.user.auth_id} />
+              src={"http://localhost:3000/user/" + this.state.user?.auth_id + "/avatar"} />
+            <h3>{this.state.user?.username}</h3>
+            <BlockUnBlock auth_id={this.state.user?.auth_id} />
+            <FriendUnFriend auth_id={this.state.user?.auth_id} />
           </div>
         );
       } else {
@@ -201,13 +199,13 @@ class Profil extends Component<
     let i: number = this.state.histories.length - 1;
     while (i >= 0) {
       if (
-        this.state.histories[i].user_one === this.state.user.username ||
-        this.state.histories[i].user_two === this.state.user.username
+        this.state.histories[i].user_one === this.state.user?.username ||
+        this.state.histories[i].user_two === this.state.user?.username
       )
         histories.push(
           <HistoryCards
             history={this.state.histories[i]}
-            profil={this.state.user.username}
+            profil={this.state.user}
           />
         );
       i--;
@@ -225,8 +223,8 @@ class Profil extends Component<
                   <div className="col-6 d-flex justify-content-end">lost</div>
                 </div>
                 <div className="Ratio p-1 d-flex flex-row align-items-center">
-                  <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.state.user.game_won}</div>
-                  <div className="col-6 px-2 d-flex justify-content-end">{this.state.user.game_lost}</div>
+                  <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.state.user?.game_won}</div>
+                  <div className="col-6 px-2 d-flex justify-content-end">{this.state.user?.game_lost}</div>
                 </div>
               </div>
             </div>

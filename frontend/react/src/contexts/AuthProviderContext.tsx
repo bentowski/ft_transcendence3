@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const updateFriendsList = useCallback((
       usr: UserType,
       action: boolean): void => {
-
+    console.log('update friends list called')
     if (action) {
       setFriendsList(prevState => [...prevState, usr]);
       return ;
@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const updateBlockedList = useCallback((
       usr: UserType,
       action: boolean): void => {
+    console.log('update blocked list called')
     if (action) {
       setBlockedList(prevState => [...prevState, usr]);
       return ;

@@ -7,7 +7,7 @@ import { ChanType, ErrorType, UsersChanBanType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{
-    chan: ChanType,
+    chan: string,
     socket: Socket,
     usersInChan: UserType[]
 }): JSX.Element => {

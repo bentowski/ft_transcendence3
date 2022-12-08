@@ -1,5 +1,4 @@
 import { Component } from "react";
-import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
 import {AuthContext} from "../contexts/AuthProviderContext";
