@@ -9,7 +9,7 @@ class ListOfDirectMessages extends Component<{
 
   render(): JSX.Element[] {
     const ret: JSX.Element[] = [];
-    this.props.chanList.map((chan: ChanType) => {
+    this.props.chanList.forEach((chan: ChanType) => {
           if (chan.type === "direct")
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
@@ -34,14 +34,14 @@ class ListOfJoinedChans extends Component<{
   parentCallBack: any}, {}> {
   render(): JSX.Element[] {
     const ret: JSX.Element[] = []
-    this.props.chanList.map((chan: ChanType) => {
+    this.props.chanList.forEach((chan: ChanType) => {
           if (chan.type !== "direct" && this.props.parentCallBack.inChan(chan))
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
                   <li
                       onClick={() => this.props.parentCallBack.joinRoom(chan)}
                       className={
-                    "d-flex flex-row d-flex justify-content-between align-items-center m-2 list-group-item "
+                    "d-flex flex-row d-flex justify-content-between align-items-center list-group-item overflow-hidden"
                           + (this.props.parentCallBack.chanColor(chan))}>
                     {this.props.parentCallBack.printName(chan, this.props.user)}
                   </li>
@@ -105,12 +105,14 @@ export const ChannelList = (
     return (
       <div className="channels col-2">
         <button
-            className="btn btn-outline-dark shadow-none"
+            // className="btn btn-outline-dark shadow-none"
+            className="mb-2"
             onClick={parentCallBack.createChan}>
           Create Channel
         </button>
         <button
-            className="btn btn-outline-dark shadow-none"
+            // className="btn btn-outline-dark shadow-none"
+            className="mb-2"
             onClick={parentCallBack.joinChan}>
           Join Channel
         </button>

@@ -75,7 +75,7 @@ class MatchNav extends Component {
 		return (
 			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
 				<div>
-					<button className="btn btn-outline-dark shadow-none" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
+					<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
 				</div>
 				<div style={{verticalAlign: "top"}}>
 					<p className="py-2">{login}</p>
@@ -105,8 +105,8 @@ class MatchNav extends Component {
 				</div> {/* Wait */}
 				<ModalMatch title="Create new game" calledBy="newGame" />
 				<div className="fastAccess">
-					<button className="btn btn-outline-dark shadow-none" onClick={this.randomMatchmaking}>Random matching</button>
-					<button className="mx-2 btn btn-outline-dark shadow-none" onClick={this.prompt}>Create</button>
+					<button className="" onClick={this.randomMatchmaking}>Random matching</button>
+					<button className="" onClick={this.prompt}>Create</button>
 					<div className="m-2 p-2">
 						<SearchBar inputSelector={"MatchNav"} routeForRequest={"parties/"} parentCallBack={this.callBackFunction} />
 					</div>

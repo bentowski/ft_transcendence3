@@ -75,86 +75,85 @@ const ModalAdminUser = ({
         if (show) {
             fetchUsersChan();
         }
-    }, [usersInChan, adminFrom, show])
+    }, [chan, user, setError, usersInChan, adminFrom, show])
 
     useEffect((): void => {
+        const adminUser = (obj: any): void => {
+            socket.emit('adminToChannel', {
+                "room": chan,
+                "auth_id": obj.user.auth_id,
+                "action": !obj.isAdmin });
+            const newArray: UsersChanAdminType[] = [];
+            for (let index: number = 0; index < usersChan.length; index++) {
+                if (usersChan[index].user?.auth_id === obj.user.auth_id) {
+                    usersChan[index].isAdmin = !obj.isAdmin;
+                }
+                newArray.push(usersChan[index]);
+            }
+            setUsersChan(newArray);
+        }
+
+        const listUserCards = async (): Promise<void> => {
+            const ret: ReactNode[] = []
+
+            for(let x: number = 0; x < usersChan.length; x++)
+            {
+                if (usersChan[x].user?.username !== user.username)
+                {
+                    ret.push(
+                        <div
+                            key={x}
+                            className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
+                            <div
+                                className="col-5 h-100 overflow-hidden buttons">
+                                <button
+                                    type="button"
+                                    onClick={() => adminUser(usersChan[x])}>
+                                    {
+                                        usersChan[x].isAdmin ?
+                                            <p>UNADMIN</p> :
+                                            <p>ADMIN</p>
+                                    }
+                                </button>
+                            </div>
+                            <div
+                                className="col-2 d-flex flex-row d-flex justify-content-center">
+                                <input
+                                    className={usersChan[x].user?.status ?
+                                        "online" : "offline"}
+                                    type="radio"></input>
+                            </div>
+                            <div
+                                className="col-5 d-flex flex-row justify-content-end align-items-center">
+                                <Link
+                                    to={"/profil/" + usersChan[x].user?.username}
+                                    className="mx-2">
+                                    {usersChan[x].user?.username}
+                                </Link>
+                                <img
+                                    alt=""
+                                    src={'http://localhost:3000/user/' +
+                                        usersChan[x].user?.auth_id + '/avatar'}
+                                    className="miniAvatar"
+                                    width={150}
+                                    height={150}/>
+                            </div>
+                        </div>
+                    );
+                }
+            }
+            setList(ret);
+        }
         if (usersChan) {
             listUserCards();
         }
-    }, [usersInChan, usersChan])
-
-    const adminUser = (obj: any): void => {
-        socket.emit('adminToChannel', {
-            "room": chan,
-            "auth_id": obj.user.auth_id,
-            "action": !obj.isAdmin });
-        const newArray: UsersChanAdminType[] = [];
-        for (let index: number = 0; index < usersChan.length; index++) {
-            if (usersChan[index].user?.auth_id === obj.user.auth_id) {
-                usersChan[index].isAdmin = !obj.isAdmin;
-            }
-            newArray.push(usersChan[index]);
-        }
-        setUsersChan(newArray);
-    }
-
-    const listUserCards = async (): Promise<void> => {
-        const ret: ReactNode[] = []
-
-        for(let x: number = 0; x < usersChan.length; x++)
-        {
-            if (usersChan[x].user?.username !== user.username)
-            {
-                ret.push(
-                    <div
-                        key={x}
-                        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center">
-                        <div
-                            className="col-5 h-100 overflow-hidden buttons">
-                            <button
-                                type="button"
-                                onClick={() => adminUser(usersChan[x])}>
-                                {
-                                    usersChan[x].isAdmin ?
-                                        <p>UNADMIN</p> :
-                                        <p>ADMIN</p>
-                                }
-                            </button>
-                        </div>
-                        <div
-                            className="col-2 d-flex flex-row d-flex justify-content-center">
-                            <input
-                                className={usersChan[x].user?.status ?
-                                    "online" : "offline"}
-                                type="radio"></input>
-                        </div>
-                        <div
-                            className="col-5 d-flex flex-row justify-content-end align-items-center">
-                            <Link
-                                to={"/profil/" + usersChan[x].user?.username}
-                                className="mx-2">
-                                {usersChan[x].user?.username}
-                            </Link>
-                            <img
-                                alt=""
-                                src={'http://localhost:3000/user/' +
-                                    usersChan[x].user?.auth_id + '/avatar'}
-                                className="miniAvatar"
-                                width={150}
-                                height={150}/>
-                        </div>
-                    </div>
-                );
-            }
-        }
-        setList(ret);
-    }
+    }, [chan, socket, user, setError, usersInChan, usersChan])
 
     const handleOpen = (): void => setShow(true);
     const handleClose = (): void => setShow(false);
 
     return (
-        <div className="col-13">
+        <div className="col-4 d-flex justify-content-end">
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
@@ -179,7 +178,7 @@ const ModalAdminUser = ({
             {
                 isOwner ?
                     <button
-                        className="col-3"
+                        className="col-6"
                         onClick={handleOpen}>
                         ADMIN
                     </button> :

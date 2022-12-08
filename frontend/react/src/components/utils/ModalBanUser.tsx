@@ -56,67 +56,53 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
             }
             fetchUsersChan();
         }
-    }, [usersInChan, show])
+    }, [chan, setError, usersInChan, show])
 
     useEffect((): void => {
-        if (usersChan) {
-            listUserCards();
-        }
-    }, [usersInChan, usersChan])
-
-    const handleClose = (): void => {
-        setShow(false);
-    }
-
-    const handleOpen = (): void => {
-        setShow(true);
-    }
-
-    const checkIfAdmin = async (id: string): Promise<boolean> => {
-        let res: UserType[] = [];
-        try {
-            res = await Request(
-                "GET",
-                {},
-                {},
-                "http://localhost:3000/chan/" + chan + "/admin"
-            )
-        } catch (error) {
-            setError(error);
-        }
-        for (let i: number = 0; i < res.length; i++) {
-            if (id === res[i].auth_id) {
-                return true;
+        const checkIfAdmin = async (id: string): Promise<boolean> => {
+            let res: UserType[] = [];
+            try {
+                res = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/chan/" + chan + "/admin"
+                )
+            } catch (error) {
+                setError(error);
             }
-        }
-        return false;
-    }
-
-    const banUser = async (obj: any): Promise<void> => {
-        if (await checkIfAdmin(obj.user.auth_id)) {
-            const error: ErrorType = {
-                statusCode: 400,
-                message: 'Cant ban user: User is admin'
+            for (let i: number = 0; i < res.length; i++) {
+                if (id === res[i].auth_id) {
+                    return true;
+                }
             }
-            setError(error);
-            return ;
+            return false;
         }
-        socket.emit('banToChannel', {
-            "room": chan,
-            "auth_id": obj.user.auth_id,
-            "action": !obj.isBan });
-        const newArray: UsersChanBanType[] = [];
-        for (let index: number = 0; index < usersChan.length; index++) {
-            if (usersChan[index].user?.auth_id === obj.user.auth_id) {
-                usersChan[index].isBan = !obj.isBan;
-            }
-            newArray.push(usersChan[index]);
-        }
-        setUsersChan(newArray);
-    }
 
-    const listUserCards = (): void => {
-        const ret: JSX.Element[] = [];
+        const banUser = async (obj: any): Promise<void> => {
+            if (await checkIfAdmin(obj.user.auth_id)) {
+                const error: ErrorType = {
+                    statusCode: 400,
+                    message: 'Cant ban user: User is admin'
+                }
+                setError(error);
+                return ;
+            }
+            socket.emit('banToChannel', {
+                "room": chan,
+                "auth_id": obj.user.auth_id,
+                "action": !obj.isBan });
+            const newArray: UsersChanBanType[] = [];
+            for (let index: number = 0; index < usersChan.length; index++) {
+                if (usersChan[index].user?.auth_id === obj.user.auth_id) {
+                    usersChan[index].isBan = !obj.isBan;
+                }
+                newArray.push(usersChan[index]);
+            }
+            setUsersChan(newArray);
+        }
+        const listUserCards = (): void => {
+            const ret: JSX.Element[] = [];
 
             for(let x: number = 0; x < usersChan.length; x++)
             {
@@ -164,10 +150,26 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 }
             }
             setList(ret);
+        }
+        if (usersChan) {
+            listUserCards();
+        }
+    }, [chan, setError, socket, user, usersInChan, usersChan])
+
+    const handleClose = (): void => {
+        setShow(false);
     }
 
+    const handleOpen = (): void => {
+        setShow(true);
+    }
+
+
+
+
+
     return (
-        <div className="col-6">
+        <div className="col-4 d-flex justify-content-start">
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
