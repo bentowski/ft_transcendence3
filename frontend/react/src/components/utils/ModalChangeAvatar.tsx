@@ -107,7 +107,7 @@ const ModalChangeAvatar = (): JSX.Element => {
           </Modal.Footer>
         </div>
       </Modal>
-      <button onClick={() => handleShow()}>
+      <button className="btnAvatar" onClick={() => handleShow()}>
         <img
             className="modifAvatar mb-2"
             width={100}

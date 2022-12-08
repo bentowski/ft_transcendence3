@@ -94,6 +94,13 @@ ul {
 } */
 
 button {
+	background: none;
+	border: none;
+	padding: 0;
+	color: rgb(55, 71, 104);
+}
+
+button:not(.btnAvatar, .btnUsername, .btnLogout) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
@@ -104,11 +111,11 @@ button {
 	overflow: hidden;
 }
 
-button:hover {
+button:hover:not(.btnAvatar, .btnUsername, .btnLogout) {
 	color: rgb(99, 82, 28);
 }
 
-button:active {
+button:active:not(.btnAvatar, .btnUsername, .btnLogout) {
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }

@@ -169,7 +169,7 @@ const ModalChangeUsername = (): JSX.Element => {
       </Modal>
       <button
           onClick={handleShow}
-          className="d-flex flex-row justify-content-start align-items-center"
+          className="btnUsername d-flex flex-row justify-content-start align-items-center"
       >
         <h3>{username}</h3>
         <svg
