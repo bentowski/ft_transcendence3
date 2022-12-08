@@ -49,7 +49,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
           exist = true;
       }
       if (exist) {
-        this.setState({alert: false})
+        this.setState({ alert: false })
         const userToAdd: UserType = await Request(
           'GET',
           {},
@@ -135,38 +135,40 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
         <div className="numberFriendsOnline">
           <p>
             {onlines ? onlines + '/' +
-                this.state.friends.length +
-                " friends online" : 'You are friendless'}
+              this.state.friends.length +
+              " friends online" : 'You are friendless'}
           </p>
         </div>
         <div className="addFriends my-3">
           <input
-              id="InputAddFriends"
-              className="col-8"
-              type="text"
-              placeholder="login"
-              onKeyDown={this.pressEnter}></input>
+            id="InputAddFriends"
+            className="col-8"
+            type="text"
+            placeholder="login"
+            onKeyDown={this.pressEnter}>
+
+          </input>
+          <button
+            className="col-2 mx-2"
+            onClick={this.addFriends}>ADD</button>
           <div>
-            {this.state.alert ?
-              <Alert
+            <div>
+              {this.state.alert ?
+                <Alert
                   onClose={this.closeAlert}
                   variant="danger"
                   dismissible>{"This user doesn't exist"}</Alert> :
-              // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-              <div />
-            }
-          </div>
-          <div className="item-list">
-            <ol>
-              {this.state.filteredList.map((item: any, key: any) => (
-                <li key={key}>{item}</li>
-              ))}
-            </ol>
-          </div>
-          <button
-              className="col-2 mx-2 btn btn-outline-dark shadow-none"
-              onClick={this.addFriends}>ADD</button>
-          <div>
+                // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
+                <div />
+              }
+            </div>
+            <div className="item-list">
+              <ol>
+                {this.state.filteredList.map((item: any, key: any) => (
+                  <li key={key}>{item}</li>
+                ))}
+              </ol>
+            </div>
             <DisplayFriendsList />
           </div>
         </div>
