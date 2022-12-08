@@ -6,7 +6,7 @@ WORKDIR /home/node/www
 
 COPY --chown=node:node ./react/package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY --chown=node:node ./react ./
 
