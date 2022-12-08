@@ -14,6 +14,10 @@ import {
   UpdateAvatarDto,
 } from './dto/update-user.dto';
 import ChanEntity from "../chans/entities/chan-entity";
+import * as io from "socket.io-client";
+
+const update = io.connect("http://localhost:3000/update");
+
 
 @Injectable()
 export class UserService {
@@ -73,6 +77,7 @@ export class UserService {
     user.channelJoined = [];
     user.channelBanned = [];
     user.channelMuted = [];
+    update.emit('userCreation', user);
     try {
       return this.userRepository.save(user);
     } catch (error) {
@@ -92,6 +97,7 @@ export class UserService {
     user.channelBanned = [];
     user.channelMuted = [];
     user.createdAt = new Date();
+    update.emit('userCreation', user);
     try {
       await this.userRepository.save(user);
       return user;
