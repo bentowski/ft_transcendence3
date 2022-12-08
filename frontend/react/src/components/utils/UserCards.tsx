@@ -95,7 +95,12 @@ class UserCards extends Component<
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      const chans: ChanType[] = ctx.allChans;
+	  const chans: ChanType[] = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan",
+      )
       let doesChanExist: boolean = false;
       let newChan: ChanType | undefined = undefined;
       chans.forEach((chan: ChanType) => {
