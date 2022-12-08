@@ -239,9 +239,9 @@ class UserCards extends Component<
         return (
           <div
             key={id}
-            className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+            className="friendsDiv mt-2 col-12 d-flex flex-row align-items-center"
           >
-            <div className="col-5 h-100">
+            <div className="col-5  d-flex flex-row justify-content-start">
               {/* <Link to={"/chat"}> */}
               <button className="p-1" onClick={this.createChan}>
                 <svg
@@ -258,7 +258,7 @@ class UserCards extends Component<
               </button>
               {/* </Link> */}
               {/* <Link to={"/game"}> */}
-                <button className="mx-2 p-1 btn btn-outline-dark shadow-none" onClick={this.startNewGame}>
+                <button className="mx-2 p-1" onClick={this.startNewGame}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
@@ -277,7 +277,7 @@ class UserCards extends Component<
               <input className={this.state.online} type="radio"></input>
             </div>
             <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-              <Link to={"/profil/" + this.state.login} className="mx-2">
+              <Link to={"/profil/" + this.state.login} className="mx-2 overflow-hidden">
                 {this.state.login}
               </Link>
               <Link to={"/profil/" + this.state.login} className="mx-2">
@@ -411,7 +411,7 @@ class UserCards extends Component<
     return (
       <div
         key={(this.state.id * 5) / 3}
-        className="col-12 my-2 d-flex flex-row justify-content-between"
+        className="col-12 m-2 d-flex flex-row justify-content-between"
       >
         <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user} />
         <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user} />

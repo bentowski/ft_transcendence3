@@ -134,26 +134,37 @@ class FriendsNav extends Component<{}, {
     }
 
     return (
-      <div className="FriendsNav">
-        {/* <div className="numberFriendsOnline">
+      <div className="FriendsNav col-12">
+        <div className="numberFriendsOnline col-12">
           <p>
             {onlines ? onlines + '/' +
               this.state.friends.length +
               " friends online" : 'You are friendless'}
           </p>
-        </div> */}
-        <div className="addFriends my-3">
-          <input
-            id="InputAddFriends"
-            className="col-8"
-            type="text"
-            placeholder="login"
-            onKeyDown={this.pressEnter}>
+        </div>
+        <div className="addFriends my-3 col-12">
+          <div className="divAddFriend d-flex flex-row px-2 col-12">
+            <div className="inputDrop col-8 d-flex justify-content-start">
+              <input
+                id="InputAddFriends"
+                className="col-12 d-flex justify-content-start"
+                type="text"
+                placeholder="login"
+                onKeyDown={this.pressEnter}>
+              </input>
+              <div className="item-list">
+                <ol>
+                  {this.state.filteredList.map((item: any, key: any) => (
+                    <li className="d-flex justify-content-start p-1" key={key}>{item}</li>
+                  ))}
+                </ol>
+              </div>
 
-          </input>
-          <button
-            className="col-2 mx-2"
-            onClick={this.addFriends}>ADD</button>
+            </div>
+            <button
+              className="btnAddUser col-4 ml-2"
+              onClick={this.addFriends}>ADD</button>
+          </div>
           <div>
             <div>
               {this.state.alert ?
