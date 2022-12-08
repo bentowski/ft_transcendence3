@@ -267,7 +267,6 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-
         }, 10000)
   }
 
@@ -289,8 +288,34 @@ export class ChatGateway implements OnModuleInit
                     );
                 return ;
             }
-
         }, 10000)
+    }
+
+    @SubscribeMessage('adminToChannel')
+    async adminUserToChannel(client: Socket, body: {room:string, auth_id: string, action: boolean}): Promise<void> {
+      try {
+          await this.chanService.adminUserToChannel(body.auth_id, body.room, body.action)
+          client.emit('adminRoom');
+          this.server
+              .to(body.room)
+              .emit("adminChannel",
+                  {
+                      room: body.room,
+                      auth_id: body.auth_id,
+                      action: body.action
+                  })
+      } catch (error) {
+          this.server
+              .to(body.room)
+              .emit('error',
+                  {
+                      statusCode: error.statusCode,
+                      message: error.message
+                  },
+                  body.auth_id
+              );
+          return ;
+      }
     }
 
     @SubscribeMessage('banToChannel')
@@ -321,36 +346,9 @@ export class ChatGateway implements OnModuleInit
         }
     }
 
-    @SubscribeMessage('adminToChannel')
-    async adminUserToChannel(client: Socket, body: {room:string, auth_id: string, action: boolean}): Promise<void> {
-      try {
-          await this.chanService.adminUserToChannel(body.auth_id, body.room, body.action)
-          client.emit('adminRoom');
-          this.server
-              .to(body.room)
-              .emit("adminChannel",
-                  {
-                      room: body.room,
-                      auth_id: body.auth_id,
-                      action: body.action
-                  })
-      } catch (error) {
-          this.server
-              .to(body.room)
-              .emit('error',
-                  {
-                      statusCode: error.statusCode,
-                      message: error.message
-                  },
-                  body.auth_id
-              );
-          return ;
-      }
-    }
-
     @SubscribeMessage('muteToChannel')
     async mutenUserToChannel(client: Socket, body: {room: string, auth_id: string, action: boolean}): Promise<void> {
-        try {
+      try {
             await this.chanService.muteUserToChannel(body.auth_id, body.room, body.action)
             client.emit('muteRoom');
             this.server
@@ -359,7 +357,7 @@ export class ChatGateway implements OnModuleInit
                     {
                         room: body.room,
                         auth_id: body.auth_id,
-                        status: body.action
+                        action: body.action
                     });
             if (body.action === true) {
                 this.launchCounterMute(client, body.auth_id, body.room);

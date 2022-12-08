@@ -18,7 +18,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
 
     useEffect((): void => {
         if (show) {
-            setLoading(false);
+            setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
                     const users: UserType[] = await Request(
@@ -52,7 +52,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
     }, [setError, chan, usersInChan, show])
 
     useEffect((): void => {
-
         const checkIfAdmin = async (id: string): Promise<boolean> => {
             let res: UserType[] = [];
             try {
@@ -73,6 +72,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
             return false;
         }
         const muteUser = async (obj: any): Promise<void> => {
+            console.log('muting user ', obj.user.auth_id);
             if (await checkIfAdmin(obj.user.auth_id)) {
                 const error: ErrorType = {
                     statusCode: 400,
@@ -81,11 +81,11 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 setError(error);
                 return ;
             }
+            console.log('sending to socket...');
             socket.emit('muteToChannel', {
                 "room": chan,
                 "auth_id": obj.user.auth_id,
                 "action": !obj.isMute });
-            //updateMutedFromList(chan, !obj.isMute)
             const newArray: UsersChanMuteType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -93,6 +93,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 }
                 newArray.push(usersChan[index]);
             }
+            console.log('new array = ', newArray);
             setUsersChan(newArray);
         }
         const listUserCards = async (): Promise<void> => {
