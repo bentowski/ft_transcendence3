@@ -62,7 +62,7 @@ class AdminButtons extends Component<
     }
     if (this.isUserAdmin()) {
       return (
-         <div className="row">
+         <div className="d-flex flex-rox p-0">
              <ModalBanUser
                  chan={this.props.room}
                  socket={this.props.socket}
@@ -97,7 +97,7 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
         !(this.props.chanList[id - 1].type === "direct")) {
       return (<button
           id="addPeople"
-          className="col-2"
+          className="col-2 mb-2"
           onClick={this.promptAddUser}>
           Add Peoples
       </button>)

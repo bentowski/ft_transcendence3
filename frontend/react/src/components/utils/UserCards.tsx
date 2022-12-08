@@ -96,34 +96,34 @@ class UserCards extends Component<
         "http://localhost:3000/user/name/" + this.state.login,
       )
       const chans: ChanType[] = ctx.allChans;
-	  let doesChanExist:boolean = false;
-	  let newChan: ChanType | undefined = undefined;
-	  chans.forEach((chan:ChanType) => {
-		if (chan.type === "direct" &&
-			(chan.chanUser[0].auth_id === ctx.user.auth_id || chan.chanUser[1].auth_id === ctx.user.auth_id) &&
-			(chan.chanUser[0].auth_id === u2.auth_id || chan.chanUser[1].auth_id === u2.auth_id)) {
-			doesChanExist = true;
-			newChan = chan;
-		}
-	  })
-	  if (doesChanExist === false) {
-      	newChan = await Request(
-        	"POST",
-        	{
-          	Accept: "application/json",
-          	"Content-Type": "application/json",
-        	},
-        	{
-          	name: this.createChanName(ctx.user, u2),
-          	type: "direct",
-          	user_1_id: ctx.user.auth_id,
-          	user_2_id: u2.auth_id,
-        	},
-        	"http://localhost:3000/chan/createpriv"
-      	);
-	  }
-	  if (newChan !== undefined)
-       	window.location.href = "http://localhost:8080/chat/" + newChan.id
+      let doesChanExist: boolean = false;
+      let newChan: ChanType | undefined = undefined;
+      chans.forEach((chan: ChanType) => {
+        if (chan.type === "direct" &&
+          (chan.chanUser[0].auth_id === ctx.user.auth_id || chan.chanUser[1].auth_id === ctx.user.auth_id) &&
+          (chan.chanUser[0].auth_id === u2.auth_id || chan.chanUser[1].auth_id === u2.auth_id)) {
+          doesChanExist = true;
+          newChan = chan;
+        }
+      })
+      if (doesChanExist === false) {
+        newChan = await Request(
+          "POST",
+          {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          {
+            name: this.createChanName(ctx.user, u2),
+            type: "direct",
+            user_1_id: ctx.user.auth_id,
+            user_2_id: u2.auth_id,
+          },
+          "http://localhost:3000/chan/createpriv"
+        );
+      }
+      if (newChan !== undefined)
+        window.location.href = "http://localhost:8080/chat/" + newChan.id
     } catch (error) {
       ctx.setError(error);
     }
@@ -241,9 +241,9 @@ class UserCards extends Component<
             key={id}
             className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
           >
-            <div className="col-5 h-100 overflow-hidden buttons">
+            <div className="col-5 h-100">
               {/* <Link to={"/chat"}> */}
-              <button className="p-1 btn btn-outline-dark shadow-none" onClick={this.createChan}>
+              <button className="p-1" onClick={this.createChan}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="30"
@@ -297,13 +297,16 @@ class UserCards extends Component<
       }
 
       return (
-        <div key={id} className="friendsDiv row my-2">
-          <div className="col-6">
+        <div key={id} className="friendsDiv d-flex flex-row my-2 col-12">
+          <div className="col-3">
             <input className={this.state.online} type="radio"></input>
           </div>
-          <div className="col-6 row">
-            <a href={"/profil/" + this.state.login} className="col-12">{this.state.login}</a>
-          </div>
+          {/* <div className="col-6 row"> */}
+          <Link to={"/profil/" + this.state.login} className="col-9 overflow-hidden">
+            {this.state.login}
+          </Link>
+          {/* <a href={"/profil/" + this.state.login} className="col-12">{this.state.login}</a> */}
+          {/* </div> */}
         </div>
       );
     }
@@ -311,9 +314,9 @@ class UserCards extends Component<
     return (
       <div
         key={id}
-        className="friendsDiv col-11 mr-2 d-flex flex-row align-items-center"
+        className="friendsDiv col-12 mr-2 d-flex flex-row align-items-center"
       >
-        <div className="col-3 d-flex flex-row justify-content-start align-items-center">
+        <div className="col-4 d-flex flex-row justify-content-start align-items-center">
           <Link to={"/profil/" + this.state.login} className="mx-2">
             <img
               alt=""
@@ -325,11 +328,11 @@ class UserCards extends Component<
               className="miniAvatar"
             />
           </Link>
-          <Link to={"/profil/" + this.state.login} className="mx-2">
+          <Link to={"/profil/" + this.state.login} className="mx-2 overflow-hidden">
             {this.state.login}
           </Link>
         </div>
-        <div className="Score col-9 d-flex justify-content-between align-items-center">
+        <div className="Score col-8 d-flex justify-content-end align-items-center">
           <div className="">won</div>
           <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
             <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>

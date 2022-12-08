@@ -153,7 +153,7 @@ const ModalAdminUser = ({
     const handleClose = (): void => setShow(false);
 
     return (
-        <div className="col-13">
+        <div className="col-4 d-flex justify-content-end">
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">
@@ -178,7 +178,7 @@ const ModalAdminUser = ({
             {
                 isOwner ?
                     <button
-                        className="col-3"
+                        className="col-6"
                         onClick={handleOpen}>
                         ADMIN
                     </button> :

@@ -84,53 +84,54 @@ a:active {
   color: white;
 }
 
+ul {
+	padding: 0;
+}
+/* 
+.m-2 {
+	padding: 0;
+	margin: 0;
+} */
+
 button {
-  border: 2px solid rgb(55, 71, 104);
-	background: rgb(67, 156, 202);
+  border: 2px solid rgb(99, 82, 28);
+	background: rgb(155, 133, 60);
   border-radius: 10px;
   /* background: none; */
-  color: rgb(55, 71, 104);
+  color: white;
+	padding-top: 5px;
+	box-shadow: 0 3px rgb(99, 82, 28);
+	overflow: hidden;
 }
 
-/* .btn:focus,.btn:active {
-	outline: none !important;
-	box-shadow: none;
- } */
-/* 
-label {
-	color: rgb(55, 55, 55);
-} */
-
-/* button:hover::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: gray;
-  border-radius: 4px;
-  content: '';
-  mix-blend-mode: color;
-} */
+button:hover {
+	color: rgb(99, 82, 28);
+}
 
 button:active {
-  position: relative;
-  outline: none;
-  color: black;
-  border: 2px solid white;
-  mix-blend-mode: screen;
+	transform: translateY(3px);
+	box-shadow: 0 0;
 }
 
-button:active::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: white;
-  border-radius: 4px;
-  content: '';
-  mix-blend-mode: color;
+.btn {
+  border: 2px solid rgb(99, 82, 28);
+	background: rgb(155, 133, 60);
+  border-radius: 10px;
+  /* background: none; */
+  color: white;
+	padding-top: 5px;
+	box-shadow: 0 3px rgb(99, 82, 28);
+}
+
+.btn:hover {
+  border: 2px solid rgb(99, 82, 28);
+	color: rgb(99, 82, 28);
+	background: rgb(155, 133, 60);
+}
+
+.btn:active {
+	transform: translateY(3px);
+	box-shadow: 0 0;
 }
 
 img {

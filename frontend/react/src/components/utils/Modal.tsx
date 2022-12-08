@@ -354,12 +354,13 @@ class Modal extends Component<
   };
 
   displayUser = (id: number, user: UserType): JSX.Element => {
+    console.log(user.auth_id)
     return (
       <div
         key={id}
-        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+        className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center mb-2"
       >
-        <div className="col-5 h-100 overflow-hidden buttons">
+        <div className="col-5 buttons">
           <button
             onClick={() =>
               this.props.parentCallBack.socket.emit("addToChannel", {
@@ -425,7 +426,7 @@ class Modal extends Component<
         <input
           key={x++}
           id="searchUserToAdd"
-          className="w-100"
+          className="w-100 mb-2"
           type="text"
           placeholder="Search user here"
           value={this.state.input}

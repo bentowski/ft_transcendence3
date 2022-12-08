@@ -169,7 +169,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
 
 
     return (
-        <div className="col-6">
+        <div className="col-4 d-flex justify-content-start">
             <Modal show={show} id="ModalCode" onHide={handleClose}>
                 <div className="p-4 pb-1">
                     <Modal.Header className="mb-3">

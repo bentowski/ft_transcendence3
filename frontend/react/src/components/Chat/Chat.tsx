@@ -374,7 +374,7 @@ export const WebSocket = (): JSX.Element => {
   return (
       <div>
         <div className="chat row">
-          <h4>CHAT</h4>
+          <h3 className="d-flex justify-content-start">Chat</h3>
           <Modal
               title={modalTitle}
               calledBy={modalType}
