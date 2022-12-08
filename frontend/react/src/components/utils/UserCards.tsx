@@ -314,9 +314,9 @@ class UserCards extends Component<
     return (
       <div
         key={id}
-        className="friendsDiv col-11 mr-2 d-flex flex-row align-items-center"
+        className="friendsDiv col-12 mr-2 d-flex flex-row align-items-center"
       >
-        <div className="col-3 d-flex flex-row justify-content-start align-items-center">
+        <div className="col-4 d-flex flex-row justify-content-start align-items-center">
           <Link to={"/profil/" + this.state.login} className="mx-2">
             <img
               alt=""
@@ -328,11 +328,11 @@ class UserCards extends Component<
               className="miniAvatar"
             />
           </Link>
-          <Link to={"/profil/" + this.state.login} className="mx-2">
+          <Link to={"/profil/" + this.state.login} className="mx-2 overflow-hidden">
             {this.state.login}
           </Link>
         </div>
-        <div className="Score col-9 d-flex justify-content-between align-items-center">
+        <div className="Score col-8 d-flex justify-content-end align-items-center">
           <div className="">won</div>
           <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
             <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>
