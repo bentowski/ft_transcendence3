@@ -2,11 +2,13 @@ import { Component } from "react";
 import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
+import {AuthContext} from "../contexts/AuthProviderContext";
 
 class Stats extends Component<
   {},
   { users: Array<UserType>; histories: Array<any> }
 > {
+  static contextType = AuthContext;
   constructor(props: any) {
     super(props);
     this.state = {
@@ -15,22 +17,28 @@ class Stats extends Component<
     };
   }
 
-  componentDidMount = async (): Promise<void> => {
+  componentDidUpdate(
+      prevProps: Readonly<{}>,
+      prevState: Readonly<{
+        users: Array<UserType>;
+        histories: Array<any> }>,
+      snapshot?: any) {
     const ctx: any = this.context;
-    let users: UserType[] = [];
-    try {
-      users = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user"
-      );
-    } catch (error) {
-      ctx.setError(error);
+    const users: UserType[] = ctx.userList;
+    users.sort(function (a: UserType, b: UserType) {
+      return a.game_lost - b.game_lost;
+    });
+    users.sort(function (a: UserType, b: UserType) {
+      return b.game_won - a.game_won;
+    });
+    if (prevState.users !== users) {
+      this.setState({ users: users });
     }
-    if (!users) {
-      return;
-    }
+  }
+
+  componentDidMount = (): void => {
+    const ctx: any = this.context;
+    const users: UserType[] = ctx.userList;
     users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });

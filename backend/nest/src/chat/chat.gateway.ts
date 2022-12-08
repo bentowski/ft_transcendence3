@@ -395,8 +395,8 @@ export class ChatGateway implements OnModuleInit
 	this.server.emit('onNewParty');
   }
 
-    @SubscribeMessage('updateChan')
-    onUpdateChan(client: Socket, room:string): void {
-        this.server.emit('chanDeleted', room);
-}
+  @SubscribeMessage('updateChan')
+  onUpdateChan(client: Socket, room:string): void {
+      this.server.emit('chanDeleted', room);
+  }
 }
