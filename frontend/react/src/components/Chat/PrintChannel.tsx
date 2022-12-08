@@ -197,7 +197,7 @@ export const PrintChannel = (
   if (room) {
     return (
       <div className="inChat row col-10">
-        <div>
+        <div className="d-flex justify-content-start p-0">
           {printName()}
         </div>
         <div className="chatMain col-10">
@@ -233,7 +233,7 @@ export const PrintChannel = (
             </div>
           </div>
         </div> {/*fin chatMain*/}
-        <div className="chatMembers col-2">
+        <div className="chatMembers col-2 p-0">
           <p> Channel's members ({usersInChan.length}) </p>
           <UsersInActualchannel room={room} usersList={usersInChan} />
         </div>
