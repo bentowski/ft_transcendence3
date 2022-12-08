@@ -154,8 +154,8 @@ class FriendsNav extends Component<{}, {
               </input>
               <div className="item-list">
                 <ol>
-                  {this.state.filteredList.map((item: any, key: any) => (
-                    <li className="d-flex justify-content-start p-1" key={key}>{item}</li>
+                  {this.state.filteredList.map((item: UserType, key: any) => (
+                    <li className="d-flex justify-content-start p-1" key={key}>{item.username}</li>
                   ))}
                 </ol>
               </div>
@@ -175,13 +175,6 @@ class FriendsNav extends Component<{}, {
                 // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
                 <div />
               }
-            </div>
-            <div className="item-list">
-              <ol>
-                {this.state.filteredList.map((item: UserType, key: any) => (
-                  <li key={key}>{item.username}</li>
-                ))}
-              </ol>
             </div>
             <DisplayFriendsList />
           </div>
