@@ -62,7 +62,7 @@ export class UpdateGateway implements OnModuleInit
     console.log('on update friend received');
     try {
       const user: UserEntity = await this.userService.updateFriends(obj.action, obj.curid, obj.frid);
-      console.log('onUpdateFriend emitting request ', user, obj.action);
+      console.log('onUpdateFriend emitting request ', user.auth_id, obj.action);
       this.server.emit('onUpdateFriend', {
         "user": user,
         "action": obj.action

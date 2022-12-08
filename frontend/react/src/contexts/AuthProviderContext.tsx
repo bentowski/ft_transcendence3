@@ -15,7 +15,6 @@ import {io} from "socket.io-client";
 const socket = io('http://localhost:3000/update')
 
 export const AuthContext = createContext<any>({});
-
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
@@ -34,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
+
 
   const updateFriendsList = useCallback((
       usr: UserType,

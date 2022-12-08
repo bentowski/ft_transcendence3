@@ -3,7 +3,7 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { ChanType, ErrorType, UsersChanBanType, UserType } from "../../types";
+import { ErrorType, UsersChanBanType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{

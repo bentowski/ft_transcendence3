@@ -3,7 +3,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import { io } from "socket.io-client";
 
-const sock = io("http://localhost:3000/update");
+const socket = io("http://localhost:3000/update");
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
@@ -40,14 +40,14 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
                 updateBlockedList(obj.user, obj.action);
             }
         }
-        sock.on('onUpdateBlocked', handleUpdateBlocked);
+        socket.on('onUpdateBlocked', handleUpdateBlocked);
         return () => {
-            sock.off('onUpdateBlocked');
+            socket.off('onUpdateBlocked');
         }
     },[updateBlockedList, user, blockedList])
 
     const blockunblockUser = async (): Promise<void> => {
-        sock.emit('updateBlocked', {
+        socket.emit('updateBlocked', {
             "curid": user.auth_id,
             "bloid": auth_id,
             "action": !status,

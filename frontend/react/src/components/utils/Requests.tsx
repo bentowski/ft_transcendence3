@@ -1,6 +1,5 @@
-//import React from "react";
-import {useAuthData} from "../../contexts/AuthProviderContext";
-import {ErrorType} from "../../types";
+import { useAuthData } from "../../contexts/AuthProviderContext";
+import { ErrorType } from "../../types";
 
 const Logout = async (): Promise<void> => {
   const { userAuthentication } = useAuthData();

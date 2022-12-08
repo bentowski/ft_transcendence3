@@ -3,11 +3,11 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import { io } from "socket.io-client";
 
-const sock = io("http://localhost:3000/update");
+const socket = io("http://localhost:3000/update");
 
 const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
-    const { user, friendsList, updateFriendsList, setError } = useAuthData();
+    const { socketUpdate, user, friendsList, updateFriendsList, setError } = useAuthData();
 
     useEffect((): void => {
         const updateStatus = async (): Promise<void> => {
@@ -31,19 +31,20 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
 
     useEffect(() => {
         const handleUpdateFriends = (obj: any) => {
-            console.log('handle update friends socket received');
+            //console.log('handle update friends socket received');
             setStatus((prevState: boolean) => !prevState);
             updateFriendsList(obj.user, obj.action);
         }
-        sock.on('onUpdateFriend', handleUpdateFriends);
+        console.log('is declaring ok');
+        socket.on('onUpdateFriend', handleUpdateFriends);
         return () => {
-            sock.off('onUpdateFriend');
+            socket.off('onUpdateFriend');
         }
     }, [updateFriendsList, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        console.log('emiting updateFriend socket request');
-        sock.emit('updateFriend', {
+        //console.log('emiting updateFriend socket request');
+        socket.emit('updateFriend', {
             "curid": user.auth_id,
             "frid": auth_id,
             "action": !status,

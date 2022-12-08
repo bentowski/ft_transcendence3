@@ -7,7 +7,7 @@ import {ErrorType} from "../../types";
 const socket = io('http://localhost:3000/update')
 
 const HandleError = (): JSX.Element => {
-    const { errorShow, errorMsg, errorCode, setError } = useAuthData();
+    const { socketUpdate, errorShow, errorMsg, errorCode, setError } = useAuthData();
 
     useEffect((): void => {
         const close = (): void => {

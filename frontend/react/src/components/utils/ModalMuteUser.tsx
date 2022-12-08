@@ -3,7 +3,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { ChanType, ErrorType, UsersChanMuteType, UserType } from "../../types";
+import { ErrorType, UsersChanMuteType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalMuteUser = ({chan, socket, usersInChan}:{
