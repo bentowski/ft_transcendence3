@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
+import {Socket} from "socket.io-client";
 
-const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
+const BlockUnBlock = ({ socket, auth_id }:{ socket: Socket, auth_id : string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { user, blockedList, updateBlockedList, setError } = useAuthData();
@@ -30,7 +31,22 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
         updateStatus();
     }, [setError, auth_id, blockedList])
 
+    useEffect(() => {
+        const handleUpdateBlocked = (obj: any, auth_id: string) => {
+            if (user.auth_id === auth_id) {
+                console.log('handle update blocked, ', obj.user, obj.action);
+                setStatus((prevState: boolean) => !prevState);
+                updateBlockedList(obj.user, obj.action);
+            }
+        }
+        socket.on('onUpdateBlocked', handleUpdateBlocked);
+        return () => {
+            socket.off('onUpdateBlocked');
+        }
+    },[blockedList])
+
     const blockunblockUser = async (): Promise<void> => {
+        /*
         try {
             await Request(
                 "PATCH",
@@ -45,6 +61,14 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
         } catch (error) {
             setError(error);
         }
+         */
+        console.log('user ', user.auth_id, ' blocking ', !status, ' user ', auth_id);
+
+        socket.emit('updateBlocked', {
+            "curid": user.auth_id,
+            "bloid": auth_id,
+            "action": !status,
+        })
     }
 
     return (

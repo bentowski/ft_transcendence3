@@ -120,7 +120,7 @@ export const WebSocket = (): JSX.Element => {
         }
       }
     }
-    const handleError = async (error: ErrorType, auth_id: string) => {
+    const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {

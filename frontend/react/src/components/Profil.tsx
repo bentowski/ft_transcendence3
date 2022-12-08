@@ -10,6 +10,9 @@ import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
 import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
+import {io} from "socket.io-client";
+
+const socket = io("http://localhost:3000/update");
 
 class Profil extends Component<
     {
@@ -183,8 +186,8 @@ class Profil extends Component<
               height={100}
               src={"http://localhost:3000/user/" + this.state.user.auth_id + "/avatar"} />
             <h3>{this.state.user.username}</h3>
-            <BlockUnBlock auth_id={this.state.user.auth_id} />
-            <FriendUnFriend auth_id={this.state.user.auth_id} />
+            <BlockUnBlock socket={socket} auth_id={this.state.user.auth_id} />
+            <FriendUnFriend socket={socket} auth_id={this.state.user.auth_id} />
           </div>
         );
       } else {

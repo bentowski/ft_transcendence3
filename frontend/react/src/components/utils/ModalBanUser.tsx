@@ -78,7 +78,6 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
             }
             return false;
         }
-
         const banUser = async (obj: any): Promise<void> => {
             if (await checkIfAdmin(obj.user.auth_id)) {
                 const error: ErrorType = {
@@ -103,11 +102,8 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         }
         const listUserCards = (): void => {
             const ret: JSX.Element[] = [];
-
-            for(let x: number = 0; x < usersChan.length; x++)
-            {
-                if (usersChan[x].user && usersChan[x].user?.username !== user.username)
-                {
+            for(let x: number = 0; x < usersChan.length; x++) {
+                if (usersChan[x].user && usersChan[x].user?.username !== user.username) {
                     ret.push(
                         <div
                             key={x}
