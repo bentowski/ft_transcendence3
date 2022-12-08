@@ -107,7 +107,7 @@ const ModalChangeAvatar = (): JSX.Element => {
           </Modal.Footer>
         </div>
       </Modal>
-      <a onClick={() => handleShow()}>
+      <button onClick={() => handleShow()}>
         <img
             className="modifAvatar mb-2"
             width={100}
@@ -115,7 +115,7 @@ const ModalChangeAvatar = (): JSX.Element => {
             src={`${avatarUrl.url}?${avatarUrl.hash}`}
             alt="prout"
         />
-      </a>
+      </button>
     </div>
   );
 };

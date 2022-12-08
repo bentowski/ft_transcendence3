@@ -3,7 +3,7 @@ import { socket } from '../contexts/WebSocketContextGame';
 import Request from "../components/utils/Requests"
 import '../styles/pages/game.css'
 import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
-import { io } from 'socket.io-client';
+//import { io } from 'socket.io-client';
 import { AuthContext } from '../contexts/AuthProviderContext';
 import { UserType } from '../types';
 
@@ -16,7 +16,7 @@ let gameOver = () => {
 	window.location.href = "http://localhost:8080/"
 }
 
-const updateSocket = io("http://localhost:3000/update");
+//const updateSocket = io("http://localhost:3000/update");
 
 let movePlayer = (ctx: any, move: number, globale: any, settings: any) => {
     let newPos = settings.player1[1] + (move * settings.playerSpeed)
@@ -91,11 +91,11 @@ let moveBall = (ctx: any, globale: any, settings: any) => {
   // =========== Players moves ==========
   if (settings.spec === false) {
   let move = 0;
-    if (settings.up == 1)  {
+    if (settings.up === 1)  {
       movePlayer(ctx, -1, globale, settings)
       move += 1;
     }
-    if (settings.down == 1) {
+    if (settings.down === 1) {
       movePlayer(ctx, 1, globale, settings)
       move += 1;
     }

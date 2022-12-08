@@ -54,9 +54,9 @@ const Menu = () => {
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
           <div className="logoutMenu">
             {/* <a className="mx-2 btn btn-outline-dark shadow-none" onClick={logoutSession}> */}
-            <a className="mx-2" onClick={logoutSession}>
+            <button className="mx-2" onClick={logoutSession}>
               <p className="m-0">logout</p>
-            </a>
+            </button>
           </div>
           <div className="loginMenu px-2">
             <Link to={"/profil/" + username}>

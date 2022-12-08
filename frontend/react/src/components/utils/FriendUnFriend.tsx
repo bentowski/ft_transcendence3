@@ -25,7 +25,7 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
             }
         }
         updateStatus();
-    }, [auth_id, friendsList])
+    }, [setError, auth_id, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
         const res: Response = await fetch("http://localhost:3000/user/update/friends", {

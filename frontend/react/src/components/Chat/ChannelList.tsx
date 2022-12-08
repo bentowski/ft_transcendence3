@@ -9,7 +9,7 @@ class ListOfDirectMessages extends Component<{
 
   render(): JSX.Element[] {
     const ret: JSX.Element[] = [];
-    this.props.chanList.map((chan: ChanType) => {
+    this.props.chanList.forEach((chan: ChanType) => {
           if (chan.type === "direct")
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
@@ -34,7 +34,7 @@ class ListOfJoinedChans extends Component<{
   parentCallBack: any}, {}> {
   render(): JSX.Element[] {
     const ret: JSX.Element[] = []
-    this.props.chanList.map((chan: ChanType) => {
+    this.props.chanList.forEach((chan: ChanType) => {
           if (chan.type !== "direct" && this.props.parentCallBack.inChan(chan))
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>

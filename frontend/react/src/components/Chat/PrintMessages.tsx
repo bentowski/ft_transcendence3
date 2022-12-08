@@ -5,7 +5,7 @@ import {MessagePayload, ChanType, UserType } from "../../types"
 class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
   render(): JSX.Element[] {
     const ret: JSX.Element[] = []
-    this.props.messages.map((msg: MessagePayload, index: number) => {
+    this.props.messages.forEach((msg: MessagePayload, index: number) => {
       if (msg.sender_socket_id === this.props.user.auth_id)
         ret.push(
             <div key={index} className="outgoing_msg break-text">

@@ -28,7 +28,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
             }
         }
         updateStatus();
-    }, [auth_id, blockedList])
+    }, [setError, auth_id, blockedList])
 
     const blockunblockUser = async (): Promise<void> => {
         try {
