@@ -132,6 +132,7 @@ class FriendsNav extends Component<{}, { uslist: Array<string>, filteredList: Ar
 
     return (
       <div className="FriendsNav col-12">
+        <img className="pat" src="/pictures/pat.png" alt="pat" />
         <div className="numberFriendsOnline col-12">
           <p>
             {onlines ? onlines + '/' +
