@@ -1,6 +1,6 @@
 import { Component, useEffect, useState } from "react";
 import { socket } from '../../contexts/WebSocketContext';
-import {MessagePayload, ChanType, UserType } from "../../types"
+import { MessagePayload, ChanType, UserType } from "../../types"
 
 class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
   render(): JSX.Element[] {

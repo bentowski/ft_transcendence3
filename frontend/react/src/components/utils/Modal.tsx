@@ -60,13 +60,18 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
-    //const ctx: any = this.context;
-    /*
+    const ctx: any = this.context;
     if (state.banned !== ctx.bannedFrom) {
-      //this.setState({ banned: ctx.bannedFrom })
+      console.log('change state banned')
+      //this.setState({ banned: ctx.bannedFrom });
       setTimeout(() => {
         this.updateChan()
       }, 10)
+    }
+    /*
+    if (state.joined !== ctx.chanFrom) {
+      console.log('change state joined')
+      this.setState({ joined: ctx.chanFrom })
     }
      */
     if (props.chanList.length !== this.state.allChans.length
@@ -135,8 +140,8 @@ class Modal extends Component<
 
    updateChan = async (): Promise<void> => {
     const ctx: any = this.context
-    this.setState({ banned: ctx.banned })
-    this.setState({ joined: ctx.joined })
+    this.setState({ banned: ctx.bannedFrom })
+    this.setState({ joined: ctx.chanFrom })
     const newUser: UserType = ctx.user
     if (newUser) {
       this.setState({ user: newUser });
@@ -152,12 +157,14 @@ class Modal extends Component<
         "http://localhost:3000/user/"
       );
        */
+
       chans = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/chan"
       );
+
     } catch (error) {
       ctx.setError(error);
     }
@@ -301,7 +308,6 @@ class Modal extends Component<
     // let users = await getUsers();
     const regex: RegExp = /^[\w-]+$/
     const minmax: RegExp = /^.{3,10}$/
-
     // let retPass = true;
     // if (this.state.protected)
     //   retPass = this.verifPass()
