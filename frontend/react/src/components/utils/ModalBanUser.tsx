@@ -160,10 +160,6 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         setShow(true);
     }
 
-
-
-
-
     return (
         <div className="col-4 d-flex justify-content-start">
             <Modal show={show} id="ModalCode" onHide={handleClose}>

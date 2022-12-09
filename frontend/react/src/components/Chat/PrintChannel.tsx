@@ -1,9 +1,8 @@
 import { Component } from "react";
 import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
 import { socket } from '../../contexts/WebSocketContext';
 import { ChanType, UserType } from "../../types"
-import { useAuthData} from "../../contexts/AuthProviderContext";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 

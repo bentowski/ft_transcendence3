@@ -15,7 +15,7 @@ const HandleError = (): JSX.Element => {
         const close = (): void => {
             setError(null);
         }
-        setInterval(close, 1800);
+        setTimeout(close, 1800);
     }, [setError])
 
     useEffect(() => {
