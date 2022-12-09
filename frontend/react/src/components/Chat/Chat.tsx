@@ -65,8 +65,40 @@ export const WebSocket = (): JSX.Element => {
   });
 
   useEffect((): () => void => {
+    const handleOutBan = async (obj: any) => {
+      getChan()
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateBannedFromList(chan, false)
+        } catch (error) {
+          setError(error);
+        }
+      }
+    }
+    const handleOutMute = async (obj: any) => {
+      getChan()
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateMutedFromList(chan, false)
+        } catch (error) {
+          setError(error);
+        }
+      }
+    }
     const handleMute = async (obj: PunishSocketType): Promise<void> => {
-      if (obj.auth_id === user.auth_id){
+      if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -75,6 +107,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateMutedFromList(chan, obj.action)
+          getChan()
         } catch (error) {
           setError(error);
         }
@@ -90,6 +123,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateBannedFromList(chan, obj.action);
+          getChan()
         } catch (error) {
           setError(error);
         }
@@ -99,7 +133,6 @@ export const WebSocket = (): JSX.Element => {
           );
           changeActiveRoom("");
           setRoom("null");
-          await getChan();
           socket.emit('chanCreated');
           window.location.href = "http://localhost:8080/chat"; //!
         }
@@ -115,6 +148,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateAdminFromList(chan, obj.action)
+          await getChan();
         } catch (error) {
           setError(error);
         }
@@ -135,11 +169,15 @@ export const WebSocket = (): JSX.Element => {
         }
       }
     }
+    socket.on('timerOutMute', handleOutMute);
+    socket.on('timerOutBan', handleOutBan);
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     return () => {
+      socket.off('timerOutMute', handleOutMute);
+      socket.off('timerOutBan', handleOutBan);
       socket.off('error', handleMute);
       socket.off('mutedChannel', handleBan);
       socket.off('bannedChannel', handleAdmin);
@@ -282,6 +320,7 @@ export const WebSocket = (): JSX.Element => {
   }
 
   const getChan = async (): Promise<void> => {
+    console.log('calling get chan');
     let channels: ChanType[] = [];
     try {
       channels = await Request(

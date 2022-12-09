@@ -3,8 +3,9 @@ import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 import {UserType} from "../../types";
+import { socket } from '../../contexts/WebSocketContextUpdate';
 
-const socket = io("http://localhost:3000/update");
+//const socket = io("http://localhost:3000/update");
 
 class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hidden?: boolean, user?: any, countdown?: number}, {}> {
 

@@ -60,6 +60,14 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
+    const ctx: any = this.context;
+    if (state.banned !== ctx.bannedFrom) {
+      //console.log('banned state refresh in modal')
+      //this.setState({ banned: ctx.bannedFrom })
+      setTimeout(() => {
+        this.updateChan()
+      }, 10)
+    }
     if (props.chanList.length !== this.state.allChans.length
     ) {
       setTimeout(() => {

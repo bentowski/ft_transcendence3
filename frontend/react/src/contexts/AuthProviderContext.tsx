@@ -99,24 +99,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const updateBannedFromList = useCallback( (
       chan: ChanType,
       action: boolean): void => {
-    const rmvBan = (chan: ChanType): void => {
+    if (action) {
+      setBannedFrom(prevState => [...prevState, chan])
+    }
+    if (!action) {
       const idx: number = bannedFrom.findIndex(obj => {
         return obj.id === chan.id;
       })
       const newArr: ChanType[] = bannedFrom;
+      console.log('removing user at index ', idx, ' from bann list of chan ', chan.id)
       if (idx !== -1) {
         newArr.splice(idx);
       }
       setBannedFrom(newArr);
-    }
-    if (action) {
-      setBannedFrom(prevState => [...prevState, chan])
-      setTimeout(() => {
-        rmvBan(chan);
-      }, 10000)
-    }
-    if (!action) {
-      rmvBan(chan);
     }
   }, [bannedFrom])
 
@@ -141,24 +136,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
   const updateMutedFromList = useCallback(  (
       chan: ChanType, action: boolean): void => {
-    const rmvMute = (chan: ChanType): void => {
-      const idx: number = mutedFrom.findIndex(obj => {
-        return obj.id === chan.id;
-      })
-      const newArr: ChanType[] = mutedFrom;
-      if (idx !== -1) {
-        newArr.splice(idx);
-      }
-      setMutedFrom(newArr);
-    }
       if (action) {
         setMutedFrom(prevState => [...prevState, chan])
-        setTimeout(() => {
-          rmvMute(chan);
-        }, 10000)
       }
       if (!action) {
-        rmvMute(chan);
+        const idx: number = mutedFrom.findIndex(obj => {
+          return obj.id === chan.id;
+        })
+        const newArr: ChanType[] = mutedFrom;
+        if (idx !== -1) {
+          newArr.splice(idx);
+        }
+        setMutedFrom(newArr);
       }
   }, [mutedFrom])
 

@@ -215,7 +215,7 @@ export class ChatGateway implements OnModuleInit
   }
 
   @SubscribeMessage('addToChannel')
-  async onAddTochannel(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
+  async onAddTochannel(client: Socket, body: { room: string, auth_id: string }): Promise<void> {
      try {
          const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id)
          if (!usr) {
@@ -252,7 +252,10 @@ export class ChatGateway implements OnModuleInit
 
   launchCounterBan(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
-            this.server.emit('userJoinChannel');
+            this.server.emit('timerOutBan', {
+                "auth_id": auth_id,
+                "room": room,
+            });
             try {
                 await this.chanService.banUserToChannel(auth_id, room, false)
             } catch (error) {
@@ -272,7 +275,10 @@ export class ChatGateway implements OnModuleInit
 
     launchCounterMute(client: Socket, auth_id: string, room: string): void {
         setTimeout(async () => {
-            this.server.emit('userJoinChannel');
+            this.server.emit('timerOutMute', {
+                "auth_id": auth_id,
+                "room": room,
+            });
             try {
                 await this.chanService.muteUserToChannel(auth_id, room, false)
             } catch (error) {
