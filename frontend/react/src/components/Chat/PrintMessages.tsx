@@ -41,6 +41,8 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
 	// this.updateUsers()
     const ret: JSX.Element[] = []
     this.props.messages.forEach((msg: MessagePayload, index: number) => {
+		if (msg.username === undefined)
+			msg = JSON.parse(String(msg))
       if (msg.sender_socket_id === this.props.user.auth_id)
         ret.push(
             <div key={index} className="outgoing_msg break-text">
