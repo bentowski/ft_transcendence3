@@ -4,6 +4,7 @@ import "../../styles/components/utils/modal.css";
 import io from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 import { PartiesType } from "../../types";
+//import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
 
@@ -17,7 +18,8 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
   }
 
   createParties = async (isClassic: number): Promise<void> => {
-    const currentUser: any = this.context;
+    const ctx: any = this.context;
+    const currentUser: any = ctx.user;
     try {
       await Request(
         "POST",

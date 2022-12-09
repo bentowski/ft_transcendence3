@@ -3,11 +3,11 @@ import Request from "./Requests";
 import React, { useEffect, useState } from "react";
 import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { ChanType, ErrorType, UsersChanBanType, UserType } from "../../types";
+import { ErrorType, UsersChanBanType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{
-    chan: ChanType,
+    chan: string,
     socket: Socket,
     usersInChan: UserType[]
 }): JSX.Element => {
@@ -78,7 +78,6 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
             }
             return false;
         }
-
         const banUser = async (obj: any): Promise<void> => {
             if (await checkIfAdmin(obj.user.auth_id)) {
                 const error: ErrorType = {
@@ -103,11 +102,8 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         }
         const listUserCards = (): void => {
             const ret: JSX.Element[] = [];
-
-            for(let x: number = 0; x < usersChan.length; x++)
-            {
-                if (usersChan[x].user && usersChan[x].user?.username !== user.username)
-                {
+            for(let x: number = 0; x < usersChan.length; x++) {
+                if (usersChan[x].user && usersChan[x].user?.username !== user.username) {
                     ret.push(
                         <div
                             key={x}
@@ -163,10 +159,6 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
     const handleOpen = (): void => {
         setShow(true);
     }
-
-
-
-
 
     return (
         <div className="col-4 d-flex justify-content-start">

@@ -1,11 +1,11 @@
 import { Component } from 'react';
 import '../../styles/components/utils/historyCards.css'
-import { HistoryType } from "../../types";
+import {HistoryType, UserType} from "../../types";
 import { Link } from "react-router-dom";
 
 class HistoryCards extends Component<{
     history: HistoryType,
-    profil: string }, {}> {
+    profil: UserType | undefined }, {}> {
 
   renderStatus = (user: boolean): JSX.Element => {
     if (!user) {
@@ -37,7 +37,7 @@ class HistoryCards extends Component<{
     const status_one: JSX.Element = this.renderStatus(false);
     const status_two: JSX.Element = this.renderStatus(true);
     if (this.props.profil) {
-      if (this.props.profil === this.props.history.user_one)
+      if (this.props.profil.username === this.props.history.user_one)
         return (
           <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
             <div className='col-4 d-flex flex-row justify-content-start'>{status_one}</div>
@@ -84,7 +84,7 @@ class HistoryCards extends Component<{
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_two}</div>
           <div className='col-2 d-flex flex-row justify-content-end'>
-            <Link className='mx-2' to={"/profil/#" + this.props.history.user_two}>{this.props.history.user_two}</Link>
+            <Link className='mx-2' to={"/profil/" + this.props.history.user_two}>{this.props.history.user_two}</Link>
             <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
           </div>
         </div>

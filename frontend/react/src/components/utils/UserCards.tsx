@@ -7,6 +7,7 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
+//import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
 
@@ -65,9 +66,19 @@ class UserCards extends Component<
     return ctx.user;
   };
 
-  checkIfChanExists = (title: string): boolean => {
+  checkIfChanExists = async (title: string): Promise<boolean> => {
     const ctx: any = this.context;
-    const chans: ChanType[] = ctx.allChans;
+    let chans: ChanType[] = [];
+    try {
+      chans = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/"
+      )
+    } catch (error) {
+      ctx.setError(error);
+    }
     for (let index: number = 0; index < chans.length; index++) {
       if (title === chans[index].name) {
         return true;
@@ -76,10 +87,10 @@ class UserCards extends Component<
     return false;
   }
 
-  createChanName = (u1: UserType, u2: UserType): string => {
+  createChanName = async (u1: UserType, u2: UserType): Promise<string> => {
     let title: string = u1.username.slice(0, 3) + "-" + u2.username.slice(0, 3);
     let x: number = 0;
-    while (this.checkIfChanExists(title)) {
+    while (await this.checkIfChanExists(title)) {
       title = title + x.toString();
       x++;
     }
@@ -95,7 +106,12 @@ class UserCards extends Component<
         {},
         "http://localhost:3000/user/name/" + this.state.login,
       )
-      const chans: ChanType[] = ctx.allChans;
+	  const chans: ChanType[] = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan",
+      )
       let doesChanExist: boolean = false;
       let newChan: ChanType | undefined = undefined;
       chans.forEach((chan: ChanType) => {
@@ -106,21 +122,22 @@ class UserCards extends Component<
           newChan = chan;
         }
       })
-      if (doesChanExist === false) {
-        newChan = await Request(
-          "POST",
-          {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          {
-            name: this.createChanName(ctx.user, u2),
-            type: "direct",
-            user_1_id: ctx.user.auth_id,
-            user_2_id: u2.auth_id,
-          },
-          "http://localhost:3000/chan/createpriv"
-        );
+      if (!doesChanExist) {
+          const channelname: string = await this.createChanName(ctx.user, u2)
+          newChan = await Request(
+              "POST",
+              {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              {
+                name: channelname,
+                type: "direct",
+                user_1_id: ctx.user.auth_id,
+                user_2_id: u2.auth_id,
+              },
+              "http://localhost:3000/chan/createpriv"
+          );
       }
       if (newChan !== undefined)
         window.location.href = "http://localhost:8080/chat/" + newChan.id
@@ -239,9 +256,9 @@ class UserCards extends Component<
         return (
           <div
             key={id}
-            className="friendsDiv d-flex flex-row d-flex justify-content-between align-items-center"
+            className="friendsDiv mt-2 col-12 d-flex flex-row align-items-center"
           >
-            <div className="col-5 h-100">
+            <div className="col-5  d-flex flex-row justify-content-start">
               {/* <Link to={"/chat"}> */}
               <button className="p-1" onClick={this.createChan}>
                 <svg
@@ -258,7 +275,7 @@ class UserCards extends Component<
               </button>
               {/* </Link> */}
               {/* <Link to={"/game"}> */}
-                <button className="mx-2 p-1 btn btn-outline-dark shadow-none" onClick={this.startNewGame}>
+                <button className="mx-2 p-1" onClick={this.startNewGame}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
@@ -277,7 +294,7 @@ class UserCards extends Component<
               <input className={this.state.online} type="radio"></input>
             </div>
             <div className="col-5 d-flex flex-row justify-content-end align-items-center">
-              <Link to={"/profil/" + this.state.login} className="mx-2">
+              <Link to={"/profil/" + this.state.login} className="mx-2 overflow-hidden">
                 {this.state.login}
               </Link>
               <Link to={"/profil/" + this.state.login} className="mx-2">
@@ -383,16 +400,16 @@ class UserCards extends Component<
   componentDidMount = async (): Promise<void> => {
     const ctx: any = this.context;
     let user: UserType | undefined = undefined;
-    try {
-      user = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/id/" + this.state.id
-      );
-    } catch (error) {
-      ctx.setError(error);
-    }
+     try {
+       user = await Request(
+         "GET",
+         {},
+         {},
+         "http://localhost:3000/user/id/" + this.state.id
+       );
+     } catch (error) {
+       ctx.setError(error);
+     }
     let status: string = "offline";
     if (user) {
       if (user.status === 1) {
@@ -411,7 +428,7 @@ class UserCards extends Component<
     return (
       <div
         key={(this.state.id * 5) / 3}
-        className="col-12 my-2 d-flex flex-row justify-content-between"
+        className="col-12 m-2 d-flex flex-row justify-content-between"
       >
         <ModalMatchWaiting title="Waiting for opponent" calledBy="UserCards" hidden user={this.props.user} />
         <ModalMatchInvite title="Invitation" calledBy="UserCards" user={this.props.user} />

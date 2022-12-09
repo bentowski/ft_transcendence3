@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { ErrorType, UserType } from "../../types";
+import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
+import { io } from "socket.io-client";
 
-const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
+const socket = io('http://localhost:3000/update')
+
+const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
-    const { friendsList, updateFriendsList, setError } = useAuthData();
+    const [loading, setLoading] = useState<boolean>(false);
+    const { user, friendsList, setError } = useAuthData();
+    //const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
         const updateStatus = async (): Promise<void> => {
             if (auth_id !== undefined) {
+                setLoading(true);
                 try {
                     const res: boolean = await Request(
                         "GET",
@@ -18,42 +24,36 @@ const FriendUnFriend = ({auth_id}:{auth_id:string}): JSX.Element => {
                         "http://localhost:3000/user/" + auth_id + "/isfriend",
                     )
                     setStatus(res);
+                    setLoading(false);
                     return ;
                 } catch (error) {
+                    setLoading(false)
                     setError(error);
                 }
             }
         }
         updateStatus();
-    }, [setError, auth_id, friendsList])
+    }, [setError, auth_id, socket, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        const res: Response = await fetch("http://localhost:3000/user/update/friends", {
-            method: "PATCH",
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: !status, auth_id: auth_id }),
+        socket.emit('updateFriend', {
+            "curid": user.auth_id,
+            "frid": auth_id,
+            "action": !status,
         })
-        if (res.ok) {
-            setStatus((prevState: any) => !prevState);
-            const obj: UserType = await res.json();
-            updateFriendsList(obj, !status);
-        } else {
-            const err: ErrorType = await res.json();
-            setError(err);
-        }
     }
 
     return (
         <div>
+            { loading? <p></p> :
             <button onClick={() => friendunfriendUser()} >
-                { status ?
+                {status ?
                     <p>UNFRIEND</p>
                     :
-                    <p>FRIEND</p> }
+                    <p>FRIEND</p>
+                }
             </button>
+            }
         </div>
     )
 }

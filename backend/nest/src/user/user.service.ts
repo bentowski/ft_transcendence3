@@ -14,6 +14,10 @@ import {
   UpdateAvatarDto,
 } from './dto/update-user.dto';
 import ChanEntity from "../chans/entities/chan-entity";
+import * as io from "socket.io-client";
+
+const update = io.connect("http://localhost:3000/update");
+
 
 @Injectable()
 export class UserService {
@@ -53,7 +57,7 @@ export class UserService {
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
-      relations: { channelJoined: true },
+      relations: { channelJoined: true, channelBanned: true, channelMuted: true, channelAdmin: true },
     });
     return findUsername;
   }
@@ -61,7 +65,7 @@ export class UserService {
   async findOneByAuthId(auth_id: string): Promise<UserEntity> {
     const findAuthId: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
-      relations: { channelJoined: true },
+      relations: { channelJoined: true, channelBanned: true, channelMuted: true, channelAdmin: true },
     });
     return findAuthId;
   }
@@ -73,6 +77,7 @@ export class UserService {
     user.channelJoined = [];
     user.channelBanned = [];
     user.channelMuted = [];
+    update.emit('userCreation', user);
     try {
       return this.userRepository.save(user);
     } catch (error) {
@@ -92,6 +97,7 @@ export class UserService {
     user.channelBanned = [];
     user.channelMuted = [];
     user.createdAt = new Date();
+    update.emit('userCreation', user);
     try {
       await this.userRepository.save(user);
       return user;
@@ -197,7 +203,8 @@ export class UserService {
     }
     const list: UserEntity[] = [];
     for (let index = 0; index < user.friends.length; index++) {
-      await this.findOneByAuthId(user.friends[index]).then(function (result) {
+      await this.findOneByAuthId(user.friends[index])
+          .then(function (result: UserEntity) {
         list.push(result);
       });
     }

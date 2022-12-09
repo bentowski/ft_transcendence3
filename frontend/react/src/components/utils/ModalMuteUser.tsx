@@ -3,11 +3,11 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { ChanType, ErrorType, UsersChanMuteType, UserType } from "../../types";
+import { ErrorType, UsersChanMuteType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
 
 const ModalMuteUser = ({chan, socket, usersInChan}:{
-    chan: ChanType,
+    chan: string,
     socket: Socket,
     usersInChan: UserType[]}): JSX.Element => {
     const { user, setError } = useAuthData();
@@ -18,7 +18,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
 
     useEffect((): void => {
         if (show) {
-            setLoading(false);
+            setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
                     const users: UserType[] = await Request(
@@ -52,7 +52,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
     }, [setError, chan, usersInChan, show])
 
     useEffect((): void => {
-
         const checkIfAdmin = async (id: string): Promise<boolean> => {
             let res: UserType[] = [];
             try {
@@ -85,7 +84,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 "room": chan,
                 "auth_id": obj.user.auth_id,
                 "action": !obj.isMute });
-            //updateMutedFromList(chan, !obj.isMute)
             const newArray: UsersChanMuteType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
