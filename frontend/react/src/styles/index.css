@@ -71,11 +71,11 @@ a:active {
 }
 
 .logoutMenu p {
-	color: orangered;
+	/* color: orangered; */
 }
 
 .logoutMenu:hover p {
-	color: orangered;
+	/* color: orangered; */
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 }
@@ -100,7 +100,7 @@ button {
 	color: rgb(55, 71, 104);
 }
 
-button:not(.btnAvatar, .btnUsername, .btnLogout) {
+button:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
@@ -111,11 +111,11 @@ button:not(.btnAvatar, .btnUsername, .btnLogout) {
 	overflow: hidden;
 }
 
-button:hover:not(.btnAvatar, .btnUsername, .btnLogout) {
+button:hover:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
 	color: rgb(99, 82, 28);
 }
 
-button:active:not(.btnAvatar, .btnUsername, .btnLogout) {
+button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }
@@ -236,7 +236,12 @@ img {
 
 .FriendsNav {
 	/* background-image: url(http://localhost:8080/pictures/divBg2.jpg); */
+	/* background-image: url(http://localhost:8080/pictures/divBg2.jpg); */
+	border: 3px solid #e67b6bff;
 	background-color: rgb(254, 151, 136);
+	background-repeat: repeat;
+	background-size: 70%;
+	background-image: url(http://localhost:8080/pictures/patskin.png);
 	/* overflow-x: hidden;
 	overflow-y: auto; */
 }
@@ -246,7 +251,11 @@ img {
 } */
 
 .MatchNav {
+	border: 3px solid #a7ae06ff;
 	background-color: #fff359;
+	background-repeat: repeat;
+	background-size: 70%;
+	background-image: url(http://localhost:8080/pictures/bobskin.png);
 	/* background-image: url(http://localhost:8080/pictures/divBg.jpg);
 	z-index: 999999!important; */
 }
