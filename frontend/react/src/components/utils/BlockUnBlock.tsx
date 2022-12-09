@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000/update");
+import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { user, blockedList, updateBlockedList, setError } = useAuthData();
+    const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
         const updateStatus = async (): Promise<void> => {
@@ -31,7 +30,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
             }
         }
         updateStatus();
-    }, [setError, auth_id])
+    }, [setError, auth_id, blockedList])
 
     useEffect(() => {
         const handleUpdateBlocked = (obj: any, auth_id: string) => {
@@ -42,9 +41,9 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
         }
         socket.on('onUpdateBlocked', handleUpdateBlocked);
         return () => {
-            socket.off('onUpdateBlocked');
+            socket.off('onUpdateBlocked', handleUpdateBlocked);
         }
-    },[updateBlockedList, user, blockedList])
+    },[socket, updateBlockedList, user, blockedList])
 
     const blockunblockUser = async (): Promise<void> => {
         socket.emit('updateBlocked', {
@@ -56,13 +55,15 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
 
     return (
         <div>
+            { loading? <p></p> :
             <button className="btn btn-outline-dark shadow-none" onClick={blockunblockUser} >
-                { loading && <p></p>}
-                { status ?
-                <p>UNBLOCK</p>
-                :
-                <p>BLOCK</p> }
+                {  status ?
+                            <p>UNBLOCK</p>
+                            :
+                            <p>BLOCK</p>
+                }
             </button>
+            }
         </div>
     )
 }

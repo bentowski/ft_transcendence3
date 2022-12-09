@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Request from "./Requests"
-import { socket } from '../../contexts/WebSocketContextUpdate';
+import /* socket, */ {WebsocketContextUpdate} from '../../contexts/WebSocketContextUpdate';
 import { PartiesType } from "../../types";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 
@@ -8,6 +8,7 @@ function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelect
 	const [onload, setOnload] = useState<number>(0);
 	const [value, setValue] = useState<string>('');
 	const { setError } = useAuthData();
+	const socket = useContext(WebsocketContextUpdate);
 
 	useEffect(() => {
 		if (inputSelector === "MatchNav") {

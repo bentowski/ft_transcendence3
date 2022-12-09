@@ -57,7 +57,7 @@ export class UserService {
   async findOnebyUsername(username?: string): Promise<UserEntity> {
     const findUsername: UserEntity = await this.userRepository.findOne({
       where: { username: username },
-      relations: { channelJoined: true },
+      relations: { channelJoined: true, channelBanned: true, channelMuted: true, channelAdmin: true },
     });
     return findUsername;
   }
@@ -65,7 +65,7 @@ export class UserService {
   async findOneByAuthId(auth_id: string): Promise<UserEntity> {
     const findAuthId: UserEntity = await this.userRepository.findOne({
       where: { auth_id: auth_id },
-      relations: { channelJoined: true },
+      relations: { channelJoined: true, channelBanned: true, channelMuted: true, channelAdmin: true },
     });
     return findAuthId;
   }
@@ -203,7 +203,8 @@ export class UserService {
     }
     const list: UserEntity[] = [];
     for (let index = 0; index < user.friends.length; index++) {
-      await this.findOneByAuthId(user.friends[index]).then(function (result) {
+      await this.findOneByAuthId(user.friends[index])
+          .then(function (result: UserEntity) {
         list.push(result);
       });
     }

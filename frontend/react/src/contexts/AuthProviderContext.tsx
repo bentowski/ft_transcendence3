@@ -8,11 +8,9 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {AuthType, ChanType, UserType} from "../types";
+import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
-import {io} from "socket.io-client";
-
-const socket = io('http://localhost:3000/update')
+import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
 
 export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
@@ -33,18 +31,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
-
+  const socket = useContext(WebsocketContextUpdate);
 
   const updateFriendsList = useCallback((
       usr: UserType,
       action: boolean): void => {
-    console.log('update friends list called')
     if (action) {
       setFriendsList(prevState => [...prevState, usr]);
       return ;
     } else if (!action) {
       const idx: number = friendsList.findIndex(obj => {
-        return obj === usr;
+        return obj.auth_id === usr.auth_id;
       });
       const array: UserType[] = [ ...friendsList ];
       if (idx !== -1) {
@@ -55,16 +52,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
   }, [friendsList])
 
+  useEffect(() => {
+    const handleUpdateFriends = (obj: any) => {
+      if (user.auth_id === obj.curuser.auth_id) {
+        updateFriendsList(obj.friuser, obj.action);
+      }
+      if (user.auth_id === obj.friuser.auth_id) {
+        updateFriendsList(obj.curuser, obj.action);
+      }
+    }
+    socket.on('onUpdateFriend', handleUpdateFriends);
+    return () => {
+      socket.off('onUpdateFriend', handleUpdateFriends);
+    }
+  },[socket, user, updateFriendsList, friendsList])
+
   const updateBlockedList = useCallback((
       usr: UserType,
       action: boolean): void => {
-    console.log('update blocked list called')
     if (action) {
       setBlockedList(prevState => [...prevState, usr]);
       return ;
     } else if (!action) {
       const idx: number = blockedList.findIndex(obj => {
-        return obj === usr;
+        return obj.auth_id === usr.auth_id;
       });
       const array: UserType[] = [...blockedList];
       if (idx !== -1) {
@@ -81,9 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
     socket.on('onUserCreation', handleUserCreation);
     return () => {
-      socket.off('onUserCreation');
+      socket.off('onUserCreation', handleUserCreation);
     }
-  }, [isAuth, user, userList])
+  }, [userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,
@@ -387,6 +398,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       setError: (value: any) => setError(value),
       navigate,
       location,
+      socket,
     }),
     [
       errorShow,
@@ -415,6 +427,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       blockedList,
       navigate,
       location,
+      socket,
     ]
   );
 

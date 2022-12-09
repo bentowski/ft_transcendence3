@@ -1,4 +1,4 @@
-import { OnModuleInit } from '@nestjs/common';
+import {NotFoundException, OnModuleInit} from '@nestjs/common';
 import {
  SubscribeMessage,
  WebSocketGateway,
@@ -59,12 +59,15 @@ export class UpdateGateway implements OnModuleInit
 
   @SubscribeMessage('updateFriend')
   async onUpdateFriend(client: Socket, obj: { curid: string, frid: string, action: boolean }) {
-    console.log('on update friend received');
+    const curuser: UserEntity = await this.userService.findOneByAuthId(obj.curid)
+    if (!curuser) {
+      throw new NotFoundException('Error while adding friend: Cant find current user')
+    }
     try {
-      const user: UserEntity = await this.userService.updateFriends(obj.action, obj.curid, obj.frid);
-      console.log('onUpdateFriend emitting request ', user.auth_id, obj.action);
+      const friuser: UserEntity = await this.userService.updateFriends(obj.action, obj.curid, obj.frid);
       this.server.emit('onUpdateFriend', {
-        "user": user,
+        "curuser": curuser,
+        "friuser": friuser,
         "action": obj.action
       })
     } catch (error) {

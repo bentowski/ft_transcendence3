@@ -1,17 +1,18 @@
-import { useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000/update");
+import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 
 const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
-    const { socketUpdate, user, friendsList, updateFriendsList, setError } = useAuthData();
+    const [loading, setLoading] = useState<boolean>(false);
+    const { user, friendsList, setError } = useAuthData();
+    const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
         const updateStatus = async (): Promise<void> => {
             if (auth_id !== undefined) {
+                setLoading(true);
                 try {
                     const res: boolean = await Request(
                         "GET",
@@ -20,30 +21,18 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
                         "http://localhost:3000/user/" + auth_id + "/isfriend",
                     )
                     setStatus(res);
+                    setLoading(false);
                     return ;
                 } catch (error) {
+                    setLoading(false)
                     setError(error);
                 }
             }
         }
         updateStatus();
-    }, [setError, auth_id])
-
-    useEffect(() => {
-        const handleUpdateFriends = (obj: any) => {
-            //console.log('handle update friends socket received');
-            setStatus((prevState: boolean) => !prevState);
-            updateFriendsList(obj.user, obj.action);
-        }
-        console.log('is declaring ok');
-        socket.on('onUpdateFriend', handleUpdateFriends);
-        return () => {
-            socket.off('onUpdateFriend');
-        }
-    }, [updateFriendsList, friendsList])
+    }, [setError, auth_id, socket, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        //console.log('emiting updateFriend socket request');
         socket.emit('updateFriend', {
             "curid": user.auth_id,
             "frid": auth_id,
@@ -53,12 +42,15 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
 
     return (
         <div>
+            { loading? <p></p> :
             <button onClick={() => friendunfriendUser()} >
-                { status ?
+                {status ?
                     <p>UNFRIEND</p>
                     :
-                    <p>FRIEND</p> }
+                    <p>FRIEND</p>
+                }
             </button>
+            }
         </div>
     )
 }

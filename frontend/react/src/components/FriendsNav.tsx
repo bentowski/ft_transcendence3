@@ -5,12 +5,13 @@ import { AuthContext } from "../contexts/AuthProviderContext";
 import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
 import { Alert } from "react-bootstrap";
+import {io, Socket} from "socket.io-client";
 
 class FriendsNav extends Component<{}, {
   uslist: Array<UserType>,
   filteredList: Array<UserType>,
   friends: Array<UserType>,
-  alert: boolean
+  alert: boolean,
 }> {
   static contextType = AuthContext;
   constructor(props: any) {
@@ -19,7 +20,7 @@ class FriendsNav extends Component<{}, {
       friends: [],
       filteredList: [],
       uslist: [],
-      alert: false
+      alert: false,
     };
   }
 
@@ -32,11 +33,10 @@ class FriendsNav extends Component<{}, {
         alert: boolean }>, snapshot?: any): void {
     const ctx: any = this.context;
     if (prevState.friends !== ctx.friendsList) {
-      console.log('updating friend list...')
+      console.log('setting new state friends list ');
       this.setState({ friends: ctx.friendsList })
     }
     if (prevState.uslist !== ctx.userList) {
-      console.log('updating user list...')
       this.setState({ uslist: ctx.userList });
     }
   }

@@ -244,5 +244,4 @@ class Profil extends Component<
     );
   }
 }
-
 export default Profil;

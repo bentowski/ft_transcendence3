@@ -140,10 +140,10 @@ export const WebSocket = (): JSX.Element => {
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     return () => {
-      socket.off('error');
-      socket.off('mutedChannel');
-      socket.off('bannedChannel');
-      socket.off('adminChannel');
+      socket.off('error', handleMute);
+      socket.off('mutedChannel', handleBan);
+      socket.off('bannedChannel', handleAdmin);
+      socket.off('adminChannel', handleError);
     }
   }, [
       navigate,
