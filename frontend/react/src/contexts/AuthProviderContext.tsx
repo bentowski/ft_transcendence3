@@ -11,6 +11,9 @@ import Request from "../components/utils/Requests";
 import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
+import { io } from "socket.io-client";
+
+const socket = io('http://localhost:3000/update')
 
 export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
@@ -31,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
-  const socket = useContext(WebsocketContextUpdate);
+  //const socket = useContext(WebsocketContextUpdate);
 
   const updateFriendsList = useCallback((
       usr: UserType,
@@ -107,7 +110,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         return obj.id === chan.id;
       })
       const newArr: ChanType[] = bannedFrom;
-      console.log('removing user at index ', idx, ' from bann list of chan ', chan.id)
       if (idx !== -1) {
         newArr.splice(idx);
       }

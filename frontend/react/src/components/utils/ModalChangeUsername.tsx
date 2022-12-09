@@ -79,7 +79,6 @@ const ModalChangeUsername = (): JSX.Element => {
             { username: field },
             "http://localhost:3000/user/update/username"
         )
-        //console.log('result = ', res);
         if (res) {
           const newName: string = field;
           updateUser(null, field);

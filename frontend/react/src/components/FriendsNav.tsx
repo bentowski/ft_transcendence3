@@ -33,7 +33,6 @@ class FriendsNav extends Component<{}, {
       snapshot?: any): void {
     const ctx: any = this.context;
     if (prevState.friends !== ctx.friendsList) {
-      console.log('setting new state friends list ');
       this.setState({ friends: ctx.friendsList })
     }
     if (prevState.uslist !== ctx.userList) {

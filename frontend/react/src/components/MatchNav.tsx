@@ -5,7 +5,7 @@ import Request from "./utils/Requests"
 import { ErrorType, PartiesType } from "../types";
 import { AuthContext } from '../contexts/AuthProviderContext';
 
-class MatchNav extends Component {
+class MatchNav extends Component<{},{}> {
 	static contextType = AuthContext;
 	state = {
 		allGames: [],
@@ -53,7 +53,6 @@ class MatchNav extends Component {
 			const error: ErrorType = {
 				statusCode: 400,
 				message: "Error while trying to join game: No available game joinable"}
-			console.log(ctx)
 			ctx.setError(error);
 			return ;
 		}

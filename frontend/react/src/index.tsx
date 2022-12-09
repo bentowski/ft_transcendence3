@@ -4,7 +4,7 @@ import './styles/index.css';
 import App from './App';
 import { AuthProvider } from "./contexts/AuthProviderContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {WebsocketUpdateProvider} from "./contexts/WebSocketContextUpdate";
+//import {WebsocketUpdateProvider} from "./contexts/WebSocketContextUpdate";
 
 const root: ReactDOM.Root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivElement);
 root.render(

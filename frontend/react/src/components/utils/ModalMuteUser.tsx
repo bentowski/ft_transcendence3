@@ -72,7 +72,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
             return false;
         }
         const muteUser = async (obj: any): Promise<void> => {
-            console.log('muting user ', obj.user.auth_id);
             if (await checkIfAdmin(obj.user.auth_id)) {
                 const error: ErrorType = {
                     statusCode: 400,
@@ -81,7 +80,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 setError(error);
                 return ;
             }
-            console.log('sending to socket...');
             socket.emit('muteToChannel', {
                 "room": chan,
                 "auth_id": obj.user.auth_id,
@@ -93,7 +91,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 }
                 newArray.push(usersChan[index]);
             }
-            console.log('new array = ', newArray);
             setUsersChan(newArray);
         }
         const listUserCards = async (): Promise<void> => {

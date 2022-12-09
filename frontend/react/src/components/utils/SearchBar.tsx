@@ -5,7 +5,7 @@ import { PartiesType } from "../../types";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:8080/update')
+const socket = io('http://localhost:3000/update')
 
 function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}): JSX.Element {
 	const [onload, setOnload] = useState<number>(0);

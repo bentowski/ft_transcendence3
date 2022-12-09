@@ -60,14 +60,15 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
-    const ctx: any = this.context;
+    //const ctx: any = this.context;
+    /*
     if (state.banned !== ctx.bannedFrom) {
-      //console.log('banned state refresh in modal')
       //this.setState({ banned: ctx.bannedFrom })
       setTimeout(() => {
         this.updateChan()
       }, 10)
     }
+     */
     if (props.chanList.length !== this.state.allChans.length
     ) {
       setTimeout(() => {
@@ -140,15 +141,17 @@ class Modal extends Component<
     if (newUser) {
       this.setState({ user: newUser });
     }
-    let users: UserType[] = [];
+    //let users: UserType[] = [];
     let chans: ChanType[] = [];
     try {
+      /*
       users = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/user/"
       );
+       */
       chans = await Request(
         "GET",
         {},
@@ -158,7 +161,7 @@ class Modal extends Component<
     } catch (error) {
       ctx.setError(error);
     }
-    this.setState({ friends: users, allChans: chans });
+    this.setState({ friends: ctx.userList, allChans: chans });
     this.chans();
    }
   componentDidMount = () => {
@@ -362,7 +365,6 @@ class Modal extends Component<
   };
 
   displayUser = (id: number, user: UserType): JSX.Element => {
-    console.log(user.auth_id)
     return (
       <div
         key={id}

@@ -35,7 +35,8 @@ export const WebSocket = (): JSX.Element => {
 // ================= UseEffects ===================
 
   useEffect((): () => void => {
-    socket.on('connect', () => {});
+    socket.on('connect', () => {
+    });
     socket.on("userJoinChannel", () => {
       getChan();
     });
@@ -75,7 +76,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateMutedFromList(chan, obj.action)
-          getChan()
+          //getChan()
         } catch (error) {
           setError(error);
         }
@@ -91,7 +92,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateBannedFromList(chan, obj.action);
-          getChan()
+          //getChan()
         } catch (error) {
           setError(error);
         }
@@ -116,7 +117,7 @@ export const WebSocket = (): JSX.Element => {
               "http://localhost:3000/chan/id/" + obj.room
           )
           updateAdminFromList(chan, obj.action)
-          await getChan();
+          //getChan();
         } catch (error) {
           setError(error);
         }
@@ -142,10 +143,10 @@ export const WebSocket = (): JSX.Element => {
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     return () => {
-      socket.off('error', handleError);
       socket.off('mutedChannel', handleMute);
       socket.off('bannedChannel', handleBan);
       socket.off('adminChannel', handleAdmin);
+      socket.off('error', handleError);
     }
   }, [
     setError,
@@ -157,7 +158,7 @@ export const WebSocket = (): JSX.Element => {
 
   useEffect(() => {
     const handleOutBan = async (obj: any) => {
-      getChan()
+      //getChan()
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -173,7 +174,7 @@ export const WebSocket = (): JSX.Element => {
       }
     }
     const handleOutMute = async (obj: any) => {
-      getChan()
+      //getChan()
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -328,7 +329,6 @@ export const WebSocket = (): JSX.Element => {
   }
 
   const getChan = async (): Promise<void> => {
-    console.log('calling get chan');
     let channels: ChanType[] = [];
     try {
       channels = await Request(

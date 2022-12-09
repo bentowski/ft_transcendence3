@@ -4,7 +4,7 @@ import Request from './Requests';
 import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:8080/update')
+const socket = io('http://localhost:3000/update')
 
 const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
