@@ -1,9 +1,44 @@
 import { Component, useEffect, useState } from "react";
 import { socket } from '../../contexts/WebSocketContext';
 import { MessagePayload, ChanType, UserType } from "../../types"
+import { AuthContext } from "../../contexts/AuthProviderContext";
+import Request from "../utils/Requests"
 
-class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
+class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: UserType[]}> {
+	constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            userList: [],
+        }
+    }
+
+	// componentDidUpdate(): void {
+		
+    //     const ctx: any = this.context;
+	// 	console.log(ctx.userList)
+    //     // this.setState({userList: ctx.adminList})
+    // }
+
+	// updateUsers = async () => {
+	// 	let users:UserType = await Request("GET", {}, {}, "http://localhost:3000/user")
+	// 	this.setState({userList: users})
+	// }
+
+	componentDidMount = async () => {
+        let users:UserType[] = await Request("GET", {}, {}, "http://localhost:3000/user")
+		console.log(users)
+		this.setState({userList: users})
+    }
+
+	takeUsername = (msg: MessagePayload) => {
+		const user:UserType | undefined = (this.state.userList.find((user:UserType) => user.auth_id === msg.auth_id))
+		if (user !== undefined)
+			return user.username
+		return msg.username
+	}
+
   render(): JSX.Element[] {
+	// this.updateUsers()
     const ret: JSX.Element[] = []
     this.props.messages.forEach((msg: MessagePayload, index: number) => {
       if (msg.sender_socket_id === this.props.user.auth_id)
@@ -20,7 +55,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {}> {
               <div className="incoming_msg_img align-bottom"> <img src={"http://localhost:3000/user/" + msg.auth_id + "/avatar"} alt="ImageNotFound" /> </div>
               <div className="received_msg">
                 <div className="received_withd_msg">
-                  <div className="received_withd_msg"><span className="time_date"> {msg.username}</span></div>
+                  <div className="received_withd_msg"><span className="time_date">{this.takeUsername(msg)}</span></div>
                   <p>{msg.content}</p>
                 </div>
               </div>
