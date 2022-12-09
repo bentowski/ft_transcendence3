@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     return () => {
       socket.off('onUserCreation', handleUserCreation);
     }
-  }, [userList])
+  }, [socket, userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,

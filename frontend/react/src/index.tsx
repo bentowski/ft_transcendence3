@@ -10,13 +10,13 @@ const root: ReactDOM.Root = ReactDOM.createRoot(document.getElementById('root') 
 root.render(
   <React.StrictMode>
       <BrowserRouter>
-          <WebsocketUpdateProvider>
+          {/* <WebsocketUpdateProvider> */}
               <AuthProvider>
                   <Routes>
                       <Route path="/*" element={<App />} />
                   </Routes>
               </AuthProvider>
-          </WebsocketUpdateProvider>
+          {/* </WebsocketUpdateProvider> */}
       </BrowserRouter>
   </React.StrictMode>
 );

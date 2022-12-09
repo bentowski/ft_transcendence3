@@ -4,10 +4,10 @@ import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 import {PartiesType, UserType} from "../../types";
-import { socket } from '../../contexts/WebSocketContextUpdate';
+//import { socket } from '../../contexts/WebSocketContextUpdate';
 
 
-//const socket = io("http://localhost:3000/update");
+const socket = io("http://localhost:3000/update");
 
 class ModalMatchInvite extends Component<{ title: string, calledBy: string, user: any}, {}> {
   static contextType = AuthContext;

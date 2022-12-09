@@ -65,38 +65,6 @@ export const WebSocket = (): JSX.Element => {
   });
 
   useEffect((): () => void => {
-    const handleOutBan = async (obj: any) => {
-      getChan()
-      if (obj.auth_id === user.auth_id) {
-        try {
-          const chan: ChanType = await Request(
-              "GET",
-              {},
-              {},
-              "http://localhost:3000/chan/id/" + obj.room
-          )
-          updateBannedFromList(chan, false)
-        } catch (error) {
-          setError(error);
-        }
-      }
-    }
-    const handleOutMute = async (obj: any) => {
-      getChan()
-      if (obj.auth_id === user.auth_id) {
-        try {
-          const chan: ChanType = await Request(
-              "GET",
-              {},
-              {},
-              "http://localhost:3000/chan/id/" + obj.room
-          )
-          updateMutedFromList(chan, false)
-        } catch (error) {
-          setError(error);
-        }
-      }
-    }
     const handleMute = async (obj: PunishSocketType): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
@@ -159,7 +127,7 @@ export const WebSocket = (): JSX.Element => {
         setError(error);
         if (error.statusCode === 450) {
           //updateBannedFromList();
-          navigate("/chat/");
+          //navigate("/chat/");
         }
         if (error.statusCode === 451) {
           //updateMutedFromList();
@@ -169,29 +137,69 @@ export const WebSocket = (): JSX.Element => {
         }
       }
     }
-    socket.on('timerOutMute', handleOutMute);
-    socket.on('timerOutBan', handleOutBan);
     socket.on('mutedChannel', handleMute);
     socket.on('bannedChannel', handleBan);
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     return () => {
-      socket.off('timerOutMute', handleOutMute);
-      socket.off('timerOutBan', handleOutBan);
-      socket.off('error', handleMute);
-      socket.off('mutedChannel', handleBan);
-      socket.off('bannedChannel', handleAdmin);
-      socket.off('adminChannel', handleError);
+      socket.off('error', handleError);
+      socket.off('mutedChannel', handleMute);
+      socket.off('bannedChannel', handleBan);
+      socket.off('adminChannel', handleAdmin);
     }
   }, [
-      navigate,
-    room,
     setError,
     socket,
     updateAdminFromList,
     updateBannedFromList,
     updateMutedFromList,
     user]);
+
+  useEffect(() => {
+    const handleOutBan = async (obj: any) => {
+      getChan()
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateBannedFromList(chan, false)
+        } catch (error) {
+          setError(error);
+        }
+      }
+    }
+    const handleOutMute = async (obj: any) => {
+      getChan()
+      if (obj.auth_id === user.auth_id) {
+        try {
+          const chan: ChanType = await Request(
+              "GET",
+              {},
+              {},
+              "http://localhost:3000/chan/id/" + obj.room
+          )
+          updateMutedFromList(chan, false)
+        } catch (error) {
+          setError(error);
+        }
+      }
+    }
+    socket.on('timerOutMute', handleOutMute);
+    socket.on('timerOutBan', handleOutBan);
+    return () => {
+      socket.off('timerOutMute', handleOutMute);
+      socket.off('timerOutBan', handleOutBan);
+    }
+  }, [
+      setError,
+    updateMutedFromList,
+    updateBannedFromList,
+    user,
+    socket])
 
   useEffect((): void => {
     getChan();

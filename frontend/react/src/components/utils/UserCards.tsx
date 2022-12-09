@@ -7,9 +7,9 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
-import { socket } from '../../contexts/WebSocketContextUpdate';
+//import { socket } from '../../contexts/WebSocketContextUpdate';
 
-//const socket = io("http://localhost:3000/update");
+const socket = io("http://localhost:3000/update");
 
 class UserCards extends Component<
   { user: any, avatar: any, stat: any },
