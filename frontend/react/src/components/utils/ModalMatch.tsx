@@ -17,6 +17,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
   }
 
   createParties = async (isClassic: number): Promise<void> => {
+    const ctx: any = this.context;
     const currentUser: any = this.context;
     try {
       await Request(

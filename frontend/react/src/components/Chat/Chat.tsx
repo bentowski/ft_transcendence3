@@ -25,7 +25,7 @@ export const WebSocket = (): JSX.Element => {
     updateMutedFromList,
     updateChanFromList,
     updateAdminFromList,
-    updateAllChans,
+    //updateAllChans,
   } = useAuthData();
   const socket = useContext(WebsocketContext);
   const msgInput = useRef<HTMLInputElement>(null)
@@ -120,7 +120,7 @@ export const WebSocket = (): JSX.Element => {
         }
       }
     }
-    const handleError = async (error: ErrorType, auth_id: string) => {
+    const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
         setError(error);
         if (error.statusCode === 450) {
@@ -140,10 +140,10 @@ export const WebSocket = (): JSX.Element => {
     socket.on('adminChannel', handleAdmin);
     socket.on('error', handleError);
     return () => {
-      socket.off('error');
-      socket.off('mutedChannel');
-      socket.off('bannedChannel');
-      socket.off('adminChannel');
+      socket.off('error', handleMute);
+      socket.off('mutedChannel', handleBan);
+      socket.off('bannedChannel', handleAdmin);
+      socket.off('adminChannel', handleError);
     }
   }, [
       navigate,
@@ -225,7 +225,7 @@ export const WebSocket = (): JSX.Element => {
             "http://localhost:3000/chan/create"
         );
           socket.emit('chanCreated');
-          updateAllChans();
+          //updateAllChans();
           updateAdminFromList(chanCreated, true);
           updateChanFromList(chanCreated, true);
           navigate('/chat/' + chanCreated?.id);

@@ -307,7 +307,7 @@ export class ChanService {
 	async muteUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
-			relations: ['muteUser','chanUser'],
+			relations: ['adminUser', 'muteUser','chanUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while muting user from channel: Cant find channel');
@@ -330,7 +330,6 @@ export class ChanService {
 				}
 				throw error;
 			}
-			console.log('pushing ', user.auth_id, ' to mute ', chan.id)
 			chan.muteUser.push(user);
 		}
 		if (action === false) {

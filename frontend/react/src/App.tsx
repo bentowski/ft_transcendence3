@@ -43,7 +43,6 @@ const App = (): JSX.Element => {
   const loc: any = useLocation();
 
   const setNewLoc = (newurl: string): void => {
-    console.log('set new location');
     loc.pathname = newurl;
   }
 

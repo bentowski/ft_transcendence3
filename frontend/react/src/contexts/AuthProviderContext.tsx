@@ -8,56 +8,42 @@ import {
   useState,
 } from "react";
 import Request from "../components/utils/Requests";
-import {AuthType, ChanType, UserType} from "../types";
+import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
+import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
 
-export const AuthContext = createContext<any>({
-  /*
-  updateUser: (avatar: string, username: string) => {},
-  userAuthentication: (auth: boolean) => {},
-  updateFriendsList: (usr: UserType, action: boolean) => {},
-  updateUserList: () => {},
-  updateBlockedList: (usr: UserType, action: boolean) => {},
-  updateBannedFromList: () => {},
-  updateMutedFromList: () => {},
-  updateChanFromList: () => {},
-  updateAllChans: () => {},
-  setError: (value: any) => {}
-   */
-});
-
+export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isTwoFa, setIsTwoFa] = useState<boolean>(false);
   const [isToken, setIsToken] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(undefined);
+  const [user, setUser] = useState<any>();
   const [errorShow, setErrorShow] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [errorCode, setErrorCode] = useState<number>(0);
-  const [userList, setUserList] = useState<string[]>([]);
-  const [friendsList, setFriendsList] = useState<string[]>([]);
-  const [blockedList, setBlockedList] = useState<string[]>([]);
-  const [allChans, setAllChans] = useState<ChanType[]>([]);
+  const [userList, setUserList] = useState<UserType[]>([]);
+  const [friendsList, setFriendsList] = useState<UserType[]>([]);
+  const [blockedList, setBlockedList] = useState<UserType[]>([]);
   const [bannedFrom, setBannedFrom] = useState<ChanType[]>([]);
   const [mutedFrom, setMutedFrom] = useState<ChanType[]>([]);
   const [chanFrom, setChanFrom] = useState<ChanType[]>([]);
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
+  const socket = useContext(WebsocketContextUpdate);
 
-  const updateFriendsList = useCallback(async (
+  const updateFriendsList = useCallback((
       usr: UserType,
-      action: boolean): Promise<void> => {
-    const auth_id: string = usr.auth_id;
+      action: boolean): void => {
     if (action) {
-      setFriendsList(prevState => [...prevState, auth_id]);
+      setFriendsList(prevState => [...prevState, usr]);
       return ;
     } else if (!action) {
       const idx: number = friendsList.findIndex(obj => {
-        return obj === auth_id;
+        return obj.auth_id === usr.auth_id;
       });
-      const array: string[] = [ ...friendsList ];
+      const array: UserType[] = [ ...friendsList ];
       if (idx !== -1) {
         array.splice(idx, 1);
         setFriendsList(array);
@@ -66,18 +52,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
   }, [friendsList])
 
+  useEffect(() => {
+    const handleUpdateFriends = (obj: any) => {
+      if (user.auth_id === obj.curuser.auth_id) {
+        updateFriendsList(obj.friuser, obj.action);
+      }
+      if (user.auth_id === obj.friuser.auth_id) {
+        updateFriendsList(obj.curuser, obj.action);
+      }
+    }
+    socket.on('onUpdateFriend', handleUpdateFriends);
+    return () => {
+      socket.off('onUpdateFriend', handleUpdateFriends);
+    }
+  },[socket, user, updateFriendsList, friendsList])
+
   const updateBlockedList = useCallback((
       usr: UserType,
       action: boolean): void => {
-    const auth_id: string = usr.auth_id;
     if (action) {
-      setBlockedList(prevState => [...prevState, auth_id]);
+      setBlockedList(prevState => [...prevState, usr]);
       return ;
     } else if (!action) {
       const idx: number = blockedList.findIndex(obj => {
-        return obj === auth_id;
+        return obj.auth_id === usr.auth_id;
       });
-      const array: string[] = [...blockedList];
+      const array: UserType[] = [...blockedList];
       if (idx !== -1) {
         array.splice(idx, 1);
         setBlockedList(array);
@@ -86,35 +86,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
   }, [blockedList])
 
-  const updateUserList = useCallback(async (): Promise<void> => {
-    const setErr = (value: any) => {
-      if (value) {
-        setErrorShow(true);
-        setErrorMsg(value.message);
-        setErrorCode(value.statusCode);
-      } else {
-        setErrorShow(false);
-        setErrorMsg('');
-        setErrorCode(0);
-      }
+  useEffect(() => {
+    const handleUserCreation = (user: UserType) => {
+      setUserList(prevState => [...prevState, user]);
     }
-    let list: UserType[] = [];
-    try {
-      list = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user"
-      )
-    } catch (error) {
-      setErr(error);
+    socket.on('onUserCreation', handleUserCreation);
+    return () => {
+      socket.off('onUserCreation', handleUserCreation);
     }
-    const array_users: string[] = [];
-    for (let index = 0; index < list.length; index++) {
-      array_users[index] = list[index].username;
-    }
-    setUserList(array_users);
-  }, [])
+  }, [userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,
@@ -200,48 +180,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       }
   }, [chanFrom])
 
-  const updateAllChans = useCallback(async (): Promise<void> => {
-    const setErr = (value: any) => {
-      if (value) {
-        setErrorShow(true);
-        setErrorMsg(value.message);
-        setErrorCode(value.statusCode);
-      } else {
-        setErrorShow(false);
-        setErrorMsg('');
-        setErrorCode(0);
-      }
-    }
-    try {
-      const res: ChanType[] = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/chan"
-      )
-      setAllChans(res);
-    } catch (error: unknown) {
-      setErr(error);
-    }
-  }, [])
-
   const updateUser = useCallback((avatar: string, username: string): void => {
     if (avatar || username) {
       const usr: UserType = {
-        user_id: user.user_id,
-        auth_id: user.auth_id,
-        username: username ? username : user.username,
-        avatar: avatar ? avatar : user.avatar,
-        game_won: user.game_won,
-        game_lost: user.game_lost,
-        total_games: user.total_games,
-        total_score: user.total_score,
-        status: user.status,
-        twoFASecret: user.twoFASecret,
-        isTwoFA: user.isTwoFa,
-        channelJoind: user.channelJoind,
-        friends: user.friends,
-        blocked: user.blocked,
+        user_id: user?.user_id,
+        auth_id: user?.auth_id,
+        username: username ? username : user?.username,
+        avatar: avatar ? avatar : user?.avatar,
+        game_won: user?.game_won,
+        game_lost: user?.game_lost,
+        total_games: user?.total_games,
+        total_score: user?.total_score,
+        status: user?.status,
+        twoFASecret: user?.twoFASecret,
+        isTwoFA: user?.isTwoFA,
+        channelJoind: user?.channelJoind,
+        friends: user?.friends,
+        blocked: user?.blocked,
       }
       setUser(usr);
     }
@@ -278,13 +233,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       } catch (error) {
         setError(error);
       }
-      const array_users: string[] = [];
-      for (let index = 0; index < list.length; index++) {
-        array_users[index] = list[index].username;
-      }
-      setUserList(array_users);
+      setUserList(list);
     }
-
     const fetchData = async (): Promise<void> => {
       setIsToken(false);
       setUser(undefined);
@@ -327,27 +277,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
                   //------------------
 
-                  const chans: ChanType[] = await Request(
-                      "GET",
-                      {},
-                      {},
-                      "http://localhost:3000/chan"
-                  )
-                  setAllChans(chans);
-
-                  //------------------
-
                   const flist: UserType[] = await Request(
                       "GET",
                       {},
                       {},
                       "http://localhost:3000/user/" + user.auth_id + "/getfriends",
                   )
-                  const array_friends: string[] = [];
-                  for (let index = 0; index < flist.length; index++) {
-                    array_friends[index] = flist[index].auth_id;
-                  }
-                  setFriendsList(array_friends);
+                  setFriendsList(flist);
 
                   //-----------------
 
@@ -357,11 +293,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       {},
                       "http://localhost:3000/user/" + user.auth_id + "/getblocked"
                   )
-                  const array_blocked: string[] = [];
-                  for (let index = 0; index < blist.length; index++) {
-                    array_blocked[index] = blist[index].auth_id;
-                  }
-                  setBlockedList(array_blocked);
+                  setBlockedList(blist);
 
                   //------------------
 
@@ -444,7 +376,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       isAuth,
       isToken,
       isTwoFa,
-      allChans,
       bannedFrom,
       mutedFrom,
       adminFrom,
@@ -459,16 +390,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateUser: (avatar: string, username: string) => updateUser(avatar, username),
       userAuthentication: (auth: boolean) => userAuthentication(auth),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
-      updateUserList: () => updateUserList(),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
       updateBannedFromList: (chan: ChanType, action: boolean) => updateBannedFromList(chan, action),
       updateChanFromList: (chan: ChanType, action: boolean) => updateChanFromList(chan, action),
       updateMutedFromList: (chan: ChanType, action: boolean) => updateMutedFromList(chan, action),
       updateAdminFromList: (chan: ChanType, action: boolean) => updateAdminFromList(chan, action),
-      updateAllChans: () => updateAllChans(),
       setError: (value: any) => setError(value),
       navigate,
       location,
+      socket,
     }),
     [
       errorShow,
@@ -477,7 +407,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       user,
       isAuth,
       loading,
-      allChans,
       bannedFrom,
       mutedFrom,
       chanFrom,
@@ -488,10 +417,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       updateChanFromList,
       updateMutedFromList,
       updateFriendsList,
-      updateAllChans,
       updateAdminFromList,
       userAuthentication,
-      updateUserList,
       updateUser,
       updateBlockedList,
       setError,
@@ -500,6 +427,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       blockedList,
       navigate,
       location,
+      socket,
     ]
   );
 

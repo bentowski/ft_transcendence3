@@ -8,7 +8,6 @@ import {PartiesType, UserType} from "../../types";
 const socket = io("http://localhost:3000/update");
 
 class ModalMatchInvite extends Component<{ title: string, calledBy: string, user: any}, {}> {
-
   static contextType = AuthContext;
 
   accept = async (): Promise<void> => {

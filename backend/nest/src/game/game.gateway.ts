@@ -61,13 +61,11 @@ export class GameGateway implements OnModuleInit
 
   @SubscribeMessage('gameover')
   gameOver(@MessageBody() body: any) {
-    console.log("AAAAAAAAAAAAAAAAAAA")
     this.server.to(body.room).emit('gameoverSend', body)
   }
 
   @SubscribeMessage('endGame')
   onEndGame(client: Socket, room: string) {
-    console.log("end game !")
     this.server.to(room).emit('onEndGame', room)
   }
 //   @SubscribeMessage('leaveRoom')
