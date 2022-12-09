@@ -1,37 +1,12 @@
 import { Component } from "react";
 import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
 import { socket } from '../../contexts/WebSocketContext';
 import { ChanType, UserType } from "../../types"
-import { useAuthData} from "../../contexts/AuthProviderContext";
+import { useAuthData } from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
 class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
-  /*
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      usersChan: [],
-    }
-  }
-
-  componentDidMount() {
-    this.setState({usersChan: this.props.usersList})
-  }
-
-  async componentDidUpdate(
-      prevProps: Readonly<{
-        usersList: UserType[] }>,
-      prevState: Readonly<{
-        usersChan: UserType[]
-      }>,
-      snapshot?: any) {
-    if (prevState.usersChan !== this.props.usersList) {
-      this.setState({usersChan: this.props.usersList});
-    }
-  }
-   */
 
   render(): JSX.Element[] {
     const users: JSX.Element[] = [];

@@ -3,12 +3,15 @@ import Request from "./Requests"
 import /* socket, */ {WebsocketContextUpdate} from '../../contexts/WebSocketContextUpdate';
 import { PartiesType } from "../../types";
 import { useAuthData } from "../../contexts/AuthProviderContext";
+import { io } from "socket.io-client";
+
+const socket = io('http://localhost:3000/update')
 
 function SearchBar({inputSelector, routeForRequest, parentCallBack}:{inputSelector: string, routeForRequest: string, parentCallBack: any}): JSX.Element {
 	const [onload, setOnload] = useState<number>(0);
 	const [value, setValue] = useState<string>('');
 	const { setError } = useAuthData();
-	const socket = useContext(WebsocketContextUpdate);
+	//const socket = useContext(WebsocketContextUpdate);
 
 	useEffect(() => {
 		if (inputSelector === "MatchNav") {

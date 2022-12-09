@@ -11,6 +11,9 @@ import Request from "../components/utils/Requests";
 import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
+import { io } from "socket.io-client";
+
+const socket = io('http://localhost:3000/update')
 
 export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
@@ -31,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [adminFrom, setAdminFrom] = useState<ChanType[]>([]);
   const navigate: NavigateFunction = useNavigate();
   const location: any = useLocation();
-  const socket = useContext(WebsocketContextUpdate);
+  //const socket = useContext(WebsocketContextUpdate);
 
   const updateFriendsList = useCallback((
       usr: UserType,
@@ -94,12 +97,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     return () => {
       socket.off('onUserCreation', handleUserCreation);
     }
-  }, [userList])
+  }, [socket, userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,
       action: boolean): void => {
-    const rmvBan = (chan: ChanType): void => {
+    if (action) {
+      setBannedFrom(prevState => [...prevState, chan])
+    }
+    if (!action) {
       const idx: number = bannedFrom.findIndex(obj => {
         return obj.id === chan.id;
       })
@@ -108,15 +114,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         newArr.splice(idx);
       }
       setBannedFrom(newArr);
-    }
-    if (action) {
-      setBannedFrom(prevState => [...prevState, chan])
-      setTimeout(() => {
-        rmvBan(chan);
-      }, 10000)
-    }
-    if (!action) {
-      rmvBan(chan);
     }
   }, [bannedFrom])
 
@@ -141,24 +138,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
   const updateMutedFromList = useCallback(  (
       chan: ChanType, action: boolean): void => {
-    const rmvMute = (chan: ChanType): void => {
-      const idx: number = mutedFrom.findIndex(obj => {
-        return obj.id === chan.id;
-      })
-      const newArr: ChanType[] = mutedFrom;
-      if (idx !== -1) {
-        newArr.splice(idx);
-      }
-      setMutedFrom(newArr);
-    }
       if (action) {
         setMutedFrom(prevState => [...prevState, chan])
-        setTimeout(() => {
-          rmvMute(chan);
-        }, 10000)
       }
       if (!action) {
-        rmvMute(chan);
+        const idx: number = mutedFrom.findIndex(obj => {
+          return obj.id === chan.id;
+        })
+        const newArr: ChanType[] = mutedFrom;
+        if (idx !== -1) {
+          newArr.splice(idx);
+        }
+        setMutedFrom(newArr);
       }
   }, [mutedFrom])
 

@@ -4,6 +4,8 @@ import "../../styles/components/utils/modal.css";
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../contexts/AuthProviderContext';
 import {PartiesType, UserType} from "../../types";
+//import { socket } from '../../contexts/WebSocketContextUpdate';
+
 
 const socket = io("http://localhost:3000/update");
 

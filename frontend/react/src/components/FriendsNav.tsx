@@ -5,7 +5,6 @@ import { AuthContext } from "../contexts/AuthProviderContext";
 import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
 import { Alert } from "react-bootstrap";
-import {io, Socket} from "socket.io-client";
 
 class FriendsNav extends Component<{}, {
   uslist: Array<UserType>,
@@ -30,10 +29,10 @@ class FriendsNav extends Component<{}, {
         uslist: Array<UserType>;
         filteredList: Array<UserType>;
         friends: Array<UserType>;
-        alert: boolean }>, snapshot?: any): void {
+        alert: boolean }>,
+      snapshot?: any): void {
     const ctx: any = this.context;
     if (prevState.friends !== ctx.friendsList) {
-      console.log('setting new state friends list ');
       this.setState({ friends: ctx.friendsList })
     }
     if (prevState.uslist !== ctx.userList) {

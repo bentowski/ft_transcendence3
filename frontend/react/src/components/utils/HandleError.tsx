@@ -1,19 +1,21 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Alert } from "react-bootstrap";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { ErrorType } from "../../types";
+import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 import {io} from "socket.io-client";
-import {ErrorType} from "../../types";
 
 const socket = io('http://localhost:3000/update')
 
 const HandleError = (): JSX.Element => {
-    const { socketUpdate, errorShow, errorMsg, errorCode, setError } = useAuthData();
+    const { errorShow, errorMsg, errorCode, setError } = useAuthData();
+    //const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
         const close = (): void => {
             setError(null);
         }
-        setInterval(close, 1800);
+        setTimeout(close, 1800);
     }, [setError])
 
     useEffect(() => {

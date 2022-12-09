@@ -1,7 +1,7 @@
 import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
-import {AuthContext} from "../contexts/AuthProviderContext";
+import { AuthContext } from "../contexts/AuthProviderContext";
 
 class Stats extends Component<
   {},
@@ -51,7 +51,6 @@ class Stats extends Component<
     let user: JSX.Element[] = [];
     let y: number = 0;
     while (y < this.state.users.length) {
-      // console.log("avatar est un bon film = ", this.state.users[y]);
       user.push(
         <div key={y} className="col-12 d-flex flex-row d-flex align-items-center">
           {/* <div className="nb col-1 mr-2 d-flex flex-row justify-content-start"> */}

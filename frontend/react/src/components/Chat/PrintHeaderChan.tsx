@@ -82,7 +82,7 @@ class AdminButtons extends Component<
   }
 }
 
-class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
+export class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
   promptAddUser = (): void => {
     const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove("hidden");
@@ -90,9 +90,9 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
     this.props.parentCallBack.setModalTitle("Add a user");
   };
   render(): JSX.Element {
-    let url: string = document.URL
+    let url: string = document.URL;
     url = url.substring(url.lastIndexOf("/") + 1);
-    const id: number = parseInt(url)
+    const id: number = parseInt(url);
     if (id && id > 0 && this.props.chanList[id - 1] &&
         !(this.props.chanList[id - 1].type === "direct")) {
       return (<button

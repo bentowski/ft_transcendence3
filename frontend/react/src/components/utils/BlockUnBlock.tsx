@@ -1,13 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
+//import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
+import { io } from "socket.io-client";
+
+const socket = io('http://localhost:3000/update')
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { user, blockedList, updateBlockedList, setError } = useAuthData();
-    const socket = useContext(WebsocketContextUpdate);
+    //const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
         const updateStatus = async (): Promise<void> => {

@@ -7,6 +7,7 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
+//import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
 
@@ -65,9 +66,19 @@ class UserCards extends Component<
     return ctx.user;
   };
 
-  checkIfChanExists = (title: string): boolean => {
+  checkIfChanExists = async (title: string): Promise<boolean> => {
     const ctx: any = this.context;
-    const chans: ChanType[] = ctx.allChans;
+    let chans: ChanType[] = [];
+    try {
+      chans = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/"
+      )
+    } catch (error) {
+      ctx.setError(error);
+    }
     for (let index: number = 0; index < chans.length; index++) {
       if (title === chans[index].name) {
         return true;
@@ -76,10 +87,10 @@ class UserCards extends Component<
     return false;
   }
 
-  createChanName = (u1: UserType, u2: UserType): string => {
+  createChanName = async (u1: UserType, u2: UserType): Promise<string> => {
     let title: string = u1.username.slice(0, 3) + "-" + u2.username.slice(0, 3);
     let x: number = 0;
-    while (this.checkIfChanExists(title)) {
+    while (await this.checkIfChanExists(title)) {
       title = title + x.toString();
       x++;
     }
@@ -111,21 +122,22 @@ class UserCards extends Component<
           newChan = chan;
         }
       })
-      if (doesChanExist === false) {
-        newChan = await Request(
-          "POST",
-          {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          {
-            name: this.createChanName(ctx.user, u2),
-            type: "direct",
-            user_1_id: ctx.user.auth_id,
-            user_2_id: u2.auth_id,
-          },
-          "http://localhost:3000/chan/createpriv"
-        );
+      if (!doesChanExist) {
+          const channelname: string = await this.createChanName(ctx.user, u2)
+          newChan = await Request(
+              "POST",
+              {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              {
+                name: channelname,
+                type: "direct",
+                user_1_id: ctx.user.auth_id,
+                user_2_id: u2.auth_id,
+              },
+              "http://localhost:3000/chan/createpriv"
+          );
       }
       if (newChan !== undefined)
         window.location.href = "http://localhost:8080/chat/" + newChan.id
