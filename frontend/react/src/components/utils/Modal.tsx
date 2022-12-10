@@ -62,20 +62,22 @@ class Modal extends Component<
   componentDidUpdate(props:any, state:any) {
     const ctx: any = this.context;
     if (state.banned.length !== ctx.bannedFrom.length) {
-      console.log('change state banned')
-      this.setState({ banned: ctx.bannedFrom });
-      /*
+      //this.setState({ banned: ctx.bannedFrom });
+      console.log('modal banned refresh')
       setTimeout(() => {
         this.updateChan()
       }, 10)
-       */
     }
     if (state.joined.length !== ctx.chanFrom.length) {
-      console.log('change state joined')
-      this.setState({ joined: ctx.chanFrom })
+      //this.setState({ joined: ctx.chanFrom })
+      console.log('modal joined refresh')
+      setTimeout(() => {
+        this.updateChan()
+      }, 10)
     }
     if (props.chanList.length !== this.state.allChans.length
     ) {
+      console.log('modal chanlist refresh')
       setTimeout(() => {
         this.updateChan()
       }, 10)

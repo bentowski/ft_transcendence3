@@ -1,7 +1,6 @@
 import { Component, useEffect, useState } from "react";
 import { socket } from '../../contexts/WebSocketContext';
 import { MessagePayload, ChanType, UserType } from "../../types"
-import { AuthContext } from "../../contexts/AuthProviderContext";
 import Request from "../utils/Requests"
 
 class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: UserType[]}> {
@@ -26,7 +25,6 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
 
 	componentDidMount = async () => {
         let users:UserType[] = await Request("GET", {}, {}, "http://localhost:3000/user")
-		console.log(users)
 		this.setState({userList: users})
     }
 
