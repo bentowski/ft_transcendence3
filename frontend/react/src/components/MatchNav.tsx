@@ -4,6 +4,7 @@ import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
 import { ErrorType, PartiesType } from "../types";
 import { AuthContext } from '../contexts/AuthProviderContext';
+import '../styles/components/matchnav.css';
 
 class MatchNav extends Component<{},{}> {
 	static contextType = AuthContext;
@@ -99,6 +100,7 @@ class MatchNav extends Component<{},{}> {
 	render(): JSX.Element {
 		return (
 			<div className="MatchNav h-100" id="MatchNav">
+        <img className="bob" src="/pictures/bob.png" alt="bob" />
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}
