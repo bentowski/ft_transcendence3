@@ -15,11 +15,11 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
     const [list, setList] = useState<JSX.Element[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    //const [loading, setLoading] = useState<boolean>(false);
 
     useEffect((): void => {
         if (show) {
-            setLoading(true);
+            //setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
                     const users: UserType[] = await Request(
@@ -48,9 +48,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                         })
                     }
                     setUsersChan(newArr);
-                    setLoading(false);
+                    //setLoading(false);
                 } catch (error) {
-                    setLoading(false);
+                    //setLoading(false);
                     setError(error);
                 }
             }
@@ -91,6 +91,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 "room": chan,
                 "auth_id": obj.user.auth_id,
                 "action": !obj.isBan });
+            /*
             const newArray: UsersChanBanType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -99,6 +100,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 newArray.push(usersChan[index]);
             }
             setUsersChan(newArray);
+             */
         }
         const listUserCards = (): void => {
             const ret: JSX.Element[] = [];
@@ -170,9 +172,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                     <Modal.Body>
                         <form className="mb-3">
                             <div>
-                                { loading ?
-                                    <p>Please wait...</p>
-                                    : list}
+                                {/* loading ? */}
+                                {/* <p>Please wait...</p> */}
+                                {list}
                             </div>
                         </form>
                     </Modal.Body>

@@ -3,8 +3,10 @@ import React, { ReactNode, useEffect, useState } from "react";
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Modal } from 'react-bootstrap';
-import { UsersChanAdminType, UserType } from "../../types";
+import {ChanType, ErrorType, UsersChanAdminType, UserType} from "../../types";
 import { Link } from "react-router-dom";
+import {Simulate} from "react-dom/test-utils";
+import rateChange = Simulate.rateChange;
 
 const ModalAdminUser = ({
                             chan,
@@ -16,13 +18,31 @@ const ModalAdminUser = ({
 }): JSX.Element => {
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
+    //const [loading, setLoading] = useState<boolean>(false);
     const [list, setList] = useState<ReactNode[]>([]);
+    //const [channel, setChannel] = useState<ChanType>()
     const [usersChan, setUsersChan] = useState<UsersChanAdminType[]>([{user: undefined, isAdmin: false}]);
     const { setError, user, adminFrom } = useAuthData();
 
     useEffect(() => {
-        setLoading(true);
+        //setLoading(true);
+        /*
+        const fetchChannel = async (): Promise<void> => {
+            console.log('CHAN = ', chan)
+            try {
+                const res: ChanType = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/chan/id/" + chan,
+                )
+                setChannel(res);
+            } catch (error) {
+                setError(error);
+            }
+        }
+
+         */
         const fetchOwner = async (): Promise<void> => {
             try {
                 const res: boolean = await Request(
@@ -69,20 +89,71 @@ const ModalAdminUser = ({
                 }
             }
             setUsersChan(newArray);
-            setLoading(false);
+            //setLoading(false);
         }
         fetchOwner();
         if (show) {
             fetchUsersChan();
         }
+        //fetchChannel();
     }, [chan, user, setError, usersInChan, adminFrom, show])
 
+
+
     useEffect((): void => {
-        const adminUser = (obj: any): void => {
+        const checkIfBanned = async (usr: UserType): Promise<boolean> => {
+            let banned: UserType[] = [];
+            try {
+                banned = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/chan/" + chan + "/banned"
+                )
+            } catch (error) {
+                setError(error);
+            }
+            for (let i = 0; i < banned.length; i++) {
+                if (banned[i].auth_id === usr.auth_id) {
+                    return true;
+                }
+            }
+            return false
+        }
+
+        const checkIfMuted = async (usr: UserType): Promise<boolean> => {
+            let muted: UserType[] = [];
+            try {
+                muted = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/chan/" + chan + "/muted"
+                )
+            } catch (error) {
+                setError(error);
+            }
+            for (let i = 0; i < muted.length; i++) {
+                if (muted[i].auth_id === usr.auth_id) {
+                    return true;
+                }
+            }
+            return false
+        }
+        const adminUser = async (obj: any): Promise<void> => {
+            if (await checkIfBanned(obj.user) || await checkIfMuted(obj.user)) {
+                const err: ErrorType = {
+                    statusCode: 400,
+                    message: 'Error while setting user admin: Cant add admin if user is mute or ban'
+                }
+                setError(err);
+                return ;
+            }
             socket.emit('adminToChannel', {
                 "room": chan,
                 "auth_id": obj.user.auth_id,
                 "action": !obj.isAdmin });
+            /*
             const newArray: UsersChanAdminType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -91,6 +162,7 @@ const ModalAdminUser = ({
                 newArray.push(usersChan[index]);
             }
             setUsersChan(newArray);
+             */
         }
 
         const listUserCards = async (): Promise<void> => {
@@ -162,9 +234,9 @@ const ModalAdminUser = ({
                     <Modal.Body>
                         <form className="mb-3">
                             <div>
-                                { loading ?
-                                    <p>Please wait...</p>
-                                    : list}
+                                {/* loading ? */}
+                                {/* <p>Please wait...</p> */}
+                                    {list}
                             </div>
                         </form>
                     </Modal.Body>

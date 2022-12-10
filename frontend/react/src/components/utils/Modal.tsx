@@ -61,7 +61,7 @@ class Modal extends Component<
 
   componentDidUpdate(props:any, state:any) {
     const ctx: any = this.context;
-    if (state.banned !== ctx.bannedFrom) {
+    if (state.banned.length !== ctx.bannedFrom.length) {
       console.log('change state banned')
       //this.setState({ banned: ctx.bannedFrom });
       setTimeout(() => {
