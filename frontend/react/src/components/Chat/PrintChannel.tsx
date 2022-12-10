@@ -7,7 +7,7 @@ import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 
 class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
-
+  
   render(): JSX.Element[] {
     const users: JSX.Element[] = [];
     const actualChan = this.props.usersList;
@@ -23,11 +23,11 @@ class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 }
 
 export const PrintChannel = (
-    {
-      msgInput,
-      value,
-      chanList,
-      user,
+  {
+    msgInput,
+    value,
+    chanList,
+    user,
       room,
       usersInChan,
       currentChan,
@@ -43,6 +43,7 @@ export const PrintChannel = (
           currentChan: any,
           parentCallBack: any
         }): JSX.Element => {
+  const navigate = useNavigate();
   const { mutedFrom } = useAuthData();
 
   const setModalType = (newValue: any): void => {
@@ -116,8 +117,9 @@ export const PrintChannel = (
           parentCallBack.changeActiveRoom("");
           //parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
-          parentCallBack.getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          //parentCallBack.getChan();
+          //window.location.href = "http://localhost:8080/chat"; //!
+          navigate("/chat");
         } else {
           socket.emit("newMessage", {
             chat: value,
@@ -131,7 +133,7 @@ export const PrintChannel = (
       }
       setValue("");
     } else {
-      setValue("Youve been muted");
+      setValue("You've been muted");
       setTimeout(() => {
         setValue("");
       }, 1800)
@@ -162,7 +164,7 @@ export const PrintChannel = (
     )
   };
 
-  if (room) {
+  if (room && room != "null") {
     return (
         <div className="inChat row col-10">
           <div className="d-flex justify-content-start p-0">

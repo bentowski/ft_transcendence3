@@ -48,7 +48,8 @@ export const WebSocket = (): JSX.Element => {
         if (c.chanUser.find((u: UserType) =>
           u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          navigate("/chat")
+          // window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
       })
@@ -108,7 +109,9 @@ export const WebSocket = (): JSX.Element => {
             );
             changeActiveRoom("");
             setRoom("null");
-            window.location.href = "http://localhost:8080/chat"; //!
+            //socket.emit('chanCreated');
+            //window.location.href = "http://localhost:8080/chat"; //!
+            navigate("/chat")
           }
         } catch (error) {
           setError(error);
@@ -175,6 +178,7 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
+          // console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, false)
         } catch (error) {
           setError(error);
