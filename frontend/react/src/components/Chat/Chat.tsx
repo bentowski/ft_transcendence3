@@ -37,10 +37,11 @@ export const WebSocket = (): JSX.Element => {
     socket.on('connect', () => {
     });
     socket.on("userJoinChannel", (obj: any) => {
-      getChan();
       if (user.auth_id === obj.auth_id) {
+        console.log('user joind chan')
         updateChanFromList(obj.chan, true);
       }
+      getChan();
     });
     socket.on("chanDeleted", (/* roomId: string */) => {
       chanList.forEach((c: ChanType) => {
@@ -69,7 +70,6 @@ export const WebSocket = (): JSX.Element => {
 
   useEffect((): () => void => {
     const handleMute = async (obj: PunishSocketType): Promise<void> => {
-      getChan()
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -83,10 +83,11 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan()
     }
     const handleBan = async (obj: PunishSocketType): Promise<void> => {
-      getChan()
-      if (obj.auth_id === user.auth_id){
+      console.log('OOOBJ = ', obj)
+      if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -94,6 +95,7 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
+          console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, obj.action);
           if (obj.action) {
             socket.emit("leaveRoom", {
@@ -110,9 +112,9 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan()
     }
     const handleAdmin = async (obj: PunishSocketType) => {
-      getChan();
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -126,6 +128,7 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan();
     }
     const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
@@ -162,7 +165,6 @@ export const WebSocket = (): JSX.Element => {
 
   useEffect(() => {
     const handleOutBan = async (obj: any) => {
-      getChan()
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -171,14 +173,15 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
+          console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, false)
         } catch (error) {
           setError(error);
         }
       }
+      getChan()
     }
     const handleOutMute = async (obj: any) => {
-      getChan()
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -192,6 +195,7 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan()
     }
     socket.on('timerOutMute', handleOutMute);
     socket.on('timerOutBan', handleOutBan);

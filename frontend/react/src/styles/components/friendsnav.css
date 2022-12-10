@@ -18,3 +18,7 @@ ol {
 .inputDrop {
     transform: translateY(20px);
 } */
+
+.pat {
+    max-width: 50%;
+}

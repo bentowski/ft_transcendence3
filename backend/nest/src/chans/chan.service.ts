@@ -233,7 +233,7 @@ export class ChanService {
 
 	checkIfUserIsBanned(chan: ChanEntity, user: UserEntity) {
 		for (let i: number = 0; i < chan.banUser.length; i++) {
-			if (chan.banUser[i] === user) {
+			if (chan.banUser[i].auth_id === user.auth_id) {
 				return true;
 			}
 		}
@@ -242,7 +242,7 @@ export class ChanService {
 
 	checkIfUserIsMuted(chan: ChanEntity, user: UserEntity) {
 		for (let i: number = 0; i < chan.muteUser.length; i++) {
-			if (chan.muteUser[i] === user) {
+			if (chan.muteUser[i].auth_id === user.auth_id) {
 				return true;
 			}
 		}

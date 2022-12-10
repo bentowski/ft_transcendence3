@@ -344,8 +344,9 @@ export class ChatGateway implements OnModuleInit
                         auth_id: body.auth_id,
                         action: body.action
                     });
-            if (body.action === true)
+            if (body.action === true) {
                 this.launchCounterBan(client, body.auth_id, body.room);
+            }
         } catch (error) {
             this.server
                 .to(body.room)

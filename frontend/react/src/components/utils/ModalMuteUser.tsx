@@ -13,12 +13,12 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
     const { user, setError } = useAuthData();
     const [ show, setShow ] = useState<boolean>(false);
     const [ usersChan, setUsersChan ] = useState<UsersChanMuteType[]>([{user: undefined, isMute:false}]);
-    const [ loading, setLoading ] = useState<boolean>(false);
+    //const [ loading, setLoading ] = useState<boolean>(false);
     const [ list, setList ] = useState<any[]>([]);
 
     useEffect((): void => {
         if (show) {
-            setLoading(true);
+            //setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
                     const users: UserType[] = await Request(
@@ -41,9 +41,9 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                         })
                     }
                     setUsersChan(newArray);
-                    setLoading(false);
+                    //setLoading(false);
                 } catch (error) {
-                    setLoading(false);
+                    //setLoading(false);
                     setError(error);
                 }
             }
@@ -84,6 +84,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 "room": chan,
                 "auth_id": obj.user.auth_id,
                 "action": !obj.isMute });
+            /*
             const newArray: UsersChanMuteType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -92,6 +93,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 newArray.push(usersChan[index]);
             }
             setUsersChan(newArray);
+             */
         }
         const listUserCards = async (): Promise<void> => {
             const ret: ReactNode[] = []
@@ -166,10 +168,9 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                     <Modal.Body>
                         <form className="mb-3">
                             <div>
-                                { loading ?
-                                    <p>please wait...</p>
-                                    : list
-                                }
+                                {/* loading ? */}
+                                {/* <p>please wait...</p> */}
+                                {list}
                             </div>
                         </form>
                     </Modal.Body>

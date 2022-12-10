@@ -10,6 +10,7 @@ import ModalMatchInvite from "./ModalMatchInvite";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
+const socketChat = io("http://localhost:3000/chat");
 
 class UserCards extends Component<
   { user: any, avatar: any, stat: any },
@@ -125,22 +126,24 @@ class UserCards extends Component<
       if (!doesChanExist) {
           const channelname: string = await this.createChanName(ctx.user, u2)
           newChan = await Request(
-              "POST",
-              {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-              {
-                name: channelname,
-                type: "direct",
-                user_1_id: ctx.user.auth_id,
-                user_2_id: u2.auth_id,
-              },
-              "http://localhost:3000/chan/createpriv"
-          );
+            "POST",
+            {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            {
+              name: channelname,
+              type: "direct",
+              user_1_id: ctx.user.auth_id,
+              user_2_id: u2.auth_id,
+            },
+            "http://localhost:3000/chan/createpriv"
+            );
+          socketChat.emit("chanCreated", {chan: newChan, auth_id: u2.auth_id});
       }
-      if (newChan !== undefined)
+      if (newChan !== undefined) {
         window.location.href = "http://localhost:8080/chat/" + newChan.id
+      }
     } catch (error) {
       ctx.setError(error);
     }

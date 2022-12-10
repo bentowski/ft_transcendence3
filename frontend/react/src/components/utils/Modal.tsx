@@ -61,19 +61,19 @@ class Modal extends Component<
 
   componentDidUpdate(props:any, state:any) {
     const ctx: any = this.context;
-    if (state.banned !== ctx.bannedFrom) {
+    if (state.banned.length !== ctx.bannedFrom.length) {
       console.log('change state banned')
-      //this.setState({ banned: ctx.bannedFrom });
+      this.setState({ banned: ctx.bannedFrom });
+      /*
       setTimeout(() => {
         this.updateChan()
       }, 10)
+       */
     }
-    /*
-    if (state.joined !== ctx.chanFrom) {
+    if (state.joined.length !== ctx.chanFrom.length) {
       console.log('change state joined')
       this.setState({ joined: ctx.chanFrom })
     }
-     */
     if (props.chanList.length !== this.state.allChans.length
     ) {
       setTimeout(() => {
@@ -171,7 +171,10 @@ class Modal extends Component<
     this.setState({ friends: ctx.userList, allChans: chans });
     this.chans();
    }
+
+
   componentDidMount = () => {
+
     this.updateChan();
   };
 
@@ -456,10 +459,10 @@ class Modal extends Component<
   };
 
   checkIfBanned = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const banned: ChanType[] = ctx.bannedFrom;
-    for (let index: number = 0; index < banned.length; index++) {
-      if (chan.id === banned[index].id) {
+    //const ctx: any = this.context;
+    //const banned: ChanType[] = ctx.bannedFrom;
+    for (let index: number = 0; index < this.state.banned.length; index++) {
+      if (chan.id === this.state.banned[index].id) {
         return true;
       }
     }
@@ -467,10 +470,10 @@ class Modal extends Component<
   }
 
   checkIfAlreadyIn = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const joined: ChanType[] = ctx.chanFrom;
-    for (let index: number = 0; index < joined.length; index++) {
-      if (chan.id === joined[index].id) {
+    //const ctx: any = this.context;
+    //const joined: ChanType[] = ctx.chanFrom;
+    for (let index: number = 0; index < this.state.joined.length; index++) {
+      if (chan.id === this.state.joined[index].id) {
         return true;
       }
     }
