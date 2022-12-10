@@ -63,18 +63,18 @@ const printGame = (ctx: any) => {
 	let y = 0;
   if (settings.spec === false) {
     let move = 0;
-      if (settings.up == 1)  {
-        movePlayer(ctx, -1, settings)
-        move += 1;
-      }
-      if (settings.down == 1) {
-        movePlayer(ctx, 1, settings)
-        move += 1;
-      }
-      if (move === 1) {
-        socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "p1": settings.p1, "p2": settings.p2, "player": settings.currentUser, "room": settings.room})
-      }
+    if (settings.up == 1)  {
+      movePlayer(ctx, -1, settings)
+      move += 1;
     }
+    if (settings.down == 1) {
+      movePlayer(ctx, 1, settings)
+      move += 1;
+    }
+    if (move === 1) {
+      socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "p1": settings.p1, "p2": settings.p2, "player": settings.currentUser, "room": settings.room})
+    }
+  }
   ctx.clearRect(0, 0, settings.w, settings.h)
   while (y <= settings.h) {
     ctx.fillStyle = "white"
@@ -109,8 +109,8 @@ let movePlayer = (ctx: any, move: number, settings: any) => {
 
 const start = (ctx: any) => {
 	socket.off('Start')
-	socket.on('moveBall', (ball, round) => {
-    console.log("moveBall")
+	socket.on('ballMoved', (ball, round) => {
+    console.log("ballMoved")
 	    if (ball.room === settings.room)
 			{
 				settings.ballPos[0] = ball.ballPos[0] * settings.w;

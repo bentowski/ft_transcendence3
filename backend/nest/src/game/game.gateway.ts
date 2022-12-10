@@ -3,8 +3,9 @@ import {
  SubscribeMessage,
  WebSocketGateway,
  WebSocketServer,
- MessageBody,
+ MessageBody
 } from '@nestjs/websockets';
+import { Interval } from '@nestjs/schedule';
 import { Socket, Server } from 'socket.io';
 import { PartiesService } from '../parties/parties.service';
 // import { ChanService } from '../chans/chan.service';
@@ -76,6 +77,12 @@ export class GameGateway implements OnModuleInit
   onBallMove(@MessageBody() body: any) {
     this.server.to(body.room).emit('ballMoved', body)
   }
+
+  @Interval(1000)
+   loop(): void {
+     for (const room of this.rooms.values())
+       if (room.state == State.INGAME) this.pong.update(room);
+   }
 
   // @SubscribeMessage('gameover')
   // gameOver(@MessageBody() body: any) {

@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PartiesService } from '../parties/parties.service';
+import { Room } from './room.interface';
 
 @Injectable()
 export class GameService {
  constructor() {}
 
+ rooms: Map<string, Room> = new Map();
 
  initGame(p1: string, p2: string) {
    let sizeBall = 3;
