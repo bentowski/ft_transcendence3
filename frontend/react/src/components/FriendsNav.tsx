@@ -13,8 +13,8 @@ class FriendsNav extends Component<{}, {
   alert: boolean,
 }> {
   static contextType = AuthContext;
-  constructor(props: any) {
-    super(props)
+  constructor(props: any, context: any) {
+    super(props, context)
     this.state = {
       friends: [],
       filteredList: [],
@@ -25,7 +25,7 @@ class FriendsNav extends Component<{}, {
 
   componentDidUpdate(
       prevProps: Readonly<{
-        
+
       }>,
       prevState: Readonly<{
         uslist: Array<UserType>;
