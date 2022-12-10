@@ -174,7 +174,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                             <div>
                                 {/* loading ? */}
                                 {/* <p>Please wait...</p> */}
-                                {list}
+                                    {list}
                             </div>
                         </form>
                     </Modal.Body>

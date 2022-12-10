@@ -59,9 +59,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const handleUpdateFriends = (obj: any) => {
       if (user.auth_id === obj.curuser.auth_id) {
         updateFriendsList(obj.friuser, obj.action);
+        return ;
       }
       if (user.auth_id === obj.friuser.auth_id) {
         updateFriendsList(obj.curuser, obj.action);
+        return ;
       }
     }
     socket.on('onUpdateFriend', handleUpdateFriends);
