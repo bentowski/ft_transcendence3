@@ -7,9 +7,11 @@ import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
-
+  
   render(): JSX.Element[] {
     const users: JSX.Element[] = [];
     const actualChan = this.props.usersList;
@@ -25,11 +27,11 @@ class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 }
 
 export const PrintChannel = (
-    {
-      msgInput,
-      value,
-      chanList,
-      user,
+  {
+    msgInput,
+    value,
+    chanList,
+    user,
       room,
       usersInChan,
       currentChan,
@@ -45,6 +47,7 @@ export const PrintChannel = (
           currentChan: any,
           parentCallBack: any
         }): JSX.Element => {
+  const navigate = useNavigate();
   const { mutedFrom, bannedFrom, setError } = useAuthData();
 
   const setModalType = (newValue: any): void => {
@@ -119,7 +122,8 @@ export const PrintChannel = (
           //parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
           parentCallBack.getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          //window.location.href = "http://localhost:8080/chat"; //!
+          navigate("/chat");
         } else {
           socket.emit("newMessage", {
             chat: value,
@@ -164,7 +168,7 @@ export const PrintChannel = (
     )
   };
 
-  if (room) {
+  if (room && room != "null") {
     return (
         <div className="inChat row col-10">
           <div className="d-flex justify-content-start p-0">

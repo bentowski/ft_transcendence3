@@ -48,7 +48,8 @@ export const WebSocket = (): JSX.Element => {
         if (c.chanUser.find((u: UserType) =>
           u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          navigate("/chat")
+          // window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
       })
