@@ -29,6 +29,19 @@ export class GameGateway implements OnModuleInit
 
   rooms: Map<string, Room> = new Map();
 
+  //
+  // @Interval(1000)
+  //  loop(): void {
+  //    console.log("test")
+  //    for (const room of this.rooms.values())
+  //    {
+  //      console.log(room.code);
+  //      if (room.state == State.INGAME)
+  //      {
+  //        console.log(room.code);
+  //      }
+  //    }
+  //  }
 
   @WebSocketServer()
   server: Server
@@ -83,16 +96,6 @@ export class GameGateway implements OnModuleInit
     this.server.to(body.room).emit('ballMoved', body)
   }
 
-  @Interval(1000)
-   loop(): void {
-     for (const room of this.rooms.values())
-       if (room.state == State.INGAME)
-       {
-         console.log(room.code);
-       }
-        // this.pong.update(room);
-   }
-
    getRoom(code: string): Room {
      return this.rooms.get(code);
    }
@@ -118,8 +121,9 @@ export class GameGateway implements OnModuleInit
    }
 
    startGame(room: Room): void {
-     if (room.state != State.STARTING) return;
+     // if (room.state != State.STARTING) return;
      // this.resetBall(room);
+     console.log("pretty")
      room.state = State.INGAME;
      this.update(room);
      // room.state = State.COUNTDOWN;
@@ -156,7 +160,8 @@ export class GameGateway implements OnModuleInit
   //   return { x: Math.cos(radian) * speed, y: Math.sin(radian) * speed };
   // };
 
-  update(room: Room): any {
+  async update(room: Room): any {
+    console.log("works")
     // ======== New position Ball ============
 
    // =============== scores ================
@@ -167,6 +172,8 @@ export class GameGateway implements OnModuleInit
 
 
    //====== Envoyer position ball =========
+   await setTimeout(() => {}, 1000)
+   this.update(room)
  }
 
  stopGame()
