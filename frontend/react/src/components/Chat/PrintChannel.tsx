@@ -25,31 +25,27 @@ class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 }
 
 export const PrintChannel = (
-  {
-    msgInput,
-    value,
-    chanList,
-    user,
-    room,
-    usersInChan,
-    currentChan,
-    parentCallBack
-  }:
     {
-      msgInput: any,
-      value: any,
-      chanList: ChanType[],
-      user: UserType,
-      room: any,
-      usersInChan: UserType[],
-      currentChan: any,
-      parentCallBack: any,
-    }): JSX.Element => {
-  const [show, setShow] = useState<boolean>(false);
-  const [alert, setAlert] = useState<boolean>(false);
-  const [err, setErr] = useState<string>("");
-
-  const { setError } = useAuthData();
+      msgInput,
+      value,
+      chanList,
+      user,
+      room,
+      usersInChan,
+      currentChan,
+      parentCallBack
+    }:
+        {
+          msgInput: any,
+          value: any,
+          chanList: ChanType[],
+          user: UserType,
+          room: any,
+          usersInChan: UserType[],
+          currentChan: any,
+          parentCallBack: any
+        }): JSX.Element => {
+  const { mutedFrom, bannedFrom, setError } = useAuthData();
 
   const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
@@ -96,10 +92,10 @@ export const PrintChannel = (
     let mutedList: ChanType[] = [];
     try {
       mutedList = await Request(
-        "GET",
-        {},
-        {},
-        "http://localhost:3000/user/chan/muted"
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/chan/muted"
       )
     } catch (error) {
       setError(error);
@@ -115,48 +111,32 @@ export const PrintChannel = (
 
   const onSubmit = (): void => {
     // check if array is empty or contain only whitespace
-    // var regex: RegExp = /^[\w-]+$/
-    var minmax: RegExp = /^.{1,150}$/
-
-    if (await checkIfMuted()) {
-      // setValue("Youve been muted");
-      // setTimeout(() => {
-      //   setValue("");
-      // }, 1800)
-      setErr("Youve been muted");
-      setAlert(true);
-      setValue("");
-    } else {
-      if (!minmax.test(value)) {
-        setValue("");
-        setErr("The message must contains between 1 and 150 characters")
-        setAlert(true);
-      }
-      else {
-        if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
-          if (value === "/leave") {
-            socket.emit("leaveRoom", { room: room, auth_id: user.auth_id });
-            parentCallBack.changeActiveRoom("");
-            //parentCallBack.setMessage([]);
-            parentCallBack.setRoom("null");
-            parentCallBack.getChan();
-            window.location.href = "http://localhost:8080/chat"; //!
-          } else {
-            socket.emit("newMessage", {
-              chat: value,
-              sender_socket_id: user.auth_id,
-              username: user.username,
-              avatar: user.avatar,
-              auth_id: user.auth_id,
-              room: room,
-            });
-            // handleClose();
-            setAlert(false);
-            setErr("")
-          }
+    if (!checkIfMuted()) {
+      if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
+        if (value === "/leave") {
+          socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
+          parentCallBack.changeActiveRoom("");
+          //parentCallBack.setMessage([]);
+          parentCallBack.setRoom("null");
+          parentCallBack.getChan();
+          window.location.href = "http://localhost:8080/chat"; //!
+        } else {
+          socket.emit("newMessage", {
+            chat: value,
+            sender_socket_id: user.auth_id,
+            username: user.username,
+            avatar: user.avatar,
+            auth_id: user.auth_id,
+            room: room,
+          });
         }
       }
-      // setValue("");
+      setValue("");
+    } else {
+      setValue("Youve been muted");
+      setTimeout(() => {
+        setValue("");
+      }, 1800)
     }
   };
 
@@ -166,98 +146,74 @@ export const PrintChannel = (
     }
   };
 
-  const handleClose = (): void => {
-    setShow(false);
-  }
-
-  const handleShow = (): void => {
-    setShow(true);
-  }
-
-  const closeAlert = (): void => {
-    setAlert(false);
-  }
-
   const printName = (): JSX.Element => {
     if (currentChan.type === "direct") {
       if (user.auth_id === currentChan.chanUser[0].auth_id) {
         return (
-          <h3>{currentChan.chanUser[1].username}</h3>
+            <h3>{currentChan.chanUser[1].username}</h3>
         )
       }
       else {
         return (
-          <h3>{currentChan.chanUser[0].username}</h3>
+            <h3>{currentChan.chanUser[0].username}</h3>
         )
       }
     }
     return (
-      <h3>{currentChan.name}</h3>
+        <h3>{currentChan.name}</h3>
     )
   };
 
   if (room) {
     return (
-      <div className="inChat row col-10">
-        <div className="d-flex justify-content-start p-0">
-          {printName()}
-        </div>
-        <div className="chatMain col-10">
-          <PrintHeaderChan
-            chanList={chanList}
-            usersInChan={usersInChan}
-            room={room}
-            socket={socket}
-            user={user}
-            parentCallBack={{ setModalType, setModalTitle }} />
-          <div className="row">
-            <div>
-              <PrintMessages
-                user={user}
-                currentChan={currentChan}
+        <div className="inChat row col-10">
+          <div className="d-flex justify-content-start p-0">
+            {printName()}
+          </div>
+          <div className="chatMain col-10">
+            <PrintHeaderChan
                 chanList={chanList}
-                parentCallBack={{ setChanList }} />
-              <div className="row">
-                <div>
-                  <input
-                    id="message"
-                    ref={msgInput}
-                    className="col-10"
-                    type="text"
-                    placeholder="type your message"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    onKeyDown={pressEnter}
-                  />
-                  <button className="col-1" onClick={onSubmit}>Send</button>
-                </div>
-                <div>
-                  {alert ?
-                    <Alert
-                      onClose={closeAlert}
-                      variant="danger"
-                      dismissible>{err}</Alert> :
-                    // dismissible>{"The message must contains between 1 and 150 characters"}</Alert> :
-                    // <Alert onClose={closeAlert} variant="danger" dismissible>{alertMsg}</Alert> :
-                    <div />
-                  }
+                usersInChan={usersInChan}
+                room={room}
+                socket={socket}
+                user={user}
+                parentCallBack={{ setModalType, setModalTitle }} />
+            <div className="row">
+              <div>
+                <PrintMessages
+                    user={user}
+                    currentChan={currentChan}
+                    chanList={chanList}
+                    parentCallBack={{ setChanList }} />
+                <div className="row">
+                  <div>
+                    <input
+                        id="message"
+                        ref={msgInput}
+                        className="col-10"
+                        type="text"
+                        placeholder="type your message"
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        onKeyDown={pressEnter}
+                    />
+                    <button className="col-1" onClick={onSubmit}>Send</button>
+                  </div>
                 </div>
               </div>
             </div>
+          </div> {/*fin chatMain*/}
+          <div className="chatMembers col-2 p-0">
+            <p> Channel's members ({usersInChan.length}) </p>
+            <UsersInActualchannel usersList={usersInChan} />
           </div>
-        </div> {/*fin chatMain*/}
-        <div className="chatMembers col-2 p-0">
-          <p> Channel's members ({usersInChan.length}) </p>
-          <UsersInActualchannel usersList={usersInChan} />
         </div>
-      </div>
     )
   } else {
     return (
-      <div>
-      </div>
+        <div>
+        </div>
     )
   }
 }
-
 export default PrintChannel;

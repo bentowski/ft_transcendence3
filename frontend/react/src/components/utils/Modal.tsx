@@ -462,7 +462,7 @@ class Modal extends Component<
     //const ctx: any = this.context;
     //const banned: ChanType[] = ctx.bannedFrom;
     for (let index: number = 0; index < this.state.banned.length; index++) {
-      if (chan.id === banned[index].id) {
+      if (chan.id === this.state.banned[index].id) {
         return true;
       }
     }
@@ -473,7 +473,7 @@ class Modal extends Component<
     //const ctx: any = this.context;
     //const joined: ChanType[] = ctx.chanFrom;
     for (let index: number = 0; index < this.state.joined.length; index++) {
-      if (chan.id === joined[index].id) {
+      if (chan.id === this.state.joined[index].id) {
         return true;
       }
     }
