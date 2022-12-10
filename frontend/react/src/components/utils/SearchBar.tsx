@@ -1,6 +1,5 @@
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Request from "./Requests"
-import /* socket, */ {WebsocketContextUpdate} from '../../contexts/WebSocketContextUpdate';
 import { PartiesType } from "../../types";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { io } from "socket.io-client";

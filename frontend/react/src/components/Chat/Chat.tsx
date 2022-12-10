@@ -3,7 +3,7 @@ import { useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import { ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
+import { ChanType, UserType, ErrorType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { ChannelList } from './ChannelList'
 import { PrintChannel } from './PrintChannel'
@@ -37,9 +37,9 @@ export const WebSocket = (): JSX.Element => {
     socket.on('connect', () => {
     });
     socket.on("userJoinChannel", (obj: any) => {
-      if (user.auth_id === obj.auth_id) {
-        console.log('user joind chan')
-        updateChanFromList(obj.chan, true);
+      if (user.auth_id === obj.userid) {
+          console.log('user ', user.auth_id, ' is joinin chan ', obj.chan)
+          updateChanFromList(obj.chan, true);
       }
       getChan();
     });
@@ -48,12 +48,17 @@ export const WebSocket = (): JSX.Element => {
         if (c.chanUser.find((u: UserType) =>
           u.auth_id === user.auth_id) !== undefined) {
           getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          navigate("/chat")
+          // window.location.href = "http://localhost:8080/chat"; //!
           return ;
         }
       })
     })
-    socket.on("userLeaveChannel", () => {
+    socket.on("userLeaveChannel", (obj: any) => {
+      if (user.auth_id === obj.userid) {
+        console.log('user ', user.auth_id, ' is livin chan ', obj.chan.id)
+        updateChanFromList(obj.chan, false);
+      }
       getChan();
       //window.location.replace("http://localhost:8080/chat");
       //navigate("/chat/")
@@ -69,7 +74,7 @@ export const WebSocket = (): JSX.Element => {
   });
 
   useEffect((): () => void => {
-    const handleMute = async (obj: PunishSocketType): Promise<void> => {
+    const handleMute = async (obj: any): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -85,8 +90,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleBan = async (obj: PunishSocketType): Promise<void> => {
-      console.log('OOOBJ = ', obj)
+    const handleBan = async (obj: any): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -95,18 +99,19 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('banning user from chan ', chan.id, obj.action)
+          console.log('user ', user.auth_id, ' is banned from ', obj.room)
           updateBannedFromList(chan, obj.action);
           if (obj.action) {
             socket.emit("leaveRoom", {
               room: room,
-              auth_id: user.auth_id}
+              auth_id: user.auth_id
+            }
             );
-            updateChanFromList(chan, false);
             changeActiveRoom("");
             setRoom("null");
             //socket.emit('chanCreated');
-            window.location.href = "http://localhost:8080/chat"; //!
+            //window.location.href = "http://localhost:8080/chat"; //!
+            navigate("/chat")
           }
         } catch (error) {
           setError(error);
@@ -114,7 +119,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleAdmin = async (obj: PunishSocketType) => {
+    const handleAdmin = async (obj: any) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -173,7 +178,7 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('banning user from chan ', chan.id, obj.action)
+          // console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, false)
         } catch (error) {
           setError(error);
@@ -209,6 +214,7 @@ export const WebSocket = (): JSX.Element => {
     updateBannedFromList,
     user,
     socket])
+
 
   useEffect((): void => {
     getChan();
@@ -281,7 +287,7 @@ export const WebSocket = (): JSX.Element => {
         );
           socket.emit('chanCreated', {
             chan: chanCreated,
-            userid: user.auth_id,
+            auth_id: user.auth_id,
           });
           //updateAllChans();
           updateAdminFromList(chanCreated, true);

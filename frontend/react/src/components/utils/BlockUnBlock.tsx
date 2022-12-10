@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-//import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 import { io } from "socket.io-client";
 
 const socket = io('http://localhost:3000/update')
@@ -46,7 +45,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
         return () => {
             socket.off('onUpdateBlocked', handleUpdateBlocked);
         }
-    },[socket, updateBlockedList, user, blockedList])
+    },[updateBlockedList, user, blockedList])
 
     const blockunblockUser = async (): Promise<void> => {
         socket.emit('updateBlocked', {

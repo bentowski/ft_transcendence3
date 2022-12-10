@@ -88,9 +88,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 return ;
             }
             socket.emit('banToChannel', {
-                "room": chan,
-                "auth_id": obj.user.auth_id,
-                "action": !obj.isBan });
+                room: chan,
+                auth_id: obj.user.auth_id,
+                action: !obj.isBan });
             /*
             const newArray: UsersChanBanType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
@@ -104,8 +104,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
         }
         const listUserCards = (): void => {
             const ret: JSX.Element[] = [];
+
             for(let x: number = 0; x < usersChan.length; x++) {
-                if (usersChan[x].user && usersChan[x].user?.username !== user.username) {
+                if (usersChan[x].user && usersChan[x].user?.auth_id !== user.auth_id) {
                     ret.push(
                         <div
                             key={x}
