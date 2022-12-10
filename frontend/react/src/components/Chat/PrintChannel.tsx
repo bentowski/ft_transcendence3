@@ -121,7 +121,7 @@ export const PrintChannel = (
           parentCallBack.changeActiveRoom("");
           //parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
-          parentCallBack.getChan();
+          //parentCallBack.getChan();
           //window.location.href = "http://localhost:8080/chat"; //!
           navigate("/chat");
         } else {
@@ -137,7 +137,7 @@ export const PrintChannel = (
       }
       setValue("");
     } else {
-      setValue("Youve been muted");
+      setValue("You've been muted");
       setTimeout(() => {
         setValue("");
       }, 1800)
