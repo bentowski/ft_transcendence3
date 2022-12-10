@@ -74,15 +74,15 @@ a:active {
 	/* color: orangered; */
 }
 
-.logoutMenu:hover p {
+/* .logoutMenu:hover p { */
 	/* color: orangered; */
-	text-decoration: underline;
+	/* text-decoration: underline;
 	text-decoration-thickness: 2px;
-}
-
+} */
+/* 
 .logoutMenu:active p {
   color: white;
-}
+} */
 
 ul {
 	padding: 0;
