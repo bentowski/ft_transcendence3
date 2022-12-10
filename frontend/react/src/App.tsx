@@ -64,9 +64,9 @@ const App = (): JSX.Element => {
             {/* </Route> */}
             <Route path="history" element={<Stats />} />
             {/* <Route path="game/" element={<Game />} > */}
-              <Route path="game/*" element={<Game />} />
             {/* </Route> */}
           </Route>
+          <Route path="game/*" element={<Game />} />
         </Route>
       </Route>
 
