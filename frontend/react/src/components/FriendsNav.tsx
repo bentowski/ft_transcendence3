@@ -13,8 +13,8 @@ class FriendsNav extends Component<{}, {
   alert: boolean,
 }> {
   static contextType = AuthContext;
-  constructor(props: any) {
-    super(props)
+  constructor(props: any, context: any) {
+    super(props, context)
     this.state = {
       friends: [],
       filteredList: [],
@@ -24,7 +24,9 @@ class FriendsNav extends Component<{}, {
   }
 
   componentDidUpdate(
-      prevProps: Readonly<{}>,
+      prevProps: Readonly<{
+
+      }>,
       prevState: Readonly<{
         uslist: Array<UserType>;
         filteredList: Array<UserType>;
@@ -81,6 +83,14 @@ class FriendsNav extends Component<{}, {
           },
           "http://localhost:3000/user/update/friends"
         )
+        ctx.updateFriendsList(userToAdd, true);
+        let newFriendsArray = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/user/" + currentUser.auth_id + "/getfriends",
+        )
+        this.setState({friends: newFriendsArray})
         input.value = '';
       }
       else {

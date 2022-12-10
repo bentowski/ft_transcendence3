@@ -171,6 +171,8 @@ class Modal extends Component<
     this.setState({ friends: ctx.userList, allChans: chans });
     this.chans();
    }
+
+
   componentDidMount = () => {
 
     this.updateChan();
@@ -457,9 +459,9 @@ class Modal extends Component<
   };
 
   checkIfBanned = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const banned: ChanType[] = ctx.bannedFrom;
-    for (let index: number = 0; index < banned.length; index++) {
+    //const ctx: any = this.context;
+    //const banned: ChanType[] = ctx.bannedFrom;
+    for (let index: number = 0; index < this.state.banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
       }
@@ -468,9 +470,9 @@ class Modal extends Component<
   }
 
   checkIfAlreadyIn = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const joined: ChanType[] = ctx.chanFrom;
-    for (let index: number = 0; index < joined.length; index++) {
+    //const ctx: any = this.context;
+    //const joined: ChanType[] = ctx.chanFrom;
+    for (let index: number = 0; index < this.state.joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;
       }
