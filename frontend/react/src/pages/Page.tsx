@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import Menu from "../components/Menu";
 import MatchNav from "../components/MatchNav";
 import FriendsNav from "../components/FriendsNav";
+import "../styles/pages/page.css"
+
 
 class Page extends Component {
   render(): JSX.Element {
