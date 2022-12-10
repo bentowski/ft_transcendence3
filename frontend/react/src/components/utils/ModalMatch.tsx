@@ -28,7 +28,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           "Content-Type": "application/json",
         },
         {
-          login: currentUser.user.username,
+          login: currentUser.username,
           public: true
         },
         "http://localhost:3000/parties/create"
