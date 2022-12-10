@@ -36,6 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const location: any = useLocation();
   //const socket = useContext(WebsocketContextUpdate);
 
+
+
   const updateFriendsList = useCallback((
       usr: UserType,
       action: boolean): void => {

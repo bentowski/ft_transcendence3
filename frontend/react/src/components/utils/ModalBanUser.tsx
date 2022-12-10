@@ -88,9 +88,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 return ;
             }
             socket.emit('banToChannel', {
-                "room": chan,
-                "auth_id": obj.user.auth_id,
-                "action": !obj.isBan });
+                room: chan,
+                auth_id: obj.user.auth_id,
+                action: !obj.isBan });
             /*
             const newArray: UsersChanBanType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {

@@ -392,18 +392,20 @@ export class ChatGateway implements OnModuleInit
 
     @SubscribeMessage('leaveRoom')
     async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
-  	// client.leave(body.room);
   	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
-    //const chan: ChanEntity = await this.chanService.findOnebyID(body.room);
-    await this.chanService.delUserToChannel(usr, body.room)
+    const chan: ChanEntity = await this.chanService.delUserToChannel(usr, body.room)
+        this.server.emit('userLeaveChannel', {
+            userid: body.auth_id,
+            chan: chan,
+        })
   	client.emit('leftRoom', {room: ChanEntity});
   }
 
   @SubscribeMessage('chanCreated')
   onChanCreated(client: Socket, obj: { chan: ChanEntity, auth_id: string }): void {
-  	this.server.emit('userJoinChannel', {
-        "chanid": obj.chan,
-        "userid": obj.auth_id,
+      this.server.emit('userJoinChannel', {
+        chan: obj.chan,
+        userid: obj.auth_id,
     });
   }
 

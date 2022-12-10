@@ -37,9 +37,8 @@ export const WebSocket = (): JSX.Element => {
     socket.on('connect', () => {
     });
     socket.on("userJoinChannel", (obj: any) => {
-      if (user.auth_id === obj.auth_id) {
-        console.log('user joind chan')
-        updateChanFromList(obj.chan, true);
+      if (user.auth_id === obj.userid) {
+          updateChanFromList(obj.chan, true);
       }
       getChan();
     });
@@ -53,7 +52,10 @@ export const WebSocket = (): JSX.Element => {
         }
       })
     })
-    socket.on("userLeaveChannel", () => {
+    socket.on("userLeaveChannel", (obj: any) => {
+      if (user.auth_id === obj.userid) {
+          updateChanFromList(obj.chan, false);
+      }
       getChan();
       //window.location.replace("http://localhost:8080/chat");
       //navigate("/chat/")
@@ -85,8 +87,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleBan = async (obj: PunishSocketType): Promise<void> => {
-      console.log('OOOBJ = ', obj)
+    const handleBan = async (obj: any): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -95,17 +96,15 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, obj.action);
           if (obj.action) {
             socket.emit("leaveRoom", {
               room: room,
-              auth_id: user.auth_id}
+              auth_id: user.auth_id
+            }
             );
-            updateChanFromList(chan, false);
             changeActiveRoom("");
             setRoom("null");
-            //socket.emit('chanCreated');
             window.location.href = "http://localhost:8080/chat"; //!
           }
         } catch (error) {
@@ -163,6 +162,7 @@ export const WebSocket = (): JSX.Element => {
     updateMutedFromList,
     user]);
 
+
   useEffect(() => {
     const handleOutBan = async (obj: any) => {
       if (obj.auth_id === user.auth_id) {
@@ -173,7 +173,6 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, false)
         } catch (error) {
           setError(error);
@@ -209,6 +208,7 @@ export const WebSocket = (): JSX.Element => {
     updateBannedFromList,
     user,
     socket])
+
 
   useEffect((): void => {
     getChan();
@@ -281,7 +281,7 @@ export const WebSocket = (): JSX.Element => {
         );
           socket.emit('chanCreated', {
             chan: chanCreated,
-            userid: user.auth_id,
+            auth_id: user.auth_id,
           });
           //updateAllChans();
           updateAdminFromList(chanCreated, true);
