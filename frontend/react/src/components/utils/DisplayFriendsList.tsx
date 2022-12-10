@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import UserCards from "./UserCards";
-import {UserType} from "../../types";
+import { UserType } from "../../types";
+import '../../styles/components/utils/friendsList.css'
 
 const DisplayFriendsList = (): JSX.Element => {
     const { friendsList, setError } = useAuthData();
@@ -11,7 +12,7 @@ const DisplayFriendsList = (): JSX.Element => {
 
 
     useEffect((): void => {
-        const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
+        const fetchUser = async (auth_id: string): Promise<UserType | undefined> => {
             try {
                 const usr: UserType = await Request(
                     "GET",
@@ -34,13 +35,17 @@ const DisplayFriendsList = (): JSX.Element => {
                 }
             }
             setResult(cards);
-            return ;
+            return;
         }
         getresults();
     }, [setError, friendsList])
 
-    return <div>
+    return (
+        <div className="FriendsList">
+            <div className="divFriendsList">
                 {result}
-           </div>
+            </div>
+        </div>
+    )
 }
 export default DisplayFriendsList;

@@ -184,7 +184,7 @@ export const PrintChannel = (
           }
         }
       }
-      // setValue("");
+      setValue("");
     }
   };
 

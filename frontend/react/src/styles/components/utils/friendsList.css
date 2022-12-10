@@ -1,0 +1,14 @@
+.FriendsList {
+  overflow-y: scroll;
+  max-height: 50vh;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.FriendsList::-webkit-scrollbar {
+  display: none;
+}
+
+.divFriendsList {
+  max-width: 96%;
+}

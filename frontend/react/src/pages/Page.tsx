@@ -7,7 +7,7 @@ import FriendsNav from "../components/FriendsNav";
 class Page extends Component {
   render(): JSX.Element {
     return (
-      <div className="Page p-4 d-flex flex-column bg-image">
+      <div className="Page d-flex flex-column bg-image">
     		<div id="background-wrap">
     			<div className="bubble blur x1"></div>
         		<div className="bubble blur x2"></div>
@@ -21,14 +21,14 @@ class Page extends Component {
         		<div className="bubble blur x10"></div>
     		</div>
         <Menu />
-        <div className="main front row h-100">
-          <div className="mt-4 col-sm-12 order-2 col-lg-3 order-lg-1">
+        <div className="front row">
+          <div className="col-sm-12 order-2 col-lg-3 order-lg-1">
             <MatchNav />
           </div>
-          <div className="mt-4 col-sm-12 order-1 col-lg-6 order-lg-2" id="mainDiv">
+          <div className="col-sm-12 order-1 col-lg-6 order-lg-2" id="mainDiv">
             <Outlet />
           </div>
-          <div className="mt-4 col-sm-12 col-lg-3 order-3">
+          <div className="col-sm-12 col-lg-3 order-3">
             <FriendsNav />
           </div>
         </div>

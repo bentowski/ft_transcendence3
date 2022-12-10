@@ -100,7 +100,7 @@ class MatchNav extends Component {
 
 	render(): JSX.Element {
 		return (
-			<div className="MatchNav h-100" id="MatchNav">
+			<div className="MatchNav" id="MatchNav">
         <img className="bob" src="/pictures/bob.png" alt="bob" />
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>

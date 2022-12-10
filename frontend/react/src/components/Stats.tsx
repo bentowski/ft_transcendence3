@@ -2,6 +2,7 @@ import { Component } from "react";
 import Request from "./utils/Requests";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
+import '../styles/components/stats.css';
 
 class Stats extends Component<
   {},
@@ -66,7 +67,11 @@ class Stats extends Component<
     return (
       <div className="Stats">
         <h3 className="d-flex justify-content-start">Rank</h3>
-        {user}
+        <div className="divUserStats">
+          <div className="divStats">
+            {user}
+          </div>
+        </div>
       </div>
     );
   }
