@@ -24,7 +24,9 @@ class FriendsNav extends Component<{}, {
   }
 
   componentDidUpdate(
-      prevProps: Readonly<{}>,
+      prevProps: Readonly<{
+        
+      }>,
       prevState: Readonly<{
         uslist: Array<UserType>;
         filteredList: Array<UserType>;
