@@ -1,8 +1,7 @@
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Alert } from "react-bootstrap";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { ErrorType } from "../../types";
-import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 import {io} from "socket.io-client";
 
 const socket = io('http://localhost:3000/update')

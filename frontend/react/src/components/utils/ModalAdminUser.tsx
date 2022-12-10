@@ -3,10 +3,8 @@ import React, { ReactNode, useEffect, useState } from "react";
 import Request from "./Requests";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Modal } from 'react-bootstrap';
-import {ChanType, ErrorType, UsersChanAdminType, UserType} from "../../types";
+import {ErrorType, UsersChanAdminType, UserType} from "../../types";
 import { Link } from "react-router-dom";
-import {Simulate} from "react-dom/test-utils";
-import rateChange = Simulate.rateChange;
 
 const ModalAdminUser = ({
                             chan,
@@ -170,7 +168,7 @@ const ModalAdminUser = ({
 
             for(let x: number = 0; x < usersChan.length; x++)
             {
-                if (usersChan[x].user?.username !== user.username)
+                if (usersChan[x].user && usersChan[x].user?.auth_id !== user.auth_id)
                 {
                     ret.push(
                         <div

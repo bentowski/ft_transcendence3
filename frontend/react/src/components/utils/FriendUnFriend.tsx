@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
-import { WebsocketContextUpdate } from "../../contexts/WebSocketContextUpdate";
 import { io } from "socket.io-client";
 
 const socket = io('http://localhost:3000/update')
@@ -33,7 +32,7 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
             }
         }
         updateStatus();
-    }, [setError, auth_id, socket, friendsList])
+    }, [setError, auth_id, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
         socket.emit('updateFriend', {

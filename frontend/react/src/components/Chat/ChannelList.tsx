@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
+import {AuthContext} from "../../contexts/AuthProviderContext";
 
 class ListOfDirectMessages extends Component<{
   chanList: ChanType[],
@@ -31,7 +32,8 @@ class ListOfDirectMessages extends Component<{
 class ListOfJoinedChans extends Component<{
   chanList: ChanType[],
   user: UserType,
-  parentCallBack: any}, {}> {
+  parentCallBack: any
+}, {}> {
   render(): JSX.Element[] {
     const ret: JSX.Element[] = []
     this.props.chanList.forEach((chan: ChanType) => {
