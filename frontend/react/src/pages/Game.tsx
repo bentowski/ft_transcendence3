@@ -13,7 +13,7 @@ let gameOver = () => {
   socket.off('ballMoved')
   socket.off('userJoinChannel')
   // navigate("/history")
-	window.location.href = "http://localhost:8080/"
+	//window.location.href = "http://localhost:8080/"
 }
 
 //const updateSocket = io("http://localhost:3000/update");

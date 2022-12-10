@@ -43,6 +43,7 @@ class AdminButtons extends Component<
         snapshot?: any): void {
         const ctx: any = this.context;
         if (prevState.adminList !== ctx.adminFrom) {
+            console.log('update admin state');
             this.setState({adminList: ctx.adminFrom});
             //this.render();
         }
