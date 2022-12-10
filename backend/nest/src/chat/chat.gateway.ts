@@ -213,8 +213,8 @@ export class ChatGateway implements OnModuleInit
   	this.server
         .to(body[0])
         .emit("userJoinChannel", {
-            "chanid": chan,
-            "userid": usr.auth_id,
+            chan: chan,
+            userid: usr.auth_id,
         });
   }
 
@@ -240,8 +240,8 @@ export class ChatGateway implements OnModuleInit
          this.server
              .to(body.room)
              .emit("userJoinChannel", {
-                 "chanid": chan,
-                 "userid": usr.auth_id,
+                 chan: chan,
+                 userid: usr.auth_id,
              });
      } catch (error) {
          this.server
@@ -403,6 +403,7 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('chanCreated')
   onChanCreated(client: Socket, obj: { chan: ChanEntity, auth_id: string }): void {
+    console.log('chancreated with ', obj.chan, obj.auth_id)
       this.server.emit('userJoinChannel', {
         chan: obj.chan,
         userid: obj.auth_id,

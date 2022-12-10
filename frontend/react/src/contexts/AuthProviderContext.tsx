@@ -10,11 +10,9 @@ import {
 import Request from "../components/utils/Requests";
 import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
-import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
 import { io } from "socket.io-client";
 
 const socket = io('http://localhost:3000/update')
-
 export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -72,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     return () => {
       socket.off('onUpdateFriend', handleUpdateFriends);
     }
-  },[socket, user, updateFriendsList, friendsList])
+  },[user, updateFriendsList, friendsList])
 
   const updateBlockedList = useCallback((
       usr: UserType,
@@ -101,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     return () => {
       socket.off('onUserCreation', handleUserCreation);
     }
-  }, [socket, userList])
+  }, [userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,
@@ -422,7 +420,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       blockedList,
       navigate,
       location,
-      socket,
     ]
   );
 

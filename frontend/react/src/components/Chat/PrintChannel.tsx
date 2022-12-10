@@ -5,8 +5,6 @@ import { ChanType, UserType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
-import { Alert } from 'react-bootstrap';
-import { useEffect, useState } from "react";
 
 class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 
@@ -45,7 +43,7 @@ export const PrintChannel = (
           currentChan: any,
           parentCallBack: any
         }): JSX.Element => {
-  const { mutedFrom, bannedFrom, setError } = useAuthData();
+  const { mutedFrom } = useAuthData();
 
   const setModalType = (newValue: any): void => {
     parentCallBack.setModalType(newValue)
