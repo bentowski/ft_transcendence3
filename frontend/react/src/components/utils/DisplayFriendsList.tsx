@@ -2,16 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from "./Requests";
 import UserCards from "./UserCards";
-import {UserType} from "../../types";
+import { UserType } from "../../types";
 
 const DisplayFriendsList = (): JSX.Element => {
     const { friendsList, setError } = useAuthData();
     const [result, setResult] = useState<JSX.Element[]>([]);
 
-
-
     useEffect((): void => {
-        const fetchUser = async (auth_id: string): Promise<UserType|undefined> => {
+        const fetchUser = async (auth_id: string): Promise<UserType|undefined>  => {
             try {
                 const usr: UserType = await Request(
                     "GET",
@@ -28,7 +26,7 @@ const DisplayFriendsList = (): JSX.Element => {
         const getresults = async (): Promise<void> => {
             let cards: JSX.Element[] = [];
             for (let x: number = 0; x < friendsList.length; x++) {
-                const usr: UserType | undefined = await fetchUser(friendsList[x]);
+                const usr: UserType | undefined = await fetchUser(friendsList[x].auth_id);
                 if (usr) {
                     cards.push(<UserCards key={x} user={usr} avatar={true} stat={false} />)
                 }

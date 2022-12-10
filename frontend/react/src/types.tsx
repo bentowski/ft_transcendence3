@@ -53,7 +53,7 @@ export type UserType = {
   status: number,
   twoFASecret: string,
   isTwoFA: number,
-  channelJoind: Array<ChanType>
+  channelJoind: Array<ChanType>,
   friends: string[],
   blocked: string[],
 }

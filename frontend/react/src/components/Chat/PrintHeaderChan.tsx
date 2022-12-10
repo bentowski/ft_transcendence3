@@ -8,14 +8,14 @@ import { Socket } from "socket.io-client";
 
 class AdminButtons extends Component<
     {
-        room: any,
-        socket: any,
+        room: string,
+        socket: Socket,
         user: UserType,
         chanList: ChanType[]
         usersInChan: UserType[],
     },
     {
-        adminList: UserType[],
+        adminList: ChanType[],
     }> {
     static contextType = AuthContext;
     constructor(props: any, context: any) {
@@ -31,26 +31,26 @@ class AdminButtons extends Component<
 
     componentDidUpdate(
         prevProps: Readonly<{
-            room: any;
-            socket: any;
+            room: string;
+            socket: Socket;
             user: UserType;
             chanList: ChanType[],
             usersInChan: UserType[],
         }>,
         prevState: Readonly<{
-            adminList: UserType[],
+            adminList: ChanType[],
         }>,
         snapshot?: any): void {
         const ctx: any = this.context;
         if (prevState.adminList !== ctx.adminFrom) {
             this.setState({adminList: ctx.adminFrom});
-            this.render();
+            //this.render();
         }
     }
 
     isUserAdmin = (): boolean => {
         return this.state.adminList &&
-            this.state.adminList.findIndex((c: any) => c.id === this.props.room) > -1;
+            this.state.adminList.findIndex((c: ChanType) => c.id === this.props.room) > -1;
     }
 
     render(): JSX.Element {
@@ -82,7 +82,7 @@ class AdminButtons extends Component<
   }
 }
 
-class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
+export class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack: any}, {}> {
   promptAddUser = (): void => {
     const modal: HTMLElement | null = document.getElementById("Modal") as HTMLDivElement;
     modal.classList.remove("hidden");
@@ -90,9 +90,9 @@ class PrintAddUserButton extends Component<{chanList: ChanType[], parentCallBack
     this.props.parentCallBack.setModalTitle("Add a user");
   };
   render(): JSX.Element {
-    let url: string = document.URL
+    let url: string = document.URL;
     url = url.substring(url.lastIndexOf("/") + 1);
-    const id: number = parseInt(url)
+    const id: number = parseInt(url);
     if (id && id > 0 && this.props.chanList[id - 1] &&
         !(this.props.chanList[id - 1].type === "direct")) {
       return (<button

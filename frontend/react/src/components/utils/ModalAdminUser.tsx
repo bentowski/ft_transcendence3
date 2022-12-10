@@ -10,7 +10,7 @@ const ModalAdminUser = ({
                             chan,
                             socket,
                             usersInChan}:{
-    chan:string,
+    chan: string,
     socket: Socket,
     usersInChan: UserType[]
 }): JSX.Element => {

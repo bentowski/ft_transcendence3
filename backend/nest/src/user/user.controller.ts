@@ -15,7 +15,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   ParseIntPipe,
-  NotFoundException, Query,
+  NotFoundException, Query, BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -241,7 +241,7 @@ export class UserController {
   @Get(':id/getfriends')
   async getFriends(@Param('id') id: string): Promise<UserEntity[]> {
     try {
-      return this.userService.getFriends(id);
+      return await this.userService.getFriends(id);
     } catch (error) {
       throw new Error(error);
     }

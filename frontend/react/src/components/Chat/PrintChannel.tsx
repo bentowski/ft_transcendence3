@@ -1,6 +1,5 @@
 import { Component } from "react";
 import UserCards from '../utils/UserCards'
-import Request from "../utils/Requests"
 import { socket } from '../../contexts/WebSocketContext';
 import { ChanType, UserType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
@@ -9,36 +8,7 @@ import { PrintMessages } from './PrintMessages'
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 
-class UsersInActualchannel extends Component<{
-  room: string,
-  usersList: UserType[]
-}, {
-  usersChan: UserType[],
-}> {
-  /*
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      usersChan: [],
-    }
-  }
-
-  componentDidMount() {
-    this.setState({usersChan: this.props.usersList})
-  }
-
-  async componentDidUpdate(
-      prevProps: Readonly<{
-        usersList: UserType[] }>,
-      prevState: Readonly<{
-        usersChan: UserType[]
-      }>,
-      snapshot?: any) {
-    if (prevState.usersChan !== this.props.usersList) {
-      this.setState({usersChan: this.props.usersList});
-    }
-  }
-   */
+class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
 
   render(): JSX.Element[] {
     const users: JSX.Element[] = [];
@@ -121,7 +91,8 @@ export const PrintChannel = (
   }, [bannedFrom])
   */
 
-  const checkIfMuted = async (): Promise<boolean> => {
+  const checkIfMuted = (): boolean => {
+    /*
     let mutedList: ChanType[] = [];
     try {
       mutedList = await Request(
@@ -133,15 +104,16 @@ export const PrintChannel = (
     } catch (error) {
       setError(error);
     }
-    for (let i: number = 0; i < mutedList.length; i++) {
-      if (mutedList[i].id === room) {
+     */
+    for (let i: number = 0; i < mutedFrom.length; i++) {
+      if (mutedFrom[i].id === room) {
         return true;
       }
     }
     return false;
   }
 
-  const onSubmit = async (): Promise<void> => {
+  const onSubmit = (): void => {
     // check if array is empty or contain only whitespace
     // var regex: RegExp = /^[\w-]+$/
     var minmax: RegExp = /^.{1,150}$/
@@ -276,7 +248,7 @@ export const PrintChannel = (
         </div> {/*fin chatMain*/}
         <div className="chatMembers col-2 p-0">
           <p> Channel's members ({usersInChan.length}) </p>
-          <UsersInActualchannel room={room} usersList={usersInChan} />
+          <UsersInActualchannel usersList={usersInChan} />
         </div>
       </div>
     )

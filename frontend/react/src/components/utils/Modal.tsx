@@ -60,6 +60,20 @@ class Modal extends Component<
   }
 
   componentDidUpdate(props:any, state:any) {
+    const ctx: any = this.context;
+    if (state.banned.length !== ctx.bannedFrom.length) {
+      console.log('change state banned')
+      this.setState({ banned: ctx.bannedFrom });
+      /*
+      setTimeout(() => {
+        this.updateChan()
+      }, 10)
+       */
+    }
+    if (state.joined.length !== ctx.chanFrom.length) {
+      console.log('change state joined')
+      this.setState({ joined: ctx.chanFrom })
+    }
     if (props.chanList.length !== this.state.allChans.length
     ) {
       setTimeout(() => {
@@ -126,34 +140,41 @@ class Modal extends Component<
 
    updateChan = async (): Promise<void> => {
     const ctx: any = this.context
-    this.setState({ banned: ctx.banned })
-    this.setState({ joined: ctx.joined })
+    this.setState({ banned: ctx.bannedFrom })
+    this.setState({ joined: ctx.chanFrom })
     const newUser: UserType = ctx.user
     if (newUser) {
       this.setState({ user: newUser });
     }
-    let users: UserType[] = [];
+    //let users: UserType[] = [];
     let chans: ChanType[] = [];
     try {
+      /*
       users = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/user/"
       );
+       */
+
       chans = await Request(
         "GET",
         {},
         {},
         "http://localhost:3000/chan"
       );
+
     } catch (error) {
       ctx.setError(error);
     }
-    this.setState({ friends: users, allChans: chans });
+    this.setState({ friends: ctx.userList, allChans: chans });
     this.chans();
    }
+
+
   componentDidMount = () => {
+
     this.updateChan();
   };
 
@@ -290,7 +311,6 @@ class Modal extends Component<
     // let users = await getUsers();
     const regex: RegExp = /^[\w-]+$/
     const minmax: RegExp = /^.{3,10}$/
-
     // let retPass = true;
     // if (this.state.protected)
     //   retPass = this.verifPass()
@@ -354,7 +374,6 @@ class Modal extends Component<
   };
 
   displayUser = (id: number, user: UserType): JSX.Element => {
-    console.log(user.auth_id)
     return (
       <div
         key={id}
@@ -440,9 +459,9 @@ class Modal extends Component<
   };
 
   checkIfBanned = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const banned: ChanType[] = ctx.bannedFrom;
-    for (let index: number = 0; index < banned.length; index++) {
+    //const ctx: any = this.context;
+    //const banned: ChanType[] = ctx.bannedFrom;
+    for (let index: number = 0; index < this.state.banned.length; index++) {
       if (chan.id === banned[index].id) {
         return true;
       }
@@ -451,9 +470,9 @@ class Modal extends Component<
   }
 
   checkIfAlreadyIn = (chan: ChanType): boolean => {
-    const ctx: any = this.context;
-    const joined: ChanType[] = ctx.chanFrom;
-    for (let index: number = 0; index < joined.length; index++) {
+    //const ctx: any = this.context;
+    //const joined: ChanType[] = ctx.chanFrom;
+    for (let index: number = 0; index < this.state.joined.length; index++) {
       if (chan.id === joined[index].id) {
         return true;
       }

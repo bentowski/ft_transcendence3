@@ -35,10 +35,8 @@ const ModalChangeAvatar = (): JSX.Element => {
     const res: Response = await fetch("http://localhost:3000/user/upload",
         params);
     if (res.ok) {
-      //console.log("upload success!");
       const str: any = await res.json();
       //const avatar: string = "http://localhost:3000/user/" + user.auth_id + "/avatar/" + Date.now();
-      //console.log('str = ', avatar);
       updateUser(str.avatar, null);
       setSelectedImage(null);
       handleClose();
@@ -47,7 +45,6 @@ const ModalChangeAvatar = (): JSX.Element => {
       const err: ErrorType = await res.json();
       setError(err);
       //HandleError(err);
-      //console.log("upload failed!");
     }
   };
 

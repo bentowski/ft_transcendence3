@@ -16,7 +16,7 @@ WORKDIR /home/node/app
 
 COPY --chown=node:node ./nest/package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY --chown=node:node ./nest ./
 
