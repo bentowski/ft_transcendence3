@@ -16,7 +16,7 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
 		monospace;
 }
-
+/* 
 @font-face {
 	font-family: "SpongeBobFont";
 	src: url("http://localhost:8080/font/spongebobfont.woff");
@@ -70,9 +70,9 @@ a:active {
 	width: 100%;
 }
 
-.logoutMenu p {
-	/* color: orangered; */
-}
+/* .logoutMenu p {
+	color: orangered;
+} */
 
 /* .logoutMenu:hover p { */
 	/* color: orangered; */
@@ -251,7 +251,7 @@ img {
 } */
 
 .MatchNav {
-	border: 3px solid #a7ae06ff;
+	border: 3px solid #c2c746;
 	background-color: #fff359;
 	background-repeat: repeat;
 	background-size: 70%;
