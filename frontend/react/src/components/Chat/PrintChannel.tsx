@@ -5,6 +5,7 @@ import { ChanType, UserType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { PrintHeaderChan } from './PrintHeaderChan'
 import { PrintMessages } from './PrintMessages'
+import { useNavigate } from "react-router-dom";
 
 class UsersInActualchannel extends Component<{ usersList: UserType[] }, {}> {
   

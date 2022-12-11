@@ -43,16 +43,10 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan();
     });
-    socket.on("chanDeleted", (/* roomId: string */) => {
-      chanList.forEach((c: ChanType) => {
-        if (c.chanUser.find((u: UserType) =>
-          u.auth_id === user.auth_id) !== undefined) {
-          getChan();
-          navigate("/chat")
-          // window.location.href = "http://localhost:8080/chat"; //!
-          return ;
-        }
-      })
+    socket.on("chanDeleted", (roomId: string) => {
+        if (roomId === room)
+          goHome();
+        getChan();
     })
     socket.on("userLeaveChannel", (obj: any) => {
       if (user.auth_id === obj.userid) {
@@ -72,6 +66,12 @@ export const WebSocket = (): JSX.Element => {
       socket.off('userLeaveChannel');
     }
   });
+
+  const goHome = () => {
+    changeActiveRoom("");
+    setRoom("null");
+    navigate("/chat")
+  }
 
   useEffect((): () => void => {
     const handleMute = async (obj: any): Promise<void> => {
@@ -107,11 +107,7 @@ export const WebSocket = (): JSX.Element => {
               auth_id: user.auth_id
             }
             );
-            changeActiveRoom("");
-            setRoom("null");
-            //socket.emit('chanCreated');
-            //window.location.href = "http://localhost:8080/chat"; //!
-            navigate("/chat")
+            goHome();
           }
         } catch (error) {
           setError(error);
