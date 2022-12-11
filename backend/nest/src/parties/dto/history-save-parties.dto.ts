@@ -1,20 +1,28 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class HistorySavePartiesDto {
-  public user_one: string;
-
-  public user_two: string;
-
-  @IsNumber()
-  public score_one: number;
-
-  @IsNumber()
-  public score_two: number;
+  @IsNotEmpty()
+  @IsString()
+  user_one: string;
 
   @IsNotEmpty()
-  public winner: string;
+  @IsString()
+  user_two: string;
+
+  @IsNumber()
+  @IsNumber()
+  score_one: number;
 
   @IsNotEmpty()
-  public looser: string;
+  @IsNumber()
+  score_two: number;
+
+  @IsNotEmpty()
+  @IsString()
+  winner: string;
+
+  @IsNotEmpty()
+  @IsString()
+  looser: string;
 
 }

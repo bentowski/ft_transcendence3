@@ -5,7 +5,9 @@ import { AuthContext } from "../contexts/AuthProviderContext";
 import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
 import { Alert } from "react-bootstrap";
+import { io } from "socket.io-client";
 
+const socket = io('http://localhost:3000/update')
 class FriendsNav extends Component<{}, {
   uslist: Array<UserType>,
   filteredList: Array<UserType>,
@@ -72,26 +74,12 @@ class FriendsNav extends Component<{}, {
           {},
           "http://localhost:3000/user/name/" + input.value
         )
-        await Request('PATCH',
-          {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          {
-            action: true,
-            auth_id: userToAdd.auth_id
-          },
-          "http://localhost:3000/user/update/friends"
-        )
-        ctx.updateFriendsList(userToAdd, true);
-        let newFriendsArray = await Request(
-          "GET",
-          {},
-          {},
-          "http://localhost:3000/user/" + currentUser.auth_id + "/getfriends",
-        )
-        this.setState({friends: newFriendsArray})
         input.value = '';
+        socket.emit("updateFriend", {
+          "curid": currentUser.auth_id,
+          "frid": userToAdd.auth_id,
+          "action": true,
+        })
       }
       else {
         this.setState({ alert: true })

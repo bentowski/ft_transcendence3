@@ -5,23 +5,16 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {CreateChanDto, CreatePrivChanDto} from "./dto/create-chan.dto";
-import ChanEntity, {ErrorType} from "./entities/chan-entity";
+import { CreateChanDto, CreatePrivChanDto } from "./dto/create-chan.dto";
+import ChanEntity, { ErrorType } from "./entities/chan-entity";
 import * as argon2 from "argon2"
 import { UserEntity } from '../user/entities/user-entity'
 import { UserService} from "../user/user.service";
 import * as io from "socket.io-client";
+import { ChanType } from "./types/chan.type";
+import { Msg } from './types/msg.type';
 
 const socket = io.connect("http://localhost:3000/chat");
-
-type Msg = {
-	content: string;
-	sender_socket_id: string;
-	username: string;
-	avatar: string;
-	auth_id: string;
-	room: string;
-};
 
 @Injectable()
 export class ChanService {
@@ -53,7 +46,7 @@ export class ChanService {
 		if (!user2) {
 			throw new NotFoundException('Error while creating new Chan: Cant find user');
 		}
-		const chan: ChanEntity = this.chanRepository.create({
+		const newChannel: ChanType = {
 			type: type,
 			name: name,
 			owner: user1.auth_id,
@@ -62,7 +55,9 @@ export class ChanService {
 			chanUser: [],
 			banUser: [],
 			muteUser: [],
-		})
+			adminUser: [],
+		}
+		const chan: ChanEntity = this.chanRepository.create(newChannel)
 		chan.chanUser.push(user1);
 		chan.chanUser.push(user2);
 		try {
@@ -103,8 +98,8 @@ export class ChanService {
 		if (!user) {
 			throw new NotFoundException('Error while creating new Chan: Cant find user');
 		}
-        const chan: ChanEntity = this.chanRepository.create({
-            type: type,
+		const newChan: ChanType = {
+			type: type,
 			name: name,
 			owner: owner,
 			password: hashed,
@@ -113,7 +108,8 @@ export class ChanService {
 			banUser: [],
 			muteUser: [],
 			adminUser: [],
-        })
+		}
+        const chan: ChanEntity = this.chanRepository.create(newChan);
 		chan.chanUser.push(user);
 		chan.adminUser.push(user);
 		try {
@@ -130,7 +126,8 @@ export class ChanService {
 				adminUser: true,
 				banUser: true,
 				chanUser: true,
-				muteUser: true }
+				muteUser: true
+			}
 		});
     }
 
