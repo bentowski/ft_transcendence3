@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import { io } from "socket.io-client";
+import {BlockedUserReceiveDto, BlockedUserSendDto} from "../../dtos/blocked-user.dto";
 
 const socket = io('http://localhost:3000/update')
 
@@ -35,7 +36,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     }, [setError, auth_id, blockedList])
 
     useEffect(() => {
-        const handleUpdateBlocked = (obj: any, auth_id: string) => {
+        const handleUpdateBlocked = (obj: BlockedUserSendDto, auth_id: string) => {
             if (user.auth_id === auth_id) {
                 setStatus((prevState: boolean) => !prevState);
                 updateBlockedList(obj.user, obj.action);
@@ -48,11 +49,12 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     },[updateBlockedList, user, blockedList])
 
     const blockunblockUser = async (): Promise<void> => {
-        socket.emit('updateBlocked', {
-            "curid": user.auth_id,
-            "bloid": auth_id,
-            "action": !status,
-        })
+        const response: BlockedUserReceiveDto = {
+            curid: user.auth_id,
+            bloid: auth_id,
+            action: !status,
+        }
+        socket.emit('updateBlocked', response)
     }
 
     return (

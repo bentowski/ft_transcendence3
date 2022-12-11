@@ -5,6 +5,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import { Modal } from 'react-bootstrap';
 import {ErrorType, UsersChanAdminType, UserType} from "../../types";
 import { Link } from "react-router-dom";
+import {AdminToChannelReceiveDto} from "../../dtos/adminToChannel.dto";
 
 const ModalAdminUser = ({
                             chan,
@@ -147,10 +148,11 @@ const ModalAdminUser = ({
                 setError(err);
                 return ;
             }
-            socket.emit('adminToChannel', {
-                "room": chan,
-                "auth_id": obj.user.auth_id,
-                "action": !obj.isAdmin });
+            const res: AdminToChannelReceiveDto = {
+                room: chan,
+                auth_id: obj.user.auth_id,
+                action: !obj.isAdmin }
+            socket.emit('adminToChannel', res);
             /*
             const newArray: UsersChanAdminType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {

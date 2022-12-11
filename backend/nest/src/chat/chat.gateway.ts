@@ -11,7 +11,7 @@ import { UserService } from '../user/user.service';
 import UserEntity from '../user/entities/user-entity';
 import ChanEntity from '../chans/entities/chan-entity';
 import {UserJoinChannelReceiveDto, UserJoinChannelSendDto} from "./dto/userjoinchannel.dto";
-import {LeaveRoomSendDto} from "./dto/leaveroom.dto";
+import {LeaveRoomReceiveDto, LeaveRoomSendDto} from "./dto/leaveroom.dto";
 import {ErrorDto} from "./dto/error.dto";
 import {MuteToChannelReceiveDto, MuteToChannelSendDto, TimerOutMuteDto} from "./dto/muteToChannel.dto";
 import {BanToChannelReceiveDto, BanToChannelSendDto, TimerOutBanDto} from "./dto/banToChannel.dto";
@@ -362,7 +362,7 @@ export class ChatGateway implements OnModuleInit
     }
 
     @SubscribeMessage('leaveRoom')
-    async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
+    async onLeaveRoom(client: Socket, body: LeaveRoomReceiveDto): Promise<void> {
   	try {
         const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
         const chan: ChanEntity = await this.chanService.delUserToChannel(usr, body.room)

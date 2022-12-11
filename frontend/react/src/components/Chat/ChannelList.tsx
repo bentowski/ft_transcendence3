@@ -1,7 +1,6 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import { ChanType, UserType } from "../../types"
-import {AuthContext} from "../../contexts/AuthProviderContext";
 
 class ListOfDirectMessages extends Component<{
   chanList: ChanType[],

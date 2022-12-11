@@ -24,8 +24,8 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
 	// }
 
 	componentDidMount = async () => {
-        let users:UserType[] = await Request("GET", {}, {}, "http://localhost:3000/user")
-		this.setState({userList: users})
+        const ctx: any = this.context;
+		this.setState({userList: ctx.userList})
     }
 
 	takeUsername = (msg: MessagePayload) => {

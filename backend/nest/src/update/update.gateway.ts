@@ -7,6 +7,11 @@ import {
 import { Socket, Server } from 'socket.io';
 import { UserService } from '../user/user.service';
 import UserEntity from "../user/entities/user-entity";
+import {BlockedUserReceiveDto, BlockedUserSendDto} from "./dto/blocked-user.dto";
+import {ErrorDto} from "../chat/dto/error.dto";
+import {FriendUserReceiveDto, FriendUserSendDto} from "./dto/friend-user.dto";
+import {UpdateUserDto} from "./dto/updateUser.dto";
+import {SendGameInfoDto} from "./dto/game.dto";
 
 @WebSocketGateway({
   cors: {
@@ -33,69 +38,68 @@ export class UpdateGateway implements OnModuleInit
   }
 
   @SubscribeMessage('askForGameUp')
-  onAskForGameUp(client: Socket, body: {"to": string, "from": string}): void {
+  onAskForGameUp(client: Socket, body: SendGameInfoDto): void {
 	  this.server.emit('onAskForGameUp', body);
   }
 
   @SubscribeMessage('askForGamedown')
-  onAskForGameDown(client: Socket, body: {"to": string, "from": string}): void {
+  onAskForGameDown(client: Socket, body: SendGameInfoDto): void {
     this.server.emit('onAskForGameDown', body);
   }
 
   @SubscribeMessage('inviteAccepted')
-  onInviteAccepted(client: Socket, body: {"to": string, "from": string, "partyID": string}): void {
+  onInviteAccepted(client: Socket, body: SendGameInfoDto): void {
 	  this.server.emit('onInviteAccepted', body);
   }
 
   @SubscribeMessage('inviteDeclined')
-  onInviteDeclined(client: Socket, body: {"to": string, "from": string}): void {
+  onInviteDeclined(client: Socket, body: SendGameInfoDto): void {
 	  this.server.emit('onInviteDeclined', body);
   }
 
   @SubscribeMessage('updateUser')
-  onUpdateUser(client: Socket, user: { auth_id: number, status: number }): void {
+  onUpdateUser(client: Socket, user: UpdateUserDto): void {
 	this.server.emit('onUpdateUser', user);
   }
 
   @SubscribeMessage('updateFriend')
-  async onUpdateFriend(client: Socket, obj: { curid: string, frid: string, action: boolean }) {
+  async onUpdateFriend(client: Socket, obj: FriendUserReceiveDto) {
     const curuser: UserEntity = await this.userService.findOneByAuthId(obj.curid)
     if (!curuser) {
       throw new NotFoundException('Error while adding friend: Cant find current user')
     }
     try {
       const friuser: UserEntity = await this.userService.updateFriends(obj.action, obj.curid, obj.frid);
-      this.server.emit('onUpdateFriend', {
-        "curuser": curuser,
-        "friuser": friuser,
-        "action": obj.action
-      })
+      const response: FriendUserSendDto = {
+        curuser: curuser,
+        friuser: friuser,
+        action: obj.action
+      }
+      this.server.emit('onUpdateFriend', response)
     } catch (error) {
-      this.server.emit('error', {
-            statusCode: error.statusCode,
-            message: error.message
-          },
-          obj.curid,
-      )
+      const err: ErrorDto = {
+        statusCode: error.statusCode,
+        message: error.message
+      }
+      this.server.emit('error', err, obj.curid)
     }
   }
 
   @SubscribeMessage('updateBlocked')
-  async onUpdateBlocked(client: Socket, obj: { curid: string, bloid: string, action: boolean }) {
+  async onUpdateBlocked(client: Socket, obj: BlockedUserReceiveDto) {
     try {
       const user: UserEntity = await this.userService.updateBlocked(obj.action, obj.bloid, obj.curid);
-      this.server.emit('onUpdateBlocked', {
-        "user": user,
-        "action": obj.action,
-      },
-          obj.curid);
+      const response: BlockedUserSendDto = {
+        user: user,
+        action: obj.action,
+      }
+      this.server.emit('onUpdateBlocked', response, obj.curid);
     } catch (error) {
-      this.server.emit('error', {
-            statusCode: error.statusCode,
-            message: error.message
-          },
-          obj.curid,
-      )
+      const err: ErrorDto = {
+        statusCode: error.statusCode,
+        message: error.message
+      }
+      this.server.emit('error', err, obj.curid)
     }
   }
 
