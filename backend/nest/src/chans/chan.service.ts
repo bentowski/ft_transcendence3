@@ -379,7 +379,7 @@ export class ChanService {
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		if (chan.owner === user.auth_id || chan.type === "direct") {
+		if (chan.owner === user.auth_id && chan.type === "direct") {
 			try {
 				await this.chanRepository.delete(chan.id);
 				//! socket emit reload for room's user

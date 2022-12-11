@@ -38,7 +38,6 @@ export const WebSocket = (): JSX.Element => {
     });
     socket.on("userJoinChannel", (obj: any) => {
       if (user.auth_id === obj.userid) {
-          console.log('user ', user.auth_id, ' is joinin chan ', obj.chan)
           updateChanFromList(obj.chan, true);
       }
       getChan();
@@ -50,7 +49,6 @@ export const WebSocket = (): JSX.Element => {
     })
     socket.on("userLeaveChannel", (obj: any) => {
       if (user.auth_id === obj.userid) {
-        console.log('user ', user.auth_id, ' is livin chan ', obj.chan.id)
         updateChanFromList(obj.chan, false);
       }
       getChan();
@@ -99,7 +97,6 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          console.log('user ', user.auth_id, ' is banned from ', obj.room)
           updateBannedFromList(chan, obj.action);
           if (obj.action) {
             socket.emit("leaveRoom", {
@@ -174,7 +171,6 @@ export const WebSocket = (): JSX.Element => {
               {},
               "http://localhost:3000/chan/id/" + obj.room
           )
-          // console.log('banning user from chan ', chan.id, obj.action)
           updateBannedFromList(chan, false)
         } catch (error) {
           setError(error);

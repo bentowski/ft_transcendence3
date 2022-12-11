@@ -392,18 +392,30 @@ export class ChatGateway implements OnModuleInit
 
     @SubscribeMessage('leaveRoom')
     async onLeaveRoom(client: Socket, body: {room: string, auth_id: string}): Promise<void> {
-  	const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
-    const chan: ChanEntity = await this.chanService.delUserToChannel(usr, body.room)
+  	try {
+        const usr: UserEntity = await this.userService.findOneByAuthId(body.auth_id);
+        const chan: ChanEntity = await this.chanService.delUserToChannel(usr, body.room)
         this.server.emit('userLeaveChannel', {
             userid: body.auth_id,
             chan: chan,
         })
-  	client.emit('leftRoom', {room: ChanEntity});
+        client.emit('leftRoom', {room: ChanEntity});
+      } catch (error) {
+        this.server
+            .to(body.room)
+            .emit('error',
+                {
+                    statusCode: error.statusCode,
+                    message: error.message
+                },
+                body.auth_id
+            );
+        return ;
+      }
   }
 
   @SubscribeMessage('chanCreated')
   onChanCreated(client: Socket, obj: { chan: ChanEntity, auth_id: string }): void {
-    console.log('chancreated with ', obj.chan, obj.auth_id)
       this.server.emit('userJoinChannel', {
         chan: obj.chan,
         userid: obj.auth_id,
