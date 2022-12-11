@@ -18,6 +18,7 @@ export const WebSocket = (): JSX.Element => {
   const [loaded, setLoaded] = useState("not ok");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
   const [url, setUrl] = useState<string>('');
+  // const [lastChan, setLastChan] = useState<ChanType>();
   const {
     user,
     setError,
@@ -239,6 +240,13 @@ export const WebSocket = (): JSX.Element => {
     }
   }, [room, chanList])
 
+  useEffect((): void => {
+    if (currentChan) {
+      navigate('/chat/' + currentChan.id);
+      joinRoom(currentChan);
+    }
+  }, [currentChan])
+
 // ================= Fin UseEffects ===================
 
   const createChannel = async (
@@ -281,19 +289,12 @@ export const WebSocket = (): JSX.Element => {
             chan: chanCreated,
             auth_id: user.auth_id,
           });
-          //updateAllChans();
+          if (chanCreated === undefined)
+            return ;
           updateAdminFromList(chanCreated, true);
-          //updateChanFromList(chanCreated, true);
-          navigate('/chat/' + chanCreated?.id);
-          //!
-          //await getChan();
-          setUrl('/chat/' + chanCreated?.id);
-          // joinRoom(chanCreated);
-          // changeActiveRoom(chanCreated.id)
-          //setRoom(chanCreated.id)
-          //!
-          // joinUrl();
-          // setTimeout(joinUrl, 5000);
+          await getChan();
+          setCurrentChan(chanCreated)
+          socket.emit("joinRoom", chanCreated.id, user.auth_id);
       } catch (error) {
         setError(error);
       }
@@ -376,17 +377,24 @@ export const WebSocket = (): JSX.Element => {
 
   const joinRoom = (newRoom: ChanType): void => {
      const chanToJoin: ChanType | undefined = chanList.find((chan: ChanType) => {
+      console.log(chan, newRoom)
       return String(chan.id) === String(newRoom.id)
      })
+     console.log("1")
     if (chanToJoin !== undefined) {
-      if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
-        //updateChanFromList(chanToJoin, true);
+     console.log("2")
+     if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
+     //updateChanFromList(chanToJoin, true);
+        // updateAdminFromList(chanToJoin, false)
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
         setCurrentChan(newRoom)
+        console.log("pasjoin");
       } else {
+        console.log("Join");
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+        // updateAdminFromList(chanToJoin, false)
         //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);
