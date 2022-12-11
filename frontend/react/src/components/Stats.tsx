@@ -23,17 +23,14 @@ class Stats extends Component<
         histories: Array<any> }>,
       snapshot?: any) {
     const ctx: any = this.context;
-    console.log('prevState.users.length !== ctx.userList.length ', prevState.users, ctx.userList)
-    if (prevState.users.length !== ctx.userList.length) {
-      let users: UserType[] = ctx.userList;
-      let newArray = users.sort(function (a: UserType, b: UserType) {
+    const users: UserType[] = ctx.userList;
+    if (prevState.users !== users) {
+      users.sort(function (a: UserType, b: UserType) {
         return a.game_lost - b.game_lost;
       });
-      users = newArray.sort(function (a: UserType, b: UserType) {
+      users.sort(function (a: UserType, b: UserType) {
         return b.game_won - a.game_won;
       });
-      console.log('updating users list stats');
-      console.log('prevState.users.length !== ctx.userList.length ', this.state.users, users)
       this.setState({ users: users });
     }
   }

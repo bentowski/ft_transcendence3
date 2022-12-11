@@ -1,32 +1,37 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import {IsNotEmpty, IsString, MaxLength, MinLength} from 'class-validator';
 
 export class CreateChanDto {
     @IsString()
     @IsNotEmpty()
-    public type: string;
-
-    @IsString()
-    @IsNotEmpty()
-    public name: string;
+    type: string;
 
     @IsNotEmpty()
-    public owner: string;
-
     @IsString()
+    name: string;
+
+    @IsNotEmpty()
+    @IsString()
+    owner: string;
+
     password: string;
 }
 
 export class CreatePrivChanDto {
     @IsNotEmpty()
-    type: "direct";
+    @IsString()
+    type: string;
 
+    @MinLength(2)
+    @MaxLength(10)
     @IsString()
     @IsNotEmpty()
     name: string;
 
     @IsNotEmpty()
+    @IsString()
     user_1_id: string;
 
     @IsNotEmpty()
+    @IsString()
     user_2_id: string;
 }

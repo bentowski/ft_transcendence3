@@ -7,7 +7,7 @@ class HistoryCards extends Component<{
     history: HistoryType,
     profil: UserType | undefined }, {}> {
 
-  renderStatus = (user: boolean): JSX.Element => {
+    renderStatus = (user: boolean): JSX.Element => {
     if (!user) {
       if (this.props.history.score_one > this.props.history.score_two)
         return (

@@ -277,6 +277,7 @@
 	position: absolute;
 	width: 200px;
 	z-index: 5;
+    pointer-events: none;
 }
 
 .blur {

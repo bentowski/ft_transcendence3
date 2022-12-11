@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
@@ -11,6 +11,31 @@ import ModalMatchInvite from "./ModalMatchInvite";
 
 const socket = io("http://localhost:3000/update");
 const socketChat = io("http://localhost:3000/chat");
+
+const BtnToChat = ({cb}:{cb: any}) => {
+  const navigate = useNavigate();
+
+  const btnClick = async () => {
+    const ret:string = await cb();
+    if (ret != "" && !window.location.href.includes("http://localhost:8080/chat"))
+      navigate(ret);
+  }
+
+  return (
+      <button className="p-1" onClick={btnClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          fill="currentColor"
+          className="bi bi-chat-left-dots"
+          viewBox="0 0 16 16"
+        >
+          <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+          <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+        </svg>
+      </button>
+  )}
 
 class UserCards extends Component<
   { user: any, avatar: any, stat: any },
@@ -98,7 +123,7 @@ class UserCards extends Component<
     return title;
   }
 
-  createChan = async (): Promise<void> => {
+  createChan = async (): Promise<string> => {
     const ctx: any = this.context;
     try {
       const u2: UserType = await Request(
@@ -142,11 +167,16 @@ class UserCards extends Component<
           socketChat.emit("chanCreated", {chan: newChan, auth_id: u2.auth_id});
       }
       if (newChan !== undefined) {
-        window.location.href = "http://localhost:8080/chat/" + newChan.id
+        // this.navigate("/chat/"/*  + newChan.id */)
+        // console.log(this.props.navigation)
+        //window.location.href = "http://localhost:8080/chat/" + newChan.id
+        return ("/chat/" + newChan.id)
       }
     } catch (error) {
       ctx.setError(error);
+      return ("")
     }
+    return ("")
 
     /*
     let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
@@ -263,19 +293,7 @@ class UserCards extends Component<
           >
             <div className="col-5  d-flex flex-row justify-content-start">
               {/* <Link to={"/chat"}> */}
-              <button className="p-1" onClick={this.createChan}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  fill="currentColor"
-                  className="bi bi-chat-left-dots"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                  <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                </svg>
-              </button>
+              <BtnToChat cb={this.createChan}/>
               {/* </Link> */}
               {/* <Link to={"/game"}> */}
                 <button className="mx-2 p-1" onClick={this.startNewGame}>
