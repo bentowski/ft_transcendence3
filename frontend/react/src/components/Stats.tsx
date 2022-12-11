@@ -24,13 +24,13 @@ class Stats extends Component<
       snapshot?: any) {
     const ctx: any = this.context;
     const users: UserType[] = ctx.userList;
-    users.sort(function (a: UserType, b: UserType) {
-      return a.game_lost - b.game_lost;
-    });
-    users.sort(function (a: UserType, b: UserType) {
-      return b.game_won - a.game_won;
-    });
     if (prevState.users !== users) {
+      users.sort(function (a: UserType, b: UserType) {
+        return a.game_lost - b.game_lost;
+      });
+      users.sort(function (a: UserType, b: UserType) {
+        return b.game_won - a.game_won;
+      });
       this.setState({ users: users });
     }
   }
