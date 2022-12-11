@@ -62,8 +62,8 @@ export class GameGateway implements OnModuleInit
     {
       this.partiesService.addToGame(body.game.id, body.auth_id);
       this.server.to(body.game.id).emit("Init", {room: body.game, settings: currentRoom.config});
-      if (currentRoom.players[0] && currentRoom.players[1])
-        this.startGame(currentRoom, body.game);
+      // if (currentRoom.players[0] && currentRoom.players[1])
+      //   this.startGame(currentRoom);
     }
    }
 
@@ -71,6 +71,7 @@ export class GameGateway implements OnModuleInit
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
     let admin: boolean
+    console.log("========MOOOVE======")
     let currentRoom: Room|undefined = this.findRoom(body.game.id);
     if (currentRoom != undefined)
     {
@@ -127,28 +128,38 @@ export class GameGateway implements OnModuleInit
     return config;
   }
 
-  startGame(room: Room, prout: any): void {
-    console.log("pretty")
+  @Interval(1000 / 60)
+  loop(): void {
+    console.log("interval")
+    for (const room of this.rooms.values())
+      if (room.state == State.INGAME) this.startGame(room);;
+  }
 
-    // while (!(room.state = State.WAITING && room.players[0] != 0 && room.players[1] != 0));
-    room.state = State.INGAME;
-    for (let i = 5; i > 0; i--)
-      this.server.to(prout.id).emit("printCountDown", {room: prout, number: i});
+  startGame(room: Room): void {
+    console.log("truc")
+    if (room.state = State.WAITING)
+    {
+      console.log("waiting")
+      for (let i = 5; i > 0; i--)
+        this.server.to(room.code.toString()).emit("printCountDown", {room: room, number: i});
+      room.state = State.INGAME;
+    }
     if (room.state = State.INGAME)
     {
-      this.routine();
+      console.log("call")
+      this.update(room);
     }
   }
 
-   routine(): void {
-     for (const room of this.rooms.values())
-       if (room.state == State.INGAME)
-         this.update(room)
-     setTimeout(() => {this.routine()}, (1000 / 60))
-   }
+   // routine(): void {
+   //   for (const room of this.rooms.values())
+   //     if (room.state == State.INGAME)
+   //       this.update(room)
+   //   setTimeout(() => {this.routine()}, (1000 / 60))
+   // }
 
     update(room: Room): any {
-      console.log("routine");
+      console.log("update");
       // ======== New position Ball ============
 
      // =============== scores ================
