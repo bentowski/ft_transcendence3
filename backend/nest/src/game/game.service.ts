@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Interval } from '@nestjs/schedule';
 import { PartiesService } from '../parties/parties.service';
 
 @Injectable()
@@ -27,5 +28,12 @@ export class GameService {
       p1Score: 0,
       p2Score: 0,
    }
+ }
+
+ @Interval(1000)
+ handleInterval(): void {
+   console.log("interval")
+   // for (const room of this.rooms.values())
+   //   if (room.state == State.INGAME) this.startGame(room);;
  }
 }

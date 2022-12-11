@@ -128,11 +128,11 @@ export class GameGateway implements OnModuleInit
     return config;
   }
 
-  @Interval(1000 / 60)
-  loop(): void {
+  @Interval(1000)
+  handleInterval(): void {
     console.log("interval")
-    for (const room of this.rooms.values())
-      if (room.state == State.INGAME) this.startGame(room);;
+    // for (const room of this.rooms.values())
+    //   if (room.state == State.INGAME) this.startGame(room);;
   }
 
   startGame(room: Room): void {
