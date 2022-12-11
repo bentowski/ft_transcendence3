@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class CreatePartiesDto {
 
@@ -7,4 +7,8 @@ export class CreatePartiesDto {
     @IsString()
     @IsNotEmpty()
     public login: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    public nbplayer: number;
 }

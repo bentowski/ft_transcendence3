@@ -9,6 +9,7 @@ import { ChanModule } from './chans/chan.module';
 import { AuthModule } from './auth/auth.module';
 import { UserAuthGuard } from './auth/guards/user-auth.guard';
 import { GameModule } from './game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { UpdateModule } from './update/update.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UpdateModule } from './update/update.module';
     AuthModule,
     GameModule,
     UpdateModule,
+    ScheduleModule.forRoot()
   ],
   providers: [UserAuthGuard],
 })

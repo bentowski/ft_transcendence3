@@ -144,6 +144,26 @@ export class UserService {
     }
   }
 
+  async updateScore(auth_id: string, isWin: boolean): Promise<UserEntity> {
+    const user: UserEntity = await this.findOneByAuthId(auth_id);
+    if (!user) {
+      throw new NotFoundException(
+        'Error while updating username: Failed requesting user in database',
+      );
+    }
+    if (isWin)
+      user.game_won = user.game_won + 1;
+    else
+      user.game_lost = user.game_lost + 1;
+    user.total_games = user.total_games + 1;
+    try {
+      return await this.userRepository.save(user);
+    } catch (error) {
+      const err: string = 'Error while saving score in database: ' + error;
+      throw new NotAcceptableException(err);
+    }
+  }
+
   async updateAvatar(auth_id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserEntity> {
     const user: UserEntity = await this.findOneByAuthId(auth_id);
     if (!user) {

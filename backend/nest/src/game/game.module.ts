@@ -6,13 +6,12 @@ import { GameGateway } from './game.gateway';
 // import { Chat } from "./entities/chat.entity";
 // import { ChanService } from '../chans/chan.service';
 // import { ChanModule } from '../chans/chan.module';
-import { ScheduleModule } from '@nestjs/schedule';
 import { UserModule } from '../user/user.module';
 import { GameService } from './game.service';
 import { PartiesModule } from '../parties/parties.module';
 
 @Module({
-  imports: [ UserModule, PartiesModule, ScheduleModule.forRoot() ],
+  imports: [ UserModule, PartiesModule ],
   controllers: [],
   providers: [GameGateway, GameService],
 })

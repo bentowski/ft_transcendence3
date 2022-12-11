@@ -10,12 +10,12 @@ export type MessagePayload = {
 
 export type HistoryType = {
   game_id: bigint,
-  user_one: string,
-  user_two: string,
+  user_one_id: string,
+  user_two_id: string,
   score_one: number,
   score_two: number,
-  winner: string,
-  looser: string,
+  user_one_name: string,
+  user_two_name: string,
   createdAt: Date,
   users: UserType[],
 }
@@ -99,4 +99,3 @@ export type ParamsImgType = {
   headers: HeadersInit,
   body: FormData,
 }
-

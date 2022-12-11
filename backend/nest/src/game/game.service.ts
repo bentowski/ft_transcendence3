@@ -30,10 +30,10 @@ export class GameService {
    }
  }
 
- @Interval(1000)
- handleInterval(): void {
-   console.log("interval")
-   // for (const room of this.rooms.values())
-   //   if (room.state == State.INGAME) this.startGame(room);;
- }
+ // @Interval(1000)
+ // handleInterval(): void {
+ //   console.log("interval")
+ //   // for (const room of this.rooms.values())
+ //   //   if (room.state == State.INGAME) this.startGame(room);;
+ // }
 }

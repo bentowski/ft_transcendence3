@@ -29,7 +29,8 @@ export interface Config {
   middle: number,
   vector: [number, number],
   p1Score: number,
-  p2Score: number
+  p2Score: number,
+  baseSpeed: number
 }
 
 export interface Room {

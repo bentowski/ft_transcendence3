@@ -20,11 +20,11 @@ import { GameService } from './game.service';
   namespace: '/game',
 })
 export class GameGateway implements OnModuleInit
- //implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(
     private readonly gameService: GameService,
-    private readonly partiesService: PartiesService
+    private readonly partiesService: PartiesService,
+    private readonly userService: UserService
   ) {}
 
   rooms: Map<number, Room> = new Map()
@@ -62,17 +62,16 @@ export class GameGateway implements OnModuleInit
     {
       this.partiesService.addToGame(body.game.id, body.auth_id);
       this.server.to(body.game.id).emit("Init", {room: body.game, settings: currentRoom.config});
-      // if (currentRoom.players[0] && currentRoom.players[1])
-      //   this.startGame(currentRoom);
+      if (currentRoom.players[0] && currentRoom.players[1])
+        this.startGame(currentRoom);
     }
    }
-
 
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
     let admin: boolean
     console.log("========MOOOVE======")
-    let currentRoom: Room|undefined = this.findRoom(body.game.id);
+    let currentRoom: Room|undefined = this.findRoom(body.room);
     if (currentRoom != undefined)
     {
       if (body.player === currentRoom.players[0])
@@ -111,86 +110,137 @@ export class GameGateway implements OnModuleInit
   }
 
   initConfig(){
-    let sizeBall = 3;
+    let sizeBallExt = 3;
     let config: Config = {
-      ballPos: [50 - (sizeBall / 2), 50],
-      player1: [100 - sizeBall, 50],
+      ballPos: [50 - (sizeBallExt / 2), 50],
+      player1: [100 - sizeBallExt, 50],
       player2: [0, 50],
-      sizeBall:  sizeBall,
-      speed: 10,
-      playerSize: sizeBall * 4,
+      sizeBall:  sizeBallExt,
+      speed: 0.5,
+      playerSize: sizeBallExt * 4,
       playerSpeed: 10,
-      middle: 50 + (sizeBall / 4),
+      middle: 50 + (sizeBallExt / 4),
       vector: [1, 0],
       p1Score: 0,
-      p2Score: 0
+      p2Score: 0,
+      baseSpeed: 0.5
     }
     return config;
   }
 
-  @Interval(1000)
+  @Interval(1000 / 60)
   handleInterval(): void {
-    console.log("interval")
-    // for (const room of this.rooms.values())
-    //   if (room.state == State.INGAME) this.startGame(room);;
+    for (const room of this.rooms.values())
+      this.routine(room);;
   }
 
   startGame(room: Room): void {
-    console.log("truc")
-    if (room.state = State.WAITING)
+    if (room.state == State.WAITING && room.players[0] != 0 && room.players[1] != 0)
     {
-      console.log("waiting")
-      for (let i = 5; i > 0; i--)
-        this.server.to(room.code.toString()).emit("printCountDown", {room: room, number: i});
       room.state = State.INGAME;
-    }
-    if (room.state = State.INGAME)
-    {
-      console.log("call")
-      this.update(room);
+      this.server.to(room.code.toString()).emit("Start", {room: room});
     }
   }
 
-   // routine(): void {
-   //   for (const room of this.rooms.values())
-   //     if (room.state == State.INGAME)
-   //       this.update(room)
-   //   setTimeout(() => {this.routine()}, (1000 / 60))
-   // }
+  routine(room: Room): void {
+    if (room.state == State.INGAME)
+      this.update(room);
+  }
 
-    update(room: Room): any {
-      console.log("update");
-      // ======== New position Ball ============
+  update(room: Room): any {
+    // ======== New position Ball ============
+    let newPos = 0;
+    room.config.ballPos = [room.config.ballPos[0] + (room.config.vector[0] * room.config.speed), room.config.ballPos[1] + (room.config.vector[1]  * room.config.speed)]
+    if (room.config.ballPos[1] + (room.config.sizeBall / 2) >= 100) {
+      newPos = 100 - (room.config.sizeBall / 2)
+      room.config.vector = [room.config.vector[0], -room.config.vector[1]]
+      room.config.ballPos = [room.config.ballPos[0], newPos]
+    }
+    if (room.config.ballPos[1] - (room.config.sizeBall / 2) < 0) {
+      newPos = (0 + (room.config.sizeBall / 2))
+      room.config.vector = [room.config.vector[0], -room.config.vector[1]]
+      room.config.ballPos = [room.config.ballPos[0], newPos]
+    }
+    if (room.config.ballPos[0] + room.config.sizeBall / 2 >= room.config.player1[0]) {
+  		if (room.config.ballPos[1] >= room.config.player1[1] && room.config.ballPos[1] <= room.config.player1[1] + room.config.sizeBall * 4) {
+  			let percent = Math.floor((room.config.ballPos[1] - room.config.player1[1]) / ((room.config.player1[1] + room.config.sizeBall * 4) - room.config.player1[1]) * 100)
+  			if (percent <= 20) {
+  				room.config.vector = [-0.5, -Math.sqrt(3) / 2];
+  			}
+  			else if (percent <= 40) {
+  				room.config.vector = [-Math.sqrt(3) / 2, -0.5];
+  			}
+  			else if (percent <= 60) {
+  				room.config.vector = [-1, 0];
+  			}
+  			else if (percent <= 80) {
+  				room.config.vector = [-Math.sqrt(3) / 2, 0.5];
+  			}
+  			else {
+  				room.config.vector = [-0.5, Math.sqrt(3) / 2];
+  			}
+        room.config.speed = room.config.speed + 0.1 ;
+  		}
+  		else {
+  			room.config.ballPos = [50, 50]
+  			room.config.speed = room.config.baseSpeed
+        room.config.p2Score++;
+        this.server.to(room.code.toString()).emit('newPoint', room)
+  		}
+  	}
+  	if (room.config.ballPos[0] <= room.config.player2[0] + room.config.sizeBall * 1.5)
+  	{
+  		if (room.config.ballPos[1] >= room.config.player2[1] && room.config.ballPos[1] <= room.config.player2[1] + room.config.sizeBall * 4) {
+  			let percent = Math.floor((room.config.ballPos[1] - room.config.player2[1]) / ((room.config.player2[1] + room.config.sizeBall * 4) - room.config.player2[1]) * 100)
+  			if (percent <= 20) {
+  				room.config.vector = [0.5, -Math.sqrt(3) / 2];
+  			}
+  			else if (percent <= 40) {
+  				room.config.vector = [Math.sqrt(3) / 2, -0.5];
+  			}
+  			else if (percent <= 60) {
+  				room.config.vector = [1, 0];
+  			}
+  			else if (percent <= 80) {
+  				room.config.vector = [Math.sqrt(3) / 2, 0.5];
+  			}
+  			else {
+  				room.config.vector = [0.5, Math.sqrt(3) / 2];
+  			}
+        room.config.speed = room.config.speed + 0.1 ;
+  		}
+  		else {
+  			room.config.ballPos = [50, 50]
+  			room.config.speed = room.config.baseSpeed
+        room.config.p1Score++;
+        this.server.to(room.code.toString()).emit('newPoint', room)
+  		}
+  	}
+   this.server.to(room.code.toString()).emit('ballMoved', room)
 
-     // =============== scores ================
-
-     //=========== EndGame ? ==========
-
-     //============ Reset Ball Pos ============
-
-
-     //====== Envoyer position ball =========
-
+   //=========== EndGame  ==========
+   if (room.config.p1Score > 2 || room.config.p2Score > 2)
+   {
+     this.partiesService.remove(room.code.toString());
+     this.partiesService.createHistories({
+       user_one_id: room.players[0].toString(),
+       user_two_id: room.players[1].toString(),
+       score_one: room.config.p1Score,
+       score_two: room.config.p2Score
+     })
+     if (room.config.p1Score < room.config.p2Score)
+     {
+       this.userService.updateScore(room.players[0].toString(), false)
+       this.userService.updateScore(room.players[1].toString(), true)
+     }
+     else
+     {
+       this.userService.updateScore(room.players[0].toString(), true)
+       this.userService.updateScore(room.players[1].toString(), false)
+     }
+     this.rooms.delete(room.code)
+     this.server.to(room.code.toString()).emit('gameoverSend', room)
    }
-
- //  @SubscribeMessage('pleaseBall')
- //  onBallMove(@MessageBody() body: any) {
- //    this.server.to(body.room).emit('ballMoved', body)
- //  }
- //
- //
- //
-
- //
-
- //
-
- //
- //
- //  @SubscribeMessage('gameover')
- //  gameOver(@MessageBody() body: any) {
- //    this.server.to(body.room).emit('gameoverSend', body)
- //  }
-
+ }
 
 }
