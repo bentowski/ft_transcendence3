@@ -1,0 +1,9 @@
+.gary {
+    background-image: url("http://localhost:8080/pictures/gary.png");
+    width: 200px;
+    height: 200px;
+	position: absolute;
+	object-fit: cover;
+    /* pointer-events: none; */
+}
+

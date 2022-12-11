@@ -1,4 +1,5 @@
 import "../styles/pages/login.css";
+import "../styles/pages/pagenotfound.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
@@ -56,6 +57,7 @@ const Login = (): JSX.Element => {
     		<div className="bubble x9"></div>
     		<div className="bubble x10"></div>
 		</div>
+    		<div className="gary border"></div>
 	</div>
   ); //
 }; //
