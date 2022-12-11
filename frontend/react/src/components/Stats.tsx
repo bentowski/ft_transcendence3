@@ -24,26 +24,31 @@ class Stats extends Component<
       snapshot?: any) {
     const ctx: any = this.context;
     const users: UserType[] = ctx.userList;
-    users.sort(function (a: UserType, b: UserType) {
-      return a.game_lost - b.game_lost;
-    });
-    users.sort(function (a: UserType, b: UserType) {
-      return b.game_won - a.game_won;
-    });
     if (prevState.users !== users) {
+      users.sort(function (a: UserType, b: UserType) {
+        return a.game_lost - b.game_lost;
+      });
+      users.sort(function (a: UserType, b: UserType) {
+        return b.game_won - a.game_won;
+      });
       this.setState({ users: users });
     }
   }
 
+  componentWillUnmout() {
+    console.log('component is destroyyyyyyeed');
+  }
+
   componentDidMount = (): void => {
     const ctx: any = this.context;
-    const users: UserType[] = ctx.userList;
-    users.sort(function (a: UserType, b: UserType) {
+    let users: UserType[] = ctx.userList;
+    let newArray = users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
-    users.sort(function (a: UserType, b: UserType) {
+    users = newArray.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
+    console.log('component did mount ', this.state.users, users)
     this.setState({ users: users });
   };
 

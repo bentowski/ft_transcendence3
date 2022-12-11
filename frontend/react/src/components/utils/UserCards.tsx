@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import Request from "./Requests";
 import "../../styles/components/utils/userCards.css";
@@ -7,10 +7,38 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
+import {UpdateUserGameDto} from "../../dtos/updateUser.dto";
+import {CreatePrivChanDto} from "../../dtos/create-chan.dto";
+import {UserJoinChannelReceiveDto} from "../../dtos/userjoinchannel.dto";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
 const socketChat = io("http://localhost:3000/chat");
+
+const BtnToChat = ({cb}:{cb: any}) => {
+  const navigate = useNavigate();
+
+  const btnClick = async () => {
+    const ret:string = await cb();
+    if (ret != "" && !window.location.href.includes("http://localhost:8080/chat"))
+      navigate(ret);
+  }
+
+  return (
+      <button className="p-1" onClick={btnClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          fill="currentColor"
+          className="bi bi-chat-left-dots"
+          viewBox="0 0 16 16"
+        >
+          <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+          <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+        </svg>
+      </button>
+  )}
 
 class UserCards extends Component<
   { user: any, avatar: any, stat: any },
@@ -55,7 +83,7 @@ class UserCards extends Component<
 
   setSocket = (): void => {
     if (this.state.loaded !== 'ok') {
-      socket.on(('onUpdateUser'), (user: { auth_id: number, status: number }) => {
+      socket.on(('onUpdateUser'), (user: UpdateUserGameDto) => {
         this.updateUser(user);
       })
       this.setState({ loaded: 'ok' })
@@ -98,7 +126,7 @@ class UserCards extends Component<
     return title;
   }
 
-  createChan = async (): Promise<void> => {
+  createChan = async (): Promise<string> => {
     const ctx: any = this.context;
     try {
       const u2: UserType = await Request(
@@ -124,29 +152,36 @@ class UserCards extends Component<
         }
       })
       if (!doesChanExist) {
-          const channelname: string = await this.createChanName(ctx.user, u2)
+        const channelname: string = await this.createChanName(ctx.user, u2)
+        const createprivchan: CreatePrivChanDto = {
+          name: channelname,
+          type: "direct",
+          user_1_id: ctx.user.auth_id,
+          user_2_id: u2.auth_id,
+        }
           newChan = await Request(
             "POST",
             {
               Accept: "application/json",
               "Content-Type": "application/json",
             },
-            {
-              name: channelname,
-              type: "direct",
-              user_1_id: ctx.user.auth_id,
-              user_2_id: u2.auth_id,
-            },
+            createprivchan,
             "http://localhost:3000/chan/createpriv"
             );
-          socketChat.emit("chanCreated", {chan: newChan, auth_id: u2.auth_id});
+        const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
+          socketChat.emit("chanCreated", res);
       }
       if (newChan !== undefined) {
-        window.location.href = "http://localhost:8080/chat/" + newChan.id
+        // this.navigate("/chat/"/*  + newChan.id */)
+        // console.log(this.props.navigation)
+        //window.location.href = "http://localhost:8080/chat/" + newChan.id
+        return ("/chat/" + newChan.id)
       }
     } catch (error) {
       ctx.setError(error);
+      return ("")
     }
+    return ("")
 
     /*
     let chans = await Request("GET", {}, {}, "http://localhost:3000/chan");
@@ -263,19 +298,7 @@ class UserCards extends Component<
           >
             <div className="col-5  d-flex flex-row justify-content-start">
               {/* <Link to={"/chat"}> */}
-              <button className="p-1" onClick={this.createChan}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  fill="currentColor"
-                  className="bi bi-chat-left-dots"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                  <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                </svg>
-              </button>
+              <BtnToChat cb={this.createChan}/>
               {/* </Link> */}
               {/* <Link to={"/game"}> */}
                 <button className="mx-2 p-1" onClick={this.startNewGame}>
@@ -355,8 +378,8 @@ class UserCards extends Component<
         <div className="Score col-8 d-flex justify-content-end align-items-center">
           <div className="">won</div>
           <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
-            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>
-            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost}</div>
+            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won ? this.props.user.game_won : 0}</div>
+            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost ? this.props.user.game_lost : 0}</div>
           </div>
           <div className="">lost</div>
         </div>

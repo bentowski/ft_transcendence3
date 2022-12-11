@@ -3,6 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import "../../styles/components/utils/modal.css";
 import { ErrorType } from "../../types";
+import {TwoFACodeDto} from "../../dtos/twofacode.dto";
 
 const Switch = (): JSX.Element => {
   const [code, setCode] = useState<string>("");
@@ -58,15 +59,16 @@ const Switch = (): JSX.Element => {
     if (!checkVal(code) && code.length !== 6) {
       return;
     }
+    const twofa: TwoFACodeDto = {
+      twoFACode: code,
+    }
     const res: Response = await fetch("http://localhost:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        twoFACode: code,
-      }),
+      body: JSON.stringify(twofa),
     })
     if (res.ok) {
        handleClose();
