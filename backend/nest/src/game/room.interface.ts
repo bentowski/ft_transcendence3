@@ -1,13 +1,13 @@
 import { UserEntity } from '../user/entities/user-entity';
 
 export interface Position {
-  x: number;
-  y: number;
+  x: number,
+  y: number
 }
 
 interface Ball {
-  position: Position;
-  velocity: Position;
+  position: Position,
+  velocity: Position
 }
 
 export enum State {
@@ -15,14 +15,28 @@ export enum State {
   STARTING,
   COUNTDOWN,
   INGAME,
-  END,
+  END
+}
+
+export interface Config {
+  ballPos: [number, number],
+  player1: [number, number],
+  player2: [number, number],
+  sizeBall:  number,
+  speed: number,
+  playerSize: number,
+  playerSpeed: number,
+  middle: number,
+  vector: [number, number],
+  p1Score: number,
+  p2Score: number
 }
 
 export interface Room {
-  code: string;
-  state: State;
-  players: Array<UserEntity>;
-  spectators?: Array<UserEntity>;
-  ball: Ball;
-  speed: number;
+  code: number,
+  state: State,
+  mode: number,
+  players: [number, number],
+  spectators: Array<number>,
+  config: Config,
 }

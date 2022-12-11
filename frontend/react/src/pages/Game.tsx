@@ -72,7 +72,7 @@ const printGame = (ctx: any) => {
       move += 1;
     }
     if (move === 1) {
-      socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "p1": settings.p1, "p2": settings.p2, "player": settings.currentUser, "room": settings.room})
+      socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
     }
   }
   ctx.clearRect(0, 0, settings.w, settings.h)

@@ -10,7 +10,7 @@ import { Socket, Server } from 'socket.io';
 import { PartiesService } from '../parties/parties.service';
 // import { ChanService } from '../chans/chan.service';
 import { UserService } from '../user/user.service';
-import { Room, State, Position } from './room.interface';
+import { Room, State, Config } from './room.interface';
 import { GameService } from './game.service';
 
 @WebSocketGateway({
@@ -24,134 +24,162 @@ export class GameGateway implements OnModuleInit
 {
 	constructor(
     private readonly gameService: GameService,
-    private readonly partiesService: PartiesService) {}
+    private readonly partiesService: PartiesService
+  ) {}
 
-
-  rooms: Map<string, Room> = new Map();
-
-  // @Interval(1000)
-  //  loop(): void {
-  //    console.log("test")
-  //    for (const room of this.rooms.values())
-  //    {
-  //      console.log(room.code);
-  //      if (room.state == State.INGAME)
-  //      {
-  //        console.log(room.code);
-  //      }
-  //    }
-  //  }
+  rooms: Map<number, Room> = new Map()
 
   @WebSocketServer()
   server: Server
 
   onModuleInit() {
-    this.server.on('connection', (socket) => {
-    });
+    this.server.on('connection', (socket) => {});
   }
 
   @SubscribeMessage('joinRoom')
-  async onJoinRoom(client: Socket, body: any) {
-    console.log("JOINROOM == ", body.game.id)
-    client.join(body.game.id);
-    this.partiesService.addToGame(body.game.id, body.auth_id);
-    if (body.game.p1 === null)
-    {
-      body.game.p1 = body.auth_id;
-      this.createRoom(body.game.id);
-      this.server.to(body.game.id).emit("userJoinChannel", body.game);
-    }
-    else if (body.game.p1 !== null && body.game.p1 !== body.auth_id && body.game.p2 === null)
-    {
-      body.game.p2 = body.auth_id
-      const settings = await this.gameService.initGame(body.game.p1, body.game.p2)
-      this.server.to(body.game.id).emit("Init", {room: body.game, settings: settings});
-      for (let i = 5; i > 0; i--)
-        this.server.to(body.game.id).emit("printCountDown", {room: body.game, number: i});
-      this.server.to(body.game.id).emit("Start", {room: body.game});
-      this.startGame(this.getRoom(body.game.id))
-    }
-    else
-    // if (body.game.p1 !== null && body.game.p2 !== null)
-    {
-      const settings = await this.gameService.initGame(body.game.p1, body.game.p2)
-      if (body.game.p2 !== body.game.id && body.game.p1 !== body.game.id)
+   async onJoinRoom(client: Socket, body: any) {
+     client.join(body.game.id);
+     let currentRoom: Room|undefined = this.findRoom(body.game.id);
+     if (currentRoom == undefined)
+     {
+       console.log("works");
+       currentRoom = this.createRoom(body.game.id, body.auth_id);
+     }
+     else if (currentRoom.players[1] == 0
+      && currentRoom.players[0] != body.auth_id)
       {
-        this.server.to(body.game.id).emit("Init", {room: body.game, settings: settings});
-        this.server.to(body.game.id).emit("Start", {room: body.game});
+        console.log(body.auth_id, "works")
+        currentRoom.players[1] = body.auth_id
+        this.partiesService.addToGame(body.game.id, body.auth_id);
       }
-      this.update(body.game.id);
+     else if (currentRoom.players.find(element => element == body.auth_id) == undefined
+      && (!currentRoom.spectators || currentRoom.spectators.find(element => element == body.auth_id) == undefined))
+      {
+        currentRoom.spectators.push(body.auth_id)
+        console.log("Spectator")
+      }
+    if (currentRoom != undefined)
+    {
+      this.partiesService.addToGame(body.game.id, body.auth_id);
+      this.server.to(body.game.id).emit("Init", {room: body.game, settings: currentRoom.config});
+      if (currentRoom.players[0] && currentRoom.players[1])
+        this.startGame(currentRoom, body.game);
     }
-  }
+   }
+
 
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
     let admin: boolean
-    if (body.player === body.p1)
-      admin = true
-    else if (body.player === body.p2)
-      admin = false
-    this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
+    let currentRoom: Room|undefined = this.findRoom(body.game.id);
+    if (currentRoom != undefined)
+    {
+      if (body.player === currentRoom.players[0])
+        admin = true
+      else if (body.player === currentRoom.players[1])
+        admin = false
+      this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
+    }
   }
 
-  @SubscribeMessage('pleaseBall')
-  onBallMove(@MessageBody() body: any) {
-    this.server.to(body.room).emit('ballMoved', body)
+  findRoom(id: number) {
+    const roomIterator = this.rooms.values()
+    let i = 0;
+    let value: Room;
+    while (i < this.rooms.size)
+    {
+      value = roomIterator.next().value;
+      if (value.code == id)
+       return value;
+      i++
+    }
+     return undefined
   }
 
-   getRoom(code: string): Room {
-     return this.rooms.get(code);
-   }
-
-   createRoom(code: string = null): Room {
-     while (!code) {
-       const length = 10;
-       const generated = Math.floor(
-         Math.random() * Math.pow(16, length),
-       ).toString(16);
-       if (!this.rooms.has(generated)) code = generated;
-     }
-
-     const room: Room = {
-       code,
-       state: State.WAITING,
-       players: [],
-       ball: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
-       speed: 0,
-     };
-     this.rooms.set(code, room);
-     return room;
-   }
-
-   startGame(room: Room): void {
-     console.log("pretty")
-     // ================ init Game ==============
-     room.state = State.INGAME;
-     this.update(room);
-
-   }
-
-  update(room: Room): any {
-    console.log("works")
-    // ======== New position Ball ============
-
-   // =============== scores ================
-
-   //=========== EndGame ? ==========
-
-   //============ Reset Ball Pos ============
-
-
-   //====== Envoyer position ball =========
-   // setTimeout(() => {}, 1000)
-   // this.update(room)
- }
-
-
-  @SubscribeMessage('gameover')
-  gameOver(@MessageBody() body: any) {
-    this.server.to(body.room).emit('gameoverSend', body)
+  createRoom(codeRoom: number, playerID: number) {
+      const room: Room = {
+        code : codeRoom,
+        state: State.WAITING,
+        mode: 0,
+        players: [playerID, 0],
+        spectators: [],
+        config: this.initConfig(),
+      };
+      this.rooms.set(codeRoom, room);
+      return room;
   }
+
+  initConfig(){
+    let sizeBall = 3;
+    let config: Config = {
+      ballPos: [50 - (sizeBall / 2), 50],
+      player1: [100 - sizeBall, 50],
+      player2: [0, 50],
+      sizeBall:  sizeBall,
+      speed: 10,
+      playerSize: sizeBall * 4,
+      playerSpeed: 10,
+      middle: 50 + (sizeBall / 4),
+      vector: [1, 0],
+      p1Score: 0,
+      p2Score: 0
+    }
+    return config;
+  }
+
+  startGame(room: Room, prout: any): void {
+    console.log("pretty")
+
+    // while (!(room.state = State.WAITING && room.players[0] != 0 && room.players[1] != 0));
+    room.state = State.INGAME;
+    for (let i = 5; i > 0; i--)
+      this.server.to(prout.id).emit("printCountDown", {room: prout, number: i});
+    if (room.state = State.INGAME)
+    {
+      this.routine();
+    }
+  }
+
+   routine(): void {
+     for (const room of this.rooms.values())
+       if (room.state == State.INGAME)
+         this.update(room)
+     setTimeout(() => {this.routine()}, (1000 / 60))
+   }
+
+    update(room: Room): any {
+      console.log("routine");
+      // ======== New position Ball ============
+
+     // =============== scores ================
+
+     //=========== EndGame ? ==========
+
+     //============ Reset Ball Pos ============
+
+
+     //====== Envoyer position ball =========
+
+   }
+
+ //  @SubscribeMessage('pleaseBall')
+ //  onBallMove(@MessageBody() body: any) {
+ //    this.server.to(body.room).emit('ballMoved', body)
+ //  }
+ //
+ //
+ //
+
+ //
+
+ //
+
+ //
+ //
+ //  @SubscribeMessage('gameover')
+ //  gameOver(@MessageBody() body: any) {
+ //    this.server.to(body.room).emit('gameoverSend', body)
+ //  }
 
 
 }
