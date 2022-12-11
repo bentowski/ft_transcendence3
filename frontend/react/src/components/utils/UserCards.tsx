@@ -373,8 +373,8 @@ class UserCards extends Component<
         <div className="Score col-8 d-flex justify-content-end align-items-center">
           <div className="">won</div>
           <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
-            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>
-            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost}</div>
+            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won ? this.props.user.game_won : 0}</div>
+            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost ? this.props.user.game_lost : 0}</div>
           </div>
           <div className="">lost</div>
         </div>

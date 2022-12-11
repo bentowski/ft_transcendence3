@@ -70,9 +70,9 @@ a:active {
 	width: 100%;
 }
 
-.logoutMenu p {
-	/* color: orangered; */
-}
+/* .logoutMenu p {
+	color: orangered;
+} */
 
 /* .logoutMenu:hover p { */
 	/* color: orangered; */
@@ -100,22 +100,21 @@ button {
 	color: rgb(55, 71, 104);
 }
 
-button:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:not(.btnAvatar, .btnUsername, .btn-close) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
-  /* background: none; */
   color: white;
 	padding-top: 5px;
 	box-shadow: 0 3px rgb(99, 82, 28);
 	overflow: hidden;
 }
 
-button:hover:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:hover:not(.btnAvatar, .btnUsername, .btn-close) {
 	color: rgb(99, 82, 28);
 }
 
-button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }
@@ -124,7 +123,6 @@ button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
-  /* background: none; */
   color: white;
 	padding-top: 5px;
 	box-shadow: 0 3px rgb(99, 82, 28);
@@ -251,7 +249,7 @@ img {
 } */
 
 .MatchNav {
-	border: 3px solid #a7ae06ff;
+	border: 3px solid #c2c746;
 	background-color: #fff359;
 	background-repeat: repeat;
 	background-size: 70%;
