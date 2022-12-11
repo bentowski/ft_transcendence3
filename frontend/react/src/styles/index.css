@@ -145,7 +145,7 @@ button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
 	box-shadow: 0 0;
 }
 
-img {
+img:not(.clickable) {
 	width:auto;
 	max-width: 100%;
 	max-height: 100%;
