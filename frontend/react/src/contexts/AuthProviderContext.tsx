@@ -11,6 +11,7 @@ import Request from "../components/utils/Requests";
 import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import {FriendUserSendDto} from "../dtos/friend-user.dto";
 
 const socket = io('http://localhost:3000/update')
 export const AuthContext = createContext<any>({});
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [friendsList])
 
   useEffect(() => {
-    const handleUpdateFriends = (obj: any) => {
+    const handleUpdateFriends = (obj: FriendUserSendDto) => {
       if (user.auth_id === obj.curuser.auth_id) {
         updateFriendsList(obj.friuser, obj.action);
         return ;

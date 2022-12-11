@@ -1,14 +1,14 @@
 import {IsNotEmpty, IsString} from "class-validator";
-export class AddToChannelReceiveDto {
+
+export class SendGameInfoDto {
     @IsNotEmpty()
     @IsString()
-    room: string;
+    to: string;
 
     @IsNotEmpty()
     @IsString()
-    auth_id: string;
-}
+    from: string;
 
-export class AddToChannelSendDto {
-
+    @IsString()
+    partyId?: string;
 }

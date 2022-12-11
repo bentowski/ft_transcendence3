@@ -5,6 +5,7 @@
   "dependencies": {
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
+    "class-validator": "^0.14.0",
     "depcheck": "^1.4.3",
     "eslint-config-react-app": "^7.0.1",
     "react": "^18.2.0",

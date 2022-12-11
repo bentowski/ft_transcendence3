@@ -7,6 +7,9 @@ import { AuthContext } from "../../contexts/AuthProviderContext";
 import { ChanType, PartiesType, UserType } from "../../types"
 import ModalMatchWaiting from "./ModalMatchWaiting";
 import ModalMatchInvite from "./ModalMatchInvite";
+import {UpdateUserGameDto} from "../../dtos/updateUser.dto";
+import {CreatePrivChanDto} from "../../dtos/create-chan.dto";
+import {UserJoinChannelReceiveDto} from "../../dtos/userjoinchannel.dto";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
 const socket = io("http://localhost:3000/update");
@@ -80,7 +83,7 @@ class UserCards extends Component<
 
   setSocket = (): void => {
     if (this.state.loaded !== 'ok') {
-      socket.on(('onUpdateUser'), (user: { auth_id: number, status: number }) => {
+      socket.on(('onUpdateUser'), (user: UpdateUserGameDto) => {
         this.updateUser(user);
       })
       this.setState({ loaded: 'ok' })
@@ -149,22 +152,24 @@ class UserCards extends Component<
         }
       })
       if (!doesChanExist) {
-          const channelname: string = await this.createChanName(ctx.user, u2)
+        const channelname: string = await this.createChanName(ctx.user, u2)
+        const createprivchan: CreatePrivChanDto = {
+          name: channelname,
+          type: "direct",
+          user_1_id: ctx.user.auth_id,
+          user_2_id: u2.auth_id,
+        }
           newChan = await Request(
             "POST",
             {
               Accept: "application/json",
               "Content-Type": "application/json",
             },
-            {
-              name: channelname,
-              type: "direct",
-              user_1_id: ctx.user.auth_id,
-              user_2_id: u2.auth_id,
-            },
+            createprivchan,
             "http://localhost:3000/chan/createpriv"
             );
-          socketChat.emit("chanCreated", {chan: newChan, auth_id: u2.auth_id});
+        const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
+          socketChat.emit("chanCreated", res);
       }
       if (newChan !== undefined) {
         // this.navigate("/chat/"/*  + newChan.id */)
@@ -373,8 +378,8 @@ class UserCards extends Component<
         <div className="Score col-8 d-flex justify-content-end align-items-center">
           <div className="">won</div>
           <div className="Ratio mx-2 p-1 d-flex flex-row align-items-center">
-            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won}</div>
-            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost}</div>
+            <div className="Rwon col-6 px-2 d-flex justify-content-start align-items-center">{this.props.user.game_won ? this.props.user.game_won : 0}</div>
+            <div className="col-6 px-2 d-flex justify-content-end">{this.props.user.game_lost ? this.props.user.game_lost : 0}</div>
           </div>
           <div className="">lost</div>
         </div>

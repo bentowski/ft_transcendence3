@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { ErrorType, UsersChanBanType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
+import {BanToChannelReceiveDto} from "../../dtos/banToChannel.dto";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{
     chan: string,
@@ -87,10 +88,12 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 setError(error);
                 return ;
             }
-            socket.emit('banToChannel', {
+            const res: BanToChannelReceiveDto = {
                 room: chan,
                 auth_id: obj.user.auth_id,
-                action: !obj.isBan });
+                action: !obj.isBan
+            }
+            socket.emit('banToChannel', res);
             /*
             const newArray: UsersChanBanType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {

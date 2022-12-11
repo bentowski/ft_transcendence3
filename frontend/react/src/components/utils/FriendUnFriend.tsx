@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import { io } from "socket.io-client";
+import {FriendUserReceiveDto} from "../../dtos/friend-user.dto";
 
 const socket = io('http://localhost:3000/update')
 
@@ -35,11 +36,12 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     }, [setError, auth_id, friendsList])
 
     const friendunfriendUser = async (): Promise<void> => {
-        socket.emit('updateFriend', {
+        const res: FriendUserReceiveDto = {
             "curid": user.auth_id,
             "frid": auth_id,
             "action": !status,
-        })
+        }
+        socket.emit('updateFriend', res)
     }
 
     return (
