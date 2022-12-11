@@ -16,7 +16,7 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
 		monospace;
 }
-/* 
+
 @font-face {
 	font-family: "SpongeBobFont";
 	src: url("http://localhost:8080/font/spongebobfont.woff");
@@ -100,22 +100,21 @@ button {
 	color: rgb(55, 71, 104);
 }
 
-button:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:not(.btnAvatar, .btnUsername, .btn-close) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
-  /* background: none; */
   color: white;
 	padding-top: 5px;
 	box-shadow: 0 3px rgb(99, 82, 28);
 	overflow: hidden;
 }
 
-button:hover:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:hover:not(.btnAvatar, .btnUsername, .btn-close) {
 	color: rgb(99, 82, 28);
 }
 
-button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
+button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }
@@ -124,7 +123,6 @@ button:active:not(.btnAvatar, .btnUsername/* , .btnLogout */) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
   border-radius: 10px;
-  /* background: none; */
   color: white;
 	padding-top: 5px;
 	box-shadow: 0 3px rgb(99, 82, 28);
