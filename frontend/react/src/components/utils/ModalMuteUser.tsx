@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { ErrorType, UsersChanMuteType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
+import {MuteToChannelReceiveDto} from "../../dtos/muteToChannel.dto";
 
 const ModalMuteUser = ({chan, socket, usersInChan}:{
     chan: string,
@@ -80,10 +81,11 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                 setError(error);
                 return ;
             }
-            socket.emit('muteToChannel', {
-                "room": chan,
-                "auth_id": obj.user.auth_id,
-                "action": !obj.isMute });
+            const res: MuteToChannelReceiveDto = {
+                room: chan,
+                auth_id: obj.user.auth_id,
+                action: !obj.isMute }
+            socket.emit('muteToChannel', res);
             /*
             const newArray: UsersChanMuteType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
@@ -102,7 +104,6 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
             {
                 if (usersChan[x].user && usersChan[x].user?.auth_id !== user.auth_id)
                 {
-                    console.log('userschan = ', )
                     ret.push(
                         <div
                             key={x}

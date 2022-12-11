@@ -6,6 +6,7 @@ import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
 import { Alert } from "react-bootstrap";
 import { io } from "socket.io-client";
+import {FriendUserReceiveDto, FriendUserSendDto} from "../dtos/friend-user.dto";
 
 const socket = io('http://localhost:3000/update')
 class FriendsNav extends Component<{}, {
@@ -75,11 +76,12 @@ class FriendsNav extends Component<{}, {
           "http://localhost:3000/user/name/" + input.value
         )
         input.value = '';
-        socket.emit("updateFriend", {
-          "curid": currentUser.auth_id,
-          "frid": userToAdd.auth_id,
-          "action": true,
-        })
+        const response: FriendUserReceiveDto ={
+          curid: currentUser.auth_id,
+          frid: userToAdd.auth_id,
+          action: true,
+        }
+        socket.emit("updateFriend", response)
       }
       else {
         this.setState({ alert: true })

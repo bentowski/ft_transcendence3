@@ -29,5 +29,10 @@ export class BanToChannelSendDto {
 }
 
 export class TimerOutBanDto {
-
+    @IsNotEmpty()
+    @IsString()
+    auth_id: string;
+    @IsNotEmpty()
+    @IsString()
+    room: string;
 }

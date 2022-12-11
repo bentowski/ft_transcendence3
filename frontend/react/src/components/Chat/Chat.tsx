@@ -7,6 +7,12 @@ import { ChanType, UserType, ErrorType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { ChannelList } from './ChannelList'
 import { PrintChannel } from './PrintChannel'
+import {UserJoinChannelReceiveDto, UserJoinChannelSendDto} from "../../dtos/userjoinchannel.dto";
+import {LeaveRoomSendDto} from "../../dtos/leaveroom.dto";
+import {BanToChannelSendDto, TimerOutBanDto} from "../../dtos/banToChannel.dto";
+import {MuteToChannelSendDto, TimerOutMuteDto} from "../../dtos/muteToChannel.dto";
+import {AdminToChannelSendDto} from "../../dtos/adminToChannel.dto";
+import {CreateChanDto} from "../../dtos/create-chan.dto";
 
 export const WebSocket = (): JSX.Element => {
   const [value, setValue] = useState('');
@@ -36,7 +42,7 @@ export const WebSocket = (): JSX.Element => {
   useEffect((): () => void => {
     socket.on('connect', () => {
     });
-    socket.on("userJoinChannel", (obj: any) => {
+    socket.on("userJoinChannel", (obj: UserJoinChannelSendDto) => {
       if (user.auth_id === obj.userid) {
           updateChanFromList(obj.chan, true);
       }
@@ -47,7 +53,7 @@ export const WebSocket = (): JSX.Element => {
           goHome();
         getChan();
     })
-    socket.on("userLeaveChannel", (obj: any) => {
+    socket.on("userLeaveChannel", (obj: LeaveRoomSendDto) => {
       if (user.auth_id === obj.userid) {
         updateChanFromList(obj.chan, false);
       }
@@ -72,7 +78,7 @@ export const WebSocket = (): JSX.Element => {
   }
 
   useEffect((): () => void => {
-    const handleMute = async (obj: any): Promise<void> => {
+    const handleMute = async (obj: MuteToChannelSendDto): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -88,7 +94,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleBan = async (obj: any): Promise<void> => {
+    const handleBan = async (obj: BanToChannelSendDto): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -112,7 +118,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleAdmin = async (obj: any) => {
+    const handleAdmin = async (obj: AdminToChannelSendDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -162,7 +168,7 @@ export const WebSocket = (): JSX.Element => {
     user]);
 
   useEffect(() => {
-    const handleOutBan = async (obj: any) => {
+    const handleOutBan = async (obj: TimerOutBanDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -178,7 +184,7 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan()
     }
-    const handleOutMute = async (obj: any) => {
+    const handleOutMute = async (obj: TimerOutMuteDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -263,24 +269,26 @@ export const WebSocket = (): JSX.Element => {
         setError(error);
         return;
       }
+      const newchan: CreateChanDto = {
+        name: name,
+        type: typep,
+        password: pass,
+        owner: user.auth_id,
+      }
         chanCreated = await Request(
             "POST",
             {
               Accept: "application/json",
               "Content-Type": "application/json",
             },
-            {
-              name: name,
-              type: typep,
-              password: pass,
-              owner: user.auth_id,
-            },
+            newchan,
             "http://localhost:3000/chan/create"
         );
-          socket.emit('chanCreated', {
-            chan: chanCreated,
-            auth_id: user.auth_id,
-          });
+      const userjoinchan: UserJoinChannelReceiveDto = {
+        chan: chanCreated,
+        auth_id: user.auth_id,
+      }
+          socket.emit('chanCreated', userjoinchan);
           //updateAllChans();
           updateAdminFromList(chanCreated, true);
           //updateChanFromList(chanCreated, true);
