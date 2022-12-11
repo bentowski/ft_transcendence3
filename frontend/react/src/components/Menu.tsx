@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { useEffect, useState } from "react";
 import { AvatarType } from "../types";
+import "../styles/components/menu.css"
 
 const Menu = () => {
   const { setError, user, userAuthentication } = useAuthData();

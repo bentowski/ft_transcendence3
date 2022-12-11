@@ -1,0 +1,10 @@
+.Menu {
+	height: 12vh;
+	padding: 1vh;
+	/* margin: 5vh; */
+	/* padding: 20px; */
+	/* padding-right: 10px; */
+	background-image: url(http://localhost:8080/pictures/banner.jpg);
+	background-size: auto 500%!important;
+	background-position: center;
+}
