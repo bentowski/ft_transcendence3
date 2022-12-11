@@ -98,6 +98,10 @@ button {
 	border: none;
 	padding: 0;
 	color: rgb(55, 71, 104);
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 button:not(.btnAvatar, .btnUsername, .btn-close) {
@@ -139,10 +143,15 @@ button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 	box-shadow: 0 0;
 }
 
-img {
+img:not(.clickable) {
 	width:auto;
 	max-width: 100%;
 	max-height: 100%;
+	pointer-events: none;
+	user-select: none;
+  	-webkit-user-select: none;
+  	-moz-user-select: none;
+  	-ms-user-select: none;
 	/* display: block; */
 
 }
@@ -380,7 +389,6 @@ img {
   .break-text {
 	word-wrap: break-word;
   }
-
 	/* .checkPassword {
 		z-index: 3000;
 		width: 100%;
