@@ -294,13 +294,10 @@ class Game extends Component<{},{}> {
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
-    // console.log((winWidth * 19) / 26 > winHeight)
-    // if ((winWidth * 19) / 26 > winHeight)
-    //   winWidth = ((winHeight * 26) / 19)
-    // else
-    console.log(winWidth, winHeight)
+    if ((winWidth * 19) / 26 > winHeight)
+      winWidth = ((winHeight * 26) / 19)
+    else
       winHeight = (winWidth / 26) * 19
-      console.log(winHeight)
 
     settings.w = winWidth
     settings.h = winHeight

@@ -16,4 +16,8 @@ export class CreatePartiesDto {
     @IsNumber()
     @IsNotEmpty()
     public type: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    public vitesse: number;
 }

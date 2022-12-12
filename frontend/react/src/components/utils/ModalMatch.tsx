@@ -24,6 +24,10 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
     let nbplayer: number = 1;
     if (radio.checked)
       nbplayer = 2;
+    const radioSpeed = document.getElementById('Speed2') as HTMLInputElement
+    let vitesse: number = 2;
+    if (radioSpeed.checked)
+      vitesse = 2;
     try {
       await Request(
         "POST",
@@ -34,7 +38,8 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
         {
           login: currentUser.username,
           nbplayer: nbplayer,
-          type: isClassic
+          type: isClassic,
+          vitesse: vitesse
         },
         "http://localhost:3000/parties/create"
       );
@@ -71,6 +76,13 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
             <p>
               <input type="radio" name="playerNum" value="1" id="Game1" defaultChecked/>1 player<br />
               <input type="radio" name="playerNum" value="2" id="Game2" />2 players
+            </p>
+          </form>
+          <form className='mb-3'>
+            <p>Speed</p>
+            <p>
+              <input type="radio" name="playerNum" value="1" id="Speed1" defaultChecked/>x1<br />
+              <input type="radio" name="playerNum" value="2" id="Speed2" />x2
             </p>
           </form>
           <footer>

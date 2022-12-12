@@ -63,15 +63,14 @@ const printGame = (ctx: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
     }
   }
-  const element = document.getElementById('root') as HTMLDivElement;
+  const element = document.getElementById('canvas') as HTMLDivElement;
   ctx.clearRect(0, 0, element.clientWidth, element.clientHeight)
   while (y < settings.h) {
       ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
-      console.log(settings.h, y, "AAAAAAAAAAAAAA")
       y += settings.sizeBall * 2
   }
-  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-  ctx.drawImage(p1, settings.player1[0] - settings.sizeBall, settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.playerSize)
+  ctx.drawImage(p1, settings.player1[0] - settings.sizeBall, settings.player1[1], settings.sizeBall, settings.playerSize)
   ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
@@ -327,10 +326,9 @@ class Game extends Component<{},{}> {
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
-    // if ((winWidth * 19) / 26 > winHeight)
-    //   winWidth = ((winHeight * 26) / 19)
-    // else
-    console.log(winWidth, winHeight)
+    if ((winWidth * 19) / 26 > winHeight)
+      winWidth = ((winHeight * 26) / 19)
+    else
       winHeight = (winWidth / 26) * 19
       console.log(winHeight)
     settings.w = winWidth
