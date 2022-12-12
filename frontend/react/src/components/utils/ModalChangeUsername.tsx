@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { Alert } from 'react-bootstrap';
 import { UserType } from "../../types";
+import {UpdateUsernameDto} from "../../dtos/update-user.dto";
 
 const ModalChangeUsername = (): JSX.Element => {
   const { user, updateUser, setError } = useAuthData();
@@ -71,12 +72,13 @@ const ModalChangeUsername = (): JSX.Element => {
     const ret: boolean = await verifField();
     if (ret) {
       try {
+        const req: UpdateUsernameDto = { username: field }
         const res: UserType = await Request(
             "PATCH",
             {
               "Content-Type": "application/json",
             },
-            { username: field },
+            req,
             "http://localhost:3000/user/update/username"
         )
         if (res) {

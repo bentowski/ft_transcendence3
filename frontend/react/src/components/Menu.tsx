@@ -40,10 +40,10 @@ const Menu = () => {
       <div className="Menu shadow d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">
           <Link to={"/chat"}>
-            <div className="m-0">chat</div>
+            <div className="m-0">Chat</div>
           </Link>
           <Link to={"/history"}>
-            <div className="m-0 mx-2">stats</div>
+            <div className="m-0 mx-2">Stats</div>
           </Link>
         </div>{" "}
         {/* homeButtonDiv */}
@@ -55,7 +55,7 @@ const Menu = () => {
           <div className="logoutMenu">
             {/* <a className="mx-2 btn btn-outline-dark shadow-none" onClick={logoutSession}> */}
             <button className="btnLogout mx-2" onClick={logoutSession}>
-              <p className="m-0">logout</p>
+              <p className="m-0">Logout</p>
             </button>
           </div>
           <div className="loginMenu px-2">

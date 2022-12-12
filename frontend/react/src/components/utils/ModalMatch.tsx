@@ -74,9 +74,9 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
             </p>
           </form>
           <footer>
-            <button className='mx-1 btn btn-outline-dark shadow-none' onClick={this.hidden}>Cancel</button>
-            <button className='mx-1 btn btn-outline-dark shadow-none' onClick={() => this.createParties(0)}>Create</button>
-            <button className='mx-1 btn btn-outline-dark shadow-none' onClick={() => this.createParties(1)}>Create classic</button>
+            <button className='mx-1' onClick={this.hidden}>Cancel</button>
+            <button className='mx-1' onClick={() => this.createParties(0)}>Create</button>
+            <button className='mx-1' onClick={() => this.createParties(1)}>Create classic</button>
           </footer>
         </div>
       </div>

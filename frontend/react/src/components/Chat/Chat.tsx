@@ -3,10 +3,17 @@ import { useNavigate} from "react-router-dom";
 import Modal from "../utils/Modal";
 import Request from "../utils/Requests"
 import { socket, WebsocketProvider, WebsocketContext } from '../../contexts/WebSocketContext';
-import { ChanType, UserType, PunishSocketType, ErrorType } from "../../types"
+import { ChanType, UserType, ErrorType } from "../../types"
 import { useAuthData } from "../../contexts/AuthProviderContext";
 import { ChannelList } from './ChannelList'
 import { PrintChannel } from './PrintChannel'
+import {UserJoinChannelReceiveDto, UserJoinChannelSendDto} from "../../dtos/userjoinchannel.dto";
+import {LeaveRoomSendDto} from "../../dtos/leaveroom.dto";
+import {BanToChannelSendDto, TimerOutBanDto} from "../../dtos/banToChannel.dto";
+import {MuteToChannelSendDto, TimerOutMuteDto} from "../../dtos/muteToChannel.dto";
+import {AdminToChannelSendDto} from "../../dtos/adminToChannel.dto";
+import {CreateChanDto} from "../../dtos/create-chan.dto";
+import "../../styles/components/chat.css"
 
 export const WebSocket = (): JSX.Element => {
   const [value, setValue] = useState('');
@@ -18,6 +25,7 @@ export const WebSocket = (): JSX.Element => {
   const [loaded, setLoaded] = useState("not ok");
   const [chanUser, setChanUser] = useState<Array<UserType>>([]);
   const [url, setUrl] = useState<string>('');
+  // const [lastChan, setLastChan] = useState<ChanType>();
   const {
     user,
     setError,
@@ -36,23 +44,21 @@ export const WebSocket = (): JSX.Element => {
   useEffect((): () => void => {
     socket.on('connect', () => {
     });
-    socket.on("userJoinChannel", (obj: any) => {
-      getChan();
-      if (user.auth_id === obj.auth_id) {
-        updateChanFromList(obj.chan, true);
+    socket.on("userJoinChannel", (obj: UserJoinChannelSendDto) => {
+      if (user.auth_id === obj.userid) {
+          updateChanFromList(obj.chan, true);
       }
+      getChan();
     });
-    socket.on("chanDeleted", (/* roomId: string */) => {
-      chanList.forEach((c: ChanType) => {
-        if (c.chanUser.find((u: UserType) =>
-          u.auth_id === user.auth_id) !== undefined) {
-          getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
-          return ;
-        }
-      })
+    socket.on("chanDeleted", (roomId: string) => {
+        if (roomId === room)
+          goHome();
+        getChan();
     })
-    socket.on("userLeaveChannel", () => {
+    socket.on("userLeaveChannel", (obj: LeaveRoomSendDto) => {
+      if (user.auth_id === obj.userid) {
+        updateChanFromList(obj.chan, false);
+      }
       getChan();
       //window.location.replace("http://localhost:8080/chat");
       //navigate("/chat/")
@@ -67,9 +73,14 @@ export const WebSocket = (): JSX.Element => {
     }
   });
 
+  const goHome = () => {
+    changeActiveRoom("");
+    setRoom("null");
+    navigate("/chat")
+  }
+
   useEffect((): () => void => {
-    const handleMute = async (obj: PunishSocketType): Promise<void> => {
-      getChan()
+    const handleMute = async (obj: MuteToChannelSendDto): Promise<void> => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -83,10 +94,10 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
-    }
-    const handleBan = async (obj: PunishSocketType): Promise<void> => {
       getChan()
-      if (obj.auth_id === user.auth_id){
+    }
+    const handleBan = async (obj: BanToChannelSendDto): Promise<void> => {
+      if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -98,21 +109,18 @@ export const WebSocket = (): JSX.Element => {
           if (obj.action) {
             socket.emit("leaveRoom", {
               room: room,
-              auth_id: user.auth_id}
+              auth_id: user.auth_id
+            }
             );
-            updateChanFromList(chan, false);
-            changeActiveRoom("");
-            setRoom("null");
-            //socket.emit('chanCreated');
-            window.location.href = "http://localhost:8080/chat"; //!
+            goHome();
           }
         } catch (error) {
           setError(error);
         }
       }
+      getChan()
     }
-    const handleAdmin = async (obj: PunishSocketType) => {
-      getChan();
+    const handleAdmin = async (obj: AdminToChannelSendDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -126,6 +134,7 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan();
     }
     const handleError = (error: ErrorType, auth_id: string) => {
       if (auth_id === user.auth_id) {
@@ -161,8 +170,7 @@ export const WebSocket = (): JSX.Element => {
     user]);
 
   useEffect(() => {
-    const handleOutBan = async (obj: any) => {
-      getChan()
+    const handleOutBan = async (obj: TimerOutBanDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -176,9 +184,9 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
-    }
-    const handleOutMute = async (obj: any) => {
       getChan()
+    }
+    const handleOutMute = async (obj: TimerOutMuteDto) => {
       if (obj.auth_id === user.auth_id) {
         try {
           const chan: ChanType = await Request(
@@ -192,6 +200,7 @@ export const WebSocket = (): JSX.Element => {
           setError(error);
         }
       }
+      getChan()
     }
     socket.on('timerOutMute', handleOutMute);
     socket.on('timerOutBan', handleOutBan);
@@ -205,6 +214,7 @@ export const WebSocket = (): JSX.Element => {
     updateBannedFromList,
     user,
     socket])
+
 
   useEffect((): void => {
     getChan();
@@ -237,6 +247,13 @@ export const WebSocket = (): JSX.Element => {
     }
   }, [room, chanList])
 
+  useEffect((): void => {
+    if (currentChan) {
+      navigate('/chat/' + currentChan.id);
+      joinRoom(currentChan);
+    }
+  }, [currentChan])
+
 // ================= Fin UseEffects ===================
 
   const createChannel = async (
@@ -261,37 +278,32 @@ export const WebSocket = (): JSX.Element => {
         setError(error);
         return;
       }
+      const newchan: CreateChanDto = {
+        name: name,
+        type: typep,
+        password: pass,
+        owner: user.auth_id,
+      }
         chanCreated = await Request(
             "POST",
             {
               Accept: "application/json",
               "Content-Type": "application/json",
             },
-            {
-              name: name,
-              type: typep,
-              password: pass,
-              owner: user.auth_id,
-            },
+            newchan,
             "http://localhost:3000/chan/create"
         );
-          socket.emit('chanCreated', {
-            chan: chanCreated,
-            userid: user.auth_id,
-          });
-          //updateAllChans();
+const userjoinchan: UserJoinChannelReceiveDto = {
+        chan: chanCreated,
+        auth_id: user.auth_id,
+      }
+          socket.emit('chanCreated', userjoinchan);
+          if (chanCreated === undefined)
+            return ;
           updateAdminFromList(chanCreated, true);
-          //updateChanFromList(chanCreated, true);
-          navigate('/chat/' + chanCreated?.id);
-          //!
-          //await getChan();
-          setUrl('/chat/' + chanCreated?.id);
-          // joinRoom(chanCreated);
-          // changeActiveRoom(chanCreated.id)
-          //setRoom(chanCreated.id)
-          //!
-          // joinUrl();
-          // setTimeout(joinUrl, 5000);
+          await getChan();
+          setCurrentChan(chanCreated)
+          socket.emit("joinRoom", chanCreated.id, user.auth_id);
       } catch (error) {
         setError(error);
       }
@@ -374,17 +386,24 @@ export const WebSocket = (): JSX.Element => {
 
   const joinRoom = (newRoom: ChanType): void => {
      const chanToJoin: ChanType | undefined = chanList.find((chan: ChanType) => {
+      console.log(chan, newRoom)
       return String(chan.id) === String(newRoom.id)
      })
+     console.log("1")
     if (chanToJoin !== undefined) {
-      if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
-        //updateChanFromList(chanToJoin, true);
+     console.log("2")
+     if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
+     //updateChanFromList(chanToJoin, true);
+        // updateAdminFromList(chanToJoin, false)
         setRoom(chanToJoin.id);
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
         setCurrentChan(newRoom)
+        console.log("pasjoin");
       } else {
+        console.log("Join");
         socket.emit("joinRoom", newRoom.id, user.auth_id);
+        // updateAdminFromList(chanToJoin, false)
         //updateChanFromList(chanToJoin, true);
         setRoom(chanToJoin.id);
         changeActiveRoom(chanToJoin.id);

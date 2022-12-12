@@ -3,6 +3,7 @@ import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { ChanType } from '../../types';
 import Request from './Requests';
 import { useAuthData } from "../../contexts/AuthProviderContext";
+import {ChanPasswordDto} from "../../dtos/chan.dto";
 
 const ModalCheckPass = (
   { chanToJoin, clef, parentCallBack }:
@@ -40,10 +41,11 @@ const ModalCheckPass = (
     const id: string | undefined = chanToJoin?.id; 
     let res: boolean = false;
     try {
+      const pass: ChanPasswordDto = { pass: field }
         res = await Request(
         "PATCH",
         { "Content-Type": "application/json" },
-        { pass: field },
+        pass,
         "http://localhost:3000/chan/" + id + "/verify"
         )
     } catch (error) {

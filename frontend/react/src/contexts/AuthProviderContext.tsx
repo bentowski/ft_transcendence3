@@ -10,11 +10,10 @@ import {
 import Request from "../components/utils/Requests";
 import { AuthType, ChanType, UserType } from "../types";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
-import { WebsocketContextUpdate } from "./WebSocketContextUpdate";
 import { io } from "socket.io-client";
+import {FriendUserSendDto} from "../dtos/friend-user.dto";
 
 const socket = io('http://localhost:3000/update')
-
 export const AuthContext = createContext<any>({});
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,6 +35,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const location: any = useLocation();
   //const socket = useContext(WebsocketContextUpdate);
 
+
+
   const updateFriendsList = useCallback((
       usr: UserType,
       action: boolean): void => {
@@ -56,19 +57,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   }, [friendsList])
 
   useEffect(() => {
-    const handleUpdateFriends = (obj: any) => {
+    const handleUpdateFriends = (obj: FriendUserSendDto) => {
       if (user.auth_id === obj.curuser.auth_id) {
         updateFriendsList(obj.friuser, obj.action);
+        return ;
       }
       if (user.auth_id === obj.friuser.auth_id) {
         updateFriendsList(obj.curuser, obj.action);
+        return ;
       }
     }
     socket.on('onUpdateFriend', handleUpdateFriends);
     return () => {
       socket.off('onUpdateFriend', handleUpdateFriends);
     }
-  },[socket, user, updateFriendsList, friendsList])
+  },[user, updateFriendsList, friendsList])
 
   const updateBlockedList = useCallback((
       usr: UserType,
@@ -97,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     return () => {
       socket.off('onUserCreation', handleUserCreation);
     }
-  }, [socket, userList])
+  }, [userList])
 
   const updateBannedFromList = useCallback( (
       chan: ChanType,
@@ -418,7 +421,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       blockedList,
       navigate,
       location,
-      socket,
     ]
   );
 

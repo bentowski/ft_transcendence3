@@ -4,8 +4,9 @@ import SearchBar from './utils/SearchBar'
 import Request from "./utils/Requests"
 import { ErrorType, PartiesType } from "../types";
 import { AuthContext } from '../contexts/AuthProviderContext';
+import '../styles/components/matchnav.css';
 
-class MatchNav extends Component<{},{}> {
+class MatchNav extends Component<{}, {}> {
 	static contextType = AuthContext;
 	state = {
 		allGames: [],
@@ -52,9 +53,10 @@ class MatchNav extends Component<{},{}> {
 			// alert("No available game joinable")
 			const error: ErrorType = {
 				statusCode: 400,
-				message: "Error while trying to join game: No available game joinable"}
+				message: "Error while trying to join game: No available game joinable"
+			}
 			ctx.setError(error);
-			return ;
+			return;
 		}
 		const randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
 		window.location.href = "http://localhost:8080/game/" + randomGame.id
@@ -76,7 +78,7 @@ class MatchNav extends Component<{},{}> {
 				<div>
 					<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
 				</div>
-				<div style={{verticalAlign: "top"}}>
+				<div style={{ verticalAlign: "top" }}>
 					<p className="py-2">{login}</p>
 				</div>
 				<div>
@@ -98,7 +100,10 @@ class MatchNav extends Component<{},{}> {
 
 	render(): JSX.Element {
 		return (
-			<div className="MatchNav h-100" id="MatchNav">
+			<div className="MatchNav" id="MatchNav">
+				<div className="d-none d-lg-block w-100">
+					<img className="bob w-50" src="/pictures/bob.png" alt="bob" />
+				</div>
 				<div className="Wait m-2 p-2">
 					<p>{this.state.allGames.length} games found</p>
 				</div> {/* Wait */}

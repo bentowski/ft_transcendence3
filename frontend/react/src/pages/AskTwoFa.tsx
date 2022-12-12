@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {useAuthData} from "../contexts/AuthProviderContext";
 import {ErrorType} from "../types";
+import {TwoFACodeDto} from "../dtos/twofacode.dto";
 
 const AskTwoFa = (): JSX.Element => {
   const { user, setError, updateUserList, userAuthentication, isAuth, loading, isToken, isTwoFa} = useAuthData();
@@ -9,6 +10,7 @@ const AskTwoFa = (): JSX.Element => {
   const [validate, setValidate] = useState<boolean>(false);
 
   const validateTwoFa = async (): Promise<void> => {
+      const twofacode: TwoFACodeDto = {twoFACode: code}
       const res: Response = await fetch("http://localhost:3000/auth/2fa/authenticate",
           {
             method: "POST",
@@ -16,7 +18,7 @@ const AskTwoFa = (): JSX.Element => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({twoFACode: code})
+            body: JSON.stringify(twofacode),
           })
       if (res.ok) {
         userAuthentication(true);

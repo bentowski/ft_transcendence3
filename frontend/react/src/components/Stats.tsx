@@ -2,6 +2,7 @@ import { Component } from "react";
 import UserCards from "./utils/UserCards";
 import { UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
+import '../styles/components/stats.css';
 
 class Stats extends Component<
   {},
@@ -24,26 +25,31 @@ class Stats extends Component<
       snapshot?: any) {
     const ctx: any = this.context;
     const users: UserType[] = ctx.userList;
-    users.sort(function (a: UserType, b: UserType) {
-      return a.game_lost - b.game_lost;
-    });
-    users.sort(function (a: UserType, b: UserType) {
-      return b.game_won - a.game_won;
-    });
     if (prevState.users !== users) {
+      users.sort(function (a: UserType, b: UserType) {
+        return a.game_lost - b.game_lost;
+      });
+      users.sort(function (a: UserType, b: UserType) {
+        return b.game_won - a.game_won;
+      });
       this.setState({ users: users });
     }
   }
 
+  componentWillUnmout() {
+    console.log('component is destroyyyyyyeed');
+  }
+
   componentDidMount = (): void => {
     const ctx: any = this.context;
-    const users: UserType[] = ctx.userList;
-    users.sort(function (a: UserType, b: UserType) {
+    let users: UserType[] = ctx.userList;
+    let newArray = users.sort(function (a: UserType, b: UserType) {
       return a.game_lost - b.game_lost;
     });
-    users.sort(function (a: UserType, b: UserType) {
+    users = newArray.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
+    console.log('component did mount ', this.state.users, users)
     this.setState({ users: users });
   };
 
@@ -70,9 +76,13 @@ class Stats extends Component<
       y++;
     }
     return (
-      <div className="Stats">
+      <div className="Stats h-100">
         <h3 className="d-flex justify-content-start">Rank</h3>
-        {user}
+        <div className="divUserStats">
+          <div className="divStats">
+            {user}
+          </div>
+        </div>
       </div>
     );
   }

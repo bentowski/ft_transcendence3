@@ -5,6 +5,7 @@ import ModalBanUser from '../utils/ModalBanUser';
 import ModalMuteUser from '../utils/ModalMuteUser';
 import ModalAdminUser from "../utils/ModalAdminUser";
 import { Socket } from "socket.io-client";
+import { channel } from "diagnostics_channel";
 
 class AdminButtons extends Component<
     {
@@ -43,6 +44,7 @@ class AdminButtons extends Component<
         snapshot?: any): void {
         const ctx: any = this.context;
         if (prevState.adminList !== ctx.adminFrom) {
+            // console.log('update admin state');
             this.setState({adminList: ctx.adminFrom});
             //this.render();
         }
@@ -93,15 +95,16 @@ export class PrintAddUserButton extends Component<{chanList: ChanType[], parentC
     let url: string = document.URL;
     url = url.substring(url.lastIndexOf("/") + 1);
     const id: number = parseInt(url);
-    if (id && id > 0 && this.props.chanList[id - 1] &&
-        !(this.props.chanList[id - 1].type === "direct")) {
+    if (id && id > 0) {
+        const chan = this.props.chanList.find(c => Number(c.id) === Number(id))
+        if (chan && chan.type !== "direct") {
       return (<button
           id="addPeople"
           className="col-2 mb-2"
           onClick={this.promptAddUser}>
           Add Peoples
       </button>)
-    }
+    }}
     return <p></p>
   }
 }

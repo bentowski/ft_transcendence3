@@ -9,7 +9,7 @@
   margin-right: -50%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 4;
+  z-index: 1004;
   justify-content: center;
   align-items: center;
   display: flex;

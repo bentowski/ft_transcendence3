@@ -10,7 +10,7 @@ class ListOfDirectMessages extends Component<{
   render(): JSX.Element[] {
     const ret: JSX.Element[] = [];
     this.props.chanList.forEach((chan: ChanType) => {
-          if (chan.type === "direct")
+          if (chan.type === "direct" && (this.props.user.auth_id === chan.chanUser[0].auth_id || this.props.user.auth_id === chan.chanUser[1].auth_id))
             ret.push(
                 <Link key={chan.id} to={"/chat/" + chan.id}>
                   <li
@@ -31,7 +31,8 @@ class ListOfDirectMessages extends Component<{
 class ListOfJoinedChans extends Component<{
   chanList: ChanType[],
   user: UserType,
-  parentCallBack: any}, {}> {
+  parentCallBack: any
+}, {}> {
   render(): JSX.Element[] {
     const ret: JSX.Element[] = []
     this.props.chanList.forEach((chan: ChanType) => {
@@ -41,7 +42,7 @@ class ListOfJoinedChans extends Component<{
                   <li
                       onClick={() => this.props.parentCallBack.joinRoom(chan)}
                       className={
-                    "d-flex flex-row d-flex justify-content-between align-items-center list-group-item overflow-hidden"
+                    "d-flex flex-row d-flex justify-content-between align-items-center list-group-item overflow-hidden "
                           + (this.props.parentCallBack.chanColor(chan))}>
                     {this.props.parentCallBack.printName(chan, this.props.user)}
                   </li>

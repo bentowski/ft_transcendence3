@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { ErrorType, UsersChanBanType, UserType } from "../../types";
 import { Socket } from "socket.io-client";
+import {BanToChannelReceiveDto} from "../../dtos/banToChannel.dto";
 
 const ModalBanUser = ({chan, socket, usersInChan}:{
     chan: string,
@@ -15,11 +16,11 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
     const [show, setShow] = useState<boolean>(false);
     const [usersChan, setUsersChan] = useState<UsersChanBanType[]>([{user:undefined,isBan:false}]);
     const [list, setList] = useState<JSX.Element[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    //const [loading, setLoading] = useState<boolean>(false);
 
     useEffect((): void => {
         if (show) {
-            setLoading(true);
+            //setLoading(true);
             const fetchUsersChan = async (): Promise<void> => {
                 try {
                     const users: UserType[] = await Request(
@@ -48,9 +49,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                         })
                     }
                     setUsersChan(newArr);
-                    setLoading(false);
+                    //setLoading(false);
                 } catch (error) {
-                    setLoading(false);
+                    //setLoading(false);
                     setError(error);
                 }
             }
@@ -87,10 +88,13 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 setError(error);
                 return ;
             }
-            socket.emit('banToChannel', {
-                "room": chan,
-                "auth_id": obj.user.auth_id,
-                "action": !obj.isBan });
+            const res: BanToChannelReceiveDto = {
+                room: chan,
+                auth_id: obj.user.auth_id,
+                action: !obj.isBan
+            }
+            socket.emit('banToChannel', res);
+            /*
             const newArray: UsersChanBanType[] = [];
             for (let index: number = 0; index < usersChan.length; index++) {
                 if (usersChan[index].user?.auth_id === obj.user.auth_id) {
@@ -99,11 +103,13 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                 newArray.push(usersChan[index]);
             }
             setUsersChan(newArray);
+             */
         }
         const listUserCards = (): void => {
             const ret: JSX.Element[] = [];
+
             for(let x: number = 0; x < usersChan.length; x++) {
-                if (usersChan[x].user && usersChan[x].user?.username !== user.username) {
+                if (usersChan[x].user && usersChan[x].user?.auth_id !== user.auth_id) {
                     ret.push(
                         <div
                             key={x}
@@ -170,9 +176,9 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                     <Modal.Body>
                         <form className="mb-3">
                             <div>
-                                { loading ?
-                                    <p>Please wait...</p>
-                                    : list}
+                                {/* loading ? */}
+                                {/* <p>Please wait...</p> */}
+                                    {list}
                             </div>
                         </form>
                     </Modal.Body>
