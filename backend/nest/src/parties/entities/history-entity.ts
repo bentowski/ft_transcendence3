@@ -9,12 +9,12 @@ export class HistoryEntity {
   @Column({
     default: '',
   })
-  user_one: string;
+  user_one_id: string;
 
   @Column({
     default: '',
   })
-  user_two: string;
+  user_two_id: string;
 
   @Column({
     default: 0,
@@ -26,20 +26,21 @@ export class HistoryEntity {
   })
   score_two: number;
 
+  @Column({
+    default: 0,
+  })
+  user_one_name: string;
+
+  @Column({
+    default: 0,
+  })
+  user_two_name: string;
+
   // @Column({
   //   default: '',
   // })
   // final_score: string;
 
-  @Column({
-    default: '',
-  })
-  winner: string;
-
-  @Column({
-    default: '',
-  })
-  looser: string;
 
   @Column({
     default: () => '((CURRENT_DATE))',

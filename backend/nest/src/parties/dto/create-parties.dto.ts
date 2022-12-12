@@ -8,4 +8,8 @@ export class CreatePartiesDto {
     @IsString()
     @IsNotEmpty()
     public login: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    public nbplayer: number;
 }

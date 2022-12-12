@@ -251,41 +251,41 @@ class UserCards extends Component<
   };
 
   startNewGame = async (): Promise<void> => {
-    const ctx: any = this.context;
-    try {
-      await Request(
-        "POST",
-        {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        {
-          login: this.state.login,
-          public: true
-        },
-        "http://localhost:3000/parties/create"
-      );
-    } catch (error) {
-      ctx.setError(error);
-    }
+    // const ctx: any = this.context;
+    // try {
+    //   await Request(
+    //     "POST",
+    //     {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     {
+    //       login: this.state.login,
+    //       public: true
+    //     },
+    //     "http://localhost:3000/parties/create"
+    //   );
+    // } catch (error) {
+    //   ctx.setError(error);
+    // }
     socket.emit("askForGameUp", { "to": this.state.id, "from": this.getCurrentUser().auth_id })
     const modal: HTMLElement | null = document.getElementById('ModalMatchWaiting') as HTMLDivElement;
     modal.classList.remove('hidden');
-    let parties: PartiesType[] = [];
-    try {
-      parties = await Request(
-        'GET',
-        {},
-        {},
-        "http://localhost:3000/parties/"
-      )
-    } catch (error) {
-      ctx.setError(error);
-    }
-    const ids: number[] = parties.map((p: any) => {
-      return p.id;
-    })
-    window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
+    // let parties: PartiesType[] = [];
+    // try {
+    //   parties = await Request(
+    //     'GET',
+    //     {},
+    //     {},
+    //     "http://localhost:3000/parties/"
+    //   )
+    // } catch (error) {
+    //   ctx.setError(error);
+    // }
+    // const ids: number[] = parties.map((p: any) => {
+    //   return p.id;
+    // })
+    // window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number): JSX.Element => {
@@ -389,14 +389,14 @@ class UserCards extends Component<
 
   openInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.state.login) as HTMLDivElement;
+      const modal: HTMLDivElement = document.getElementById("ModalMatchInvite" + this.state.id) as HTMLDivElement;
       modal.classList.remove('hidden')
     }
   }
 
   closeInvite = (body: { "to": string, "from": string }): void => {
     if (body.to === this.getCurrentUser().auth_id) {
-      const modal: HTMLElement | null = document.getElementById('ModalMatchInvite' + this.state.login) as HTMLDivElement;
+      const modal: HTMLDivElement = document.getElementById('ModalMatchInvite' + this.state.id) as HTMLDivElement;
       modal.classList.add('hidden')
     }
   }
