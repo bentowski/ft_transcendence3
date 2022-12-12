@@ -82,7 +82,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
             <p>Difficulty</p>
             <p>
               <input type="radio" name="playerNum" value="1" id="Speed1" defaultChecked/>normal<br />
-              <input type="radio" name="playerNum" value="2" id="Speed2" />difficult
+              <input type="radio" name="playerNum" value="2" id="Speed2" />hard
             </p>
           </form>
           <footer>
