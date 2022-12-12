@@ -186,7 +186,8 @@ let settings = {
   sizeBall: 0,
 	playerSize: 0,
   playerSpeed: 0,
-  middle: 0
+  middle: 0,
+  currentUserName: ""
 }
 
 const initSettings = (serv: any) => {
@@ -208,7 +209,8 @@ const initSettings = (serv: any) => {
     sizeBall: serv.sizeBall * settings.h / 100,
     playerSize: serv.playerSize * settings.h / 100,
     playerSpeed: serv.playerSize,
-    middle: serv.middle * settings.w / 100
+    middle: serv.middle * settings.w / 100,
+    currentUserName: settings.currentUserName
   }
 }
 
@@ -294,7 +296,8 @@ const changeSize = () => {
       sizeBall: serv.sizeBall * settings.h / 100,
       playerSize: serv.playerSize * settings.h / 100,
       playerSpeed: serv.playerSize,
-      middle: serv.middle * settings.w / 100
+      middle: serv.middle * settings.w / 100,
+      currentUserName: settings.currentUserName
     }
   })
   socket.off('stats');
@@ -329,7 +332,8 @@ class Game extends Component<{},{}> {
       winHeight = ((winWidth * 19) / 26)
     settings.w = winWidth
     settings.h = winHeight
-	  settings.currentUser = ctxReact.user.auth_id;
+    settings.currentUser = ctxReact.user.auth_id;
+	  settings.currentUserName = ctxReact.user.username;
     let url = document.URL
   	url = url.substring(url.lastIndexOf("/") + 1)
     settings.room = url
