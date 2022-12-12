@@ -63,14 +63,14 @@ const printGame = (ctx: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
     }
   }
-  const element = document.getElementById('root') as HTMLDivElement;
+  const element = document.getElementById('canvas') as HTMLDivElement;
   ctx.clearRect(0, 0, element.clientWidth, element.clientHeight)
   while (y < settings.h) {
       ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
       y += settings.sizeBall * 2
   }
-  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
-  ctx.drawImage(p1, settings.player1[0] - settings.sizeBall, settings.player1[1], settings.sizeBall, settings.sizeBall * 4)
+  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.playerSize)
+  ctx.drawImage(p1, settings.player1[0] - settings.sizeBall, settings.player1[1], settings.sizeBall, settings.playerSize)
   ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
@@ -273,10 +273,10 @@ const changeSize = () => {
   globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
   let winWidth = element.clientWidth;
   let winHeight = element.clientHeight;
-  // if ((winWidth * 19) / 26 > winHeight)
+  if ((winWidth * 19) / 26 > winHeight)
     winWidth = ((winHeight * 26) / 19)
-  // else
-  //   winHeight = ((winWidth * 19) / 26)
+  else
+    winHeight = ((winWidth * 19) / 26)
   settings.w = winWidth
   settings.h = winHeight
   socket.emit('plzstats', {"room": settings.room})
@@ -329,7 +329,8 @@ class Game extends Component<{},{}> {
     if ((winWidth * 19) / 26 > winHeight)
       winWidth = ((winHeight * 26) / 19)
     else
-      winHeight = ((winWidth * 19) / 26)
+      winHeight = (winWidth / 26) * 19
+      console.log(winHeight)
     settings.w = winWidth
     settings.h = winHeight
 	  settings.currentUser = ctxReact.user.auth_id;
@@ -354,8 +355,8 @@ class Game extends Component<{},{}> {
     window.onresize = () => {changeSize()}
     return (
       <div>
-        <div className="canvas" id="canvas">
-          <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h} className="global-bg"></canvas>
+        <div className="canvas" id="canvas" style={{maxHeight: settings.h}}>
+          <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h}></canvas>
           <ModalMatchWaiting title="In wait for player" calledBy="newGame" />
         </div>
       </div>

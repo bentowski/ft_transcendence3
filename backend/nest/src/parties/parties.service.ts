@@ -37,9 +37,10 @@ export class PartiesService {
 
     createPartiesEntity(createPartiesDto: CreatePartiesDto): Promise<PartiesEntity> {
         const parties: PartiesEntity = new PartiesEntity();
-        // parties.id = createPartiesDto.id;
         parties.nbplayer = createPartiesDto.nbplayer;
         parties.login = createPartiesDto.login;
+        parties.type = createPartiesDto.type;
+        parties.vitesse = createPartiesDto.vitesse;
         try {
             return this.partiesRepository.save(createPartiesDto);
         } catch (error) {
