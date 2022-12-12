@@ -262,16 +262,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                   setLoading(false);
                   return ;
                 } else if (res.isTok === 4) {
-                  
+
                   //------------------
 
-                  const flist: UserType[] = await Request(
+                  const uselist: UserType[] = await Request(
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/user/" + user.auth_id + "/getfriends",
+                    "http://localhost:3000/user/",
                     )
-                    setFriendsList(flist);
+                    setUserList(uselist);
 
                   //------------------
 

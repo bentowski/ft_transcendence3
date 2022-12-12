@@ -12,7 +12,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
     }
 
 	// componentDidUpdate(): void {
-		
+
     //     const ctx: any = this.context;
 	// 	console.log(ctx.userList)
     //     // this.setState({userList: ctx.adminList})
@@ -99,6 +99,9 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
                 setMessage([])
             }
             parentCallBack.setChanList(channels);
+						let test = document.getElementById( 'messages' ) as HTMLInputElement
+						console.log("TEST")
+						test.scrollTop = test.scrollHeight;
           }
         });
         return () => {
@@ -119,7 +122,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
         return (<div>No messages here</div>)
       } else {
         return (
-            <div className='messages mt-3'>
+            <div className='messages mt-3' id='messages'>
               <DispatchMsg user={user} messages={messages}/>
             </div>
         )
