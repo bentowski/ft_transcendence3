@@ -46,27 +46,51 @@
 
 @-webkit-keyframes animateBubble {
     0% {
+        opacity: 0%;
         margin-top: 1000px;
     }
+    3% {
+        opacity : 100%;
+    }
+    97% {
+        opacity : 100%
+    }
     100% {
+        opacity : 0%;
         margin-top: -100%;
     }
 }
 
 @-moz-keyframes animateBubble {
     0% {
+        opacity: 0%;
         margin-top: 1000px;
     }
+    3% {
+        opacity : 100%;
+    }
+    97% {
+        opacity : 100%
+    }
     100% {
+        opacity : 0%;
         margin-top: -100%;
     }
 }
 
 @keyframes animateBubble {
     0% {
+        opacity: 0%;
         margin-top: 1000px;
     }
+    3% {
+        opacity : 100%;
+    }
+    97% {
+        opacity : 100%
+    }
     100% {
+        opacity : 0%;
         margin-top: -100%;
     }
 }
@@ -277,6 +301,7 @@
 	position: absolute;
 	width: 200px;
 	z-index: 5;
+    pointer-events: none;
 }
 
 .blur {
