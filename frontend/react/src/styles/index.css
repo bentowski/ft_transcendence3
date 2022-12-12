@@ -1,15 +1,20 @@
 body {
 	margin: 0;
 	padding: 0;
-	font-family: 'SpongeBobFont', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+	font-family: /* 'SpongeBobFont', */ -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
 		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: rgb(55, 71, 104);
 	overflow-anchor: none;
+	font-weight: 900;
 	/* letter-spacing: 0.42px; */
   /* background-color: #3b3c3a; */
+}
+
+h1, h2, h3, button, .btn {
+	font-family: 'SpongeBobFont', sans-serif;
 }
 
 code {
@@ -96,13 +101,20 @@ ul {
 button {
 	background: none;
 	border: none;
-	padding: 0;
+	padding-inline: 5px;
 	color: rgb(55, 71, 104);
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 button:not(.btnAvatar, .btnUsername, .btn-close) {
   border: 2px solid rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
   border-radius: 10px;
   color: white;
 	padding-top: 5px;
@@ -121,6 +133,9 @@ button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 
 .btn {
   border: 2px solid rgb(99, 82, 28);
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	background: rgb(155, 133, 60);
   border-radius: 10px;
   color: white;
@@ -130,19 +145,30 @@ button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 
 .btn:hover {
   border: 2px solid rgb(99, 82, 28);
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	color: rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
 }
 
 .btn:active {
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }
 
-img {
+img:not(.clickable) {
 	width:auto;
 	max-width: 100%;
 	max-height: 100%;
+	pointer-events: none;
+	user-select: none;
+  	-webkit-user-select: none;
+  	-moz-user-select: none;
+  	-ms-user-select: none;
 	/* display: block; */
 
 }
@@ -228,8 +254,12 @@ img {
 }
 
 .FriendsNav, .MatchNav {
-	height: 100%;
+	/* height: 100%; */
 	padding: 10px;
+}
+
+.FriendsNav, .MatchNav, #mainDiv {
+	height: 76vh;
 }
 
 .FriendsNav {
@@ -281,10 +311,12 @@ img {
 }
 
 .miniAvatar {
-	max-width: 42px;
-	max-height: 42px;
 	width: 42px;
 	height: 42px;
+	max-width: 42px;
+	max-height: 42px;
+	min-width: 42px;
+	min-height: 42px;
 	display: block;
 	left: -20px;
 	border-radius: 10px;
@@ -380,7 +412,6 @@ img {
   .break-text {
 	word-wrap: break-word;
   }
-
 	/* .checkPassword {
 		z-index: 3000;
 		width: 100%;

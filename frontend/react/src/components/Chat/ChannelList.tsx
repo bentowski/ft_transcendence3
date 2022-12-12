@@ -42,7 +42,7 @@ class ListOfJoinedChans extends Component<{
                   <li
                       onClick={() => this.props.parentCallBack.joinRoom(chan)}
                       className={
-                    "d-flex flex-row d-flex justify-content-between align-items-center list-group-item overflow-hidden"
+                    "d-flex flex-row d-flex justify-content-between align-items-center list-group-item overflow-hidden "
                           + (this.props.parentCallBack.chanColor(chan))}>
                     {this.props.parentCallBack.printName(chan, this.props.user)}
                   </li>
