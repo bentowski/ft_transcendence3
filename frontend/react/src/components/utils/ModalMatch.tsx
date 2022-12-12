@@ -25,7 +25,7 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
     if (radio.checked)
       nbplayer = 2;
     const radioSpeed = document.getElementById('Speed2') as HTMLInputElement
-    let vitesse: number = 2;
+    let vitesse: number = 1;
     if (radioSpeed.checked)
       vitesse = 2;
     try {
@@ -79,10 +79,10 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
             </p>
           </form>
           <form className='mb-3'>
-            <p>Speed</p>
+            <p>Difficulty</p>
             <p>
-              <input type="radio" name="playerNum" value="1" id="Speed1" defaultChecked/>x1<br />
-              <input type="radio" name="playerNum" value="2" id="Speed2" />x2
+              <input type="radio" name="playerNum" value="1" id="Speed1" defaultChecked/>normal<br />
+              <input type="radio" name="playerNum" value="2" id="Speed2" />hard
             </p>
           </form>
           <footer>

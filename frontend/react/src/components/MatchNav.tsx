@@ -76,7 +76,8 @@ class MatchNav extends Component<{}, {}> {
 			count++;
 		if (p2 !== null)
 			count++;
-		if (type == 0)
+		console.log("AAAAAAAAAAAAAAAAAxtype", type)
+		if (type === 1)
 		{
 			return (
 				<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">

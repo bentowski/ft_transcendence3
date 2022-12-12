@@ -197,7 +197,7 @@ export class GameGateway implements OnModuleInit
       room.config.vector = [room.config.vector[0], -room.config.vector[1]]
       room.config.ballPos = [room.config.ballPos[0], newPos]
     }
-    if (room.config.ballPos[1] < 0) {// if ball outscreen bottom
+    if (room.config.ballPos[1] < 0) {// if ball outscreen top
       newPos = (0)
       room.config.vector = [room.config.vector[0], -room.config.vector[1]]
       room.config.ballPos = [room.config.ballPos[0], newPos]
