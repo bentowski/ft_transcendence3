@@ -91,7 +91,7 @@ class Modal extends Component<
     const radioPro: HTMLInputElement | null = document.querySelector("#protected") as HTMLInputElement;
     const chanName: HTMLInputElement | null = document.querySelector("#chanName") as HTMLInputElement;
     const chanPassword: HTMLInputElement | null = document.querySelector("#chanPassword") as HTMLInputElement;
-    radioPub.checked = false;
+    radioPub.checked = true;
     radioPri.checked = false;
     radioPro.checked = false;
     chanName.value = "";
@@ -327,7 +327,7 @@ class Modal extends Component<
       return false;
     }
     else if (this.state.allChans.findIndex((c: any) => c.name === this.state.fieldName) > -1) {
-      this.setState({ errName: "This username already exists" });
+      this.setState({ errName: "This channel name already exists" });
       this.setState({ alertName: true });
       return false;
     }
@@ -357,9 +357,6 @@ class Modal extends Component<
   };
 
   createChan = async (): Promise<void> => {
-    // const radioPub = document.querySelector("#public") as HTMLInputElement;
-    // const radioPri = document.querySelector("#private") as HTMLInputElement;
-    // const radioPro = document.querySelector("#protected") as HTMLInputElement;
     const retRadio: boolean = await this.verifRadio();
     const retName: boolean = this.verifName();
     let retPass: boolean = true;
@@ -557,7 +554,7 @@ class Modal extends Component<
           {},
           "http://localhost:3000/chan/" + input.value
       );
-      if (!chan) {
+      if (!chan || this.checkIfBanned(chan)) {
         return;
       }
       this.props.parentCallBack.joinRoom(chan, true);

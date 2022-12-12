@@ -369,14 +369,17 @@ export class ChanService {
 	}
 
 	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
+		// console.log(user, room)
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
 			relations: ['chanUser', 'banUser'],
 		});
+		// console.log(chan)
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		if (chan.owner === user.auth_id && chan.type === "direct") {
+		// console.log(chan.owner, " === ", user.auth_id, " => ", )
+		if (chan.owner === user.auth_id || chan.type === "direct") {
 			try {
 				await this.chanRepository.delete(chan.id);
 				//! socket emit reload for room's user

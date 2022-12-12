@@ -29,18 +29,21 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
     }
 
 	takeUsername = (msg: MessagePayload) => {
-		const user:UserType | undefined = (this.state.userList.find((user:UserType) => user.auth_id === msg.auth_id))
+    let user:UserType | undefined = undefined;
+    if (this.state.userList)
+		  user = (this.state.userList.find((user:UserType) => user.auth_id === msg.auth_id))
 		if (user !== undefined)
 			return user.username
 		return msg.username
 	}
 
   render(): JSX.Element[] {
-	// this.updateUsers()
     const ret: JSX.Element[] = []
+    if (!this.props.messages)
+      return ret;
     this.props.messages.forEach((msg: MessagePayload, index: number) => {
-		if (msg.username === undefined)
-			msg = JSON.parse(String(msg))
+		  if (msg.username === undefined)
+			  msg = JSON.parse(String(msg))
       if (msg.sender_socket_id === this.props.user.auth_id)
         ret.push(
             <div key={index} className="outgoing_msg break-text">
