@@ -12,9 +12,6 @@ const updateSocket = io("http://localhost:3000/update");
 let score1 = new Image();
 let score2 = new Image();
 let globalCtx: any = undefined;
-// let p1 = new Image();
-// let p2 = new Image();
-// let bubble = new Image();
 
 let gameOver = () => {
   socket.off('userJoinChannel')
@@ -47,8 +44,6 @@ let joinRoom = async () => {
 }
 
 const printGame = (ctx: any) => {
-  // score1.src = "http://localhost:8080/pictures/ball.png"
-  // score2.src = "http://localhost:8080/pictures/ball.png"
 	let y = 0;
   if (settings.spec === false) {
     let move = 0;
@@ -72,12 +67,11 @@ const printGame = (ctx: any) => {
     y += settings.sizeBall * 2
   }
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall + (settings.sizeBall * 0.5), settings.playerSize)
+  ctx.fillRect(settings.player2[0] + (settings.sizeBall * 0.5), settings.player2[1], settings.sizeBall, settings.playerSize)
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0] - (settings.sizeBall * 0.5), settings.player1[1], settings.sizeBall + (settings.sizeBall * 0.5), settings.playerSize)
+  ctx.fillRect(settings.player1[0] - (settings.sizeBall * 0.5), settings.player1[1], settings.sizeBall, settings.playerSize)
 	ctx.fillStyle = "white"
 	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
-  // console.log("truc", score1)
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
   socket.emit("pleaseBall", settings.room)
@@ -109,10 +103,8 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
-      console.log("ROOOOOOOOOOM", body.room)
 	    if (body.room.code !== settings.room)
 	      return ;
-      console.log("MOVEPLAYERS")
 		 if (body.player !== settings.currentUser) {
       if (settings.spec && body.admin)
         settings.player1 = [settings.player1[0], body.ratio * settings.h]
@@ -121,7 +113,6 @@ const start = (ctx: any) => {
      }
 		})
     socket.on('newPoint', (room) => {
-      console.log(room.config.p1Score, room.config.p2Score)
       switch (room.config.p1Score)
       {
         case 0: score1.src = "http://localhost:8080/icons/0.png"
@@ -174,7 +165,6 @@ const start = (ctx: any) => {
       }
     })
 	  socket.on('gameoverSend', (room) => {
-      console.log("gameoverSend", room.code, settings.room)
 	    if (room.code === settings.room)
 	      gameOver();
 	  })
@@ -197,8 +187,6 @@ let settings = {
 	playerSize: 0,
   playerSpeed: 0,
   middle: 0
-  // p1Score: 0,
-  // p2Score: 0
 }
 
 const initSettings = (serv: any) => {
@@ -221,8 +209,6 @@ const initSettings = (serv: any) => {
     playerSize: serv.playerSize * settings.h / 100,
     playerSpeed: serv.playerSize,
     middle: serv.middle * settings.w / 100
-    // p1Score: serv.p1Score,
-    // p2Score: serv.p2Score
   }
 }
 
@@ -231,23 +217,13 @@ const init = (servSettings: any, ctx: any) => {
 	socket.off('Init')
   initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement
-  // const ctx: any = globale.getContext('2d')
   globalCtx = ctx;
   printGame(ctx)
-	// socket.on('printCountDown', (room) => {
-  //   if (room.room.id === settings.room)
-  //   {
-  //     if ((room.p1 && room.p1 === settings.currentUser) || (room.p2 && room.p2 === settings.currentUser) || !room.p1 || !room.p2)
-  //     	settings.spec = false
-  //     printNumber(ctx, room.number);
-  //   }
-	// })
 	socket.on('Start', (body) => {
     if ((body.room.players[0] && body.room.players[0] === settings.currentUser)
       || (body.room.players[1] && body.room.players[1] === settings.currentUser)
       || !body.room.players[0] || (!body.room.players[1] && body.room.mode != 1))
         settings.spec = false
-    // socket.off('printCountDown')
     if (body.room.code == settings.room)
       start(ctx)
 	})
@@ -302,7 +278,6 @@ const changeSize = () => {
   settings.h = winHeight
   socket.emit('plzstats', {"room": settings.room})
   socket.on('stats', (serv) => {
-    console.log("OK")
     settings = {
       w: settings.w,
       h: settings.h,
@@ -320,37 +295,10 @@ const changeSize = () => {
       playerSize: serv.playerSize * settings.h / 100,
       playerSpeed: serv.playerSize,
       middle: serv.middle * settings.w / 100
-      // p1Score: serv.p1Score,
-      // p2Score: serv.p2Score
     }
   })
   socket.off('stats');
-  // const oldWidth = settings.w
-  // const oldHeight = settings.h
-  //
-  // settings = {
-  //   w: settings.w,
-  //   h: settings.h,
-  //   currentUser: settings.currentUser,
-  //   room: settings.room,
-  //   spec: settings.spec,
-  //   up: settings.up,
-  //   down: settings.down,
-  //   p1: settings.p1,
-  //   p2: settings.p2,
-  //   ballPos: [settings.ballPos[0] * settings.w / oldWidth, settings.ballPos[1] * settings.h / oldHeight],
-  //   player1: [settings.player1[0] * settings.w / oldWidth, settings.player1[1] * settings.h / oldHeight],
-  //   player2: [settings.player2[0] * settings.w / oldWidth, settings.player2[1] * settings.h / oldHeight],
-  //   sizeBall: settings.sizeBall * settings.h / oldHeight,
-  //   playerSize: settings.playerSize * settings.h / oldHeight,
-  //   playerSpeed: settings.playerSize,
-  //   middle: settings.middle * settings.w / oldWidth
-  // }
 }
-
-// const resize = (ctx: any) => {
-//
-// }
 
 class Game extends Component<{},{}> {
 
