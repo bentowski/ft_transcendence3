@@ -69,9 +69,9 @@ const printGame = (ctx: any) => {
       ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
       y += settings.sizeBall * 2
   }
-  ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.playerSize)
-  ctx.drawImage(p1, settings.player1[0] - settings.sizeBall, settings.player1[1], settings.sizeBall, settings.playerSize)
-  ctx.drawImage(ball, settings.ballPos[0] - settings.sizeBall / 2, settings.ballPos[1] - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall)
+  ctx.drawImage(p2, settings.player2[0] + (settings.sizeBall * 0.5), settings.player2[1], settings.sizeBall, settings.playerSize)
+  ctx.drawImage(p1, settings.player1[0] - (settings.sizeBall * 0.5), settings.player1[1], settings.sizeBall, settings.playerSize)
+  ctx.drawImage(ball, settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
   socket.emit("pleaseBall", settings.room)
