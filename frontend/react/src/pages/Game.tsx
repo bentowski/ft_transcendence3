@@ -74,7 +74,7 @@ const printGame = (ctx: any) => {
 	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
-  socket.emit("pleaseBall", settings.room)
+  // socket.emit("pleaseBall", settings.room)
 
 	window.requestAnimationFrame(() => {
 		printGame(ctx)
@@ -107,6 +107,8 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
+      console.log("=========MOVE=========")
+      console.log(body.room.code)
 	    if (body.room.code !== settings.room)
 	      return ;
 		 if (body.player !== settings.currentUser) {
@@ -269,40 +271,40 @@ const justwait = (ctx: any) => {
 	})
 }
 
-const changeSize = () => {
-  let element = document.body as HTMLDivElement;
-  globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
-  let winWidth = element.clientWidth;
-  let winHeight = element.clientHeight;
-  // if ((winWidth * 19) / 26 > winHeight)
-    winWidth = ((winHeight * 26) / 19)
-  // else
-  //   winHeight = ((winWidth * 19) / 26)
-  settings.w = winWidth
-  settings.h = winHeight
-  socket.emit('plzstats', {"room": settings.room})
-  socket.on('stats', (serv) => {
-    settings = {
-      w: settings.w,
-      h: settings.h,
-      currentUser: settings.currentUser,
-      room: settings.room,
-      spec: settings.spec,
-      up: settings.up,
-      down: settings.down,
-      p1: settings.p1,
-      p2: settings.p2,
-      ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
-      player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
-      player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
-      sizeBall: serv.sizeBall * settings.h / 100,
-      playerSize: serv.playerSize * settings.h / 100,
-      playerSpeed: serv.playerSize,
-      middle: serv.middle * settings.w / 100
-    }
-  })
-  socket.off('stats');
-}
+// const changeSize = () => {
+//   let element = document.body as HTMLDivElement;
+//   globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
+//   let winWidth = element.clientWidth;
+//   let winHeight = element.clientHeight;
+//   // if ((winWidth * 19) / 26 > winHeight)
+//     winWidth = ((winHeight * 26) / 19)
+//   // else
+//   //   winHeight = ((winWidth * 19) / 26)
+//   settings.w = winWidth
+//   settings.h = winHeight
+//   socket.emit('plzstats', {"room": settings.room})
+//   socket.on('stats', (serv) => {
+//     settings = {
+//       w: settings.w,
+//       h: settings.h,
+//       currentUser: settings.currentUser,
+//       room: settings.room,
+//       spec: settings.spec,
+//       up: settings.up,
+//       down: settings.down,
+//       p1: settings.p1,
+//       p2: settings.p2,
+//       ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
+//       player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
+//       player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
+//       sizeBall: serv.sizeBall * settings.h / 100,
+//       playerSize: serv.playerSize * settings.h / 100,
+//       playerSpeed: serv.playerSize,
+//       middle: serv.middle * settings.w / 100
+//     }
+//   })
+//   socket.off('stats');
+// }
 
 class Game extends Component<{},{}> {
 
@@ -352,7 +354,7 @@ class Game extends Component<{},{}> {
   }
 
   render() {
-    window.onresize = () => {changeSize()}
+    // window.onresize = () => {changeSize()}
     return (
       <div>
         <div className="canvas" id="canvas">
