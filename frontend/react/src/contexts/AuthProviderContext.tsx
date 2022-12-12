@@ -164,6 +164,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       }
       if (!action) {
         const idx = chanFrom.findIndex(obj => {
+          if (!obj || !chan)
+            return false;
           return obj.id === chan.id;
         })
         const newArr: ChanType[] = chanFrom;
