@@ -7,7 +7,7 @@ import {io} from "socket.io-client";
 const socket = io('http://localhost:3000/update')
 
 const HandleError = (): JSX.Element => {
-    const { errorShow, errorMsg, errorCode, setError } = useAuthData();
+    const { errorShow, errorMsg, errorCode, setError, userAuthentication } = useAuthData();
     //const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
@@ -29,6 +29,9 @@ const HandleError = (): JSX.Element => {
 
     const handleClose = (): void => {
         setError(null);
+    }
+    if (errorCode === 401) {
+      userAuthentication(false);
     }
 
     return (

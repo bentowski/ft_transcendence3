@@ -48,6 +48,9 @@ export class UserAuthGuard implements CanActivate {
     } else {
       //console.log('welcome to the club mate');
       const token: PayloadInterface = jwt_decode(cookie);
+      if (!token) {
+        return false;
+      }
       const user: UserEntity = await this.authService.findUser(token.auth_id);
       //console.log('getting token = ', token);
       if (!user) {
