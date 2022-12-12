@@ -156,13 +156,13 @@ class FriendsNav extends Component<{}, {
                 placeholder="login"
                 onKeyDown={this.pressEnter}>
               </input>
-              <div className="item-list">
+            {/*  <div className="item-list">
                 <ol>
                   {this.state.filteredList.map((item: UserType, key: any) => (
                     <li className="d-flex justify-content-start p-1" key={key}>{item.username}</li>
                   ))}
                 </ol>
-              </div>
+              </div>*/}
 
             </div>
             <button

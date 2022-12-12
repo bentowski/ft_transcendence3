@@ -37,7 +37,7 @@ export class PartiesService {
 
     createPartiesEntity(createPartiesDto: CreatePartiesDto): Promise<PartiesEntity> {
         const parties: PartiesEntity = new PartiesEntity();
-        parties.id = createPartiesDto.id;
+        // parties.id = createPartiesDto.id;
         parties.nbplayer = createPartiesDto.nbplayer;
         parties.login = createPartiesDto.login;
         try {

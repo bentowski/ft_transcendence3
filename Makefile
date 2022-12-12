@@ -36,4 +36,10 @@ clear: clear_volume
 	sudo rm -rf ./backend/volume
 	sudo rm -rf ./data
 
+save :
+	sudo cp -rf ./frontend/volume/* ./frontend/react/
+	sudo cp -rf ./backend/volume/* ./backend/nest/
+	sudo rm -rf ./backend/nest/node_modules
+	sudo rm -rf ./frontend/react/node_modules
+
 re: clear all

@@ -2,8 +2,8 @@ import {IsNotEmpty, IsNumber, IsString} from 'class-validator';
 
 export class CreatePartiesDto {
 
-    @IsNumber()
-    public id: number;
+    // @IsNumber()
+    // public id: number;
 
     @IsString()
     @IsNotEmpty()

@@ -59,7 +59,9 @@ export class UpdateGateway implements OnModuleInit
 
   @SubscribeMessage('updateUser')
   onUpdateUser(client: Socket, user: UpdateUserDto): void {
-	this.server.emit('onUpdateUser', user);
+    // if (user.status !== 2)
+      // this.userService.setStatus(user.auth_id.toString(), user.status)
+  	this.server.emit('onUpdateUser', user);
   }
 
   @SubscribeMessage('updateFriend')
