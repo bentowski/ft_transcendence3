@@ -45,7 +45,7 @@ export class GameGateway implements OnModuleInit
        const party: PartiesEntity = await this.partiesService.findParty(body.game.id);
        currentRoom = this.createRoom(body.game.id, body.auth_id, party.nbplayer);
      }
-     else if (currentRoom.players[1] == 0
+     else if (currentRoom.mode != 1 && currentRoom.players[1] == 0
       && currentRoom.players[0] != body.auth_id)
       {
         console.log(body.auth_id, "works")
@@ -56,13 +56,12 @@ export class GameGateway implements OnModuleInit
       && (!currentRoom.spectators || currentRoom.spectators.find(element => element == body.auth_id) == undefined))
       {
         currentRoom.spectators.push(body.auth_id)
-        console.log("Spectator")
+        console.log(body.auth_id, "Spectator")
       }
     if (currentRoom != undefined)
     {
       this.partiesService.addToGame(body.game.id, body.auth_id);
       this.server.to(body.game.id).emit("Init", {room: body.game, settings: currentRoom.config});
-      console.log(currentRoom)
       if ((currentRoom.players[0] && currentRoom.players[1]) || currentRoom.mode == 1)
         this.startGame(currentRoom);
     }
@@ -165,8 +164,9 @@ export class GameGateway implements OnModuleInit
     if (room.state == State.WAITING && ((room.players[0] != 0 && room.players[1] != 0) || room.mode == 1))
     {
       room.state = State.INGAME;
-      this.server.to(room.code.toString()).emit("Start", {room: room});
     }
+    if (room.state == State.INGAME)
+      this.server.to(room.code.toString()).emit("Start", {room: room});
   }
 
   routine(room: Room): void {
@@ -243,11 +243,6 @@ export class GameGateway implements OnModuleInit
         this.server.to(room.code.toString()).emit('newPoint', room)
   		}
   	}
-    // if (room.mode == 1)
-    // {
-    //   console.log("bot")
-    //   this.botmove(room);
-    // }
    this.server.to(room.code.toString()).emit('ballMoved', room)
 
 
