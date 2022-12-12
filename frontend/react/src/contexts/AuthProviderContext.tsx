@@ -223,20 +223,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   },[])
 
   useEffect((): void => {
-    const fetchUserList = async (): Promise<void> => {
-      let list: UserType[] = [];
-      try {
-        list = await Request(
-            "GET",
-            {},
-            {},
-            "http://localhost:3000/user"
-        )
-      } catch (error) {
-        setError(error);
-      }
-      setUserList(list);
-    }
     const fetchData = async (): Promise<void> => {
       setIsToken(false);
       setUser(undefined);
@@ -276,6 +262,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                   setLoading(false);
                   return ;
                 } else if (res.isTok === 4) {
+                  
+                  //------------------
+
+                  const flist: UserType[] = await Request(
+                    "GET",
+                    {},
+                    {},
+                    "http://localhost:3000/user/" + user.auth_id + "/getfriends",
+                    )
+                    setFriendsList(flist);
 
                   //------------------
 
@@ -369,7 +365,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       }
     };
     fetchData();
-    fetchUserList();
   }, [setError]);
 
   const memoedValue = useMemo(
