@@ -6,6 +6,9 @@ class PageNotFound extends Component {
         return (
             <div className="pageNotFound">
                 <h1>Page Not Found</h1>
+                <div id="background-wrap">
+                    <div className="gary"></div>
+                </div>
             </div>
         );
     }

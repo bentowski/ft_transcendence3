@@ -1,4 +1,5 @@
 import "../styles/pages/login.css";
+import "../styles/pages/pagenotfound.css";
 import { useAuthData } from "../contexts/AuthProviderContext";
 import { Navigate, useLocation } from "react-router-dom";
 import AskTwoFa from "./AskTwoFa";
@@ -39,7 +40,7 @@ const Login = (): JSX.Element => {
 			</a>
 			{/* delete above before push */}
 			<div>
-				<img alt="prout" useMap="#spongebobbg" src="http://localhost:8080/pictures/bobhouse.png" width="auto" style={{position: "absolute", top: 0, bottom: 0, right: 0, left: 0, margin: "auto"}}/>
+				<img alt="prout" useMap="#spongebobbg" className="clickable" src="http://localhost:8080/pictures/bobhouse.png" width="auto" style={{position: "absolute", top: 0, bottom: 0, right: 0, left: 0, margin: "auto"}}/>
 			</div>
 			<div className="d-flex justify-content-center h-25 ">
 				<div className="bubble x-static align-self-center d-flex align-items-center justify-content-center"><p className="text-center">Knock Bob's<br/>house to login</p></div>
