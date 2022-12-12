@@ -10,7 +10,7 @@ const Switch = (): JSX.Element => {
   const [src, setSrc] = useState<string>("");
   const [show, setShow] = useState<boolean>(false);
   const [tick, setTick] = useState<boolean>(false);
-  const { isTwoFa, setError } = useAuthData();
+  const { isTwoFa, updateIsTwoFa, setError } = useAuthData();
 
   useEffect((): void => {
     if (isTwoFa) {
@@ -96,6 +96,7 @@ const Switch = (): JSX.Element => {
       })
       if (res.ok) {
         handleUnTick();
+        updateIsTwoFa(false);
         return;
       } else {
         const err: ErrorType = await res.json();

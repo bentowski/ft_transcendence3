@@ -202,6 +202,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
   }, [user])
 
+  const updateIsTwoFa = useCallback((isFa: boolean) => {
+    if (user) {
+      setIsTwoFa(isFa);
+    }
+  }, [user])
+
   const setError =  useCallback((value: any): void => {
     if (value) {
       setErrorShow(true);
@@ -383,6 +389,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       blockedList,
       updateUser: (avatar: string, username: string) => updateUser(avatar, username),
       userAuthentication: (auth: boolean) => userAuthentication(auth),
+      updateIsTwoFa: (isFa: boolean) => updateIsTwoFa(isFa),
       updateFriendsList: (usr: UserType, action: boolean) => updateFriendsList(usr, action),
       updateBlockedList: (usr: UserType, action: boolean) => updateBlockedList(usr, action),
       updateBannedFromList: (chan: ChanType, action: boolean) => updateBannedFromList(chan, action),
@@ -409,6 +416,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       isTwoFa,
       updateBannedFromList,
       updateChanFromList,
+      updateIsTwoFa,
       updateMutedFromList,
       updateFriendsList,
       updateAdminFromList,
