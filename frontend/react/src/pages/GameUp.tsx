@@ -355,7 +355,7 @@ class Game extends Component<{},{}> {
     return (
       <div>
         <div className="canvas" id="canvas">
-          <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h}></canvas>
+          <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h} className="global-bg"></canvas>
           <ModalMatchWaiting title="In wait for player" calledBy="newGame" />
         </div>
       </div>
