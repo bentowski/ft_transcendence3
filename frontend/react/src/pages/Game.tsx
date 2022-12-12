@@ -342,6 +342,7 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
   }
 
   render() {
+		const ctx: any = this.context;
     window.onresize = () => {changeSize(ctx)}
     return (
       <div>

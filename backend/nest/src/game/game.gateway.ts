@@ -41,14 +41,14 @@ export class GameGateway implements OnModuleInit
      let currentRoom: Room|undefined = this.findRoom(body.game.id);
      if (currentRoom == undefined)
      {
-       console.log("works");
+      //  console.log("works");
        const party: PartiesEntity = await this.partiesService.findParty(body.game.id);
        currentRoom = this.createRoom(body.game.id, body.auth_id, party.nbplayer);
      }
      else if (currentRoom.mode != 1 && currentRoom.players[1] == 0
       && currentRoom.players[0] != body.auth_id)
       {
-        console.log(body.auth_id, "works")
+        // console.log(body.auth_id, "works")
         currentRoom.players[1] = body.auth_id
         this.partiesService.addToGame(body.game.id, body.auth_id);
       }
@@ -56,7 +56,7 @@ export class GameGateway implements OnModuleInit
       && (!currentRoom.spectators || currentRoom.spectators.find(element => element == body.auth_id) == undefined))
       {
         currentRoom.spectators.push(body.auth_id)
-        console.log(body.auth_id, "Spectator")
+        // console.log(body.auth_id, "Spectator")
       }
     if (currentRoom != undefined)
     {
@@ -90,15 +90,15 @@ export class GameGateway implements OnModuleInit
   botmove(room: Room) {
     if (room.config.ballPos[0] < 50)
     {
-      console.log("detect")
+      // console.log("detect")
       if (room.config.ballPos[1] > room.config.player2[1])
       {
-        console.log("up", room.config.player2[1])
+        // console.log("up", room.config.player2[1])
         room.config.player2[1] += room.config.playerSpeed
       }
       if (room.config.ballPos[1] < room.config.player2[1])
       {
-        console.log("down", room.config.player2[1])
+        // console.log("down", room.config.player2[1])
         room.config.player2[1] -= room.config.playerSpeed
       }
       this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
@@ -121,7 +121,7 @@ export class GameGateway implements OnModuleInit
 
   createRoom(codeRoom: number, playerID: number, nbplayer: number) {
     let mode = 2
-    console.log(nbplayer);
+    // console.log(nbplayer);
     if (nbplayer == 1)
       mode = 1;
     const room: Room = {
@@ -187,34 +187,37 @@ export class GameGateway implements OnModuleInit
     // ======== New position Ball ============
     let newPos = 0;
     room.config.ballPos = [room.config.ballPos[0] + (room.config.vector[0] * room.config.speed), room.config.ballPos[1] + (room.config.vector[1]  * room.config.speed)]
-    if (room.config.ballPos[1] + (room.config.sizeBall / 2) >= 100) {
-      newPos = 100 - (room.config.sizeBall / 2)
+    // console.log(room.config.ballPos )
+    if (room.config.ballPos[1] + (room.config.sizeBall) >= 100) { // if ball outscreen bottom
+      newPos = 100 - (room.config.sizeBall)
       room.config.vector = [room.config.vector[0], -room.config.vector[1]]
       room.config.ballPos = [room.config.ballPos[0], newPos]
     }
-    if (room.config.ballPos[1] - (room.config.sizeBall / 2) < 0) {
-      newPos = (0 + (room.config.sizeBall / 2))
+    if (room.config.ballPos[1] < 0) {// if ball outscreen bottom
+      newPos = (0)
       room.config.vector = [room.config.vector[0], -room.config.vector[1]]
       room.config.ballPos = [room.config.ballPos[0], newPos]
     }
-    if (room.config.ballPos[0] + room.config.sizeBall / 2 >= room.config.player1[0]) {
-  		if (room.config.ballPos[1] >= room.config.player1[1] && room.config.ballPos[1] <= room.config.player1[1] + room.config.sizeBall * 4) {
-  			let percent = Math.floor((room.config.ballPos[1] - room.config.player1[1]) / ((room.config.player1[1] + room.config.sizeBall * 4) - room.config.player1[1]) * 100)
-  			if (percent <= 20) {
-  				room.config.vector = [-0.5, -Math.sqrt(3) / 2];
-  			}
-  			else if (percent <= 40) {
-  				room.config.vector = [-Math.sqrt(3) / 2, -0.5];
-  			}
-  			else if (percent <= 60) {
-  				room.config.vector = [-1, 0];
-  			}
-  			else if (percent <= 80) {
-  				room.config.vector = [-Math.sqrt(3) / 2, 0.5];
-  			}
-  			else {
-  				room.config.vector = [-0.5, Math.sqrt(3) / 2];
-  			}
+    if (room.config.ballPos[0] + room.config.sizeBall >= room.config.player1[0]) {
+  		if (room.config.ballPos[1] + room.config.sizeBall >= room.config.player1[1] && room.config.ballPos[1] <= room.config.player1[1] + room.config.sizeBall * 4) {
+  			// let percent = Math.floor((room.config.ballPos[1] - room.config.player1[1]) / ((room.config.player1[1] + room.config.sizeBall * 4) - room.config.player1[1]) * 100)
+        let ratio = ((room.config.ballPos[1] + (room.config.sizeBall / 2) - (room.config.player1[1] - room.config.sizeBall / 2)) / ((room.config.player1[1] + room.config.sizeBall * 5) - room.config.player1[1])) * 2 - 1
+        room.config.vector = [-Math.cos(ratio), ratio]
+  			// if (percent <= 20) {
+  			// 	room.config.vector = [-0.5, -Math.sqrt(3) / 2];
+  			// }
+  			// else if (percent <= 40) {
+  			// 	room.config.vector = [-Math.sqrt(3) / 2, -0.5];
+  			// }
+  			// else if (percent <= 60) {
+  			// 	room.config.vector = [-1, 0];
+  			// }
+  			// else if (percent <= 80) {
+  			// 	room.config.vector = [-Math.sqrt(3) / 2, 0.5];
+  			// }
+  			// else {
+  			// 	room.config.vector = [-0.5, Math.sqrt(3) / 2];
+  			// }
         room.config.speed = room.config.speed + 0.1 ;
   		}
   		else {
@@ -224,25 +227,27 @@ export class GameGateway implements OnModuleInit
         this.server.to(room.code.toString()).emit('newPoint', room)
   		}
   	}
-  	if (room.config.ballPos[0] <= room.config.player2[0] + room.config.sizeBall * 1.5)
+  	if (room.config.ballPos[0] <= room.config.player2[0] + room.config.sizeBall)
   	{
-  		if (room.config.ballPos[1] >= room.config.player2[1] && room.config.ballPos[1] <= room.config.player2[1] + room.config.sizeBall * 4) {
-  			let percent = Math.floor((room.config.ballPos[1] - room.config.player2[1]) / ((room.config.player2[1] + room.config.sizeBall * 4) - room.config.player2[1]) * 100)
-  			if (percent <= 20) {
-  				room.config.vector = [0.5, -Math.sqrt(3) / 2];
-  			}
-  			else if (percent <= 40) {
-  				room.config.vector = [Math.sqrt(3) / 2, -0.5];
-  			}
-  			else if (percent <= 60) {
-  				room.config.vector = [1, 0];
-  			}
-  			else if (percent <= 80) {
-  				room.config.vector = [Math.sqrt(3) / 2, 0.5];
-  			}
-  			else {
-  				room.config.vector = [0.5, Math.sqrt(3) / 2];
-  			}
+  		if (room.config.ballPos[1] + room.config.sizeBall >= room.config.player2[1] && room.config.ballPos[1] <= room.config.player2[1] + room.config.sizeBall * 4) {
+        let ratio = ((room.config.ballPos[1] + (room.config.sizeBall / 2) - (room.config.player2[1] - room.config.sizeBall / 2)) / ((room.config.player2[1] + room.config.sizeBall * 5) - room.config.player2[1])) * 2 - 1
+        room.config.vector = [Math.cos(ratio), ratio]
+  			// let percent = Math.floor((room.config.ballPos[1] - room.config.player2[1]) / ((room.config.player2[1] + room.config.sizeBall * 4) - room.config.player2[1]) * 100)
+  			// if (percent <= 20) {
+  			// 	room.config.vector = [0.5, -Math.sqrt(3) / 2];
+  			// }
+  			// else if (percent <= 40) {
+  			// 	room.config.vector = [Math.sqrt(3) / 2, -0.5];
+  			// }
+  			// else if (percent <= 60) {
+  			// 	room.config.vector = [1, 0];
+  			// }
+  			// else if (percent <= 80) {
+  			// 	room.config.vector = [Math.sqrt(3) / 2, 0.5];
+  			// }
+  			// else {
+  			// 	room.config.vector = [0.5, Math.sqrt(3) / 2];
+  			// }
         room.config.speed = room.config.speed + 0.1 ;
   		}
   		else {
