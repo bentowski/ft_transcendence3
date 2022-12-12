@@ -2,7 +2,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import { ErrorType } from "../../types";
 
 const Logout = async (): Promise<void> => {
-  const { userAuthentication } = useAuthData();
+  const { userAuthentication, updateIsTwoFa } = useAuthData();
 
   await fetch("http://localhost:3000/auth/logout", {
     method: "DELETE",
@@ -13,13 +13,13 @@ const Logout = async (): Promise<void> => {
   })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === 200) {
-          userAuthentication(false);
-          return ;
-        }
+        userAuthentication(false);
+        updateIsTwoFa(false);
+        return ;
       })
       .catch((error) => {
         userAuthentication(false);
+        updateIsTwoFa(false);
         return ;
       });
 }

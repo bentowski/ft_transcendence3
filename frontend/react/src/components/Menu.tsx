@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AvatarType } from "../types";
 
 const Menu = () => {
-  const { setError, user, userAuthentication } = useAuthData();
+  const { setError, user, updateIsTwoFa, userAuthentication } = useAuthData();
   const [username, setUsername] = useState<string>(user.username);
   const [avatarUrl, setAvatarUrl] = useState<AvatarType>({url:'',hash:0});
 
@@ -26,9 +26,8 @@ const Menu = () => {
       },
     })
     if (res.ok) {
-      if (res.status === 200) {
-        userAuthentication(false);
-      }
+      userAuthentication(false);
+      updateIsTwoFa(false);
     }
     else {
         const error = await res.json();
