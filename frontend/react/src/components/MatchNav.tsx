@@ -59,7 +59,10 @@ class MatchNav extends Component<{}, {}> {
 			return;
 		}
 		const randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
-		window.location.href = "http://localhost:8080/game/" + randomGame.id
+		if (randomGame.type == 0)
+			window.location.href = "http://localhost:8080/game/" + randomGame.id
+		else
+			window.location.href = "http://localhost:8080/gameup/" + randomGame.id
 	}
 
 	prompt = (): void => {
@@ -67,32 +70,52 @@ class MatchNav extends Component<{}, {}> {
 		modal.classList.remove('hidden');
 	}
 
-	renderGames = (login: string, key: number, id: number, p1: string, p2: string, nbplayer: number): JSX.Element => {
+	renderGames = (login: string, key: number, id: number, p1: string, p2: string, nbplayer: number, type: number): JSX.Element => {
 		let count: number = 0;
 		if (p1 !== null)
 			count++;
 		if (p2 !== null)
 			count++;
-		return (
-			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
-				<div>
-					<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
+		if (type == 0)
+		{
+			return (
+				<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
+					<div>
+						<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
+					</div>
+					<div style={{ verticalAlign: "top" }}>
+						<p className="py-2">{login}</p>
+					</div>
+					<div>
+						<p className="py-2">{count}/{nbplayer}</p>
+					</div>
 				</div>
-				<div style={{ verticalAlign: "top" }}>
-					<p className="py-2">{login}</p>
+			)
+		}
+		else
+		{
+			return (
+				<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
+					<div>
+						<button className="" onClick={() => window.location.href = "http://localhost:8080/gameup/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
+					</div>
+					<div style={{ verticalAlign: "top" }}>
+						<p className="py-2">{login}</p>
+					</div>
+					<div>
+						<p className="py-2">{count}/{nbplayer}</p>
+					</div>
 				</div>
-				<div>
-					<p className="py-2">{count}/{nbplayer}</p>
-				</div>
-			</div>
-		)
+			)
+		}
+
 	}
 	renderItem = (): JSX.Element[] => {
 		let x: number = 0;
 		const item: JSX.Element[] = [];
 		const games: PartiesType[] = this.state.allGames;
 		while (x < this.state.allGames.length) {
-			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2, games[x].nbplayer))
+			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2, games[x].nbplayer, games[x].type))
 			x++;
 		}
 		return (item)

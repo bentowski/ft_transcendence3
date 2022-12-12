@@ -231,7 +231,7 @@ export class GameGateway implements OnModuleInit
 
 
    //=========== EndGame  ==========
-   if (room.config.p1Score > 500 || room.config.p2Score > 500)
+   if (room.config.p1Score > 5 || room.config.p2Score > 5)
    {
      this.partiesService.remove(room.code.toString());
      if (room.mode == 2)

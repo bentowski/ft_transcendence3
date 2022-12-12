@@ -271,41 +271,6 @@ const justwait = (ctx: any) => {
 	})
 }
 
-// const changeSize = () => {
-//   let element = document.body as HTMLDivElement;
-//   globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
-//   let winWidth = element.clientWidth;
-//   let winHeight = element.clientHeight;
-//   // if ((winWidth * 19) / 26 > winHeight)
-//     winWidth = ((winHeight * 26) / 19)
-//   // else
-//   //   winHeight = ((winWidth * 19) / 26)
-//   settings.w = winWidth
-//   settings.h = winHeight
-//   socket.emit('plzstats', {"room": settings.room})
-//   socket.on('stats', (serv) => {
-//     settings = {
-//       w: settings.w,
-//       h: settings.h,
-//       currentUser: settings.currentUser,
-//       room: settings.room,
-//       spec: settings.spec,
-//       up: settings.up,
-//       down: settings.down,
-//       p1: settings.p1,
-//       p2: settings.p2,
-//       ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
-//       player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
-//       player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
-//       sizeBall: serv.sizeBall * settings.h / 100,
-//       playerSize: serv.playerSize * settings.h / 100,
-//       playerSpeed: serv.playerSize,
-//       middle: serv.middle * settings.w / 100
-//     }
-//   })
-//   socket.off('stats');
-// }
-
 class Game extends Component<{},{}> {
 
 	static contextType = AuthContext;
@@ -329,10 +294,14 @@ class Game extends Component<{},{}> {
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
+    // console.log((winWidth * 19) / 26 > winHeight)
     // if ((winWidth * 19) / 26 > winHeight)
-      winWidth = ((winHeight * 26) / 19)
+    //   winWidth = ((winHeight * 26) / 19)
     // else
-    //   winHeight = ((winWidth * 19) / 26)
+    console.log(winWidth, winHeight)
+      winHeight = (winWidth / 26) * 19
+      console.log(winHeight)
+
     settings.w = winWidth
     settings.h = winHeight
 	  settings.currentUser = ctxReact.user.auth_id;

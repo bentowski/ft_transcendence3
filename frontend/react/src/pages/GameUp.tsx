@@ -67,6 +67,7 @@ const printGame = (ctx: any) => {
   ctx.clearRect(0, 0, element.clientWidth, element.clientHeight)
   while (y < settings.h) {
       ctx.drawImage(bubble, settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall, settings.sizeBall * 2)
+      console.log(settings.h, y, "AAAAAAAAAAAAAA")
       y += settings.sizeBall * 2
   }
   ctx.drawImage(p2, settings.player2[0], settings.player2[1], settings.sizeBall, settings.sizeBall * 4)
@@ -273,10 +274,10 @@ const changeSize = () => {
   globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
   let winWidth = element.clientWidth;
   let winHeight = element.clientHeight;
-  // if ((winWidth * 19) / 26 > winHeight)
+  if ((winWidth * 19) / 26 > winHeight)
     winWidth = ((winHeight * 26) / 19)
-  // else
-  //   winHeight = ((winWidth * 19) / 26)
+  else
+    winHeight = ((winWidth * 19) / 26)
   settings.w = winWidth
   settings.h = winHeight
   socket.emit('plzstats', {"room": settings.room})
@@ -326,10 +327,12 @@ class Game extends Component<{},{}> {
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
-    if ((winWidth * 19) / 26 > winHeight)
-      winWidth = ((winHeight * 26) / 19)
-    else
-      winHeight = ((winWidth * 19) / 26)
+    // if ((winWidth * 19) / 26 > winHeight)
+    //   winWidth = ((winHeight * 26) / 19)
+    // else
+    console.log(winWidth, winHeight)
+      winHeight = (winWidth / 26) * 19
+      console.log(winHeight)
     settings.w = winWidth
     settings.h = winHeight
 	  settings.currentUser = ctxReact.user.auth_id;
@@ -354,7 +357,7 @@ class Game extends Component<{},{}> {
     window.onresize = () => {changeSize()}
     return (
       <div>
-        <div className="canvas" id="canvas">
+        <div className="canvas" id="canvas" style={{maxHeight: settings.h}}>
           <canvas ref={this.globale} id="globale" width={settings.w} height={settings.h}></canvas>
           <ModalMatchWaiting title="In wait for player" calledBy="newGame" />
         </div>
