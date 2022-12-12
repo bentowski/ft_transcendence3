@@ -22,7 +22,7 @@ let gameOver = () => {
   socket.off('players')
   socket.off('onEndGame')
   updateSocket.emit('updateUser', {auth_id: settings.currentUser, status: 1})
-	window.location.href = "http://localhost:8080/profil/"
+	window.location.href = "http://localhost:8080/history"
 }
 
 let joinRoom = async () => {
@@ -30,13 +30,13 @@ let joinRoom = async () => {
   let url = document.URL
   let index = url.lastIndexOf("/")
   if (index === -1) {
-    window.location.href = "http://localhost:8080/profil"
+    window.location.href = "http://localhost:8080/history"
   }
   else {
     url = url.substring(index + 1)
     let game: any = games.find((c:any) => c.id === url)
     if (game === undefined) {
-      window.location.href = "http://localhost:8080/profil"
+      window.location.href = "http://localhost:8080/history"
     }
     else
 			socket.emit('joinRoom', {"game":game, "auth_id": settings.currentUser})
@@ -59,7 +59,6 @@ const printGame = (ctx: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
     }
   }
-  const element = document.getElementById('root') as HTMLDivElement;
   ctx.clearRect(0, 0, 400000, 400000)
   while (y <= settings.h) {
     ctx.fillStyle = "white"

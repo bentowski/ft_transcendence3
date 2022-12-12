@@ -140,12 +140,10 @@ export class GameGateway implements OnModuleInit
 
   initConfig(vitesse: number){
     let sizeBallExt = 3;
-    // if (vitesse == 2)
-    //   vitesse = 5
     let config: Config = {
-      ballPos: [50 - (sizeBallExt / 2), 50],
-      player1: [100 - sizeBallExt, 50],
-      player2: [0, 50],
+      ballPos: [50, 50],
+      player1: [100 - (sizeBallExt * 0.5), 50],
+      player2: [0 + (sizeBallExt * 0.5), 50],
       sizeBall:  sizeBallExt,
       speed: 0.5,
       playerSize: sizeBallExt * (4 / vitesse),
