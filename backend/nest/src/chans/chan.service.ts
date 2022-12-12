@@ -182,7 +182,7 @@ export class ChanService {
 	async banUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 				where: { id: room },
-				relations: ['adminUser', 'banUser', 'chanUser'],
+				relations: ['banUser', 'muteUser', 'adminUser', 'chanUser'],
 			});
 		if (!chan) {
 			throw new NotFoundException('Error while banning user from channel: Cant find channel');
@@ -209,7 +209,7 @@ export class ChanService {
 				return obj.auth_id === iduser;
 			});
 			if (index !== -1) {
-				chan.chanUser.splice(index);
+				chan.chanUser.splice(index, 1);
 			}
 			chan.banUser.push(user);
 		}
@@ -218,7 +218,7 @@ export class ChanService {
 				return obj.auth_id === iduser;
 			});
 			if (index !== -1) {
-				chan.banUser.splice(index);
+				chan.banUser.splice(index, 1);
 			}
 		}
 		try {
@@ -290,7 +290,7 @@ export class ChanService {
 				return obj.auth_id === iduser;
 			});
 			if (index !== -1) {
-				chan.adminUser.splice(index);
+				chan.adminUser.splice(index, 1);
 			}
 		}
 		try {
@@ -304,7 +304,7 @@ export class ChanService {
 	async muteUserToChannel(iduser: string, room: string, action: boolean): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
-			relations: ['adminUser', 'muteUser','chanUser'],
+			relations: ['banUser', 'muteUser', 'adminUser', 'chanUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while muting user from channel: Cant find channel');
@@ -334,7 +334,7 @@ export class ChanService {
 				return obj.auth_id === iduser;
 			});
 			if (index !== -1) {
-				chan.muteUser.splice(index);
+				chan.muteUser.splice(index, 1);
 			}
 		}
 		try {
@@ -347,7 +347,7 @@ export class ChanService {
 	async addUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
-			relations: ['chanUser', 'banUser'],
+			relations: ['banUser', 'muteUser', 'adminUser', 'chanUser'],
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while adding user to a channel: Cant find channel');
@@ -369,16 +369,13 @@ export class ChanService {
 	}
 
 	async delUserToChannel(user: UserEntity, room: string): Promise<ChanEntity> {
-		// console.log(user, room)
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: { id: room },
-			relations: ['chanUser', 'banUser'],
+			relations: ['banUser', 'muteUser', 'adminUser', 'chanUser'],
 		});
-		// console.log(chan)
 		if (!chan) {
 			throw new NotFoundException('Error while removing user to a channel: Cant find channel');
 		}
-		// console.log(chan.owner, " === ", user.auth_id, " => ", )
 		if (chan.owner === user.auth_id || chan.type === "direct") {
 			try {
 				await this.chanRepository.delete(chan.id);
@@ -389,7 +386,10 @@ export class ChanService {
 				throw new Error(error);
 			}
 		}
-		chan.chanUser.splice(chan.chanUser.findIndex((u) => u === user))
+		const idx: number = chan.chanUser.findIndex((u) => u.auth_id === user.auth_id);
+		if (idx !== -1) {
+			chan.chanUser.splice(idx, 1);
+		}
 		try {
 			return await this.chanRepository.save(chan);
 		} catch (error) {
@@ -434,7 +434,7 @@ export class ChanService {
 	async getUsers(idroom: string): Promise<UserEntity[]> {
 		const chan: ChanEntity = await this.chanRepository.findOne({
 			where: {id: idroom},
-			relations: ['chanUser']
+			relations: ['banUser', 'muteUser', 'adminUser', 'chanUser']
 		});
 		if (!chan) {
 			throw new NotFoundException('Error while fetching users: Cant find channel');
