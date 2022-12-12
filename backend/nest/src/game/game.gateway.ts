@@ -96,12 +96,12 @@ export class GameGateway implements OnModuleInit
     {
       if (room.config.ballPos[1] > room.config.player2[1])
       {
-        if (room.config.player2[1] + (room.config.sizeBall * 4) + room.config.playerSpeed / 20 <= 100)
+        if (room.config.player2[1] + (room.config.sizeBall * 4) + room.config.playerSpeed / 15 <= 100)
           room.config.player2[1] += room.config.playerSpeed / 15
       }
       if (room.config.ballPos[1] < room.config.player2[1])
       {
-        if (room.config.player2[1]- room.config.playerSpeed / 20 >= 0)
+        if (room.config.player2[1]- room.config.playerSpeed / 15 >= 0)
           room.config.player2[1] -= room.config.playerSpeed / 15
       }
       this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
