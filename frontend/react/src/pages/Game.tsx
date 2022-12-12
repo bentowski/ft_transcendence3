@@ -9,6 +9,13 @@ import { UserType } from "../types"
 import { AuthContext } from '../contexts/AuthProviderContext';
 const updateSocket = io("http://localhost:3000/update");
 
+let score1 = new Image();
+let score2 = new Image();
+let globalCtx: any = undefined;
+// let p1 = new Image();
+// let p2 = new Image();
+// let bubble = new Image();
+
 let gameOver = () => {
   socket.off('userJoinChannel')
   socket.off('Init')
@@ -17,7 +24,7 @@ let gameOver = () => {
   socket.off('userJoinChannel')
   socket.off('players')
   socket.off('onEndGame')
-	window.location.href = "http://localhost:8080/profil"
+	window.location.href = "http://localhost:8080/profil/"
 }
 
 let joinRoom = async () => {
@@ -38,11 +45,9 @@ let joinRoom = async () => {
   }
 }
 
-const printNumber = (ctx: any, number: any) => {
-  console.log(number)
-}
-
 const printGame = (ctx: any) => {
+  // score1.src = "http://localhost:8080/pictures/ball.png"
+  // score2.src = "http://localhost:8080/pictures/ball.png"
 	let y = 0;
   if (settings.spec === false) {
     let move = 0;
@@ -58,7 +63,8 @@ const printGame = (ctx: any) => {
       socket.emit('barMove', {"ratio": (settings.player1[1] / settings.h), "player": settings.currentUser, "room": settings.room})
     }
   }
-  ctx.clearRect(0, 0, settings.w, settings.h)
+  const element = document.getElementById('root') as HTMLDivElement;
+  ctx.clearRect(0, 0, 400000, 400000)
   while (y <= settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
@@ -69,11 +75,12 @@ const printGame = (ctx: any) => {
   ctx.fillStyle = "white"
   ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.playerSize)
 	ctx.fillStyle = "white"
-	ctx.beginPath();
 	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
-	ctx.fill()
-	ctx.closePath();
+  // console.log("truc", score1)
+  ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
+  ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
   socket.emit("pleaseBall", settings.room)
+
 	window.requestAnimationFrame(() => {
 		printGame(ctx)
 	})
@@ -88,7 +95,6 @@ let movePlayer = (ctx: any, move: number, settings: any) => {
 const start = (ctx: any) => {
 	socket.off('Start')
 	socket.on('ballMoved', (room) => {
-    console.log("ballMoved")
 	    if (room.code === settings.room)
 			{
         if (room.players[1] === settings.currentUser)
@@ -102,18 +108,68 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
-      console.log("players", body.room, settings.room)
 	    if (body.room.code !== settings.room)
 	      return ;
-      console.log(settings.currentUser, body.player)
 			 if (body.player !== settings.currentUser) {
-         console.log(settings.spec, body.admin)
 	      if (settings.spec && body.admin)
           settings.player1 = [settings.player1[0], body.ratio * settings.h]
 	      else
           settings.player2 = [settings.player2[0], body.ratio * settings.h]
 	     }
 		})
+    socket.on('newPoint', (room) => {
+      console.log(room.config.p1Score, room.config.p2Score)
+      switch (room.config.p1Score)
+      {
+        case 0: score1.src = "http://localhost:8080/icons/0.png"
+          break;
+        case 1: score1.src = "http://localhost:8080/icons/1.png"
+          break;
+        case 2: score1.src = "http://localhost:8080/icons/2.png"
+          break;
+        case 3: score1.src = "http://localhost:8080/icons/3.png"
+          break;
+        case 4: score1.src = "http://localhost:8080/icons/4.png"
+          break;
+        case 5: score1.src = "http://localhost:8080/icons/5.png"
+          break;
+        case 6: score1.src = "http://localhost:8080/icons/6.png"
+          break;
+        case 7: score1.src = "http://localhost:8080/icons/7.png"
+          break;
+        case 8: score1.src = "http://localhost:8080/icons/8.png"
+          break;
+        case 9: score1.src = "http://localhost:8080/icons/9.png"
+          break;
+        case 10: score1.src = "http://localhost:8080/icons/10.png"
+          break;
+      }
+      switch (room.config.p2Score)
+      {
+        case 0: score2.src = "http://localhost:8080/icons/0.png"
+          break;
+        case 1: score2.src = "http://localhost:8080/icons/1.png"
+          break;
+        case 2: score2.src = "http://localhost:8080/icons/2.png"
+          break;
+        case 3: score2.src = "http://localhost:8080/icons/3.png"
+          break;
+        case 4: score2.src = "http://localhost:8080/icons/4.png"
+          break;
+        case 5: score2.src = "http://localhost:8080/icons/5.png"
+          break;
+        case 6: score2.src = "http://localhost:8080/icons/6.png"
+          break;
+        case 7: score2.src = "http://localhost:8080/icons/7.png"
+          break;
+        case 8: score2.src = "http://localhost:8080/icons/8.png"
+          break;
+        case 9: score2.src = "http://localhost:8080/icons/9.png"
+          break;
+        case 10: score2.src = "http://localhost:8080/icons/10.png"
+          break;
+      }
+    })
 	  socket.on('gameoverSend', (room) => {
       console.log("gameoverSend", room.code, settings.room)
 	    if (room.code === settings.room)
@@ -137,12 +193,14 @@ let settings = {
   sizeBall: 0,
 	playerSize: 0,
   playerSpeed: 0,
-  middle: 0,
-  p1Score: 0,
-  p2Score: 0
+  middle: 0
+  // p1Score: 0,
+  // p2Score: 0
 }
 
 const initSettings = (serv: any) => {
+  score1.src = "http://localhost:8080/icons/0.png"
+  score2.src = "http://localhost:8080/icons/0.png"
   settings = {
     w: settings.w,
     h: settings.h,
@@ -159,38 +217,36 @@ const initSettings = (serv: any) => {
     sizeBall: serv.sizeBall * settings.h / 100,
     playerSize: serv.playerSize * settings.h / 100,
     playerSpeed: serv.playerSize,
-    middle: serv.middle * settings.w / 100,
-    p1Score: serv.p1Score,
-    p2Score: serv.p2Score
+    middle: serv.middle * settings.w / 100
+    // p1Score: serv.p1Score,
+    // p2Score: serv.p2Score
   }
 }
 
 // Change type to SettingType
-const init = (servSettings: any) => {
+const init = (servSettings: any, ctx: any) => {
 	socket.off('Init')
   initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement
-  const ctx: any = globale.getContext('2d')
+  // const ctx: any = globale.getContext('2d')
+  globalCtx = ctx;
   printGame(ctx)
-	socket.on('printCountDown', (room) => {
-    if (room.room.id === settings.room)
-    {
-      if ((room.p1 && room.p1 === settings.currentUser) || (room.p2 && room.p2 === settings.currentUser) || !room.p1 || !room.p2)
-      	settings.spec = false
-      printNumber(ctx, room.number);
-    }
-	})
+	// socket.on('printCountDown', (room) => {
+  //   if (room.room.id === settings.room)
+  //   {
+  //     if ((room.p1 && room.p1 === settings.currentUser) || (room.p2 && room.p2 === settings.currentUser) || !room.p1 || !room.p2)
+  //     	settings.spec = false
+  //     printNumber(ctx, room.number);
+  //   }
+	// })
 	socket.on('Start', (body) => {
-    if ((body.room.p1 && body.room.p1 === settings.currentUser) || (body.room.p2 && body.room.p2 === settings.currentUser) || !body.room.p1 || !body.room.p2)
-      settings.spec = false
-    console.log("AAAAAAAAAAAAAAAAAAa")
-    socket.off('printCountDown')
-    console.log(body.room.code, settings.room)
+    if ((body.room.players[0] && body.room.players[0] === settings.currentUser)
+      || (body.room.players[1] && body.room.players[1] === settings.currentUser)
+      || !body.room.players[0] || (!body.room.players[1] && body.room.mode != 1))
+        settings.spec = false
+    // socket.off('printCountDown')
     if (body.room.code == settings.room)
-    {
-      console.log("START")
       start(ctx)
-    }
 	})
   let infosClavier = (e: KeyboardEvent) => {
     let number = Number(e.keyCode);
@@ -220,32 +276,55 @@ const init = (servSettings: any) => {
   document.addEventListener("keyup", infosClavier2);
 }
 
-const justwait = () => {
+const justwait = (ctx: any) => {
 	socket.on('Init', (body) => {
 		socket.off('userJoinChannel')
 		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 		modal.classList.add("hidden")
 		if (body.room.id === settings.room)
-			init(body.settings);
+			init(body.settings, ctx);
 	})
 }
 
 const changeSize = () => {
-  console.log("resize");
   let element = document.body as HTMLDivElement;
+  globalCtx.clearRect(0, 0, 400000, 400000)
   let winWidth = element.clientWidth;
   let winHeight = element.clientHeight;
-  console.log((winWidth * 19) / 26 > winHeight)
   if ((winWidth * 19) / 26 > winHeight)
     winWidth = ((winHeight * 26) / 19)
   else
     winHeight = ((winWidth * 19) / 26)
-  // console.log()
+  const oldWidth = settings.w
+  const oldHeight = settings.h
   settings.w = winWidth
   settings.h = winHeight
+  settings = {
+    w: settings.w,
+    h: settings.h,
+    currentUser: settings.currentUser,
+    room: settings.room,
+    spec: settings.spec,
+    up: settings.up,
+    down: settings.down,
+    p1: settings.p1,
+    p2: settings.p2,
+    ballPos: [settings.ballPos[0] * settings.w / oldWidth, settings.ballPos[1] * settings.h / oldHeight],
+    player1: [settings.player1[0] * settings.w / oldWidth, settings.player1[1] * settings.h / oldHeight],
+    player2: [settings.player2[0] * settings.w / oldWidth, settings.player2[1] * settings.h / oldHeight],
+    sizeBall: settings.sizeBall * settings.h / oldHeight,
+    playerSize: settings.playerSize * settings.h / oldHeight,
+    playerSpeed: settings.playerSize,
+    middle: settings.middle * settings.w / oldWidth
+  }
 }
 
-class Game extends Component<{},{w:number, h: number, timer: number}> {
+// const resize = (ctx: any) => {
+//
+// }
+
+class Game extends Component<{},{}> {
+
 	static contextType = AuthContext;
 	private globale: any = createRef()
 
@@ -260,7 +339,9 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
   }
 
   componentDidMount = () => {
-		const ctx: any = this.context;
+		const ctxReact: any = this.context;
+    const globale = document.getElementById('globale') as HTMLCanvasElement
+    const globalCtx: any = globale.getContext('2d')
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
@@ -270,21 +351,21 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
       winHeight = ((winWidth * 19) / 26)
     settings.w = winWidth
     settings.h = winHeight
-	  settings.currentUser = ctx.user.auth_id;
+	  settings.currentUser = ctxReact.user.auth_id;
     let url = document.URL
   	url = url.substring(url.lastIndexOf("/") + 1)
     settings.room = url
 		joinRoom()
 		socket.on('userJoinChannel', () => {
 			socket.off('Init')
-			justwait();
+			justwait(globalCtx);
 		})
 		socket.on('Init', (body) => {
 			socket.off('userJoinChannel')
 			let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 			modal.classList.add("hidden")
 			if (body.room.id === settings.room)
-        init(body.settings);
+        init(body.settings, globalCtx);
 		})
   }
 

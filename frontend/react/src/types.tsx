@@ -25,6 +25,7 @@ export type PartiesType = {
   login: string;
   p1: string;
   p2: string;
+  nbplayer: number;
 }
 
 export type ChanType = {

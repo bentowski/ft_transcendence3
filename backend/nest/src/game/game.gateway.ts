@@ -45,7 +45,7 @@ export class GameGateway implements OnModuleInit
        const party: PartiesEntity = await this.partiesService.findParty(body.game.id);
        currentRoom = this.createRoom(body.game.id, body.auth_id, party.nbplayer);
      }
-     else if (currentRoom.players[1] == 0
+     else if (currentRoom.mode != 1 && currentRoom.players[1] == 0
       && currentRoom.players[0] != body.auth_id)
       {
         console.log(body.auth_id, "works")
@@ -56,13 +56,12 @@ export class GameGateway implements OnModuleInit
       && (!currentRoom.spectators || currentRoom.spectators.find(element => element == body.auth_id) == undefined))
       {
         currentRoom.spectators.push(body.auth_id)
-        console.log("Spectator")
+        console.log(body.auth_id, "Spectator")
       }
     if (currentRoom != undefined)
     {
       this.partiesService.addToGame(body.game.id, body.auth_id);
       this.server.to(body.game.id).emit("Init", {room: body.game, settings: currentRoom.config});
-      console.log(currentRoom)
       if ((currentRoom.players[0] && currentRoom.players[1]) || currentRoom.mode == 1)
         this.startGame(currentRoom);
     }
@@ -71,14 +70,19 @@ export class GameGateway implements OnModuleInit
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
     let admin: boolean
-    console.log("========MOOOVE======")
     let currentRoom: Room|undefined = this.findRoom(body.room);
     if (currentRoom != undefined)
     {
       if (body.player === currentRoom.players[0])
+      {
+        currentRoom.config.player1[1] =  body.ratio * 100
         admin = true
-      else if (body.player === currentRoom.players[1])
+      }
+      else if (body.player === currentRoom.players[1] && currentRoom.mode != 1)
+      {
+        currentRoom.config.player2[1] =  body.ratio * 100
         admin = false
+      }
       this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
     }
   }
@@ -87,17 +91,17 @@ export class GameGateway implements OnModuleInit
     if (room.config.ballPos[0] < 50)
     {
       console.log("detect")
-      if (room.config.ballPos[1] > room.config.player1[1])
+      if (room.config.ballPos[1] > room.config.player2[1])
       {
-        console.log("up", room.config.player1[1])
-        room.config.player1[1] += room.config.playerSpeed
+        console.log("up", room.config.player2[1])
+        room.config.player2[1] += room.config.playerSpeed
       }
-      if (room.config.ballPos[1] < room.config.player1[1])
+      if (room.config.ballPos[1] < room.config.player2[1])
       {
-        console.log("down", room.config.player1[1])
-        room.config.player1[1] -= room.config.playerSpeed
+        console.log("down", room.config.player2[1])
+        room.config.player2[1] -= room.config.playerSpeed
       }
-      this.server.to(room.code.toString()).emit('players', {ratio: room.config.player1[1] / 100, player: 0, admin: false, room: room})
+      this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
     }
   }
 
@@ -165,7 +169,12 @@ export class GameGateway implements OnModuleInit
     if (room.state == State.WAITING && ((room.players[0] != 0 && room.players[1] != 0) || room.mode == 1))
     {
       room.state = State.INGAME;
+    }
+    if (room.state == State.INGAME)
+    {
       this.server.to(room.code.toString()).emit("Start", {room: room});
+      // this.server.to(room.code.toString()).emit('players', {ratio: room.config.player1[1] / 100, player: room.players[0], admin: true, room: room})
+      // this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: room.players[1], admin: false, room: room})
     }
   }
 
@@ -243,16 +252,11 @@ export class GameGateway implements OnModuleInit
         this.server.to(room.code.toString()).emit('newPoint', room)
   		}
   	}
-    // if (room.mode == 1)
-    // {
-    //   console.log("bot")
-    //   this.botmove(room);
-    // }
    this.server.to(room.code.toString()).emit('ballMoved', room)
 
 
    //=========== EndGame  ==========
-   if (room.config.p1Score > 2 || room.config.p2Score > 2)
+   if (room.config.p1Score > 200 || room.config.p2Score > 200)
    {
      this.partiesService.remove(room.code.toString());
      if (room.mode == 2)

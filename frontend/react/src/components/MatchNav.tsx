@@ -65,7 +65,7 @@ class MatchNav extends Component<{},{}> {
 		modal.classList.remove('hidden');
 	}
 
-	renderGames = (login: string, key: number, id: number, p1: string, p2: string): JSX.Element => {
+	renderGames = (login: string, key: number, id: number, p1: string, p2: string, nbplayer: number): JSX.Element => {
 		let count: number = 0;
 		if (p1 !== null)
 			count++;
@@ -74,13 +74,13 @@ class MatchNav extends Component<{},{}> {
 		return (
 			<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
 				<div>
-					<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === 2) ? "Spec" : "Join"}</button>
+					<button className="" onClick={() => window.location.href = "http://localhost:8080/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
 				</div>
 				<div style={{verticalAlign: "top"}}>
 					<p className="py-2">{login}</p>
 				</div>
 				<div>
-					<p className="py-2">{count}/2</p>
+					<p className="py-2">{count}/{nbplayer}</p>
 				</div>
 			</div>
 		)
@@ -90,7 +90,7 @@ class MatchNav extends Component<{},{}> {
 		const item: JSX.Element[] = [];
 		const games: PartiesType[] = this.state.allGames;
 		while (x < this.state.allGames.length) {
-			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2))
+			item.push(this.renderGames(games[x].login, x, games[x].id, games[x].p1, games[x].p2, games[x].nbplayer))
 			x++;
 		}
 		return (item)
