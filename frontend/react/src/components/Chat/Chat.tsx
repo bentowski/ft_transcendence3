@@ -97,7 +97,9 @@ export const WebSocket = (): JSX.Element => {
       getChan()
     }
     const handleBan = async (obj: BanToChannelSendDto): Promise<void> => {
+      console.log('if (obj.auth_id === user.auth_id) ',obj.auth_id,user.auth_id)
       if (obj.auth_id === user.auth_id) {
+        console.log('here it is ', obj)
         try {
           const chan: ChanType = await Request(
               "GET",
@@ -109,7 +111,7 @@ export const WebSocket = (): JSX.Element => {
           if (obj.action) {
             socket.emit("leaveRoom", {
               room: room,
-              auth_id: user.auth_id
+              auth_id: obj.auth_id
             }
             );
             goHome();

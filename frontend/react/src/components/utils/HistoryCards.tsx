@@ -34,7 +34,6 @@ class HistoryCards extends Component<{
   }
 
   renderHistoryCards = (): JSX.Element => {
-    console.log(this.props.history);
     const status_one: JSX.Element = this.renderStatus(false);
     const status_two: JSX.Element = this.renderStatus(true);
     if (this.props.profil) {
@@ -94,7 +93,6 @@ class HistoryCards extends Component<{
   }
 
   render(): JSX.Element {
-    console.log("HistoryCards")
     let items: JSX.Element = this.renderHistoryCards();
     return (
       <div>

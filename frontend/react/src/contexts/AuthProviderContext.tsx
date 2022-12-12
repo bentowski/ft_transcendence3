@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       })
       const newArr: ChanType[] = bannedFrom;
       if (idx !== -1) {
-        newArr.splice(idx);
+        newArr.splice(idx, 1);
       }
       setBannedFrom(newArr);
     }
@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
       })
       const newArr: ChanType[] = adminFrom;
       if (i !== -1) {
-        newArr.splice(i);
+        newArr.splice(i, 1);
       }
       setAdminFrom(newArr);
     }
@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         })
         const newArr: ChanType[] = mutedFrom;
         if (idx !== -1) {
-          newArr.splice(idx);
+          newArr.splice(idx, 1);
         }
         setMutedFrom(newArr);
       }
@@ -170,7 +170,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         })
         const newArr: ChanType[] = chanFrom;
         if (idx !== -1) {
-          newArr.splice(idx);
+          newArr.splice(idx, 1);
         }
         setChanFrom(newArr);
       }

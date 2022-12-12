@@ -36,10 +36,6 @@ class Stats extends Component<
     }
   }
 
-  componentWillUnmout() {
-    console.log('component is destroyyyyyyeed');
-  }
-
   componentDidMount = (): void => {
     const ctx: any = this.context;
     let users: UserType[] = ctx.userList;
@@ -49,7 +45,6 @@ class Stats extends Component<
     users = newArray.sort(function (a: UserType, b: UserType) {
       return b.game_won - a.game_won;
     });
-    console.log('component did mount ', this.state.users, users)
     this.setState({ users: users });
   };
 

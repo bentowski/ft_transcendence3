@@ -35,6 +35,16 @@ import { join } from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import ChanEntity from '../chans/entities/chan-entity';
+import multer = require("multer");
+
+type validMimeType =  'image/png' | 'image/jpg' | 'image/jpeg' | 'image/gif'
+
+const validMimeTypes: validMimeType [] = [
+	'image/png',
+	'image/jpg',
+	'image/jpeg',
+	'image/gif'
+]
 
 export const storage = {
   storage: diskStorage({
@@ -47,13 +57,17 @@ export const storage = {
       cb(null, `${filename}`);
     },
   }),
+  fileFilter: function (req, file, cb) {
+    const allowedMimeTypes: validMimeType[] =  validMimeTypes;
+		allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(null, false);
+	},
 };
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  //@UseGuards(UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get()
   getUsers() {
     return this.userService.findAll();
@@ -71,12 +85,15 @@ export class UserController {
   }
 
   //@UseGuards(UserAuthGuard)
+  /*
   @Post('create')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
+  */
 
   //@UseGuards(UserAuthGuard)
+  /*
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
@@ -85,6 +102,7 @@ export class UserController {
       throw new Error(error);
     }
   }
+  */
 
   @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Post('upload')
@@ -134,7 +152,7 @@ export class UserController {
     return user;
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserAuthGuard)
+  @UseGuards(AuthGuard('jwt'), UserAuthGuard)
   @Get('/id/:id')
   async findOnebyID(@Param('id') id: string) {
     const user: UserEntity = await this.userService.findOneByAuthId(id);
