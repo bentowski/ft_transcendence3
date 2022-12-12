@@ -412,7 +412,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteAccepted", (body: { "to": string, "from": string, "partyID": string }) => {
         if (body.to === this.getCurrentUser().auth_id)
-          window.location.href = "http://localhost:8080/game/" + body.partyID;
+          window.location.href = "http://localhost:8080/gameup/" + body.partyID;
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
