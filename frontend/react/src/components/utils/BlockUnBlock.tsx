@@ -58,9 +58,9 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     }
 
     return (
-        <div>
+        <div className="">
             { loading? <p></p> :
-            <button className="btn btn-outline-dark shadow-none" onClick={blockunblockUser} >
+            <button className="" onClick={blockunblockUser} >
                 {  status ?
                             <p>UNBLOCK</p>
                             :
