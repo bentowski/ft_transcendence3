@@ -189,8 +189,8 @@ let settings = {
 }
 
 const initSettings = (serv: any) => {
-  score1.src = "http://localhost:8080/icons/0.png"
-  score2.src = "http://localhost:8080/icons/0.png"
+  score1.src = "http://localhost:8080/icons/bob0.png"
+  score2.src = "http://localhost:8080/icons/bob0.png"
   settings = {
     w: settings.w,
     h: settings.h,

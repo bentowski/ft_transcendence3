@@ -36,12 +36,21 @@ const Menu = () => {
       }
     }
 
+    const linkChat = () => {
+      if (window.location.href.includes("localhost:8080/chat"))
+        return (
+          <div className="m-0">Chat</div>
+        )
+      return (
+      <Link to={"/chat"}>
+        <div className="m-0">Chat</div>
+      </Link>)
+    }
+
     return (
       <div className="Menu shadow d-flex justify-content-between align-items-center">
         <div className="homeButtonDiv col-3 d-flex justify-content-start">
-          <Link to={"/chat"}>
-            <div className="m-0">Chat</div>
-          </Link>
+          {linkChat()}
           <Link to={"/history"}>
             <div className="m-0 mx-2">Stats</div>
           </Link>
