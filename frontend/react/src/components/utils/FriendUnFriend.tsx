@@ -45,7 +45,7 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     }
 
     return (
-        <div>
+        <div className="mx-2">
             { loading? <p></p> :
             <button onClick={() => friendunfriendUser()} >
                 {status ?

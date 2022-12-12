@@ -12,19 +12,19 @@ import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
 
 class Profil extends Component<
-    {
-      nav: NavigateFunction,
-      loc: any,
-      parentCallback: (newurl: string) => void
-    },
-    {
-      user: UserType | undefined;
-      current_username: string;
-      histories: Array<any>;
-      rank: number;
-      local: string,
-    }
-    > {
+  {
+    nav: NavigateFunction,
+    loc: any,
+    parentCallback: (newurl: string) => void
+  },
+  {
+    user: UserType | undefined;
+    current_username: string;
+    histories: Array<any>;
+    rank: number;
+    local: string,
+  }
+> {
   static contextType = AuthContext;
   constructor(props: any, context: any) {
     super(props, context);
@@ -42,7 +42,7 @@ class Profil extends Component<
       username = this.state.current_username;
     }
     if (username === undefined) {
-      return ;
+      return;
     }
     try {
       const newUser: UserType = await Request(
@@ -106,18 +106,19 @@ class Profil extends Component<
   };
 
   componentDidUpdate(
-      prevProps: Readonly<{
-          nav: NavigateFunction,
-          loc: any,
-          parentCallback: (newurl: string) => void,
-      }>,
-      prevState: Readonly<{
-        user: UserType | undefined;
-        current_username: string;
-        histories: Array<any>;
-        rank: number;
-        local: string }>,
-      snapshot?: any) {
+    prevProps: Readonly<{
+      nav: NavigateFunction,
+      loc: any,
+      parentCallback: (newurl: string) => void,
+    }>,
+    prevState: Readonly<{
+      user: UserType | undefined;
+      current_username: string;
+      histories: Array<any>;
+      rank: number;
+      local: string
+    }>,
+    snapshot?: any) {
     const url: string = this.props.loc.pathname;
     const newLoc: string = url.substring(url.lastIndexOf("/") + 1);
     if (newLoc !== 'undefined' && (newLoc !== this.state.local || prevState.local !== newLoc)) {
@@ -178,14 +179,16 @@ class Profil extends Component<
         return (
           <div className="ProfilHeader col-6">
             <img
-              className="modifAvatar mb-2"
-              alt="prout"
+              className="modifAvatar d-flex flex-row justify-content-start"
+              alt="avatar"
               width={100}
               height={100}
               src={"http://localhost:3000/user/" + this.state.user?.auth_id + "/avatar"} />
-            <h3>{this.state.user?.username}</h3>
-            <BlockUnBlock auth_id={this.state.user?.auth_id} />
-            <FriendUnFriend auth_id={this.state.user?.auth_id} />
+            <h3 className="mt-3 d-flex flex-row justify-content-start">{this.state.user?.username}</h3>
+            <div className="setFriend d-flex justify-content-start">
+              <BlockUnBlock auth_id={this.state.user?.auth_id} />
+              <FriendUnFriend auth_id={this.state.user?.auth_id} />
+            </div>
           </div>
         );
       } else {
