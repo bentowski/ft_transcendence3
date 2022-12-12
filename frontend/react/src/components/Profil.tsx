@@ -1,15 +1,46 @@
 import { Component } from "react";
-import { Link, NavigateFunction } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import Request from "./utils/Requests";
+import io from "socket.io-client";
 import HistoryCards from "./utils/HistoryCards";
 import "../styles/components/profil.css";
 import ModalChangeUsername from "./utils/ModalChangeUsername";
-import { HistoryType, UserType } from "../types"
+import { ChanType, HistoryType, UserType } from "../types"
 import { AuthContext } from "../contexts/AuthProviderContext";
 import BlockUnBlock from "./utils/BlockUnBlock";
 import FriendUnFriend from "./utils/FriendUnFriend";
 import ModalChangeAvatar from "./utils/ModalChangeAvatar";
 import Switch from "./utils/Switch";
+import { CreatePrivChanDto } from "../dtos/create-chan.dto";
+import { UserJoinChannelReceiveDto } from "../dtos/userjoinchannel.dto";
+import "../styles/components/utils/userCards.css";
+
+const socketChat = io("http://localhost:3000/chat");
+
+const BtnToChat = ({cb}:{cb: any}) => {
+  const navigate = useNavigate();
+
+  const btnClick = async () => {
+    const ret:string = await cb();
+    if (ret != "" && !window.location.href.includes("http://localhost:8080/chat"))
+      navigate(ret);
+  }
+
+  return (
+      <button className="h-100" onClick={btnClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          fill="currentColor"
+          className="bi bi-chat-left-dots"
+          viewBox="0 0 16 16"
+        >
+          <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+          <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+        </svg>
+      </button>
+  )}
 
 class Profil extends Component<
     {
@@ -105,6 +136,93 @@ class Profil extends Component<
     this.setState({ rank: x + 1 });
   };
 
+  checkIfChanExists = async (title: string): Promise<boolean> => {
+    const ctx: any = this.context;
+    let chans: ChanType[] = [];
+    try {
+      chans = await Request(
+          "GET",
+          {},
+          {},
+          "http://localhost:3000/chan/"
+      )
+    } catch (error) {
+      ctx.setError(error);
+    }
+    for (let index: number = 0; index < chans.length; index++) {
+      if (title === chans[index].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createChanName = async (u1: UserType, u2: UserType): Promise<string> => {
+    let title: string = u1.username.slice(0, 3) + "-" + u2.username.slice(0, 3);
+    let x: number = 0;
+    while (await this.checkIfChanExists(title)) {
+      title = title + x.toString();
+      x++;
+    }
+    return title;
+  }
+
+  createChan = async () => {
+    const ctx: any = this.context;
+    try {
+      const u2: UserType = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/user/name/" + this.state.user?.username,
+      )
+	  const chans: ChanType[] = await Request(
+        "GET",
+        {},
+        {},
+        "http://localhost:3000/chan",
+      )
+      let doesChanExist: boolean = false;
+      let newChan: ChanType | undefined = undefined;
+      chans.forEach((chan: ChanType) => {
+        if (chan.type === "direct" &&
+          (chan.chanUser[0].auth_id === ctx.user.auth_id || chan.chanUser[1].auth_id === ctx.user.auth_id) &&
+          (chan.chanUser[0].auth_id === u2.auth_id || chan.chanUser[1].auth_id === u2.auth_id)) {
+          doesChanExist = true;
+          newChan = chan;
+        }
+      })
+      if (!doesChanExist) {
+        const channelname: string = await this.createChanName(ctx.user, u2)
+        console.log(channelname)
+        const createprivchan: CreatePrivChanDto = {
+          name: channelname,
+          type: "direct",
+          user_1_id: ctx.user.auth_id,
+          user_2_id: u2.auth_id,
+        }
+          newChan = await Request(
+            "POST",
+            {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            createprivchan,
+            "http://localhost:3000/chan/createpriv"
+            );
+        const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
+          socketChat.emit("chanCreated", res);
+      }
+      if (newChan !== undefined) {
+        return ("/chat/" + newChan.id)
+      }
+    } catch (error) {
+      ctx.setError(error);
+      return ("")
+    }
+    return ("")
+  }
+
   componentDidUpdate(
       prevProps: Readonly<{
           nav: NavigateFunction,
@@ -183,9 +301,12 @@ class Profil extends Component<
               width={100}
               height={100}
               src={"http://localhost:3000/user/" + this.state.user?.auth_id + "/avatar"} />
-            <h3>{this.state.user?.username}</h3>
-            <BlockUnBlock auth_id={this.state.user?.auth_id} />
-            <FriendUnFriend auth_id={this.state.user?.auth_id} />
+              <h3>{this.state.user?.username + " "}</h3>
+            <div className="row">
+              <div className="col"><BlockUnBlock auth_id={this.state.user?.auth_id} /></div>
+              <div className="col"><FriendUnFriend auth_id={this.state.user?.auth_id} /></div>
+              <div className="col"><BtnToChat cb={this.createChan}/></div>
+            </div>
           </div>
         );
       } else {
