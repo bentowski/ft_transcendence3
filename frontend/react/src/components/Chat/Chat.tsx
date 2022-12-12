@@ -336,14 +336,14 @@ const userjoinchan: UserJoinChannelReceiveDto = {
       if (chan !== undefined) {
         joinRoom(chan)
       }
-      else {
-        chan = chanList.find((c:ChanType) => {
-          return c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
-        });
-        if (chan !== undefined) {
-          joinRoom(chan)
-        }
-      }
+      // else {
+      //   chan = chanList.find((c:ChanType) => {
+      //     return c.chanUser.find((usr:UserType) => usr.auth_id === user.auth_id)
+      //   });
+      //   if (chan !== undefined) {
+      //     joinRoom(chan)
+      //   }
+      // }
     }
   }
 
@@ -389,9 +389,7 @@ const userjoinchan: UserJoinChannelReceiveDto = {
       console.log(chan, newRoom)
       return String(chan.id) === String(newRoom.id)
      })
-     console.log("1")
     if (chanToJoin !== undefined) {
-     console.log("2")
      if (chanToJoin.chanUser.find((u: UserType) => u.auth_id === user.auth_id)) {
      //updateChanFromList(chanToJoin, true);
         // updateAdminFromList(chanToJoin, false)
@@ -399,9 +397,7 @@ const userjoinchan: UserJoinChannelReceiveDto = {
         changeActiveRoom(newRoom.id);
         setChanUser(newRoom.chanUser);
         setCurrentChan(newRoom)
-        console.log("pasjoin");
       } else {
-        console.log("Join");
         socket.emit("joinRoom", newRoom.id, user.auth_id);
         // updateAdminFromList(chanToJoin, false)
         //updateChanFromList(chanToJoin, true);

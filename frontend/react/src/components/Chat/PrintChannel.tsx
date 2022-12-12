@@ -114,6 +114,7 @@ export const PrintChannel = (
     if (!checkIfMuted()) {
       if (value !== "" && value.replace(/\s/g, "") !== "" && room !== undefined) {
         if (value === "/leave") {
+          // console.log(room, user.auth_id)
           socket.emit("leaveRoom", {room: room, auth_id: user.auth_id});
           parentCallBack.changeActiveRoom("");
           //parentCallBack.setMessage([]);
