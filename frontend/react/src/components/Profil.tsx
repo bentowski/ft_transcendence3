@@ -205,6 +205,7 @@ class Profil extends Component<
       {
         histories.push(
           <HistoryCards
+          key = {i}
           history={this.state.histories[i]}
           profil={this.state.user}
           />
