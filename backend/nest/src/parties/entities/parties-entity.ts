@@ -19,6 +19,16 @@ export class PartiesEntity {
   public nbplayer: number;
 
   @Column({
+    nullable: false,
+  })
+  public type: number;
+
+  @Column({
+    nullable: false,
+  })
+  public vitesse: number;
+
+  @Column({
     nullable: true,
   })
   public p1: string;

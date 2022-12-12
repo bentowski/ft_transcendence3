@@ -26,6 +26,7 @@ export type PartiesType = {
   p1: string;
   p2: string;
   nbplayer: number;
+  type: number
 }
 
 export type ChanType = {
