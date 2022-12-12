@@ -23,7 +23,8 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
           },
           {
             login: this.getCurrentUser().username + "-" + this.props.user.username,
-            public: true
+            public: true,
+            nbplayer: 2,
           },
           "http://localhost:3000/parties/create"
       );
@@ -42,9 +43,13 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
     } catch (error) {
       ctx.setError(error);
     }
-    const party: PartiesType | undefined = parties.find((p:any) => p.login === this.getCurrentUser().username + "-" + this.props.user.username)
+    const party: PartiesType | undefined = parties.find((p:any) => {
+      console.log(p)
+      return p.login === this.getCurrentUser().username + "-" + this.props.user.username
+    })
     socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party?.id})
-    window.location.href = "http://localhost:8080/game/" + party?.id;
+    if (party)
+      window.location.href = "http://localhost:8080/game/" + party.id;
   }
 
   decline = (): void => {
@@ -53,7 +58,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
   }
 
   hidden = (): void => {
-    const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.props.user.username) as HTMLDivElement;
+    const modal: HTMLElement | null = document.getElementById("ModalMatchInvite" + this.props.user.auth_id) as HTMLDivElement;
     modal.classList.add('hidden')
   }
 
@@ -64,7 +69,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
 
   render(): JSX.Element {
     return (
-      <div className="Modal hidden" id={"ModalMatchInvite" + this.props.user.username}>
+      <div className="Modal hidden" id={"ModalMatchInvite" + this.props.user.auth_id}>
         <div className='p-4 pb-1'>
           <header className='mb-3'>
             <h2>

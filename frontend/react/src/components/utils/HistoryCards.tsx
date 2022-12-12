@@ -34,36 +34,37 @@ class HistoryCards extends Component<{
   }
 
   renderHistoryCards = (): JSX.Element => {
+    console.log(this.props.history);
     const status_one: JSX.Element = this.renderStatus(false);
     const status_two: JSX.Element = this.renderStatus(true);
     if (this.props.profil) {
-      if (this.props.profil.username === this.props.history.user_one)
+      if (this.props.profil.auth_id === this.props.history.user_one_id)
         return (
-          <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
+          <div className='historyDiv m-0 my-2 d-flex flex-row justify-content-between align-items-center'>
             <div className='col-4 d-flex flex-row justify-content-start'>{status_one}</div>
             <div className='col-4 d-flex flex-row justify-content-center'>
               <div className='col-5 d-flex flex-row justify-content-end'>{this.props.history.score_one}</div>
               <div className='col-2 d-flex flex-row justify-content-center'> | </div>
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_two}</div>
             </div>
-            <div className='col-4 d-flex flex-row justify-content-end'>
-              <Link to={"/profil/" + this.props.history.user_two} className='mx-2' >{this.props.history.user_two}</Link>
-              <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
+            <div className='col-4 d-flex flex-row justify-content-end align-items-center'>
+              <Link to={"/profil/" + this.props.history.user_two_name} className='mx-2' >{this.props.history.user_two_name}</Link>
+              <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
         )
       else {
         return (
-          <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
+          <div className='historyDiv m-0 my-2 d-flex flex-row justify-content-between align-items-center'>
             <div className='col-4 d-flex flex-row justify-content-start'>{status_two}</div>
             <div className='col-4 d-flex flex-row justify-content-center'>
               <div className='col-5 d-flex flex-row justify-content-end'>{this.props.history.score_two}</div>
               <div className='col-2 d-flex flex-row justify-content-center'> | </div>
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_one}</div>
             </div>
-            <div className='col-4 d-flex flex-row justify-content-end'>
-              <Link className='mx-2' to={"/profil/" + this.props.history.user_one}>{this.props.history.user_one}</Link>
-              <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
+            <div className='col-4 d-flex flex-row justify-content-end align-items-center'>
+              <Link className='mx-2' to={"/profil/" + this.props.history.user_one_name}>{this.props.history.user_one_name}</Link>
+              <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
         )
@@ -71,10 +72,10 @@ class HistoryCards extends Component<{
     }
     else {
       return (
-        <div className='historyDiv m-0 p-0 my-2 d-flex flex-row justify-content-between'>
+        <div className='historyDiv m-0 my-2 d-flex flex-row justify-content-between align-items-center'>
           <div className='col-2 d-flex flex-row'>
-            <img src={"http://localhost:3000/user/" + this.props.history.user_one + "/avatar"} alt="" className='miniAvatar' />
-            <Link className='mx-2' to={"/profil/" + this.props.history.user_one}>{this.props.history.user_one}</Link>
+            <img src={"http://localhost:3000/user/" + this.props.history.user_one_id + "/avatar"} alt="" className='miniAvatar' />
+            <Link className='mx-2' to={"/profil/" + this.props.history.user_one_id}>{this.props.history.user_one_name}</Link>
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_one}</div>
           <div className='col-4 d-flex flex-row justify-content-center'>
@@ -83,9 +84,9 @@ class HistoryCards extends Component<{
             <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_two}</div>
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_two}</div>
-          <div className='col-2 d-flex flex-row justify-content-end'>
-            <Link className='mx-2' to={"/profil/" + this.props.history.user_two}>{this.props.history.user_two}</Link>
-            <img src={"http://localhost:3000/user/" + this.props.history.user_two + "/avatar"} alt="" className='miniAvatar' />
+          <div className='col-2 d-flex flex-row justify-content-end align-items-center'>
+            <Link className='mx-2' to={"/profil/" + this.props.history.user_two_name}>{this.props.history.user_two_name}</Link>
+            <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
           </div>
         </div>
       )
@@ -93,6 +94,7 @@ class HistoryCards extends Component<{
   }
 
   render(): JSX.Element {
+    console.log("HistoryCards")
     let items: JSX.Element = this.renderHistoryCards();
     return (
       <div>

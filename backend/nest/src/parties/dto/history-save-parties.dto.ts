@@ -3,11 +3,11 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class HistorySavePartiesDto {
   @IsNotEmpty()
   @IsString()
-  user_one: string;
+  public user_one_id: string;
 
   @IsNotEmpty()
   @IsString()
-  user_two: string;
+  public user_two_id: string;
 
   @IsNumber()
   @IsNumber()
@@ -16,13 +16,5 @@ export class HistorySavePartiesDto {
   @IsNotEmpty()
   @IsNumber()
   score_two: number;
-
-  @IsNotEmpty()
-  @IsString()
-  winner: string;
-
-  @IsNotEmpty()
-  @IsString()
-  looser: string;
 
 }

@@ -199,15 +199,18 @@ class Profil extends Component<
     let i: number = this.state.histories.length - 1;
     while (i >= 0) {
       if (
-        this.state.histories[i].user_one === this.state.user?.username ||
-        this.state.histories[i].user_two === this.state.user?.username
+        this.state.histories[i].user_one_id === this.state.user?.auth_id ||
+        this.state.histories[i].user_two_id === this.state.user?.auth_id
       )
+      {
         histories.push(
           <HistoryCards
-            history={this.state.histories[i]}
-            profil={this.state.user}
+          key = {i}
+          history={this.state.histories[i]}
+          profil={this.state.user}
           />
         );
+      }
       i--;
     }
     return (
@@ -236,7 +239,7 @@ class Profil extends Component<
             </div>
           </div>
         </div>
-        <div className=" mt-5">
+        <div className="History mt-5">
           <h3 className="d-flex justify-content-start">History</h3>
           {histories}
         </div>

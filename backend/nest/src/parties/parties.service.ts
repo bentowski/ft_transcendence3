@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreatePartiesDto } from "./dto/create-parties.dto";
 import { HistoryEntity } from './entities/history-entity';
 import { HistorySavePartiesDto } from './dto/history-save-parties.dto';
+import { UserService } from '../user/user.service';
 import * as io from "socket.io-client";
 
 const update = io.connect("http://localhost:3000/update");
@@ -17,6 +18,7 @@ export class PartiesService {
         private readonly partiesRepository: Repository<PartiesEntity>,
         @InjectRepository(HistoryEntity)
         private readonly historyRepository: Repository<HistoryEntity>,
+        private readonly userService: UserService
     ) { }
 
     async findAllAvailableParties(login: string): Promise<PartiesEntity[]> {
@@ -28,9 +30,15 @@ export class PartiesService {
         return this.partiesRepository.find();
     }
 
+    async findParty(id:number): Promise<PartiesEntity> {
+      let parties: PartiesEntity[] = await this.partiesRepository.find();
+      return parties.find(parties => parties.id === id);
+    }
+
     createPartiesEntity(createPartiesDto: CreatePartiesDto): Promise<PartiesEntity> {
         const parties: PartiesEntity = new PartiesEntity();
         parties.id = createPartiesDto.id;
+        parties.nbplayer = createPartiesDto.nbplayer;
         parties.login = createPartiesDto.login;
         try {
             return this.partiesRepository.save(createPartiesDto);
@@ -48,14 +56,18 @@ export class PartiesService {
     }
 
     async createHistories(historySavePartiesDto: HistorySavePartiesDto): Promise<HistoryEntity> {
-        const { user_one, user_two, score_one, score_two } = historySavePartiesDto;
-        const histories: HistoryEntity = this.historyRepository.create(historySavePartiesDto);
-        histories.user_one = user_one;
-        histories.user_two = user_two;
-        histories.score_one = score_one;
-        histories.score_two = score_two;
-        histories.createdAt = new Date();
         try {
+            const { user_one_id, user_two_id, score_one, score_two } = historySavePartiesDto;
+            const histories: HistoryEntity = this.historyRepository.create(historySavePartiesDto);
+            const user_one = await this.userService.findOneByAuthId(user_one_id)
+            const user_two = await this.userService.findOneByAuthId(user_two_id)
+            histories.user_one_id = user_one_id;
+            histories.user_two_id = user_two_id;
+            histories.score_one = score_one;
+            histories.score_two = score_two;
+            histories.user_one_name = user_one.username;
+            histories.user_two_name = user_two.username;
+            histories.createdAt = new Date();
             await this.historyRepository.save(histories)
             return histories;
         } catch (error) {
