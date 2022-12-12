@@ -6,7 +6,7 @@ import '../styles/components/friendsnav.css';
 import DisplayFriendsList from "./utils/DisplayFriendsList";
 import { Alert } from "react-bootstrap";
 import { io } from "socket.io-client";
-import {FriendUserReceiveDto, FriendUserSendDto} from "../dtos/friend-user.dto";
+import { FriendUserReceiveDto, FriendUserSendDto } from "../dtos/friend-user.dto";
 
 const socket = io('http://localhost:3000/update')
 class FriendsNav extends Component<{}, {
@@ -27,15 +27,16 @@ class FriendsNav extends Component<{}, {
   }
 
   componentDidUpdate(
-      prevProps: Readonly<{
+    prevProps: Readonly<{
 
-      }>,
-      prevState: Readonly<{
-        uslist: Array<UserType>;
-        filteredList: Array<UserType>;
-        friends: Array<UserType>;
-        alert: boolean }>,
-      snapshot?: any): void {
+    }>,
+    prevState: Readonly<{
+      uslist: Array<UserType>;
+      filteredList: Array<UserType>;
+      friends: Array<UserType>;
+      alert: boolean
+    }>,
+    snapshot?: any): void {
     const ctx: any = this.context;
     if (prevState.friends !== ctx.friendsList) {
       this.setState({ friends: ctx.friendsList })
@@ -56,8 +57,8 @@ class FriendsNav extends Component<{}, {
     const currentUser: UserType = ctx.user;
     const input = document.getElementById("InputAddFriends") as HTMLInputElement
     if (input.value === "" ||
-        input.value === currentUser.username ||
-        this.state.friends.find((u: UserType) => u.username === input.value)) {
+      input.value === currentUser.username ||
+      this.state.friends.find((u: UserType) => u.username === input.value)) {
       input.value = '';
       return;
     }
@@ -76,7 +77,7 @@ class FriendsNav extends Component<{}, {
           "http://localhost:3000/user/name/" + input.value
         )
         input.value = '';
-        const response: FriendUserReceiveDto ={
+        const response: FriendUserReceiveDto = {
           curid: currentUser.auth_id,
           frid: userToAdd.auth_id,
           action: true,
@@ -135,7 +136,9 @@ class FriendsNav extends Component<{}, {
 
     return (
       <div className="FriendsNav col-12">
-        <img className="pat" src="/pictures/pat.png" alt="pat" />
+        <div className="d-none d-lg-block w-100">
+          <img className="pat w-50" src="/pictures/pat.png" alt="pat" />
+        </div>
         <div className="numberFriendsOnline col-12">
           <p>
             {onlines ? onlines + '/' +

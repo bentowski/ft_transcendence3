@@ -21,7 +21,7 @@ class Page extends Component {
         		<div className="bubble blur x10"></div>
     		</div>
         <Menu />
-        <div className="main front row h-100">
+        <div className="front row">
           <div className="mt-4 col-sm-12 order-2 col-lg-3 order-lg-1">
             <MatchNav />
           </div>

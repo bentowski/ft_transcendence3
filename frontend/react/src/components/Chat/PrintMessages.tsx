@@ -116,7 +116,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
         return (<div>No messages here</div>)
       } else {
         return (
-            <div className='messages'>
+            <div className='messages mt-3'>
               <DispatchMsg user={user} messages={messages}/>
             </div>
         )

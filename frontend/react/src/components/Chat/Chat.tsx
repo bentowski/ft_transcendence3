@@ -13,6 +13,7 @@ import {BanToChannelSendDto, TimerOutBanDto} from "../../dtos/banToChannel.dto";
 import {MuteToChannelSendDto, TimerOutMuteDto} from "../../dtos/muteToChannel.dto";
 import {AdminToChannelSendDto} from "../../dtos/adminToChannel.dto";
 import {CreateChanDto} from "../../dtos/create-chan.dto";
+import "../../styles/components/chat.css"
 
 export const WebSocket = (): JSX.Element => {
   const [value, setValue] = useState('');
