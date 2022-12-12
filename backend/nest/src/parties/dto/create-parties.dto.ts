@@ -12,4 +12,8 @@ export class CreatePartiesDto {
     @IsNumber()
     @IsNotEmpty()
     public nbplayer: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    public type: number;
 }

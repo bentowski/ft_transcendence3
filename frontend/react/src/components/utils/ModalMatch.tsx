@@ -33,7 +33,8 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
         },
         {
           login: currentUser.username,
-          nbplayer: nbplayer
+          nbplayer: nbplayer,
+          type: isClassic
         },
         "http://localhost:3000/parties/create"
       );
