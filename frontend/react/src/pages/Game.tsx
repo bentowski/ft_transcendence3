@@ -108,8 +108,8 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
-      console.log(body.room)
-	    if (body.room !== settings.room)
+      console.log("ROOOOOOOOOOM", body.room)
+	    if (body.room.code !== settings.room)
 	      return ;
       console.log("MOVEPLAYERS")
 		 if (body.player !== settings.currentUser) {
