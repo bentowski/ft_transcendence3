@@ -30,6 +30,11 @@ export class PartiesService {
         return this.partiesRepository.find();
     }
 
+    async findParty(id:number): Promise<PartiesEntity> {
+      let parties: PartiesEntity[] = await this.partiesRepository.find();
+      return parties.find(parties => parties.id === id);
+    }
+
     createPartiesEntity(createPartiesDto: CreatePartiesDto): Promise<PartiesEntity> {
         const parties: PartiesEntity = new PartiesEntity();
         parties.id = createPartiesDto.id;
