@@ -48,7 +48,7 @@ class HistoryCards extends Component<{
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_two}</div>
             </div>
             <div className='col-4 d-flex flex-row justify-content-end align-items-center'>
-              <Link to={"/profil/" + this.props.history.user_two_id} className='mx-2' >{this.props.history.user_two_name}</Link>
+              <Link to={"/profil/" + this.props.history.user_two_name} className='mx-2' >{this.props.history.user_two_name}</Link>
               <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
@@ -63,7 +63,7 @@ class HistoryCards extends Component<{
               <div className='col-5 d-flex flex-row justify-content-start'>{this.props.history.score_one}</div>
             </div>
             <div className='col-4 d-flex flex-row justify-content-end align-items-center'>
-              <Link className='mx-2' to={"/profil/" + this.props.history.user_one_id}>{this.props.history.user_one_name}</Link>
+              <Link className='mx-2' to={"/profil/" + this.props.history.user_one_name}>{this.props.history.user_one_name}</Link>
               <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
             </div>
           </div>
@@ -85,7 +85,7 @@ class HistoryCards extends Component<{
           </div>
           <div className='col-2 d-flex flex-row justify-content-center'>{status_two}</div>
           <div className='col-2 d-flex flex-row justify-content-end align-items-center'>
-            <Link className='mx-2' to={"/profil/" + this.props.history.user_two_id}>{this.props.history.user_two_name}</Link>
+            <Link className='mx-2' to={"/profil/" + this.props.history.user_two_name}>{this.props.history.user_two_name}</Link>
             <img src={"http://localhost:3000/user/" + this.props.history.user_two_id + "/avatar"} alt="" className='miniAvatar' />
           </div>
         </div>
@@ -94,6 +94,7 @@ class HistoryCards extends Component<{
   }
 
   render(): JSX.Element {
+    console.log("HistoryCards")
     let items: JSX.Element = this.renderHistoryCards();
     return (
       <div>
