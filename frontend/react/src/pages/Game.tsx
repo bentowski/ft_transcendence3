@@ -88,9 +88,13 @@ const printGame = (ctx: any) => {
 }
 
 let movePlayer = (ctx: any, move: number, settings: any) => {
-    let newPos = settings.player1[1] + (move * settings.playerSpeed)
-    if (newPos > 0 && newPos < settings.h - settings.playerSize)
-      settings.player1 = [settings.player1[0], newPos]
+  let newPos = settings.player1[1] + (move * settings.playerSpeed)
+  if (newPos < 0)
+    newPos = 0;
+  else if (newPos > settings.h - settings.playerSize)
+    newPos = settings.h - settings.playerSize;
+ // if (newPos >= 0 && newPos <= settings.h - settings.playerSize)
+    settings.player1 = [settings.player1[0], newPos]
 }
 
 const start = (ctx: any) => {
