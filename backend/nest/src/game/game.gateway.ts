@@ -101,12 +101,12 @@ export class GameGateway implements OnModuleInit
       if (room.config.ballPos[1] > room.config.player2[1])
       {
         // console.log("up", room.config.player2[1])
-        room.config.player2[1] += room.config.playerSpeed
+        room.config.player2[1] += room.config.playerSpeed / 20
       }
       if (room.config.ballPos[1] < room.config.player2[1])
       {
         // console.log("down", room.config.player2[1])
-        room.config.player2[1] -= room.config.playerSpeed
+        room.config.player2[1] -= room.config.playerSpeed / 20
       }
       this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
     }
@@ -172,6 +172,16 @@ export class GameGateway implements OnModuleInit
     }
   }
 
+  // @Interval(1000 / 60)
+  // handleInterval(): void {
+  //   for (const room of this.rooms.values())
+  //   {
+  //     if (room.mode == 1)
+  //       this.botmove(room);
+  //     this.routine(room);;
+  //   }
+  // }
+
   startGame(room: Room): void {
     if (room.state == State.WAITING && ((room.players[0] != 0 && room.players[1] != 0) || room.mode == 1))
     {
@@ -208,24 +218,8 @@ export class GameGateway implements OnModuleInit
     }
     if (room.config.ballPos[0] + room.config.sizeBall >= room.config.player1[0]) {
   		if (room.config.ballPos[1] + room.config.sizeBall >= room.config.player1[1] && room.config.ballPos[1] <= room.config.player1[1] + room.config.sizeBall * 4) {
-  			// let percent = Math.floor((room.config.ballPos[1] - room.config.player1[1]) / ((room.config.player1[1] + room.config.sizeBall * 4) - room.config.player1[1]) * 100)
         let ratio = ((room.config.ballPos[1] + (room.config.sizeBall / 2) - (room.config.player1[1] - room.config.sizeBall / 2)) / ((room.config.player1[1] + room.config.sizeBall * 5) - room.config.player1[1])) * 2 - 1
         room.config.vector = [-Math.cos(ratio), ratio]
-  			// if (percent <= 20) {
-  			// 	room.config.vector = [-0.5, -Math.sqrt(3) / 2];
-  			// }
-  			// else if (percent <= 40) {
-  			// 	room.config.vector = [-Math.sqrt(3) / 2, -0.5];
-  			// }
-  			// else if (percent <= 60) {
-  			// 	room.config.vector = [-1, 0];
-  			// }
-  			// else if (percent <= 80) {
-  			// 	room.config.vector = [-Math.sqrt(3) / 2, 0.5];
-  			// }
-  			// else {
-  			// 	room.config.vector = [-0.5, Math.sqrt(3) / 2];
-  			// }
         room.config.speed = room.config.speed + 0.1 ;
   		}
   		else {
@@ -240,22 +234,6 @@ export class GameGateway implements OnModuleInit
   		if (room.config.ballPos[1] + room.config.sizeBall >= room.config.player2[1] && room.config.ballPos[1] <= room.config.player2[1] + room.config.sizeBall * 4) {
         let ratio = ((room.config.ballPos[1] + (room.config.sizeBall / 2) - (room.config.player2[1] - room.config.sizeBall / 2)) / ((room.config.player2[1] + room.config.sizeBall * 5) - room.config.player2[1])) * 2 - 1
         room.config.vector = [Math.cos(ratio), ratio]
-  			// let percent = Math.floor((room.config.ballPos[1] - room.config.player2[1]) / ((room.config.player2[1] + room.config.sizeBall * 4) - room.config.player2[1]) * 100)
-  			// if (percent <= 20) {
-  			// 	room.config.vector = [0.5, -Math.sqrt(3) / 2];
-  			// }
-  			// else if (percent <= 40) {
-  			// 	room.config.vector = [Math.sqrt(3) / 2, -0.5];
-  			// }
-  			// else if (percent <= 60) {
-  			// 	room.config.vector = [1, 0];
-  			// }
-  			// else if (percent <= 80) {
-  			// 	room.config.vector = [Math.sqrt(3) / 2, 0.5];
-  			// }
-  			// else {
-  			// 	room.config.vector = [0.5, Math.sqrt(3) / 2];
-  			// }
         room.config.speed = room.config.speed + 0.1 ;
   		}
   		else {
@@ -269,7 +247,7 @@ export class GameGateway implements OnModuleInit
 
 
    //=========== EndGame  ==========
-   if (room.config.p1Score > 20 || room.config.p2Score > 20)
+   if (room.config.p1Score > 5 || room.config.p2Score > 5)
    {
      this.partiesService.remove(room.code.toString());
      if (room.mode == 2)
@@ -290,7 +268,9 @@ export class GameGateway implements OnModuleInit
          this.userService.updateScore(room.players[0].toString(), true)
          this.userService.updateScore(room.players[1].toString(), false)
        }
+       this.userService.setStatus(room.players[1].toString(), 1)
      }
+     this.userService.setStatus(room.players[0].toString(), 1)
      this.rooms.delete(room.code)
      this.server.to(room.code.toString()).emit('gameoverSend', room)
    }

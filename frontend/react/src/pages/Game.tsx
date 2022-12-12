@@ -24,6 +24,7 @@ let gameOver = () => {
   socket.off('userJoinChannel')
   socket.off('players')
   socket.off('onEndGame')
+  updateSocket.emit('updateUser', {auth_id: settings.currentUser, status: 1})
 	window.location.href = "http://localhost:8080/profil/"
 }
 
@@ -71,9 +72,9 @@ const printGame = (ctx: any) => {
     y += settings.sizeBall * 2
   }
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall, settings.playerSize)
+  ctx.fillRect(settings.player2[0], settings.player2[1], settings.sizeBall + (settings.sizeBall * 0.5), settings.playerSize)
   ctx.fillStyle = "white"
-  ctx.fillRect(settings.player1[0], settings.player1[1], settings.sizeBall, settings.playerSize)
+  ctx.fillRect(settings.player1[0] - (settings.sizeBall * 0.5), settings.player1[1], settings.sizeBall + (settings.sizeBall * 0.5), settings.playerSize)
 	ctx.fillStyle = "white"
 	ctx.fillRect(settings.ballPos[0], settings.ballPos[1], settings.sizeBall, settings.sizeBall)
   // console.log("truc", score1)
@@ -364,6 +365,7 @@ class Game extends Component<{},{}> {
 		socket.off('userJoinChannel')
 		socket.off('players')
 		socket.off('onEndGame')
+    updateSocket.emit('updateUser', {auth_id: settings.currentUser, status: 1})
   }
 
   componentDidMount = () => {
