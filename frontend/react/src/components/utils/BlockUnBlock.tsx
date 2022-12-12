@@ -3,6 +3,7 @@ import { useAuthData } from "../../contexts/AuthProviderContext";
 import Request from './Requests';
 import { io } from "socket.io-client";
 import {BlockedUserReceiveDto, BlockedUserSendDto} from "../../dtos/blocked-user.dto";
+import "../../styles/components/utils/userCards.css";
 
 const socket = io('http://localhost:3000/update')
 
@@ -60,7 +61,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     return (
         <div>
             { loading? <p></p> :
-            <button className="btn btn-outline-dark shadow-none" onClick={blockunblockUser} >
+            <button className="" onClick={blockunblockUser} >
                 {  status ?
                             <p>UNBLOCK</p>
                             :
