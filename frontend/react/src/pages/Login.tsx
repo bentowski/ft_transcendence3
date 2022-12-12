@@ -35,9 +35,9 @@ const Login = (): JSX.Element => {
 		</map>
 		<div id="background-wrap">
 			{/* delete below before push */}
-			<a className="mb-2 mx-2" href="http://localhost:3000/auth/dummyconnect">
+			{/* <a className="mb-2 mx-2" href="http://localhost:3000/auth/dummyconnect">
 				Letssss go
-			</a>
+  			</a> */}
 			{/* delete above before push */}
 			<div>
 				<img alt="prout" useMap="#spongebobbg" className="clickable" src="http://localhost:8080/pictures/bobhouse.png" width="auto" style={{position: "absolute", top: 0, bottom: 0, right: 0, left: 0, margin: "auto"}}/>
