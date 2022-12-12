@@ -11,6 +11,7 @@ const updateSocket = io("http://localhost:3000/update");
 
 let score1 = new Image();
 let score2 = new Image();
+let globalCtx: any = undefined;
 // let p1 = new Image();
 // let p2 = new Image();
 // let bubble = new Image();
@@ -63,7 +64,7 @@ const printGame = (ctx: any) => {
     }
   }
   const element = document.getElementById('root') as HTMLDivElement;
-  ctx.clearRect(0, 0, element.clientWidth, element.clientHeight)
+  ctx.clearRect(0, 0, 400000, 400000)
   while (y <= settings.h) {
     ctx.fillStyle = "white"
     ctx.fillRect(settings.middle - settings.sizeBall / 2, y - settings.sizeBall / 2, settings.sizeBall / 10, settings.sizeBall)
@@ -79,6 +80,7 @@ const printGame = (ctx: any) => {
   ctx.drawImage(score1, (settings.w / 8) * 5, 0, settings.sizeBall * 6, settings.sizeBall * 6)
   ctx.drawImage(score2, ((settings.w / 8) * 3) - (settings.sizeBall * 6), 0, settings.sizeBall * 6, settings.sizeBall * 6)
   socket.emit("pleaseBall", settings.room)
+
 	window.requestAnimationFrame(() => {
 		printGame(ctx)
 	})
@@ -222,11 +224,12 @@ const initSettings = (serv: any) => {
 }
 
 // Change type to SettingType
-const init = (servSettings: any) => {
+const init = (servSettings: any, ctx: any) => {
 	socket.off('Init')
   initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement
-  const ctx: any = globale.getContext('2d')
+  // const ctx: any = globale.getContext('2d')
+  globalCtx = ctx;
   printGame(ctx)
 	// socket.on('printCountDown', (room) => {
   //   if (room.room.id === settings.room)
@@ -273,32 +276,55 @@ const init = (servSettings: any) => {
   document.addEventListener("keyup", infosClavier2);
 }
 
-const justwait = () => {
+const justwait = (ctx: any) => {
 	socket.on('Init', (body) => {
 		socket.off('userJoinChannel')
 		let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 		modal.classList.add("hidden")
 		if (body.room.id === settings.room)
-			init(body.settings);
+			init(body.settings, ctx);
 	})
 }
 
-const changeSize = (ctx: any) => {
-  // console.log("resize");
+const changeSize = () => {
   let element = document.body as HTMLDivElement;
-  ctx.clearRect(0, 0, element.clientWidth, element.clientHeight)
+  globalCtx.clearRect(0, 0, 400000, 400000)
   let winWidth = element.clientWidth;
   let winHeight = element.clientHeight;
-  // console.log((winWidth * 19) / 26 > winHeight)
   if ((winWidth * 19) / 26 > winHeight)
     winWidth = ((winHeight * 26) / 19)
   else
     winHeight = ((winWidth * 19) / 26)
+  const oldWidth = settings.w
+  const oldHeight = settings.h
   settings.w = winWidth
   settings.h = winHeight
+  settings = {
+    w: settings.w,
+    h: settings.h,
+    currentUser: settings.currentUser,
+    room: settings.room,
+    spec: settings.spec,
+    up: settings.up,
+    down: settings.down,
+    p1: settings.p1,
+    p2: settings.p2,
+    ballPos: [settings.ballPos[0] * settings.w / oldWidth, settings.ballPos[1] * settings.h / oldHeight],
+    player1: [settings.player1[0] * settings.w / oldWidth, settings.player1[1] * settings.h / oldHeight],
+    player2: [settings.player2[0] * settings.w / oldWidth, settings.player2[1] * settings.h / oldHeight],
+    sizeBall: settings.sizeBall * settings.h / oldHeight,
+    playerSize: settings.playerSize * settings.h / oldHeight,
+    playerSpeed: settings.playerSize,
+    middle: settings.middle * settings.w / oldWidth
+  }
 }
 
-class Game extends Component<{},{w:number, h: number, timer: number}> {
+// const resize = (ctx: any) => {
+//
+// }
+
+class Game extends Component<{},{}> {
+
 	static contextType = AuthContext;
 	private globale: any = createRef()
 
@@ -313,7 +339,9 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
   }
 
   componentDidMount = () => {
-		const ctx: any = this.context;
+		const ctxReact: any = this.context;
+    const globale = document.getElementById('globale') as HTMLCanvasElement
+    const globalCtx: any = globale.getContext('2d')
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
@@ -323,26 +351,26 @@ class Game extends Component<{},{w:number, h: number, timer: number}> {
       winHeight = ((winWidth * 19) / 26)
     settings.w = winWidth
     settings.h = winHeight
-	  settings.currentUser = ctx.user.auth_id;
+	  settings.currentUser = ctxReact.user.auth_id;
     let url = document.URL
   	url = url.substring(url.lastIndexOf("/") + 1)
     settings.room = url
 		joinRoom()
 		socket.on('userJoinChannel', () => {
 			socket.off('Init')
-			justwait();
+			justwait(globalCtx);
 		})
 		socket.on('Init', (body) => {
 			socket.off('userJoinChannel')
 			let modal = document.getElementById("ModalMatchWaiting") as HTMLDivElement;
 			modal.classList.add("hidden")
 			if (body.room.id === settings.room)
-        init(body.settings);
+        init(body.settings, globalCtx);
 		})
   }
 
   render() {
-    window.onresize = () => {changeSize(ctx)}
+    window.onresize = () => {changeSize()}
     return (
       <div>
         <div className="canvas" id="canvas">
