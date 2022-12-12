@@ -107,8 +107,8 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
-      console.log("=========MOVE=========")
-      console.log(body.room.code)
+      //console.log("=========MOVE=========")
+      //console.log(body.room.code)
 	    if (body.room.code !== settings.room)
 	      return ;
 		 if (body.player !== settings.currentUser) {

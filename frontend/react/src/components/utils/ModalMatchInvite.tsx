@@ -44,7 +44,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
       ctx.setError(error);
     }
     const party: PartiesType | undefined = parties.find((p:any) => {
-      console.log(p)
+      //console.log(p)
       return p.login === this.getCurrentUser().username + "-" + this.props.user.username
     })
     socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party?.id})

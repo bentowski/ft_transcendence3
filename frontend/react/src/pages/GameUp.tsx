@@ -330,7 +330,7 @@ class Game extends Component<{},{}> {
       winWidth = ((winHeight * 26) / 19)
     else
       winHeight = (winWidth / 26) * 19
-      console.log(winHeight)
+      //(winHeight)
     settings.w = winWidth
     settings.h = winHeight
 	  settings.currentUser = ctxReact.user.auth_id;

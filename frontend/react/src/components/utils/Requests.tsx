@@ -30,7 +30,7 @@ const Request = async (
     body: any,
     url: string): Promise<any> =>
 {
-    console.log(url);
+    //console.log(url);
     if (type === "GET") {
       const response: Response = await fetch(url, {
         method: type,

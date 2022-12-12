@@ -76,7 +76,7 @@ class MatchNav extends Component<{}, {}> {
 			count++;
 		if (p2 !== null)
 			count++;
-		console.log("AAAAAAAAAAAAAAAAAxtype", type)
+		//console.log("AAAAAAAAAAAAAAAAAxtype", type)
 		if (type === 1)
 		{
 			return (
