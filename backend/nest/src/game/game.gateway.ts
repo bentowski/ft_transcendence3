@@ -96,13 +96,13 @@ export class GameGateway implements OnModuleInit
     {
       if (room.config.ballPos[1] > room.config.player2[1])
       {
-        if (room.config.player2[1] + (room.config.sizeBall * 4) + room.config.playerSpeed / 20 <= 100)
-          room.config.player2[1] += room.config.playerSpeed / 20
+        if (room.config.player2[1] + (room.config.sizeBall * 4) + room.config.playerSpeed / 13 <= 100)
+          room.config.player2[1] += room.config.playerSpeed / 13
       }
       if (room.config.ballPos[1] < room.config.player2[1])
       {
-        if (room.config.player2[1]- room.config.playerSpeed / 20 >= 0)
-          room.config.player2[1] -= room.config.playerSpeed / 20
+        if (room.config.player2[1]- room.config.playerSpeed / 13 >= 0)
+          room.config.player2[1] -= room.config.playerSpeed / 13
       }
       this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
     }
@@ -231,7 +231,7 @@ export class GameGateway implements OnModuleInit
 
 
    //=========== EndGame  ==========
-   if (room.config.p1Score > 500 || room.config.p2Score > 500)
+   if (room.config.p1Score > 5 || room.config.p2Score > 5)
    {
      this.partiesService.remove(room.code.toString());
      if (room.mode == 2)
