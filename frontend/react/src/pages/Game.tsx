@@ -108,14 +108,16 @@ const start = (ctx: any) => {
 			}
 	  })
 		socket.on('players', (body) => {
-	    if (body.room.code !== settings.room)
+      console.log(body.room)
+	    if (body.room !== settings.room)
 	      return ;
-			 if (body.player !== settings.currentUser) {
-	      if (settings.spec && body.admin)
-          settings.player1 = [settings.player1[0], body.ratio * settings.h]
-	      else
-          settings.player2 = [settings.player2[0], body.ratio * settings.h]
-	     }
+      console.log("MOVEPLAYERS")
+		 if (body.player !== settings.currentUser) {
+      if (settings.spec && body.admin)
+        settings.player1 = [settings.player1[0], body.ratio * settings.h]
+      else
+        settings.player2 = [settings.player2[0], body.ratio * settings.h]
+     }
 		})
     socket.on('newPoint', (room) => {
       console.log(room.config.p1Score, room.config.p2Score)
@@ -288,35 +290,61 @@ const justwait = (ctx: any) => {
 
 const changeSize = () => {
   let element = document.body as HTMLDivElement;
-  globalCtx.clearRect(0, 0, 400000, 400000)
+  globalCtx.clearRect(0, 0, globalCtx.width, globalCtx.height)
   let winWidth = element.clientWidth;
   let winHeight = element.clientHeight;
-  if ((winWidth * 19) / 26 > winHeight)
+  // if ((winWidth * 19) / 26 > winHeight)
     winWidth = ((winHeight * 26) / 19)
-  else
-    winHeight = ((winWidth * 19) / 26)
-  const oldWidth = settings.w
-  const oldHeight = settings.h
+  // else
+  //   winHeight = ((winWidth * 19) / 26)
   settings.w = winWidth
   settings.h = winHeight
-  settings = {
-    w: settings.w,
-    h: settings.h,
-    currentUser: settings.currentUser,
-    room: settings.room,
-    spec: settings.spec,
-    up: settings.up,
-    down: settings.down,
-    p1: settings.p1,
-    p2: settings.p2,
-    ballPos: [settings.ballPos[0] * settings.w / oldWidth, settings.ballPos[1] * settings.h / oldHeight],
-    player1: [settings.player1[0] * settings.w / oldWidth, settings.player1[1] * settings.h / oldHeight],
-    player2: [settings.player2[0] * settings.w / oldWidth, settings.player2[1] * settings.h / oldHeight],
-    sizeBall: settings.sizeBall * settings.h / oldHeight,
-    playerSize: settings.playerSize * settings.h / oldHeight,
-    playerSpeed: settings.playerSize,
-    middle: settings.middle * settings.w / oldWidth
-  }
+  socket.emit('plzstats', {"room": settings.room})
+  socket.on('stats', (serv) => {
+    console.log("OK")
+    settings = {
+      w: settings.w,
+      h: settings.h,
+      currentUser: settings.currentUser,
+      room: settings.room,
+      spec: settings.spec,
+      up: settings.up,
+      down: settings.down,
+      p1: settings.p1,
+      p2: settings.p2,
+      ballPos: [serv.ballPos[0] * settings.w / 100, serv.ballPos[1] * settings.h / 100],
+      player1: [serv.player1[0] * settings.w / 100, serv.player1[1] * settings.h / 100],
+      player2: [serv.player2[0] * settings.w / 100, serv.player2[1] * settings.h / 100],
+      sizeBall: serv.sizeBall * settings.h / 100,
+      playerSize: serv.playerSize * settings.h / 100,
+      playerSpeed: serv.playerSize,
+      middle: serv.middle * settings.w / 100
+      // p1Score: serv.p1Score,
+      // p2Score: serv.p2Score
+    }
+  })
+  socket.off('stats');
+  // const oldWidth = settings.w
+  // const oldHeight = settings.h
+  //
+  // settings = {
+  //   w: settings.w,
+  //   h: settings.h,
+  //   currentUser: settings.currentUser,
+  //   room: settings.room,
+  //   spec: settings.spec,
+  //   up: settings.up,
+  //   down: settings.down,
+  //   p1: settings.p1,
+  //   p2: settings.p2,
+  //   ballPos: [settings.ballPos[0] * settings.w / oldWidth, settings.ballPos[1] * settings.h / oldHeight],
+  //   player1: [settings.player1[0] * settings.w / oldWidth, settings.player1[1] * settings.h / oldHeight],
+  //   player2: [settings.player2[0] * settings.w / oldWidth, settings.player2[1] * settings.h / oldHeight],
+  //   sizeBall: settings.sizeBall * settings.h / oldHeight,
+  //   playerSize: settings.playerSize * settings.h / oldHeight,
+  //   playerSpeed: settings.playerSize,
+  //   middle: settings.middle * settings.w / oldWidth
+  // }
 }
 
 // const resize = (ctx: any) => {
