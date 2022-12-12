@@ -7,7 +7,7 @@ import {io} from "socket.io-client";
 const socket = io('http://localhost:3000/update')
 
 const HandleError = (): JSX.Element => {
-    const { errorShow, errorMsg, errorCode, setError, userAuthentication } = useAuthData();
+    const { errorShow, updateIsTwoFa, errorMsg, errorCode, setError, userAuthentication } = useAuthData();
     //const socket = useContext(WebsocketContextUpdate);
 
     useEffect((): void => {
@@ -32,6 +32,7 @@ const HandleError = (): JSX.Element => {
     }
     if (errorCode === 401) {
       userAuthentication(false);
+      updateIsTwoFa(false);
     }
 
     return (
