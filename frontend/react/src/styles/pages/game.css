@@ -8,6 +8,9 @@
 
 #globale{
   background-color: black;
+  background-image: url("http://localhost:8080/pictures/bg-pong.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .canvas{
