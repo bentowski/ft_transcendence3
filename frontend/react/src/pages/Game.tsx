@@ -329,10 +329,10 @@ class Game extends Component<{},{}> {
     let element = document.body as HTMLDivElement;
     let winWidth = element.clientWidth;
     let winHeight = element.clientHeight;
-    if ((winWidth * 19) / 26 > winHeight)
+    // if ((winWidth * 19) / 26 > winHeight)
       winWidth = ((winHeight * 26) / 19)
-    else
-      winHeight = ((winWidth * 19) / 26)
+    // else
+    //   winHeight = ((winWidth * 19) / 26)
     settings.w = winWidth
     settings.h = winHeight
 	  settings.currentUser = ctxReact.user.auth_id;

@@ -40,6 +40,7 @@ export class PartiesService {
         // parties.id = createPartiesDto.id;
         parties.nbplayer = createPartiesDto.nbplayer;
         parties.login = createPartiesDto.login;
+        parties.type = createPartiesDto.type;
         try {
             return this.partiesRepository.save(createPartiesDto);
         } catch (error) {
