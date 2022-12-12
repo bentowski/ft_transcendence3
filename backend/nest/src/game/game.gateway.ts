@@ -70,14 +70,19 @@ export class GameGateway implements OnModuleInit
   @SubscribeMessage('barMove')
   onNewMessage(@MessageBody() body: any) {
     let admin: boolean
-    console.log("========MOOOVE======")
     let currentRoom: Room|undefined = this.findRoom(body.room);
     if (currentRoom != undefined)
     {
       if (body.player === currentRoom.players[0])
+      {
+        currentRoom.config.player1[1] =  body.ratio * 100
         admin = true
-      else if (body.player === currentRoom.players[1])
+      }
+      else if (body.player === currentRoom.players[1] && currentRoom.mode != 1)
+      {
+        currentRoom.config.player2[1] =  body.ratio * 100
         admin = false
+      }
       this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
     }
   }
@@ -86,17 +91,17 @@ export class GameGateway implements OnModuleInit
     if (room.config.ballPos[0] < 50)
     {
       console.log("detect")
-      if (room.config.ballPos[1] > room.config.player1[1])
+      if (room.config.ballPos[1] > room.config.player2[1])
       {
-        console.log("up", room.config.player1[1])
-        room.config.player1[1] += room.config.playerSpeed
+        console.log("up", room.config.player2[1])
+        room.config.player2[1] += room.config.playerSpeed
       }
-      if (room.config.ballPos[1] < room.config.player1[1])
+      if (room.config.ballPos[1] < room.config.player2[1])
       {
-        console.log("down", room.config.player1[1])
-        room.config.player1[1] -= room.config.playerSpeed
+        console.log("down", room.config.player2[1])
+        room.config.player2[1] -= room.config.playerSpeed
       }
-      this.server.to(room.code.toString()).emit('players', {ratio: room.config.player1[1] / 100, player: 0, admin: false, room: room})
+      this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
     }
   }
 
@@ -166,7 +171,11 @@ export class GameGateway implements OnModuleInit
       room.state = State.INGAME;
     }
     if (room.state == State.INGAME)
+    {
       this.server.to(room.code.toString()).emit("Start", {room: room});
+      // this.server.to(room.code.toString()).emit('players', {ratio: room.config.player1[1] / 100, player: room.players[0], admin: true, room: room})
+      // this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: room.players[1], admin: false, room: room})
+    }
   }
 
   routine(room: Room): void {
