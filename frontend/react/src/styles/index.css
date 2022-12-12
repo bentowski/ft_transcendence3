@@ -13,7 +13,7 @@ body {
   /* background-color: #3b3c3a; */
 }
 
-h1, h2, h3, button {
+h1, h2, h3, button, .btn {
 	font-family: 'SpongeBobFont', sans-serif;
 }
 
@@ -114,7 +114,7 @@ button:not(.btnAvatar, .btnUsername, .btn-close) {
 	background: rgb(155, 133, 60);
 	background-image: url(http://localhost:8080/pictures/wood.png);
 	background-size: 150%;
-	background-position: -10%;
+	background-position: 30%;
   border-radius: 10px;
   color: white;
 	padding-top: 5px;
@@ -133,6 +133,9 @@ button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 
 .btn {
   border: 2px solid rgb(99, 82, 28);
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	background: rgb(155, 133, 60);
   border-radius: 10px;
   color: white;
@@ -142,11 +145,17 @@ button:active:not(.btnAvatar, .btnUsername, .btn-close) {
 
 .btn:hover {
   border: 2px solid rgb(99, 82, 28);
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	color: rgb(99, 82, 28);
 	background: rgb(155, 133, 60);
 }
 
 .btn:active {
+	background-image: url(http://localhost:8080/pictures/wood.png);
+	background-size: 150%;
+	background-position: 30%;
 	transform: translateY(3px);
 	box-shadow: 0 0;
 }
