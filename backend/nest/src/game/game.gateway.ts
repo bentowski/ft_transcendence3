@@ -41,14 +41,12 @@ export class GameGateway implements OnModuleInit
      let currentRoom: Room|undefined = this.findRoom(body.game.id);
      if (currentRoom == undefined)
      {
-      //  console.log("works");
        const party: PartiesEntity = await this.partiesService.findParty(body.game.id);
        currentRoom = this.createRoom(body.game.id, body.auth_id, party.nbplayer);
      }
      else if (currentRoom.mode != 1 && currentRoom.players[1] == 0
       && currentRoom.players[0] != body.auth_id)
       {
-        // console.log(body.auth_id, "works")
         currentRoom.players[1] = body.auth_id
         this.partiesService.addToGame(body.game.id, body.auth_id);
       }
@@ -56,7 +54,6 @@ export class GameGateway implements OnModuleInit
       && (!currentRoom.spectators || currentRoom.spectators.find(element => element == body.auth_id) == undefined))
       {
         currentRoom.spectators.push(body.auth_id)
-        // console.log(body.auth_id, "Spectator")
       }
     if (currentRoom != undefined)
     {
@@ -83,7 +80,7 @@ export class GameGateway implements OnModuleInit
         currentRoom.config.player2[1] =  body.ratio * 100
         admin = false
       }
-      this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: body.room})
+      this.server.to(body.room).emit('players', {ratio: body.ratio, player: body.player, admin: admin, room: currentRoom})
     }
   }
 
@@ -97,15 +94,12 @@ export class GameGateway implements OnModuleInit
   botmove(room: Room) {
     if (room.config.ballPos[0] < 50)
     {
-      // console.log("detect")
       if (room.config.ballPos[1] > room.config.player2[1])
       {
-        // console.log("up", room.config.player2[1])
         room.config.player2[1] += room.config.playerSpeed / 20
       }
       if (room.config.ballPos[1] < room.config.player2[1])
       {
-        // console.log("down", room.config.player2[1])
         room.config.player2[1] -= room.config.playerSpeed / 20
       }
       this.server.to(room.code.toString()).emit('players', {ratio: room.config.player2[1] / 100, player: 0, admin: false, room: room})
@@ -128,7 +122,6 @@ export class GameGateway implements OnModuleInit
 
   createRoom(codeRoom: number, playerID: number, nbplayer: number) {
     let mode = 2
-    // console.log(nbplayer);
     if (nbplayer == 1)
       mode = 1;
     const room: Room = {
@@ -205,7 +198,6 @@ export class GameGateway implements OnModuleInit
     // ======== New position Ball ============
     let newPos = 0;
     room.config.ballPos = [room.config.ballPos[0] + (room.config.vector[0] * room.config.speed), room.config.ballPos[1] + (room.config.vector[1]  * room.config.speed)]
-    // console.log(room.config.ballPos )
     if (room.config.ballPos[1] + (room.config.sizeBall) >= 100) { // if ball outscreen bottom
       newPos = 100 - (room.config.sizeBall)
       room.config.vector = [room.config.vector[0], -room.config.vector[1]]
