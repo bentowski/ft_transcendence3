@@ -400,6 +400,7 @@ export class ChatGateway implements OnModuleInit
 
   @SubscribeMessage('updateChan')
   onUpdateChan(client: Socket, room:string): void {
-      this.server.emit('chanDeleted', room);
+        const obj = { room : room}
+      this.server.emit('chanDeleted', obj);
   }
 }

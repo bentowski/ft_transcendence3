@@ -50,8 +50,8 @@ export const WebSocket = (): JSX.Element => {
       }
       getChan();
     });
-    socket.on("chanDeleted", (roomId: string) => {
-        if (roomId === room)
+    socket.on("chanDeleted", (obj) => {
+        if (obj.room === room)
           goHome();
         getChan();
     })
