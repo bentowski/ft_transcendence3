@@ -76,30 +76,30 @@ networks:
 
 volumes:
  postgres_volume:
-  name: postgres_volume
-  driver: local
-  driver_opts:
-   o: bind
-   type: volume
-   device: ${PWD}/data/postgresdb
+  # name: postgres_volume
+  # driver: local
+  # driver_opts:
+  #  o: bind
+  #  type: volume
+  #  device: ${PWD}/data/postgresdb
  pgadmin_volume:
-  name: pgadmin_volume
-  driver: local
-  driver_opts:
-   o: bind
-   type: volume
-   device: ${PWD}/data/pgadmin
+  # name: pgadmin_volume
+  # driver: local
+  # driver_opts:
+  #  o: bind
+  #  type: volume
+  #  device: ${PWD}/data/pgadmin
  api_volume:
-   name: api_volume
-   driver: local
-   driver_opts:
-    o: bind
-    type: volume
-    device: ${PWD}/backend/volume
+   # name: api_volume
+   # driver: local
+   # driver_opts:
+   #  o: bind
+   #  type: volume
+   #  device: ${PWD}/backend/volume
  site_volume:
-  name: site_volume
-  driver: local
-  driver_opts:
-   o: bind
-   type: volume
-   device: ${PWD}/frontend/volume
+  # name: site_volume
+  # driver: local
+  # driver_opts:
+  #  o: bind
+  #  type: volume
+  #  device: ${PWD}/frontend/volume
