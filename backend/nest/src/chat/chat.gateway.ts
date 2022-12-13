@@ -402,4 +402,9 @@ export class ChatGateway implements OnModuleInit
   onUpdateChan(client: Socket, room:string): void {
       this.server.emit('chanDeleted', room);
   }
+
+  @SubscribeMessage('updateImg')
+  onUpdateImg(client: Socket): void {
+      this.server.emit('imgUpdated');
+  }
 }

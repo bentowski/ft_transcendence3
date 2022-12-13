@@ -36,6 +36,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import ChanEntity from '../chans/entities/chan-entity';
 import multer = require("multer");
+import * as io from "socket.io-client";
+
+const update = io.connect("http://localhost:3000/chat");
 
 type validMimeType =  'image/png' | 'image/jpg' | 'image/jpeg' | 'image/gif'
 
@@ -132,6 +135,7 @@ export class UserController {
     };
     try {
       await this.userService.updateAvatar(auid, newNameAvatar);
+      update.emit('updateImg');
       return newNameAvatar;
     } catch (error) {
       throw new Error(error);

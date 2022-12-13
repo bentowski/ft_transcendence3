@@ -51,6 +51,7 @@ export const WebSocket = (): JSX.Element => {
       getChan();
     });
     socket.on("chanDeleted", (roomId: string) => {
+      console.log("ouiii");
         if (roomId === room)
           goHome();
         getChan();
