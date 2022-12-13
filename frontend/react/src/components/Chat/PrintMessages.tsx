@@ -99,9 +99,6 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
                 setMessage([])
             }
             parentCallBack.setChanList(channels);
-						let test = document.getElementById( 'messages' ) as HTMLInputElement
-						console.log("TEST")
-						test.scrollTop = test.scrollHeight;
           }
         });
         return () => {
