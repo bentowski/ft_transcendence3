@@ -59,7 +59,7 @@ class MatchNav extends Component<{}, {}> {
 			return;
 		}
 		const randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
-		if (randomGame.type == 0)
+		if (randomGame.type == 1)
 			window.location.href = "http://localhost:8080/game/" + randomGame.id
 		else
 			window.location.href = "http://localhost:8080/gameup/" + randomGame.id
