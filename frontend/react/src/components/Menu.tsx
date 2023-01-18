@@ -36,7 +36,7 @@ const Menu = () => {
     }
 
     const linkChat = () => {
-      if (window.location.href.includes("localhost:8080/chat"))
+      if (window.location.href.includes("localhost:80/chat"))
         return (
           <div className="m-0">Chat</div>
         )
@@ -56,7 +56,7 @@ const Menu = () => {
         </div>{" "}
         {/* homeButtonDiv */}
         <div className="titleDiv d-none d-sm-block">
-          <h1 className="m-0"><img alt="" className="BobLePong" src="http://localhost:8080/pictures/boblepongelogo.png"/></h1>
+          <h1 className="m-0"><img alt="" className="BobLePong" src="http://localhost:80/pictures/boblepongelogo.png"/></h1>
         </div>{" "}
         {/* titleDiv */}
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">

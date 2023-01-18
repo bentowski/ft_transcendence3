@@ -56,7 +56,7 @@ export class AuthController {
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true  })
-        .redirect('http://localhost:8080');
+        .redirect('http://localhost:80);
     } catch (error) {
       throw new Error(error);
     }
@@ -77,7 +77,7 @@ export class AuthController {
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
-        .redirect('http://localhost:8080');
+        .redirect('http://localhost:80);
     } catch (error) {
       throw new Error(error);
     }

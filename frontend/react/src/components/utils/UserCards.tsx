@@ -20,7 +20,7 @@ const BtnToChat = ({cb}:{cb: any}) => {
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://localhost:8080/chat"))
+    if (ret != "" && !window.location.href.includes("http://localhost:80/chat"))
       navigate(ret);
   }
 
@@ -174,7 +174,7 @@ class UserCards extends Component<
       if (newChan !== undefined) {
         // this.navigate("/chat/"/*  + newChan.id */)
         // console.log(this.props.navigation)
-        //window.location.href = "http://localhost:8080/chat/" + newChan.id
+        //window.location.href = "http://localhost:80/chat/" + newChan.id
         return ("/chat/" + newChan.id)
       }
     } catch (error) {
@@ -239,13 +239,13 @@ class UserCards extends Component<
         "http://localhost:3000/chan/create"
       );
       socket.emit("chanCreated");
-      let newUrl = "http://localhost:8080/chat/#" + newChan.id;
+      let newUrl = "http://localhost:80/chat/#" + newChan.id;
       setTimeout(() => {
         window.location.href = newUrl;
       }, 100);
       return;
     }
-    let newUrl = "http://localhost:8080/chat/#" + ret;
+    let newUrl = "http://localhost:80/chat/#" + ret;
     window.location.href = newUrl;
      */
   };
@@ -285,7 +285,7 @@ class UserCards extends Component<
     // const ids: number[] = parties.map((p: any) => {
     //   return p.id;
     // })
-    // window.location.href = "http://localhost:8080/game/" + Math.max(...ids)
+    // window.location.href = "http://localhost:80/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number): JSX.Element => {
@@ -412,7 +412,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteAccepted", (body: { "to": string, "from": string, "partyID": string }) => {
         if (body.to === this.getCurrentUser().auth_id)
-          window.location.href = "http://localhost:8080/gameup/" + body.partyID;
+          window.location.href = "http://localhost:80/gameup/" + body.partyID;
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {

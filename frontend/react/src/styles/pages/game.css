@@ -11,7 +11,7 @@
 }
 
 .global-bg {
-  background-image: url("http://localhost:8080/pictures/bg-pong.jpg");
+  background-image: url("http://localhost:80/pictures/bg-pong.jpg");
   background-size: cover;
   background-position: center;
 }

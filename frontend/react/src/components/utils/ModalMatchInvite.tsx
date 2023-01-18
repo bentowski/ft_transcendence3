@@ -50,7 +50,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
     })
     socket.emit('inviteAccepted', {"to": this.props.user.auth_id, "from": this.getCurrentUser().auth_id, "partyID": party?.id})
     if (party)
-      window.location.href = "http://localhost:8080/gameup/" + party.id;
+      window.location.href = "http://localhost:80/gameup/" + party.id;
   }
 
   decline = (): void => {

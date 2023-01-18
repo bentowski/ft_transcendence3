@@ -82,7 +82,7 @@ export const PrintChannel = (
           parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
           parentCallBack.getChan();
-          window.location.href = "http://localhost:8080/chat"; //!
+          window.location.href = "http://localhost:80/chat"; //!
         }
       }
     }
@@ -130,7 +130,7 @@ export const PrintChannel = (
             //parentCallBack.setMessage([]);
             parentCallBack.setRoom("null");
             //parentCallBack.getChan();
-            //window.location.href = "http://localhost:8080/chat"; //!
+            //window.location.href = "http://localhost:80/chat"; //!
             navigate("/chat");
           } else {
             socket.emit("newMessage", {

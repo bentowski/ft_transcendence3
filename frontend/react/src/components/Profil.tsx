@@ -22,7 +22,7 @@ const BtnToChat = ({cb}:{cb: any}) => {
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://localhost:8080/chat"))
+    if (ret != "" && !window.location.href.includes("http://localhost:80/chat"))
       navigate(ret);
   }
 
@@ -251,7 +251,7 @@ class Profil extends Component<
     const usr: UserType = cxt.user;
     this.setState({ user: usr });
     this.setState({ current_username: usr.username });
-    if (document.URL === "http://localhost:8080" || document.URL === "http://localhost:8080/") {
+    if (document.URL === "http://localhost:80" || document.URL === "http://localhost:80/") {
       this.props.nav("/profil/" + usr.username);
     }
     const url: string = this.props.loc.pathname;

@@ -22,7 +22,7 @@ let gameOver = () => {
   socket.off('players')
   socket.off('onEndGame')
   updateSocket.emit('updateUser', {auth_id: settings.currentUser, status: 1})
-	window.location.href = "http://localhost:8080/history"
+	window.location.href = "http://localhost:80/history"
 }
 
 let joinRoom = async () => {
@@ -30,13 +30,13 @@ let joinRoom = async () => {
   let url = document.URL
   let index = url.lastIndexOf("/")
   if (index === -1) {
-    window.location.href = "http://localhost:8080/history"
+    window.location.href = "http://localhost:80/history"
   }
   else {
     url = url.substring(index + 1)
     let game: any = games.find((c:any) => c.id === url)
     if (game === undefined) {
-      window.location.href = "http://localhost:8080/history"
+      window.location.href = "http://localhost:80/history"
     }
     else
 			socket.emit('joinRoom', {"game":game, "auth_id": settings.currentUser})
@@ -120,52 +120,52 @@ const start = (ctx: any) => {
     socket.on('newPoint', (room) => {
       switch (room.config.p1Score)
       {
-        case 0: score1.src = "http://localhost:8080/icons/0.png"
+        case 0: score1.src = "http://localhost:80/icons/0.png"
           break;
-        case 1: score1.src = "http://localhost:8080/icons/1.png"
+        case 1: score1.src = "http://localhost:80/icons/1.png"
           break;
-        case 2: score1.src = "http://localhost:8080/icons/2.png"
+        case 2: score1.src = "http://localhost:80/icons/2.png"
           break;
-        case 3: score1.src = "http://localhost:8080/icons/3.png"
+        case 3: score1.src = "http://localhost:80/icons/3.png"
           break;
-        case 4: score1.src = "http://localhost:8080/icons/4.png"
+        case 4: score1.src = "http://localhost:80/icons/4.png"
           break;
-        case 5: score1.src = "http://localhost:8080/icons/5.png"
+        case 5: score1.src = "http://localhost:80/icons/5.png"
           break;
-        case 6: score1.src = "http://localhost:8080/icons/6.png"
+        case 6: score1.src = "http://localhost:80/icons/6.png"
           break;
-        case 7: score1.src = "http://localhost:8080/icons/7.png"
+        case 7: score1.src = "http://localhost:80/icons/7.png"
           break;
-        case 8: score1.src = "http://localhost:8080/icons/8.png"
+        case 8: score1.src = "http://localhost:80/icons/8.png"
           break;
-        case 9: score1.src = "http://localhost:8080/icons/9.png"
+        case 9: score1.src = "http://localhost:80/icons/9.png"
           break;
-        case 10: score1.src = "http://localhost:8080/icons/10.png"
+        case 10: score1.src = "http://localhost:80/icons/10.png"
           break;
       }
       switch (room.config.p2Score)
       {
-        case 0: score2.src = "http://localhost:8080/icons/0.png"
+        case 0: score2.src = "http://localhost:80/icons/0.png"
           break;
-        case 1: score2.src = "http://localhost:8080/icons/1.png"
+        case 1: score2.src = "http://localhost:80/icons/1.png"
           break;
-        case 2: score2.src = "http://localhost:8080/icons/2.png"
+        case 2: score2.src = "http://localhost:80/icons/2.png"
           break;
-        case 3: score2.src = "http://localhost:8080/icons/3.png"
+        case 3: score2.src = "http://localhost:80/icons/3.png"
           break;
-        case 4: score2.src = "http://localhost:8080/icons/4.png"
+        case 4: score2.src = "http://localhost:80/icons/4.png"
           break;
-        case 5: score2.src = "http://localhost:8080/icons/5.png"
+        case 5: score2.src = "http://localhost:80/icons/5.png"
           break;
-        case 6: score2.src = "http://localhost:8080/icons/6.png"
+        case 6: score2.src = "http://localhost:80/icons/6.png"
           break;
-        case 7: score2.src = "http://localhost:8080/icons/7.png"
+        case 7: score2.src = "http://localhost:80/icons/7.png"
           break;
-        case 8: score2.src = "http://localhost:8080/icons/8.png"
+        case 8: score2.src = "http://localhost:80/icons/8.png"
           break;
-        case 9: score2.src = "http://localhost:8080/icons/9.png"
+        case 9: score2.src = "http://localhost:80/icons/9.png"
           break;
-        case 10: score2.src = "http://localhost:8080/icons/10.png"
+        case 10: score2.src = "http://localhost:80/icons/10.png"
           break;
       }
     })
@@ -195,8 +195,8 @@ let settings = {
 }
 
 const initSettings = (serv: any) => {
-  score1.src = "http://localhost:8080/icons/0.png"
-  score2.src = "http://localhost:8080/icons/0.png"
+  score1.src = "http://localhost:80/icons/0.png"
+  score2.src = "http://localhost:80/icons/0.png"
   settings = {
     w: settings.w,
     h: settings.h,

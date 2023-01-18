@@ -10,7 +10,7 @@ services:
   volumes:
    - site_volume:/home/node/www
   ports:
-   - "8080:8080"
+   - "80:80"
   networks:
    - app_network
   restart: always
