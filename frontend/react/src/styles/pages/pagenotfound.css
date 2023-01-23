@@ -1,7 +1,7 @@
 .pageNotFound {
   height: 100vh;
   width: 100vw;
-  background-image: url(http://localhost:80/pictures/carlo.jpg);
+  background-image: url(http://217.160.41.142:80/pictures/carlo.jpg);
   background-size: cover;
   background-position: center;
 }
@@ -105,7 +105,7 @@
 	-moz-animation: animatedGarySides 4s linear infinite alternate, animatedGaryUp 6s linear infinite alternate, animatedGaryRotate 2s linear infinite;
 	animation: animatedGarySides 4s linear infinite alternate, animatedGaryUp 6s linear infinite alternate, animatedGaryRotate 2s linear infinite;
 
-    background-image: url("http://localhost:80/pictures/gary.png");
+    background-image: url("http://217.160.41.142:80/pictures/gary.png");
 	background-position: center;
 	background-size:cover;
     width: 10vh;

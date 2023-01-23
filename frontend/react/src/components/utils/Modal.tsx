@@ -156,7 +156,7 @@ class Modal extends Component<
         "GET",
         {},
         {},
-        "http://localhost:3000/user/"
+        "http://217.160.41.142:3000/user/"
       );
        */
 
@@ -164,7 +164,7 @@ class Modal extends Component<
         "GET",
         {},
         {},
-        "http://localhost:3000/chan"
+        "http://217.160.41.142:3000/chan"
       );
 
     } catch (error) {
@@ -217,7 +217,7 @@ class Modal extends Component<
   //                         </div>
   //                         <div className="col-5 d-flex flex-row justify-content-end align-items-center">
   //                             <Link to={"/profil/" + usersChan[x].user?.username} className="mx-2">{usersChan[x].user?.username}</Link>
-  //                             <img alt="" src={'http://localhost:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
+  //                             <img alt="" src={'http://217.160.41.142:3000/user/' + usersChan[x].user?.auth_id + '/avatar'} className="miniAvatar" width={150} height={150}/>
   //                         </div>
   //                     </div>
   //                 );
@@ -403,7 +403,7 @@ class Modal extends Component<
           <img
             alt=""
             src={
-              "http://localhost:3000/user/" +
+              "http://217.160.41.142:3000/user/" +
               user.auth_id +
               "/avatar"
             }
@@ -552,7 +552,7 @@ class Modal extends Component<
           "GET",
           {},
           {},
-          "http://localhost:3000/chan/" + input.value
+          "http://217.160.41.142:3000/chan/" + input.value
       );
       if (!chan || this.checkIfBanned(chan)) {
         return;

@@ -8,7 +8,7 @@ import { toFileStream } from 'qrcode';
 import * as io from 'socket.io-client';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 
-const socket = io.connect("http://localhost:3000/update");
+const socket = io.connect("http://217.160.41.142:3000/update");
 
 @Injectable()
 export class AuthService {

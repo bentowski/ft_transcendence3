@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { ErrorType } from "../../types";
 import {io} from "socket.io-client";
 
-const socket = io('http://localhost:3000/update')
+const socket = io('http://217.160.41.142:3000/update')
 
 const HandleError = (): JSX.Element => {
     const { errorShow, updateIsTwoFa, errorMsg, errorCode, setError, userAuthentication } = useAuthData();

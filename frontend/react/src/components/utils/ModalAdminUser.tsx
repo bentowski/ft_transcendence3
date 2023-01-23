@@ -33,7 +33,7 @@ const ModalAdminUser = ({
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/chan/id/" + chan,
+                    "http://217.160.41.142:3000/chan/id/" + chan,
                 )
                 setChannel(res);
             } catch (error) {
@@ -48,7 +48,7 @@ const ModalAdminUser = ({
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/chan/" +
+                    "http://217.160.41.142:3000/chan/" +
                     chan + "/isowner/" + user.auth_id,
                 )
                 setIsOwner(res);
@@ -63,7 +63,7 @@ const ModalAdminUser = ({
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/chan/" +
+                    "http://217.160.41.142:3000/chan/" +
                     chan + "/user"
                 )
             } catch(error) {
@@ -76,7 +76,7 @@ const ModalAdminUser = ({
                         "GET",
                         {},
                         {},
-                        "http://localhost:3000/chan/" +
+                        "http://217.160.41.142:3000/chan/" +
                         chan + "/isadmin/" + users[index].auth_id,
                     )
                     newArray.push({
@@ -107,7 +107,7 @@ const ModalAdminUser = ({
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/chan/" + chan + "/banned"
+                    "http://217.160.41.142:3000/chan/" + chan + "/banned"
                 )
             } catch (error) {
                 setError(error);
@@ -127,7 +127,7 @@ const ModalAdminUser = ({
                     "GET",
                     {},
                     {},
-                    "http://localhost:3000/chan/" + chan + "/muted"
+                    "http://217.160.41.142:3000/chan/" + chan + "/muted"
                 )
             } catch (error) {
                 setError(error);
@@ -204,7 +204,7 @@ const ModalAdminUser = ({
                                 </Link>
                                 <img
                                     alt=""
-                                    src={'http://localhost:3000/user/' +
+                                    src={'http://217.160.41.142:3000/user/' +
                                         usersChan[x].user?.auth_id + '/avatar'}
                                     className="miniAvatar"
                                     width={150}
