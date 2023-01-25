@@ -8,7 +8,7 @@ import { HistorySavePartiesDto } from './dto/history-save-parties.dto';
 import { UserService } from '../user/user.service';
 import * as io from "socket.io-client";
 
-const update = io.connect("http://217.160.41.142:3000/update");
+const update = io.connect("http://82.165.70.203:3000/update");
 
 @Injectable()
 export class PartiesService {

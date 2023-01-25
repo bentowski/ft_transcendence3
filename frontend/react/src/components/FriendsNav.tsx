@@ -8,7 +8,7 @@ import { Alert } from "react-bootstrap";
 import { io } from "socket.io-client";
 import { FriendUserReceiveDto, FriendUserSendDto } from "../dtos/friend-user.dto";
 
-const socket = io('http://217.160.41.142:3000/update')
+const socket = io('http://82.165.70.203:3000/update')
 class FriendsNav extends Component<{}, {
   uslist: Array<UserType>,
   filteredList: Array<UserType>,
@@ -74,7 +74,7 @@ class FriendsNav extends Component<{}, {
           'GET',
           {},
           {},
-          "http://217.160.41.142:3000/user/name/" + input.value
+          "http://82.165.70.203:3000/user/name/" + input.value
         )
         input.value = '';
         const response: FriendUserReceiveDto = {

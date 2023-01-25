@@ -46,7 +46,7 @@ const ModalCheckPass = (
         "PATCH",
         { "Content-Type": "application/json" },
         pass,
-        "http://217.160.41.142:3000/chan/" + id + "/verify"
+        "http://82.165.70.203:3000/chan/" + id + "/verify"
         )
     } catch (error) {
       setError(error);

@@ -26,7 +26,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                         "GET",
                         {},
                         {},
-                        "http://217.160.41.142:3000/chan/" + chan + "/user"
+                        "http://82.165.70.203:3000/chan/" + chan + "/user"
                     )
                     const newArray: UsersChanMuteType[] = [];
                     for (let index = 0; index < users.length; index++) {
@@ -34,7 +34,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                             "GET",
                             {},
                             {},
-                            "http://217.160.41.142:3000/chan/" + chan + "/ismuted/" + users[index].auth_id,
+                            "http://82.165.70.203:3000/chan/" + chan + "/ismuted/" + users[index].auth_id,
                         )
                         newArray.push({
                             user: users[index],
@@ -60,7 +60,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                     "GET",
                     {},
                     {},
-                    "http://217.160.41.142:3000/chan/" + chan + "/admin"
+                    "http://82.165.70.203:3000/chan/" + chan + "/admin"
                 )
             } catch (error) {
                 setError(error);
@@ -134,7 +134,7 @@ const ModalMuteUser = ({chan, socket, usersInChan}:{
                                 </Link>
                                 <img
                                     alt=""
-                                    src={'http://217.160.41.142:3000/user/' + usersChan[x].user?.auth_id + '/avatar'}
+                                    src={'http://82.165.70.203:3000/user/' + usersChan[x].user?.auth_id + '/avatar'}
                                     className="miniAvatar"
                                     width={150}
                                     height={150}/>
