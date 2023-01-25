@@ -22,7 +22,7 @@ const BtnToChat = ({cb}:{cb: any}) => {
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://217.160.41.142:80/chat"))
+    if (ret != "" && !window.location.href.includes("http://cousinade-baudry.fr/chat"))
       navigate(ret);
   }
 
@@ -251,7 +251,7 @@ class Profil extends Component<
     const usr: UserType = cxt.user;
     this.setState({ user: usr });
     this.setState({ current_username: usr.username });
-    if (document.URL === "http://217.160.41.142:80" || document.URL === "http://217.160.41.142:80/") {
+    if (document.URL === "http://cousinade-baudry.fr" || document.URL === "http://cousinade-baudry.fr/") {
       this.props.nav("/profil/" + usr.username);
     }
     const url: string = this.props.loc.pathname;

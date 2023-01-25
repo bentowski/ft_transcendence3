@@ -56,7 +56,7 @@ export class AuthController {
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true  })
-        .redirect('http://217.160.41.142:80');
+        .redirect('http://cousinade-baudry.fr');
     } catch (error) {
       throw new Error(error);
     }
@@ -77,7 +77,7 @@ export class AuthController {
       res
         .status(202)
         .cookie('jwt', access_token, { httpOnly: true })
-        .redirect('http://217.160.41.142:80');
+        .redirect('http://cousinade-baudry.fr');
     } catch (error) {
       throw new Error(error);
     }
