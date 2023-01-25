@@ -60,7 +60,7 @@ export const WebSocket = (): JSX.Element => {
         updateChanFromList(obj.chan, false);
       }
       getChan();
-      //window.location.replace("http://cousinade-baudry.fr/chat");
+      //window.location.replace("http://bentowski.fr/chat");
       //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -220,7 +220,7 @@ export const WebSocket = (): JSX.Element => {
     getChan();
     const checkUrl: NodeJS.Timer = setInterval(() => {
       let url: string = document.URL
-      if (!document.URL.includes("cousinade-baudry.fr/chat"))
+      if (!document.URL.includes("bentowski.fr/chat"))
         clearInterval(checkUrl);
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== location) {
