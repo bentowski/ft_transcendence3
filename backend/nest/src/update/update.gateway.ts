@@ -15,7 +15,7 @@ import {SendGameInfoDto} from "./dto/game.dto";
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://bentowski.fr'],
+    origin: ['http://cousinade-baudry.fr'],
   },
   namespace: '/update',
 })

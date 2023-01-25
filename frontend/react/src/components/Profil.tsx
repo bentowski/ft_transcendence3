@@ -15,14 +15,14 @@ import { CreatePrivChanDto } from "../dtos/create-chan.dto";
 import { UserJoinChannelReceiveDto } from "../dtos/userjoinchannel.dto";
 import "../styles/components/utils/userCards.css";
 
-const socketChat = io("http://82.165.70.203:3000/chat");
+const socketChat = io("http://217.160.41.142:3000/chat");
 
 const BtnToChat = ({cb}:{cb: any}) => {
   const navigate = useNavigate();
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://bentowski.fr/chat"))
+    if (ret != "" && !window.location.href.includes("http://cousinade-baudry.fr/chat"))
       navigate(ret);
   }
 
@@ -80,7 +80,7 @@ class Profil extends Component<
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/user/name/" + username
+        "http://217.160.41.142:3000/user/name/" + username
       );
       this.setState({ user: newUser });
       this.setState({ current_username: username })
@@ -100,7 +100,7 @@ class Profil extends Component<
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/parties/histories/all"
+        "http://217.160.41.142:3000/parties/histories/all"
       );
     } catch (error) {
       ctx.setError(error);
@@ -117,7 +117,7 @@ class Profil extends Component<
        "GET",
        {},
        {},
-       "http://82.165.70.203:3000/user"
+       "http://217.160.41.142:3000/user"
      );
    } catch (error) {
      ctx.setError(error);
@@ -144,7 +144,7 @@ class Profil extends Component<
           "GET",
           {},
           {},
-          "http://82.165.70.203:3000/chan/"
+          "http://217.160.41.142:3000/chan/"
       )
     } catch (error) {
       ctx.setError(error);
@@ -174,13 +174,13 @@ class Profil extends Component<
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/user/name/" + this.state.user?.username,
+        "http://217.160.41.142:3000/user/name/" + this.state.user?.username,
       )
 	  const chans: ChanType[] = await Request(
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/chan",
+        "http://217.160.41.142:3000/chan",
       )
       let doesChanExist: boolean = false;
       let newChan: ChanType | undefined = undefined;
@@ -208,7 +208,7 @@ class Profil extends Component<
               "Content-Type": "application/json",
             },
             createprivchan,
-            "http://82.165.70.203:3000/chan/createpriv"
+            "http://217.160.41.142:3000/chan/createpriv"
             );
         const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
           socketChat.emit("chanCreated", res);
@@ -251,7 +251,7 @@ class Profil extends Component<
     const usr: UserType = cxt.user;
     this.setState({ user: usr });
     this.setState({ current_username: usr.username });
-    if (document.URL === "http://bentowski.fr" || document.URL === "http://bentowski.fr/") {
+    if (document.URL === "http://cousinade-baudry.fr" || document.URL === "http://cousinade-baudry.fr/") {
       this.props.nav("/profil/" + usr.username);
     }
     const url: string = this.props.loc.pathname;
@@ -300,7 +300,7 @@ class Profil extends Component<
               alt="prout"
               width={100}
               height={100}
-              src={"http://82.165.70.203:3000/user/" + this.state.user?.auth_id + "/avatar"} />
+              src={"http://217.160.41.142:3000/user/" + this.state.user?.auth_id + "/avatar"} />
               <h3>{this.state.user?.username + " "}</h3>
             <div className="row">
               <div className="col"><BlockUnBlock auth_id={this.state.user?.auth_id} /></div>

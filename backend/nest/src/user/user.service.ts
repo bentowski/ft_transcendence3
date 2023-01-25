@@ -16,7 +16,7 @@ import {
 import ChanEntity from "../chans/entities/chan-entity";
 import * as io from "socket.io-client";
 
-const update = io.connect("http://82.165.70.203:3000/update");
+const update = io.connect("http://217.160.41.142:3000/update");
 
 
 @Injectable()

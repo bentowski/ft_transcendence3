@@ -21,7 +21,7 @@ import {NewMessageSendDto} from "./dto/newMessage.dto";
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://bentowski.fr'],
+    origin: ['http://cousinade-baudry.fr'],
   },
   namespace: '/chat'
 })

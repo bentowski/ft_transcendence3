@@ -12,15 +12,15 @@ import {CreatePrivChanDto} from "../../dtos/create-chan.dto";
 import {UserJoinChannelReceiveDto} from "../../dtos/userjoinchannel.dto";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
-const socket = io("http://82.165.70.203:3000/update");
-const socketChat = io("http://82.165.70.203:3000/chat");
+const socket = io("http://217.160.41.142:3000/update");
+const socketChat = io("http://217.160.41.142:3000/chat");
 
 const BtnToChat = ({cb}:{cb: any}) => {
   const navigate = useNavigate();
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://bentowski.fr/chat"))
+    if (ret != "" && !window.location.href.includes("http://cousinade-baudry.fr/chat"))
       navigate(ret);
   }
 
@@ -103,7 +103,7 @@ class UserCards extends Component<
           "GET",
           {},
           {},
-          "http://82.165.70.203:3000/chan/"
+          "http://217.160.41.142:3000/chan/"
       )
     } catch (error) {
       ctx.setError(error);
@@ -133,13 +133,13 @@ class UserCards extends Component<
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/user/name/" + this.state.login,
+        "http://217.160.41.142:3000/user/name/" + this.state.login,
       )
 	  const chans: ChanType[] = await Request(
         "GET",
         {},
         {},
-        "http://82.165.70.203:3000/chan",
+        "http://217.160.41.142:3000/chan",
       )
       let doesChanExist: boolean = false;
       let newChan: ChanType | undefined = undefined;
@@ -166,7 +166,7 @@ class UserCards extends Component<
               "Content-Type": "application/json",
             },
             createprivchan,
-            "http://82.165.70.203:3000/chan/createpriv"
+            "http://217.160.41.142:3000/chan/createpriv"
             );
         const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
           socketChat.emit("chanCreated", res);
@@ -174,7 +174,7 @@ class UserCards extends Component<
       if (newChan !== undefined) {
         // this.navigate("/chat/"/*  + newChan.id */)
         // console.log(this.props.navigation)
-        //window.location.href = "http://bentowski.fr/chat/" + newChan.id
+        //window.location.href = "http://cousinade-baudry.fr/chat/" + newChan.id
         return ("/chat/" + newChan.id)
       }
     } catch (error) {
@@ -184,7 +184,7 @@ class UserCards extends Component<
     return ("")
 
     /*
-    let chans = await Request("GET", {}, {}, "http://82.165.70.203:3000/chan");
+    let chans = await Request("GET", {}, {}, "http://217.160.41.142:3000/chan");
     const ctx: any = this.context;
     let u1 = undefined;
     let u2 = undefined;
@@ -193,13 +193,13 @@ class UserCards extends Component<
           "GET",
           {},
           {},
-          "http://82.165.70.203:3000/user/name/" + this.state.ssname
+          "http://217.160.41.142:3000/user/name/" + this.state.ssname
       );
       u2 = await Request(
           "GET",
           {},
           {},
-          "http://82.165.70.203:3000/user/name/" + this.state.login
+          "http://217.160.41.142:3000/user/name/" + this.state.login
       );
     } catch (error) {
       ctx.setError(error);
@@ -236,16 +236,16 @@ class UserCards extends Component<
           password: "",
           chanUser: [u1, u2],
         },
-        "http://82.165.70.203:3000/chan/create"
+        "http://217.160.41.142:3000/chan/create"
       );
       socket.emit("chanCreated");
-      let newUrl = "http://bentowski.fr/chat/#" + newChan.id;
+      let newUrl = "http://cousinade-baudry.fr/chat/#" + newChan.id;
       setTimeout(() => {
         window.location.href = newUrl;
       }, 100);
       return;
     }
-    let newUrl = "http://bentowski.fr/chat/#" + ret;
+    let newUrl = "http://cousinade-baudry.fr/chat/#" + ret;
     window.location.href = newUrl;
      */
   };
@@ -263,7 +263,7 @@ class UserCards extends Component<
     //       login: this.state.login,
     //       public: true
     //     },
-    //     "http://82.165.70.203:3000/parties/create"
+    //     "http://217.160.41.142:3000/parties/create"
     //   );
     // } catch (error) {
     //   ctx.setError(error);
@@ -277,7 +277,7 @@ class UserCards extends Component<
     //     'GET',
     //     {},
     //     {},
-    //     "http://82.165.70.203:3000/parties/"
+    //     "http://217.160.41.142:3000/parties/"
     //   )
     // } catch (error) {
     //   ctx.setError(error);
@@ -285,7 +285,7 @@ class UserCards extends Component<
     // const ids: number[] = parties.map((p: any) => {
     //   return p.id;
     // })
-    // window.location.href = "http://bentowski.fr/game/" + Math.max(...ids)
+    // window.location.href = "http://cousinade-baudry.fr/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number): JSX.Element => {
@@ -327,7 +327,7 @@ class UserCards extends Component<
                 <img
                   alt=""
                   src={
-                    "http://82.165.70.203:3000/user/" +
+                    "http://217.160.41.142:3000/user/" +
                     this.props.user.auth_id +
                     "/avatar"
                   }
@@ -364,7 +364,7 @@ class UserCards extends Component<
             <img
               alt=""
               src={
-                "http://82.165.70.203:3000/user/" +
+                "http://217.160.41.142:3000/user/" +
                 this.props.user.auth_id +
                 "/avatar"
               }
@@ -412,7 +412,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteAccepted", (body: { "to": string, "from": string, "partyID": string }) => {
         if (body.to === this.getCurrentUser().auth_id)
-          window.location.href = "http://bentowski.fr/gameup/" + body.partyID;
+          window.location.href = "http://cousinade-baudry.fr/gameup/" + body.partyID;
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
@@ -431,7 +431,7 @@ class UserCards extends Component<
          "GET",
          {},
          {},
-         "http://82.165.70.203:3000/user/id/" + this.state.id
+         "http://217.160.41.142:3000/user/id/" + this.state.id
        );
      } catch (error) {
        ctx.setError(error);

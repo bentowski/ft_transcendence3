@@ -4,7 +4,7 @@ import Request from './Requests';
 import { io } from "socket.io-client";
 import {FriendUserReceiveDto} from "../../dtos/friend-user.dto";
 
-const socket = io('http://82.165.70.203:3000/update')
+const socket = io('http://217.160.41.142:3000/update')
 
 const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
@@ -21,7 +21,7 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
                         "GET",
                         {},
                         {},
-                        "http://82.165.70.203:3000/user/" + auth_id + "/isfriend",
+                        "http://217.160.41.142:3000/user/" + auth_id + "/isfriend",
                     )
                     setStatus(res);
                     setLoading(false);
