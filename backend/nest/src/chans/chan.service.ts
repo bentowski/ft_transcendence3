@@ -14,7 +14,7 @@ import * as io from "socket.io-client";
 import { ChanType } from "./types/chan.type";
 import { Msg } from './types/msg.type';
 
-const socket = io.connect("http://217.160.41.142:3000/chat");
+const socket = io.connect("http://bentowski.fr:3000/chat");
 
 @Injectable()
 export class ChanService {
