@@ -39,7 +39,7 @@ class MatchNav extends Component<{}, {}> {
 				'GET',
 				{},
 				{},
-				"http://82.165.70.203:3000/parties"
+				"http://217.160.41.142:3000/parties"
 			)
 		} catch (error) {
 			ctx.setError(error);

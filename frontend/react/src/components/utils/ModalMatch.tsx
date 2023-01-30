@@ -6,7 +6,7 @@ import { AuthContext } from '../../contexts/AuthProviderContext';
 import { PartiesType } from "../../types";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
-const socket = io("http://82.165.70.203:3000/update");
+const socket = io("http://217.160.41.142:3000/update");
 
 class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
 
@@ -41,14 +41,14 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           type: isClassic,
           vitesse: vitesse
         },
-        "http://82.165.70.203:3000/parties/create"
+        "http://217.160.41.142:3000/parties/create"
       );
       socket.emit('newParty');
       const parties: PartiesType[] = await Request(
           'GET',
           {},
           {},
-          "http://82.165.70.203:3000/parties/"
+          "http://217.160.41.142:3000/parties/"
       )
       const ids: number[] = parties.map((p: any) => {
         return p.id;

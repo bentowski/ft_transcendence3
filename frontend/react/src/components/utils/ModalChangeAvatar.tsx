@@ -12,7 +12,7 @@ const ModalChangeAvatar = (): JSX.Element => {
   useEffect((): void => {
     if (user.avatar) {
       setAvatarUrl({
-        url: "http://82.165.70.203:3000/user/" + user.auth_id + "/avatar",
+        url: "http://217.160.41.142:3000/user/" + user.auth_id + "/avatar",
         hash: Date.now()});
     }
   }, [user])
@@ -32,11 +32,11 @@ const ModalChangeAvatar = (): JSX.Element => {
       body: formData,
     };
     delete params.headers["Content-Type"];
-    const res: Response = await fetch("http://82.165.70.203:3000/user/upload",
+    const res: Response = await fetch("http://217.160.41.142:3000/user/upload",
         params);
     if (res.ok) {
       const str: any = await res.json();
-      //const avatar: string = "http://82.165.70.203:3000/user/" + user.auth_id + "/avatar/" + Date.now();
+      //const avatar: string = "http://217.160.41.142:3000/user/" + user.auth_id + "/avatar/" + Date.now();
       updateUser(str.avatar, null);
       setSelectedImage(null);
       handleClose();

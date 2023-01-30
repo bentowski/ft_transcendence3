@@ -31,11 +31,11 @@ const Login = (): JSX.Element => {
 				alt="prout"
 				shape="poly"
 				coords="187,231,139,266,115,319,114,339,109,354,108,385,108,434,117,478,149,492,160,493,170,494,193,498,215,498,271,499,303,490,316,482,327,461,336,413,336,374,332,341,320,300,352,298,357,287,355,277,352,267,357,243,362,231,357,225,335,229,336,245,337,280,324,284,322,287,315,288,307,266,298,254,286,239,277,237,267,230,235,223,208,225"
-				href="http://82.165.70.203:3000/auth/login"/>
+				href="http://217.160.41.142:3000/auth/login"/>
 		</map>
 		<div id="background-wrap">
 			{/* delete below before push */}
-			<a className="mb-2 mx-2" href="http://82.165.70.203:3000/auth/dummyconnect">
+			<a className="mb-2 mx-2" href="http://217.160.41.142:3000/auth/dummyconnect">
 				Letssss go
   			</a>
 			{/* delete above before push */}
