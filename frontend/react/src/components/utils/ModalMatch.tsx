@@ -41,23 +41,23 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           type: isClassic,
           vitesse: vitesse
         },
-        "http://217.160.41.142:3000/parties/create"
+        "http://bentowski.fr:3000/parties/create"
       );
       socket.emit('newParty');
       const parties: PartiesType[] = await Request(
           'GET',
           {},
           {},
-          "http://217.160.41.142:3000/parties/"
+          "http://bentowski.fr:3000/parties/"
       )
       const ids: number[] = parties.map((p: any) => {
         return p.id;
       })
       this.hidden()
       if (isClassic)
-        window.location.href = "http://217.160.41.142/game/" + Math.max(...ids)//currentUser.user.username
+        window.location.href = "http://bentowski.fr/game/" + Math.max(...ids)//currentUser.user.username
       else
-        window.location.href = "http://217.160.41.142/gameup/" + Math.max(...ids)//currentUser.user.username
+        window.location.href = "http://bentowski.fr/gameup/" + Math.max(...ids)//currentUser.user.username
       } catch (error) {
        const ctx: any = this.context;
        ctx.setError(error);

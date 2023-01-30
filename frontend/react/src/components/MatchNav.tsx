@@ -39,7 +39,7 @@ class MatchNav extends Component<{}, {}> {
 				'GET',
 				{},
 				{},
-				"http://217.160.41.142:3000/parties"
+				"http://bentowski.fr:3000/parties"
 			)
 		} catch (error) {
 			ctx.setError(error);
@@ -60,9 +60,9 @@ class MatchNav extends Component<{}, {}> {
 		}
 		const randomGame: PartiesType = availableGames[(Math.floor(Math.random() * availableGames.length))];
 		if (randomGame.type == 1)
-			window.location.href = "http://217.160.41.142/game/" + randomGame.id
+			window.location.href = "http://bentowski.fr/game/" + randomGame.id
 		else
-			window.location.href = "http://217.160.41.142/gameup/" + randomGame.id
+			window.location.href = "http://bentowski.fr/gameup/" + randomGame.id
 	}
 
 	prompt = (): void => {
@@ -82,7 +82,7 @@ class MatchNav extends Component<{}, {}> {
 			return (
 				<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
 					<div>
-						<button className="" onClick={() => window.location.href = "http://217.160.41.142/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
+						<button className="" onClick={() => window.location.href = "http://bentowski.fr/game/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
 					</div>
 					<div style={{ verticalAlign: "top" }}>
 						<p className="py-2">{login}</p>
@@ -98,7 +98,7 @@ class MatchNav extends Component<{}, {}> {
 			return (
 				<div key={key} className="gamesDiv text-nowrap d-flex justify-content-between">
 					<div>
-						<button className="" onClick={() => window.location.href = "http://217.160.41.142/gameup/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
+						<button className="" onClick={() => window.location.href = "http://bentowski.fr/gameup/" + id}>{(count === nbplayer) ? "Spec" : "Join"}</button>
 					</div>
 					<div style={{ verticalAlign: "top" }}>
 						<p className="py-2">{login}</p>

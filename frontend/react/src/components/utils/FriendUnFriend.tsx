@@ -21,7 +21,7 @@ const FriendUnFriend = ({ auth_id }:{ auth_id: string }): JSX.Element => {
                         "GET",
                         {},
                         {},
-                        "http://217.160.41.142:3000/user/" + auth_id + "/isfriend",
+                        "http://bentowski.fr:3000/user/" + auth_id + "/isfriend",
                     )
                     setStatus(res);
                     setLoading(false);
