@@ -73,7 +73,7 @@ export const PrintChannel = (
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/chan/banned"
+          "http://192.168.0.1:3000/user/chan/banned"
       )
       for (let i = 0; i < ban.length; i++) {
         if (ban[i].id === room) {
@@ -82,7 +82,7 @@ export const PrintChannel = (
           parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
           parentCallBack.getChan();
-          window.location.href = "http://217.160.41.142/chat"; //!
+          window.location.href = "http://192.168.0.1/chat"; //!
         }
       }
     }
@@ -130,7 +130,7 @@ export const PrintChannel = (
             //parentCallBack.setMessage([]);
             parentCallBack.setRoom("null");
             //parentCallBack.getChan();
-            //window.location.href = "http://217.160.41.142/chat"; //!
+            //window.location.href = "http://192.168.0.1/chat"; //!
             navigate("/chat");
           } else {
             socket.emit("newMessage", {

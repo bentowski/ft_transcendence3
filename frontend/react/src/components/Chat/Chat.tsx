@@ -220,7 +220,7 @@ export const WebSocket = (): JSX.Element => {
     getChan();
     const checkUrl: NodeJS.Timer = setInterval(() => {
       let url: string = document.URL
-      if (!document.URL.includes("217.160.41.142/chat"))
+      if (!document.URL.includes("bentowski.fr/chat"))
         clearInterval(checkUrl);
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== location) {

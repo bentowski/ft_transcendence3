@@ -36,7 +36,7 @@ const Menu = () => {
     }
 
     const linkChat = () => {
-      if (window.location.href.includes("217.160.41.142/chat"))
+      if (window.location.href.includes("bentowski.fr/chat"))
         return (
           <div className="m-0">Chat</div>
         )

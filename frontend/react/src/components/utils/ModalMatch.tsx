@@ -55,9 +55,9 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
       })
       this.hidden()
       if (isClassic)
-        window.location.href = "http://217.160.41.142/game/" + Math.max(...ids)//currentUser.user.username
+        window.location.href = "http://bentowski.fr/game/" + Math.max(...ids)//currentUser.user.username
       else
-        window.location.href = "http://217.160.41.142/gameup/" + Math.max(...ids)//currentUser.user.username
+        window.location.href = "http://bentowski.fr/gameup/" + Math.max(...ids)//currentUser.user.username
       } catch (error) {
        const ctx: any = this.context;
        ctx.setError(error);

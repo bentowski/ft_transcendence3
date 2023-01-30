@@ -26,7 +26,7 @@ let gameOver = () => {
   socket.off('players')
   socket.off('onEndGame')
   updateSocket.emit('updateUser', {auth_id: settings.currentUser, status: 1})
-	window.location.href = "http://217.160.41.142/history"
+	window.location.href = "http://bentowski.fr/history"
 }
 
 let joinRoom = async () => {
@@ -34,13 +34,13 @@ let joinRoom = async () => {
   let url = document.URL
   let index = url.lastIndexOf("/")
   if (index === -1) {
-    window.location.href = "http://217.160.41.142/history"
+    window.location.href = "http://bentowski.fr/history"
   }
   else {
     url = url.substring(index + 1)
     let game: any = games.find((c:any) => c.id === url)
     if (game === undefined) {
-      window.location.href = "http://217.160.41.142/history"
+      window.location.href = "http://bentowski.fr/history"
     }
     else
 			socket.emit('joinRoom', {"game":game, "auth_id": settings.currentUser})
