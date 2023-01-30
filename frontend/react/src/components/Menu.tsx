@@ -13,12 +13,12 @@ const Menu = () => {
       setUsername(user.username);
     }
     if (user.avatar) {
-      setAvatarUrl({url: 'http://82.165.70.203:3000/user/' + user.auth_id + '/avatar', hash: Date.now()});
+      setAvatarUrl({url: 'http://217.160.41.142:3000/user/' + user.auth_id + '/avatar', hash: Date.now()});
     }
   }, [user])
 
   const logoutSession = async () => {
-    const res: Response = await fetch("http://82.165.70.203:3000/auth/logout", {
+    const res: Response = await fetch("http://217.160.41.142:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
       headers: {
@@ -36,7 +36,7 @@ const Menu = () => {
     }
 
     const linkChat = () => {
-      if (window.location.href.includes("cousinade-baudry.fr/chat"))
+      if (window.location.href.includes("bentowski.fr/chat"))
         return (
           <div className="m-0">Chat</div>
         )
@@ -56,7 +56,7 @@ const Menu = () => {
         </div>{" "}
         {/* homeButtonDiv */}
         <div className="titleDiv d-none d-sm-block">
-          <h1 className="m-0"><img alt="" className="BobLePong" src="http://cousinade-baudry.fr/pictures/boblepongelogo.png"/></h1>
+          <h1 className="m-0"><img alt="" className="BobLePong" src="http://bentowski.fr/pictures/boblepongelogo.png"/></h1>
         </div>{" "}
         {/* titleDiv */}
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
