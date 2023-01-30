@@ -19,7 +19,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
     // }
 
 	// updateUsers = async () => {
-	// 	let users:UserType = await Request("GET", {}, {}, "http://217.160.41.142:3000/user")
+	// 	let users:UserType = await Request("GET", {}, {}, "http://192.168.0.1:3000/user")
 	// 	this.setState({userList: users})
 	// }
 

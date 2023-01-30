@@ -115,52 +115,52 @@ const start = (ctx: any) => {
     socket.on('newPoint', (room) => {
       switch (room.config.p1Score)
       {
-        case 0: score1.src = "http://217.160.41.142/icons/bob0.png"
+        case 0: score1.src = "http://bentowski.fr/icons/bob0.png"
           break;
-        case 1: score1.src = "http://217.160.41.142/icons/bob1.png"
+        case 1: score1.src = "http://bentowski.fr/icons/bob1.png"
           break;
-        case 2: score1.src = "http://217.160.41.142/icons/bob2.png"
+        case 2: score1.src = "http://bentowski.fr/icons/bob2.png"
           break;
-        case 3: score1.src = "http://217.160.41.142/icons/bob3.png"
+        case 3: score1.src = "http://bentowski.fr/icons/bob3.png"
           break;
-        case 4: score1.src = "http://217.160.41.142/icons/bob4.png"
+        case 4: score1.src = "http://bentowski.fr/icons/bob4.png"
           break;
-        case 5: score1.src = "http://217.160.41.142/icons/bob5.png"
+        case 5: score1.src = "http://bentowski.fr/icons/bob5.png"
           break;
-        case 6: score1.src = "http://217.160.41.142/icons/bob6.png"
+        case 6: score1.src = "http://bentowski.fr/icons/bob6.png"
           break;
-        case 7: score1.src = "http://217.160.41.142/icons/bob7.png"
+        case 7: score1.src = "http://bentowski.fr/icons/bob7.png"
           break;
-        case 8: score1.src = "http://217.160.41.142/icons/bob8.png"
+        case 8: score1.src = "http://bentowski.fr/icons/bob8.png"
           break;
-        case 9: score1.src = "http://217.160.41.142/icons/bob9.png"
+        case 9: score1.src = "http://bentowski.fr/icons/bob9.png"
           break;
-        case 10: score1.src = "http://217.160.41.142/icons/bob10.png"
+        case 10: score1.src = "http://bentowski.fr/icons/bob10.png"
           break;
       }
       switch (room.config.p2Score)
       {
-        case 0: score2.src = "http://217.160.41.142/icons/bob0.png"
+        case 0: score2.src = "http://bentowski.fr/icons/bob0.png"
           break;
-        case 1: score2.src = "http://217.160.41.142/icons/bob1.png"
+        case 1: score2.src = "http://bentowski.fr/icons/bob1.png"
           break;
-        case 2: score2.src = "http://217.160.41.142/icons/bob2.png"
+        case 2: score2.src = "http://bentowski.fr/icons/bob2.png"
           break;
-        case 3: score2.src = "http://217.160.41.142/icons/bob3.png"
+        case 3: score2.src = "http://bentowski.fr/icons/bob3.png"
           break;
-        case 4: score2.src = "http://217.160.41.142/icons/bob4.png"
+        case 4: score2.src = "http://bentowski.fr/icons/bob4.png"
           break;
-        case 5: score2.src = "http://217.160.41.142/icons/bob5.png"
+        case 5: score2.src = "http://bentowski.fr/icons/bob5.png"
           break;
-        case 6: score2.src = "http://217.160.41.142/icons/bob6.png"
+        case 6: score2.src = "http://bentowski.fr/icons/bob6.png"
           break;
-        case 7: score2.src = "http://217.160.41.142/icons/bob7.png"
+        case 7: score2.src = "http://bentowski.fr/icons/bob7.png"
           break;
-        case 8: score2.src = "http://217.160.41.142/icons/bob8.png"
+        case 8: score2.src = "http://bentowski.fr/icons/bob8.png"
           break;
-        case 9: score2.src = "http://217.160.41.142/icons/bob9.png"
+        case 9: score2.src = "http://bentowski.fr/icons/bob9.png"
           break;
-        case 10: score2.src = "http://217.160.41.142/icons/bob10.png"
+        case 10: score2.src = "http://bentowski.fr/icons/bob10.png"
           break;
       }
     })
@@ -190,8 +190,8 @@ let settings = {
 }
 
 const initSettings = (serv: any) => {
-  score1.src = "http://217.160.41.142/icons/bob0.png"
-  score2.src = "http://217.160.41.142/icons/bob0.png"
+  score1.src = "http://bentowski.fr/icons/bob0.png"
+  score2.src = "http://bentowski.fr/icons/bob0.png"
   settings = {
     w: settings.w,
     h: settings.h,
@@ -214,10 +214,10 @@ const initSettings = (serv: any) => {
 
 // Change type to SettingType
 const init = (servSettings: any, ctx: any) => {
-  p1.src = "http://217.160.41.142/pictures/barre2.png";
-  p2.src = "http://217.160.41.142/pictures/barre1.png";
-  ball.src = "http://217.160.41.142/pictures/ball.png";
-  bubble.src = "http://217.160.41.142/pictures/bubble2.png";
+  p1.src = "http://bentowski.fr/pictures/barre2.png";
+  p2.src = "http://bentowski.fr/pictures/barre1.png";
+  ball.src = "http://bentowski.fr/pictures/ball.png";
+  bubble.src = "http://bentowski.fr/pictures/bubble2.png";
 	socket.off('Init')
   initSettings(servSettings)
 	const globale = document.getElementById('globale') as HTMLCanvasElement

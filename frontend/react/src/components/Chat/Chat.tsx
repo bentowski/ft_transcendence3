@@ -313,7 +313,7 @@ const userjoinchan: UserJoinChannelReceiveDto = {
     let url: string = document.URL;
     // await getChan();
     // changeActiveRoom('4')
-    // let chanList:ChanType[] = await Request('GET', {}, {}, "http://217.160.41.142:3000/chan/")
+    // let chanList:ChanType[] = await Request('GET', {}, {}, "http://192.168.0.1:3000/chan/")
     let chan: ChanType | undefined = undefined;
     const index: number = url.lastIndexOf("/");
   	chanList.forEach((chan: ChanType) => {
