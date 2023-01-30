@@ -7,7 +7,7 @@ import ModalMatchWaiting from '../components/utils/ModalMatchWaiting';
 import { io } from 'socket.io-client';
 import { UserType } from "../types"
 import { AuthContext } from '../contexts/AuthProviderContext';
-const updateSocket = io("http://217.160.41.142:3000/update");
+const updateSocket = io("http://bentowski.fr:3000/update");
 
 let score1 = new Image();
 let score2 = new Image();
@@ -26,7 +26,7 @@ let gameOver = () => {
 }
 
 let joinRoom = async () => {
-  const games = await Request('GET', {}, {}, "http://217.160.41.142:3000/parties")
+  const games = await Request('GET', {}, {}, "http://bentowski.fr:3000/parties")
   let url = document.URL
   let index = url.lastIndexOf("/")
   if (index === -1) {

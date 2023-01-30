@@ -22,7 +22,7 @@ const ModalChangeUsername = (): JSX.Element => {
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/"
+          "http://bentowski.fr:3000/user/"
       );
       return users;
     } catch (error) {
@@ -79,7 +79,7 @@ const ModalChangeUsername = (): JSX.Element => {
               "Content-Type": "application/json",
             },
             req,
-            "http://217.160.41.142:3000/user/update/username"
+            "http://bentowski.fr:3000/user/update/username"
         )
         if (res) {
           const newName: string = field;

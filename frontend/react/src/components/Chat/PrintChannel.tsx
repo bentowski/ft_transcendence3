@@ -98,7 +98,7 @@ export const PrintChannel = (
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/chan/muted"
+          "http://bentowski.fr:3000/user/chan/muted"
       )
     } catch (error) {
       setError(error);

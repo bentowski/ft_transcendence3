@@ -12,8 +12,8 @@ import {CreatePrivChanDto} from "../../dtos/create-chan.dto";
 import {UserJoinChannelReceiveDto} from "../../dtos/userjoinchannel.dto";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
-const socket = io("http://217.160.41.142:3000/update");
-const socketChat = io("http://217.160.41.142:3000/chat");
+const socket = io("http://bentowski.fr:3000/update");
+const socketChat = io("http://bentowski.fr:3000/chat");
 
 const BtnToChat = ({cb}:{cb: any}) => {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ class UserCards extends Component<
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/chan/"
+          "http://bentowski.fr:3000/chan/"
       )
     } catch (error) {
       ctx.setError(error);
@@ -133,13 +133,13 @@ class UserCards extends Component<
         "GET",
         {},
         {},
-        "http://217.160.41.142:3000/user/name/" + this.state.login,
+        "http://bentowski.fr:3000/user/name/" + this.state.login,
       )
 	  const chans: ChanType[] = await Request(
         "GET",
         {},
         {},
-        "http://217.160.41.142:3000/chan",
+        "http://bentowski.fr:3000/chan",
       )
       let doesChanExist: boolean = false;
       let newChan: ChanType | undefined = undefined;
@@ -166,7 +166,7 @@ class UserCards extends Component<
               "Content-Type": "application/json",
             },
             createprivchan,
-            "http://217.160.41.142:3000/chan/createpriv"
+            "http://bentowski.fr:3000/chan/createpriv"
             );
         const res: UserJoinChannelReceiveDto = {chan: newChan, auth_id: u2.auth_id}
           socketChat.emit("chanCreated", res);
@@ -184,7 +184,7 @@ class UserCards extends Component<
     return ("")
 
     /*
-    let chans = await Request("GET", {}, {}, "http://217.160.41.142:3000/chan");
+    let chans = await Request("GET", {}, {}, "http://bentowski.fr:3000/chan");
     const ctx: any = this.context;
     let u1 = undefined;
     let u2 = undefined;
@@ -193,13 +193,13 @@ class UserCards extends Component<
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/name/" + this.state.ssname
+          "http://bentowski.fr:3000/user/name/" + this.state.ssname
       );
       u2 = await Request(
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/name/" + this.state.login
+          "http://bentowski.fr:3000/user/name/" + this.state.login
       );
     } catch (error) {
       ctx.setError(error);
@@ -236,7 +236,7 @@ class UserCards extends Component<
           password: "",
           chanUser: [u1, u2],
         },
-        "http://217.160.41.142:3000/chan/create"
+        "http://bentowski.fr:3000/chan/create"
       );
       socket.emit("chanCreated");
       let newUrl = "http://192.168.0.1/chat/#" + newChan.id;
@@ -263,7 +263,7 @@ class UserCards extends Component<
     //       login: this.state.login,
     //       public: true
     //     },
-    //     "http://217.160.41.142:3000/parties/create"
+    //     "http://bentowski.fr:3000/parties/create"
     //   );
     // } catch (error) {
     //   ctx.setError(error);
@@ -277,7 +277,7 @@ class UserCards extends Component<
     //     'GET',
     //     {},
     //     {},
-    //     "http://217.160.41.142:3000/parties/"
+    //     "http://bentowski.fr:3000/parties/"
     //   )
     // } catch (error) {
     //   ctx.setError(error);
@@ -327,7 +327,7 @@ class UserCards extends Component<
                 <img
                   alt=""
                   src={
-                    "http://217.160.41.142:3000/user/" +
+                    "http://bentowski.fr:3000/user/" +
                     this.props.user.auth_id +
                     "/avatar"
                   }
@@ -364,7 +364,7 @@ class UserCards extends Component<
             <img
               alt=""
               src={
-                "http://217.160.41.142:3000/user/" +
+                "http://bentowski.fr:3000/user/" +
                 this.props.user.auth_id +
                 "/avatar"
               }
@@ -431,7 +431,7 @@ class UserCards extends Component<
          "GET",
          {},
          {},
-         "http://217.160.41.142:3000/user/id/" + this.state.id
+         "http://bentowski.fr:3000/user/id/" + this.state.id
        );
      } catch (error) {
        ctx.setError(error);
