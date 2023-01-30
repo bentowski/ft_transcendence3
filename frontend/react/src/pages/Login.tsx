@@ -35,7 +35,7 @@ const Login = (): JSX.Element => {
 		</map>
 		<div id="background-wrap">
 			{/* delete below before push */}
-			<a className="mb-2 mx-2" href="http://217.160.41.142:3000/auth/dummyconnect">
+			<a className="mb-2 mx-2" href="http://bentowski.fr:3000/auth/dummyconnect">
 				Letssss go
   			</a>
 			{/* delete above before push */}

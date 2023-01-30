@@ -56,7 +56,7 @@ const Menu = () => {
         </div>{" "}
         {/* homeButtonDiv */}
         <div className="titleDiv d-none d-sm-block">
-          <h1 className="m-0"><img alt="" className="BobLePong" src="http://217.160.41.142/pictures/boblepongelogo.png"/></h1>
+          <h1 className="m-0"><img alt="" className="BobLePong" src="http://bentowski.fr/pictures/boblepongelogo.png"/></h1>
         </div>{" "}
         {/* titleDiv */}
         <div className="profilMenu d-flex justify-content-end align-items-center col-3">
