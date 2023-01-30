@@ -13,9 +13,6 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
       clientID: process.env.API_CLIENT_ID,
       clientSecret: process.env.API_CLIENT_SECRET,
       callbackURL: process.env.API_CALLBACK_URL,
-      // "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-0f99e3f59a2cbe39bcefabcb0b19a8ff2a0c157f3f7ec959018365c016c303b6&redirect_uri=http%3A%2F%2Fbentowski.fr&response_type=code",
-      // https://api.intra.42.fr/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2F217.160.41.142%3A3000%2Fauth%2Fredirect&scope=public&client_id=u-s4t2ud-0f99e3f59a2cbe39bcefabcb0b19a8ff2a0c157f3f7ec959018365c016c303b6
-      // https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-0f99e3f59a2cbe39bcefabcb0b19a8ff2a0c157f3f7ec959018365c016c303b6&redirect_uri=http%3A%2F%2Fbentowski.fr&response_type=code
       scope: ['public'],
     });
   }

@@ -82,7 +82,7 @@ export const PrintChannel = (
           parentCallBack.setMessage([]);
           parentCallBack.setRoom("null");
           parentCallBack.getChan();
-          window.location.href = "http://bentowski.fr/chat"; //!
+          window.location.href = "http://217.160.41.142/chat"; //!
         }
       }
     }
@@ -130,7 +130,7 @@ export const PrintChannel = (
             //parentCallBack.setMessage([]);
             parentCallBack.setRoom("null");
             //parentCallBack.getChan();
-            //window.location.href = "http://bentowski.fr/chat"; //!
+            //window.location.href = "http://217.160.41.142/chat"; //!
             navigate("/chat");
           } else {
             socket.emit("newMessage", {

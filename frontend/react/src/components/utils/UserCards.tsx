@@ -20,7 +20,7 @@ const BtnToChat = ({cb}:{cb: any}) => {
 
   const btnClick = async () => {
     const ret:string = await cb();
-    if (ret != "" && !window.location.href.includes("http://bentowski.fr/chat"))
+    if (ret != "" && !window.location.href.includes("http://217.160.41.142/chat"))
       navigate(ret);
   }
 
@@ -174,7 +174,7 @@ class UserCards extends Component<
       if (newChan !== undefined) {
         // this.navigate("/chat/"/*  + newChan.id */)
         // console.log(this.props.navigation)
-        //window.location.href = "http://bentowski.fr/chat/" + newChan.id
+        //window.location.href = "http://217.160.41.142/chat/" + newChan.id
         return ("/chat/" + newChan.id)
       }
     } catch (error) {
@@ -239,13 +239,13 @@ class UserCards extends Component<
         "http://217.160.41.142:3000/chan/create"
       );
       socket.emit("chanCreated");
-      let newUrl = "http://bentowski.fr/chat/#" + newChan.id;
+      let newUrl = "http://217.160.41.142/chat/#" + newChan.id;
       setTimeout(() => {
         window.location.href = newUrl;
       }, 100);
       return;
     }
-    let newUrl = "http://bentowski.fr/chat/#" + ret;
+    let newUrl = "http://217.160.41.142/chat/#" + ret;
     window.location.href = newUrl;
      */
   };
@@ -285,7 +285,7 @@ class UserCards extends Component<
     // const ids: number[] = parties.map((p: any) => {
     //   return p.id;
     // })
-    // window.location.href = "http://bentowski.fr/game/" + Math.max(...ids)
+    // window.location.href = "http://217.160.41.142/game/" + Math.max(...ids)
   }
 
   renderUserCards = (id: number): JSX.Element => {
@@ -412,7 +412,7 @@ class UserCards extends Component<
       });
       socket.on("onInviteAccepted", (body: { "to": string, "from": string, "partyID": string }) => {
         if (body.to === this.getCurrentUser().auth_id)
-          window.location.href = "http://bentowski.fr/gameup/" + body.partyID;
+          window.location.href = "http://217.160.41.142/gameup/" + body.partyID;
       });
       socket.on("onInviteDeclined", (body: { "to": string, "from": string }) => {
         if (body.to === this.getCurrentUser().auth_id) {
