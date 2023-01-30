@@ -74,7 +74,7 @@ class FriendsNav extends Component<{}, {
           'GET',
           {},
           {},
-          "http://bentowski.fr:3000/user/name/" + input.value
+          "http://217.160.41.142:3000/user/name/" + input.value
         )
         input.value = '';
         const response: FriendUserReceiveDto = {

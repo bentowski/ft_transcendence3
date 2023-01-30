@@ -30,7 +30,7 @@ let gameOver = () => {
 }
 
 let joinRoom = async () => {
-  const games = await Request('GET', {}, {}, "http://bentowski.fr:3000/parties")
+  const games = await Request('GET', {}, {}, "http://217.160.41.142:3000/parties")
   let url = document.URL
   let index = url.lastIndexOf("/")
   if (index === -1) {

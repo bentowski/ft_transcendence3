@@ -41,14 +41,14 @@ class ModalMatch extends Component<{ title: string, calledBy: string }, {}> {
           type: isClassic,
           vitesse: vitesse
         },
-        "http://bentowski.fr:3000/parties/create"
+        "http://217.160.41.142:3000/parties/create"
       );
       socket.emit('newParty');
       const parties: PartiesType[] = await Request(
           'GET',
           {},
           {},
-          "http://bentowski.fr:3000/parties/"
+          "http://217.160.41.142:3000/parties/"
       )
       const ids: number[] = parties.map((p: any) => {
         return p.id;

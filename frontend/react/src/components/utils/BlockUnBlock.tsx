@@ -22,7 +22,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
                         "GET",
                         {},
                         {},
-                        "http://bentowski.fr:3000/user/" + auth_id + "/isblocked",
+                        "http://217.160.41.142:3000/user/" + auth_id + "/isblocked",
                     )
                     setStatus(res);
                     setLoading(false);

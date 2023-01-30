@@ -232,7 +232,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             "GET",
             {},
             {},
-            "http://bentowski.fr:3000/auth/istoken"
+            "http://217.160.41.142:3000/auth/istoken"
         )
         if (res) {
           if (res.isTok === 0) {
@@ -248,7 +248,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                   "GET",
                   {},
                   {},
-                  "http://bentowski.fr:3000/user/current"
+                  "http://217.160.41.142:3000/user/current"
               )
               if (user) {
                 setUser(user);
@@ -269,7 +269,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                     "GET",
                     {},
                     {},
-                    "http://bentowski.fr:3000/user/",
+                    "http://217.160.41.142:3000/user/",
                     )
                     setUserList(uselist);
 
@@ -279,7 +279,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/" + user.auth_id + "/getfriends",
+                      "http://217.160.41.142:3000/user/" + user.auth_id + "/getfriends",
                   )
                   setFriendsList(flist);
 
@@ -289,7 +289,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/" + user.auth_id + "/getblocked"
+                      "http://217.160.41.142:3000/user/" + user.auth_id + "/getblocked"
                   )
                   setBlockedList(blist);
 
@@ -299,7 +299,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/chan/muted"
+                      "http://217.160.41.142:3000/user/chan/muted"
                   )
                   setMutedFrom(mlist);
 
@@ -309,7 +309,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/chan/banned"
+                      "http://217.160.41.142:3000/user/chan/banned"
                   )
                   setBannedFrom(banlist);
 
@@ -319,7 +319,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/chan/joined"
+                      "http://217.160.41.142:3000/user/chan/joined"
                   )
                   setChanFrom(jlist);
 
@@ -329,7 +329,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                       "GET",
                       {},
                       {},
-                      "http://bentowski.fr:3000/user/chan/admin"
+                      "http://217.160.41.142:3000/user/chan/admin"
                   )
                   setAdminFrom(alist);
 

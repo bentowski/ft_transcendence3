@@ -13,12 +13,12 @@ const Menu = () => {
       setUsername(user.username);
     }
     if (user.avatar) {
-      setAvatarUrl({url: 'http://bentowski.fr:3000/user/' + user.auth_id + '/avatar', hash: Date.now()});
+      setAvatarUrl({url: 'http://217.160.41.142:3000/user/' + user.auth_id + '/avatar', hash: Date.now()});
     }
   }, [user])
 
   const logoutSession = async () => {
-    const res: Response = await fetch("http://bentowski.fr:3000/auth/logout", {
+    const res: Response = await fetch("http://217.160.41.142:3000/auth/logout", {
       method: "DELETE",
       credentials: "include",
       headers: {

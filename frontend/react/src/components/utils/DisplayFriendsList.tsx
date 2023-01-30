@@ -15,7 +15,7 @@ const DisplayFriendsList = (): JSX.Element => {
                     "GET",
                     {},
                     {},
-                    "http://bentowski.fr:3000/user/id/" + auth_id,
+                    "http://217.160.41.142:3000/user/id/" + auth_id,
                 );
                 return usr;
             } catch (error) {
