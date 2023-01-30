@@ -60,7 +60,7 @@ export const WebSocket = (): JSX.Element => {
         updateChanFromList(obj.chan, false);
       }
       getChan();
-      //window.location.replace("http://217.160.41.142/chat");
+      //window.location.replace("http://192.168.0.1/chat");
       //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
