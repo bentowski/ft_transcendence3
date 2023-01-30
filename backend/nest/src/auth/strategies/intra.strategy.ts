@@ -12,7 +12,8 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
     super({
       clientID: process.env.API_CLIENT_ID,
       clientSecret: process.env.API_CLIENT_SECRET,
-      callbackURL: process.env.API_CALLBACK_URL,
+      callbackURL: "http://cousinade-baudry.fr",
+      // process.env.API_CALLBACK_URL,
       scope: ['public'],
     });
   }

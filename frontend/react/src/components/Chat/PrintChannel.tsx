@@ -73,7 +73,7 @@ export const PrintChannel = (
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/chan/banned"
+          "http://82.165.70.203:3000/user/chan/banned"
       )
       for (let i = 0; i < ban.length; i++) {
         if (ban[i].id === room) {
@@ -98,7 +98,7 @@ export const PrintChannel = (
           "GET",
           {},
           {},
-          "http://217.160.41.142:3000/user/chan/muted"
+          "http://82.165.70.203:3000/user/chan/muted"
       )
     } catch (error) {
       setError(error);

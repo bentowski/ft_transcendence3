@@ -7,7 +7,7 @@ import {PartiesType, UserType} from "../../types";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
 
-const socket = io("http://217.160.41.142:3000/update");
+const socket = io("http://82.165.70.203:3000/update");
 
 class ModalMatchInvite extends Component<{ title: string, calledBy: string, user: any}, {}> {
   static contextType = AuthContext;
@@ -27,7 +27,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
             type: 1,
             vitesse: 1
           },
-          "http://217.160.41.142:3000/parties/create"
+          "http://82.165.70.203:3000/parties/create"
       );
     } catch (error) {
       ctx.setError(error);
@@ -39,7 +39,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
         'GET',
         {},
         {},
-        "http://217.160.41.142:3000/parties/"
+        "http://82.165.70.203:3000/parties/"
      )
     } catch (error) {
       ctx.setError(error);
@@ -77,7 +77,7 @@ class ModalMatchInvite extends Component<{ title: string, calledBy: string, user
               You received an invitation
             </h2>
             <div className="d-flex flex-column justify-content-center">
-              <img alt="" src={"http://217.160.41.142:3000/user/" +
+              <img alt="" src={"http://82.165.70.203:3000/user/" +
                   this.props.user.auth_id +
                   "/avatar"} className='modifAvatar mx-auto'></img>
               <div>

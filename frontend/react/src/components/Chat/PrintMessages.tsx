@@ -19,7 +19,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
     // }
 
 	// updateUsers = async () => {
-	// 	let users:UserType = await Request("GET", {}, {}, "http://217.160.41.142:3000/user")
+	// 	let users:UserType = await Request("GET", {}, {}, "http://82.165.70.203:3000/user")
 	// 	this.setState({userList: users})
 	// }
 
@@ -55,7 +55,7 @@ class DispatchMsg extends Component<{user: UserType, messages: any}, {userList: 
       else
         ret.push(
             <div key={index} className="incoming_msg break-text">
-              <div className="incoming_msg_img align-bottom"> <img src={"http://217.160.41.142:3000/user/" + msg.auth_id + "/avatar"} alt="ImageNotFound" /> </div>
+              <div className="incoming_msg_img align-bottom"> <img src={"http://82.165.70.203:3000/user/" + msg.auth_id + "/avatar"} alt="ImageNotFound" /> </div>
               <div className="received_msg">
                 <div className="received_withd_msg">
                   <div className="received_withd_msg"><span className="time_date">{this.takeUsername(msg)}</span></div>

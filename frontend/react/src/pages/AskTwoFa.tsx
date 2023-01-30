@@ -11,7 +11,7 @@ const AskTwoFa = (): JSX.Element => {
 
   const validateTwoFa = async (): Promise<void> => {
       const twofacode: TwoFACodeDto = {twoFACode: code}
-      const res: Response = await fetch("http://217.160.41.142:3000/auth/2fa/authenticate",
+      const res: Response = await fetch("http://82.165.70.203:3000/auth/2fa/authenticate",
           {
             method: "POST",
             credentials: 'include',
