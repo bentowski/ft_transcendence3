@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import {BlockedUserReceiveDto, BlockedUserSendDto} from "../../dtos/blocked-user.dto";
 import "../../styles/components/utils/userCards.css";
 
-const socket = io('http://bentowski.fr:3000/update')
+const socket = io('http://217.160.41.142:3000/update')
 
 const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
     const [status, setStatus] = useState<boolean>(false);
@@ -22,7 +22,7 @@ const BlockUnBlock = ({ auth_id }:{ auth_id : string }): JSX.Element => {
                         "GET",
                         {},
                         {},
-                        "http://bentowski.fr:3000/user/" + auth_id + "/isblocked",
+                        "http://217.160.41.142:3000/user/" + auth_id + "/isblocked",
                     )
                     setStatus(res);
                     setLoading(false);

@@ -60,7 +60,7 @@ export const WebSocket = (): JSX.Element => {
         updateChanFromList(obj.chan, false);
       }
       getChan();
-      //window.location.replace("http://bentowski.fr/chat");
+      //window.location.replace("http://217.160.41.142/chat");
       //navigate("/chat/")
     });
     if (chanList.length && user.auth_id !== undefined)
@@ -87,7 +87,7 @@ export const WebSocket = (): JSX.Element => {
               "GET",
               {},
               {},
-              "http://bentowski.fr:3000/chan/id/" + obj.room
+              "http://217.160.41.142:3000/chan/id/" + obj.room
           )
           updateMutedFromList(chan, obj.action)
         } catch (error) {
@@ -103,7 +103,7 @@ export const WebSocket = (): JSX.Element => {
               "GET",
               {},
               {},
-              "http://bentowski.fr:3000/chan/id/" + obj.room
+              "http://217.160.41.142:3000/chan/id/" + obj.room
           )
           updateBannedFromList(chan, obj.action);
           if (obj.action) {
@@ -127,7 +127,7 @@ export const WebSocket = (): JSX.Element => {
               "GET",
               {},
               {},
-              "http://bentowski.fr:3000/chan/id/" + obj.room
+              "http://217.160.41.142:3000/chan/id/" + obj.room
           )
           updateAdminFromList(chan, obj.action)
         } catch (error) {
@@ -177,7 +177,7 @@ export const WebSocket = (): JSX.Element => {
               "GET",
               {},
               {},
-              "http://bentowski.fr:3000/chan/id/" + obj.room
+              "http://217.160.41.142:3000/chan/id/" + obj.room
           )
           updateBannedFromList(chan, false)
         } catch (error) {
@@ -193,7 +193,7 @@ export const WebSocket = (): JSX.Element => {
               "GET",
               {},
               {},
-              "http://bentowski.fr:3000/chan/id/" + obj.room
+              "http://217.160.41.142:3000/chan/id/" + obj.room
           )
           updateMutedFromList(chan, false)
         } catch (error) {
@@ -220,7 +220,7 @@ export const WebSocket = (): JSX.Element => {
     getChan();
     const checkUrl: NodeJS.Timer = setInterval(() => {
       let url: string = document.URL
-      if (!document.URL.includes("bentowski.fr/chat"))
+      if (!document.URL.includes("217.160.41.142/chat"))
         clearInterval(checkUrl);
       url = url.substring(url.lastIndexOf("/") + 1)
       if (url !== location) {
@@ -267,7 +267,7 @@ export const WebSocket = (): JSX.Element => {
           'GET',
           {},
           {},
-          "http://bentowski.fr:3000/chan/"
+          "http://217.160.41.142:3000/chan/"
       )
       const found: ChanType | undefined = chans.find((c: ChanType) => c.name === name)
       if (found) {
@@ -291,7 +291,7 @@ export const WebSocket = (): JSX.Element => {
               "Content-Type": "application/json",
             },
             newchan,
-            "http://bentowski.fr:3000/chan/create"
+            "http://217.160.41.142:3000/chan/create"
         );
 const userjoinchan: UserJoinChannelReceiveDto = {
         chan: chanCreated,
@@ -313,7 +313,7 @@ const userjoinchan: UserJoinChannelReceiveDto = {
     let url: string = document.URL;
     // await getChan();
     // changeActiveRoom('4')
-    // let chanList:ChanType[] = await Request('GET', {}, {}, "http://bentowski.fr:3000/chan/")
+    // let chanList:ChanType[] = await Request('GET', {}, {}, "http://217.160.41.142:3000/chan/")
     let chan: ChanType | undefined = undefined;
     const index: number = url.lastIndexOf("/");
   	chanList.forEach((chan: ChanType) => {
@@ -354,7 +354,7 @@ const userjoinchan: UserJoinChannelReceiveDto = {
           'GET',
           {},
           {},
-          "http://bentowski.fr:3000/chan/")
+          "http://217.160.41.142:3000/chan/")
       channels.forEach((c:ChanType, idx:number) => {
         if (c.id === room)
           c.isActive = true;

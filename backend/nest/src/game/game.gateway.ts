@@ -14,7 +14,7 @@ import { GameService } from './game.service';
 import PartiesEntity from '../parties/entities/parties-entity';
 @WebSocketGateway({
   cors: {
-    origin: ['http://bentowski.fr'],
+    origin: ['http://217.160.41.142'],
   },
   namespace: '/game',
 })

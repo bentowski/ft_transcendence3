@@ -4,7 +4,7 @@ import { ErrorType } from "../../types";
 const Logout = async (): Promise<void> => {
   const { userAuthentication, updateIsTwoFa } = useAuthData();
 
-  await fetch("http://bentowski.fr:3000/auth/logout", {
+  await fetch("http://217.160.41.142:3000/auth/logout", {
     method: "DELETE",
     credentials: "include",
     headers: {

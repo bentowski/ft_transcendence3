@@ -19,7 +19,7 @@ const Switch = (): JSX.Element => {
   }, [isTwoFa]);
 
   const generateTwoFA = async (): Promise<void> => {
-    const res: Response = await fetch("http://bentowski.fr:3000/auth/2fa/generate", {
+    const res: Response = await fetch("http://217.160.41.142:3000/auth/2fa/generate", {
       credentials: "include",
       method: "POST",
       headers: {
@@ -62,7 +62,7 @@ const Switch = (): JSX.Element => {
     const twofa: TwoFACodeDto = {
       twoFACode: code,
     }
-    const res: Response = await fetch("http://bentowski.fr:3000/auth/2fa/activate", {
+    const res: Response = await fetch("http://217.160.41.142:3000/auth/2fa/activate", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -85,7 +85,7 @@ const Switch = (): JSX.Element => {
 
   const deactivateTwoFA = async (): Promise<void> => {
       const res: Response = await fetch(
-          "http://bentowski.fr:3000/auth/2fa/deactivate",
+          "http://217.160.41.142:3000/auth/2fa/deactivate",
           {
         method: "POST",
         credentials: "include",

@@ -5,7 +5,7 @@ import { AuthContext } from '../../contexts/AuthProviderContext';
 import {UserType} from "../../types";
 //import { socket } from '../../contexts/WebSocketContextUpdate';
 
-const socket = io("http://bentowski.fr:3000/update");
+const socket = io("http://217.160.41.142:3000/update");
 
 class ModalMatchWaiting extends Component<{ title: string, calledBy: string, hidden?: boolean, user?: any, countdown?: number}, {}> {
 

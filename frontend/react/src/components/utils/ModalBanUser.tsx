@@ -27,7 +27,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                         "GET",
                         {},
                         {},
-                        "http://bentowski.fr:3000/chan/" + chan + "/user"
+                        "http://217.160.41.142:3000/chan/" + chan + "/user"
                     )
                     const newArr: UsersChanBanType[] = [];
                     for (let index: number = 0; index < users.length; index++) {
@@ -40,7 +40,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                         "GET",
                         {},
                         {},
-                        "http://bentowski.fr:3000/chan/" + chan + "/banned"
+                        "http://217.160.41.142:3000/chan/" + chan + "/banned"
                     )
                     for (let index = 0; index < banned.length; index++) {
                         newArr.push({
@@ -67,7 +67,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                     "GET",
                     {},
                     {},
-                    "http://bentowski.fr:3000/chan/" + chan + "/admin"
+                    "http://217.160.41.142:3000/chan/" + chan + "/admin"
                 )
             } catch (error) {
                 setError(error);
@@ -141,7 +141,7 @@ const ModalBanUser = ({chan, socket, usersInChan}:{
                                 </Link>
                                 <img
                                     alt=""
-                                    src={'http://bentowski.fr:3000/user/' +
+                                    src={'http://217.160.41.142:3000/user/' +
                                         usersChan[x].user?.auth_id + '/avatar'}
                                     className="miniAvatar"
                                     width={150}
