@@ -14,6 +14,8 @@ frontend/volume
 backend/volume
 /.pnp
 .pnp.js
+Makefile
+docker-compose.yml
 
 # testing
 /coverage
