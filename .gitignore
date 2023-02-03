@@ -1,11 +1,16 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+
+Makefile
+docker-compose.yml
+
 # dependencies
 frontend/react/node_modules
 frontend/react/dist
 backend/nest/node_modules
 backend/nest/dist
 backend/nest/.env
+backend/nest/src/.env
 backend/nest/uploads/profileimages
 data
 examples
@@ -34,3 +39,4 @@ yarn-error.log*
 
 .idea
 .transcendenceEnv
+
